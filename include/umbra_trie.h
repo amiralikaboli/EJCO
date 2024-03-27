@@ -2,23 +2,23 @@
 #include <cmath>
 #include <atomic>
 
-template<typename TUPLE_TYPE>
+template<typename T>
 class Node {
 public:
-	TUPLE_TYPE data;
+	T data;
 	Node *next;
 
-	Node(TUPLE_TYPE data) {
+	Node(T data) {
 		this->data = data;
 		next = nullptr;
 	}
 };
 
-template<typename TUPLE_TYPE>
+template<typename T>
 class LinkedList {
 public:
-	Node<TUPLE_TYPE> *head;
-	Node<TUPLE_TYPE> *tail;
+	Node<T> *head;
+	Node<T> *tail;
 	size_t size;
 	void *up;  // Bucket
 
@@ -30,14 +30,14 @@ public:
 
 	~LinkedList() {
 		while (head != nullptr) {
-			Node<TUPLE_TYPE> *node = head;
+			Node<T> *node = head;
 			head = head->next;
 			delete node;
 		}
 	}
 
-	inline void insert(TUPLE_TYPE data) {
-		Node<TUPLE_TYPE> *node = new Node<TUPLE_TYPE>(data);
+	inline void insert(T data) {
+		Node<T> *node = new Node<T>(data);
 		if (head == nullptr)
 			head = tail = node;
 		else {
@@ -47,10 +47,10 @@ public:
 		++size;
 	}
 
-	inline TUPLE_TYPE pop() {
-		Node<TUPLE_TYPE> *node = head;
+	inline T pop() {
+		Node<T> *node = head;
 		head = head->next;
-		TUPLE_TYPE data = node->data;
+		T data = node->data;
 		delete node;
 		--size;
 		return data;
@@ -66,28 +66,34 @@ public:
 		hash = -1;
 		down = nullptr;
 	}
+
+	inline bool is_empty() {
+		return hash == -1;
+	}
 };
 
 class HashTable {
 public:
-	size_t size;
-	Bucket **buckets;
-	uint32_t hash_factor;
+	size_t length;
+	uint64_t hash_factor;
 	uint8_t shift;
+	Bucket **buckets;
 	Bucket *up;
+	LinkedList<size_t> *occupied;
 
-	HashTable(size_t size) {
-		this->size = 1 << size_t(ceil(log2(size)));
-		buckets = new Bucket *[this->size];
-		for (size_t i = 0; i < this->size; ++i)
-			buckets[i] = new Bucket();
+	HashTable(size_t length) {
+		this->length = 1 << size_t(ceil(log2(length)));
 		hash_factor = (rand() << 1) | 1;
-		shift = 64 - log2(this->size);
+		shift = 64 - log2(this->length);
+		buckets = new Bucket *[this->length];
+		for (size_t i = 0; i < this->length; ++i)
+			buckets[i] = new Bucket();
 		up = nullptr;
+		occupied = new LinkedList<size_t>();
 	}
 
 	~HashTable() {
-		for (size_t i = 0; i < size; ++i)
+		for (size_t i = 0; i < length; ++i)
 			delete buckets[i];
 		delete[] buckets;
 	}
@@ -99,13 +105,20 @@ public:
 	inline void insert(size_t key) {
 		size_t h = hash(key);
 		Bucket *b = buckets[h];
-		b->hash = h;
+		if (b->is_empty()) {
+			b->hash = h;
+			occupied->insert(h);
+		}
 	}
 
 	inline Bucket *find(size_t key) {
 		size_t h = hash(key);
 		Bucket *b = buckets[h];
 		return b;
+	}
+
+	inline size_t size() {
+		return occupied->size;
 	}
 };
 
@@ -140,14 +153,17 @@ public:
 		}
 
 		auto idx_next = idx + 1;
-		for (size_t i = 0; i < M->size; ++i) {  // TODO: iterator over only occupied buckets
-			auto B = M->buckets[i];
+		auto it = M->occupied->head;
+		while (it != nullptr) {
+			auto B = M->buckets[it->data];
 			if (B->hash != -1) {
 				LinkedList<TUPLE_TYPE> *L_next = B->down;
 				HashTable *M_next = build(idx_next, L_next);
 				B->down = M_next;
 				M_next->up = B;
 			}
+
+			it = it->next;
 		}
 
 		return M;
