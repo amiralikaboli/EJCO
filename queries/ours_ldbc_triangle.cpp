@@ -4,32 +4,63 @@
 #include <tuple>
 #include <fstream>
 #include <sstream>
+#include <vector>
 
 using namespace std;
 
-void load(string path, phmap::flat_hash_map<long, phmap::flat_hash_map<long, bool>> &trie) {
+vector<pair<long, long>> load(string path) {
 	ifstream in(path);
 	if (!in)
 		cerr << "Cannot open the File : " << path << endl;
 	string line;
 	string token;
 	getline(in, line);  // skip the first line
+	vector<pair<long, long>> tuples;
 	while (getline(in, line)) {
 		stringstream ss(line);
 		getline(ss, token, '|');
 		auto lll = stol(token);
 		getline(ss, token, '|');
 		auto rrr = stol(token);
-		trie[lll][rrr] = true;
+		tuples.push_back({lll, rrr});
 	}
 	in.close();
+	return tuples;
+}
+
+void load(string path, phmap::flat_hash_map<long, phmap::flat_hash_map<long, bool>> &trie) {
+	auto tuples = load(path);
+	for (auto &ent: tuples) {
+		auto [l, r] = ent;
+		trie[l][r] = true;
+	}
+}
+
+void load(string path, phmap::flat_hash_map<long, vector<long>> &trie) {
+	auto tuples = load(path);
+	for (auto &ent: tuples) {
+		auto [l, r] = ent;
+		trie[l].push_back(r);
+	}
+}
+
+void load(string path, vector<pair<long, vector<long>>> &trie) {
+	auto tuples = load(path);
+	sort(tuples.begin(), tuples.end());
+	trie.push_back({tuples[0].first, {tuples[0].second}});
+	for (int i = 1; i < tuples.size(); ++i) {
+		if (tuples[i].first == tuples[i - 1].first)
+			trie.back().second.push_back(tuples[i].second);
+		else
+			trie.push_back({tuples[i].first, {tuples[i].second}});
+	}
 }
 
 int main() {
 	srand(time(0));
 
-	auto R_trie = phmap::flat_hash_map<long, phmap::flat_hash_map<long, bool>>();  // {x -> {y -> 1}}
-	auto S_trie = phmap::flat_hash_map<long, phmap::flat_hash_map<long, bool>>();  // {y -> {z -> 1}}
+	vector<pair<long, vector<long>>> R_trie;  // {x -> {y -> 1}}
+	auto S_trie = phmap::flat_hash_map<long, vector<long>>();  // {y -> {z -> 1}}
 	auto T_trie = phmap::flat_hash_map<long, phmap::flat_hash_map<long, bool>>();  // {x -> {z -> 1}}
 
 	load("../data/LDBC/Comment_replyOf_Post.csv", R_trie);
@@ -40,23 +71,19 @@ int main() {
 	auto iters = 10;
 	for (int i = 0; i < iters; ++i) {
 		timer.Reset();
-		auto res = phmap::flat_hash_map<tuple<long, long, long>, bool>();
+		vector<tuple<long, long, long>> res;
 		for (auto &R_ent: R_trie) {
-			auto a = R_ent.first;
-			auto R_prime = R_ent.second;
+			auto &a = R_ent.first;
+			auto &R_prime = R_ent.second;
 			if (T_trie.contains(a)) {
-				auto T_prime = T_trie.at(a);
-				for (auto &r_ent: R_prime) {
-					auto b = r_ent.first;
+				auto &T_prime = T_trie.at(a);
+				for (auto &b: R_prime)
 					if (S_trie.contains(b)) {
-						auto S_prime = S_trie.at(b);
-						for (auto &s_ent: S_prime) {
-							auto c = s_ent.first;
+						auto &S_prime = S_trie.at(b);
+						for (auto &c: S_prime)
 							if (T_prime.contains(c))
-								res[make_tuple(a, b, c)] = true;
-						}
+								res.push_back(make_tuple(a, b, c));
 					}
-				}
 			}
 		}
 		timer.StoreElapsedTime(0);
