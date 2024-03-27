@@ -37,8 +37,9 @@ int main() {
 	load("../data/LDBC/Comment_hasTag_Tag.csv", T_trie);
 
 	auto timer = HighPrecisionTimer();
-	auto cnt = 100;
-	while (cnt--) {
+	auto iters = 10;
+	for (int i = 0; i < iters; ++i) {
+		timer.Reset();
 		auto res = phmap::flat_hash_map<tuple<long, long, long>, bool>();
 		for (auto &R_ent: R_trie) {
 			auto a = R_ent.first;
@@ -58,8 +59,9 @@ int main() {
 				}
 			}
 		}
+		timer.StoreElapsedTime(0);
 	}
-	timer.PrintElapsedTimeAndReset("Triangle");
+	cout << round(timer.GetMean(0)) << " ms" << endl;
 
 //	cout << res.size() << endl;
 //	for (auto &ent: res) {

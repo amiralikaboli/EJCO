@@ -15,15 +15,16 @@ if __name__ == '__main__':
             for line in copy_file.readlines():
                 conn.execute(line)
 
+        iters = 10
         tm = time.time()
-        for _ in range(100):
+        for _ in range(iters):
             results = conn.execute(
                 "MATCH (c:Comment)-[:replyOf_Post]->(p:Post)-[:Post_hasTag]->(t:Tag), (c)-[:Comment_hasTag]->(t) "
-                "RETURN count(*)"
+                "RETURN c, p, t"
             )
-        print("Time: ", time.time() - tm)
-        while results.has_next():
-            print(results.get_next())
+        print(round((time.time() - tm) / iters * 1000), "ms")
+        # while results.has_next():
+        #     print(results.get_next())
     except:
         raise
     finally:
