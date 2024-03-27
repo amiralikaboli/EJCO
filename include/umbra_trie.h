@@ -1,29 +1,43 @@
-template<typename T>
+#include <tuple>
+#include <cmath>
+#include <atomic>
+
+template<typename TUPLE_TYPE>
 class Node {
 public:
-	T data;
+	TUPLE_TYPE data;
 	Node *next;
 
-	Node(T data) {
+	Node(TUPLE_TYPE data) {
 		this->data = data;
 		next = nullptr;
 	}
 };
 
-template<typename T>
+template<typename TUPLE_TYPE>
 class LinkedList {
 public:
-	Node<T> *head;
-	Node<T> *tail;
+	Node<TUPLE_TYPE> *head;
+	Node<TUPLE_TYPE> *tail;
 	size_t size;
+	void *up;  // Bucket
 
 	LinkedList() {
 		head = tail = nullptr;
 		size = 0;
+		up = nullptr;
 	}
 
-	inline void insert(T data) {
-		Node<T> *node = new Node<T>(data);
+	~LinkedList() {
+		while (head != nullptr) {
+			Node<TUPLE_TYPE> *node = head;
+			head = head->next;
+			delete node;
+		}
+	}
+
+	inline void insert(TUPLE_TYPE data) {
+		Node<TUPLE_TYPE> *node = new Node<TUPLE_TYPE>(data);
 		if (head == nullptr)
 			head = tail = node;
 		else {
@@ -33,10 +47,10 @@ public:
 		++size;
 	}
 
-	inline T pop() {
-		Node<T> *node = head;
+	inline TUPLE_TYPE pop() {
+		Node<TUPLE_TYPE> *node = head;
 		head = head->next;
-		T data = node->data;
+		TUPLE_TYPE data = node->data;
 		delete node;
 		--size;
 		return data;
@@ -64,7 +78,7 @@ public:
 
 	HashTable(size_t size) {
 		this->size = 1 << size_t(ceil(log2(size)));
-		table = new Bucket *[this->size];
+		buckets = new Bucket *[this->size];
 		for (size_t i = 0; i < this->size; ++i)
 			buckets[i] = new Bucket();
 		hash_factor = (rand() << 1) | 1;
@@ -72,9 +86,10 @@ public:
 		up = nullptr;
 	}
 
-	inline void set_up(Bucket *up) {
-		this->up = up;
-		up->down = this;
+	~HashTable() {
+		for (size_t i = 0; i < size; ++i)
+			delete buckets[i];
+		delete[] buckets;
 	}
 
 	inline size_t hash(size_t key) {
@@ -94,34 +109,44 @@ public:
 	}
 };
 
+template<typename TUPLE_TYPE>
 class Trie {
 public:
 	HashTable *table;
 
-	Trie(size_t size) {
-		table = new HashTable(size);
+	Trie() {
+		table = nullptr;
 	}
 
-	template<typename T>
-	HashTable *build(size_t idx, LinkedList<T> *L) {
-		// TODO: IF idx < # of attributes
+	~Trie() {
+		delete table;
+	}
+
+	HashTable *build(size_t idx, LinkedList<TUPLE_TYPE> *L) {
 		HashTable *M = new HashTable(L->size * 1.25);
 
 		while (L->head != nullptr) {
 			auto t = L->pop();
-			auto B = M->find(t);  // TODO: t needs a pi function on it
+			auto B = M->find(get<idx>(t));
 			if (B->down == nullptr)
-				B->down = new LinkedList<T>();
-			((LinkedList<T> *) B->down)->insert(t);
+				B->down = new LinkedList<TUPLE_TYPE>();
+			((LinkedList<TUPLE_TYPE> *) B->down)->insert(t);
+			((LinkedList<TUPLE_TYPE> *) B->down)->up = B;
 		}
 
-		auto i_next = ...;  // TODO: achieve i_next from somewhere
-		for (size_t i = 0; i < M->size; ++i) {
+		if (idx == std::tuple_size<TUPLE_TYPE>{} - 1) {
+			table = M;
+			return M;
+		}
+
+		auto idx_next = idx + 1;
+		for (size_t i = 0; i < M->size; ++i) {  // TODO: iterator over only occupied buckets
 			auto B = M->buckets[i];
 			if (B->hash != -1) {
-				LinkedList<T> *L_next = B->down;
-				HashTable *M_next = build(i_next, L_next);
-				B->down = M_next;  // TODO: can be set_up function
+				LinkedList<TUPLE_TYPE> *L_next = B->down;
+				HashTable *M_next = build(idx_next, L_next);
+				B->down = M_next;
+				M_next->up = B;
 			}
 		}
 
