@@ -2,5 +2,5 @@ venv
 cmake-build-debug
 *.out
 CMakeLists.txt
-data
+*.csv
 .idea

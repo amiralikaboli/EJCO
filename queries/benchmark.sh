@@ -1,12 +1,22 @@
 #!/bin/bash
 
-set -e
+set -euo pipefail
 
-echo "Kuzu: "
-python kuzu_ldbc_triangle.py
+g++ ours_ldbc_triangle.cpp -O3 -std=c++17 -o ours_ldbc_triangle.out
 
-echo "###############"
-sleep 5
+SFs=(0.1 1 3)
+for SF in "${SFs[@]}"
+do
+    echo "SF = $SF"
 
-echo "Ours: "
-g++ ours_ldbc_triangle.cpp -O3 -std=c++17 && ./a.out
+    echo "Kuzu"
+    python kuzu_ldbc_triangle.py $SF
+
+    echo "###############"
+    sleep 2
+
+    echo "Ours"
+    ./ours_ldbc_triangle.out $SF
+
+    echo "------------------------------"
+done

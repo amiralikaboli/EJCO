@@ -1,17 +1,20 @@
 import shutil
+import sys
 import time
 
 import kuzu
 
 if __name__ == '__main__':
+    SF = sys.argv[1]
+
     try:
         db = kuzu.Database('./db')
         conn = kuzu.Connection(db)
 
-        with open("../data/LDBC/schema.cypher", "r") as schema_file:
+        with open(f"../data/LDBC/{SF}/schema.cypher", "r") as schema_file:
             for line in schema_file.readlines():
                 conn.execute(line)
-        with open("../data/LDBC/copy.cypher", "r") as copy_file:
+        with open(f"../data/LDBC/{SF}/copy.cypher", "r") as copy_file:
             for line in copy_file.readlines():
                 conn.execute(line)
 

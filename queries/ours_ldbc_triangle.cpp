@@ -28,24 +28,21 @@ vector<pair<long, long>> load(string path) {
 	return tuples;
 }
 
-void load(string path, phmap::flat_hash_map<long, phmap::flat_hash_map<long, bool>> &trie) {
-	auto tuples = load(path);
+void build_trie(vector<pair<long, long>> &tuples, phmap::flat_hash_map<long, phmap::flat_hash_map<long, bool>> &trie) {
 	for (auto &ent: tuples) {
 		auto [l, r] = ent;
 		trie[l][r] = true;
 	}
 }
 
-void load(string path, phmap::flat_hash_map<long, vector<long>> &trie) {
-	auto tuples = load(path);
+void build_trie(vector<pair<long, long>> &tuples, phmap::flat_hash_map<long, vector<long>> &trie) {
 	for (auto &ent: tuples) {
 		auto [l, r] = ent;
 		trie[l].push_back(r);
 	}
 }
 
-void load(string path, vector<pair<long, vector<long>>> &trie) {
-	auto tuples = load(path);
+void build_trie(vector<pair<long, long>> &tuples, vector<pair<long, vector<long>>> &trie) {
 	sort(tuples.begin(), tuples.end());
 	trie.push_back({tuples[0].first, {tuples[0].second}});
 	for (int i = 1; i < tuples.size(); ++i) {
@@ -56,21 +53,72 @@ void load(string path, vector<pair<long, vector<long>>> &trie) {
 	}
 }
 
-int main() {
-	srand(time(0));
+void naive_query_benchmark(string SF) {
+	auto comment_replyof_post = load("../data/LDBC/" + SF + "/comment_replyof_post.csv");
+	auto post_hastag_tag = load("../data/LDBC/" + SF + "/post_hastag_tag.csv");
+	auto comment_hastag_tag = load("../data/LDBC/" + SF + "/comment_hastag_tag.csv");
 
-	vector<pair<long, vector<long>>> R_trie;  // {x -> {y -> 1}}
-	auto S_trie = phmap::flat_hash_map<long, vector<long>>();  // {y -> {z -> 1}}
-	auto T_trie = phmap::flat_hash_map<long, phmap::flat_hash_map<long, bool>>();  // {x -> {z -> 1}}
+	auto trie_timer = HighPrecisionTimer();
+	auto query_timer = HighPrecisionTimer();
 
-	load("../data/LDBC/Comment_replyOf_Post.csv", R_trie);
-	load("../data/LDBC/Post_hasTag_Tag.csv", S_trie);
-	load("../data/LDBC/Comment_hasTag_Tag.csv", T_trie);
-
-	auto timer = HighPrecisionTimer();
 	auto iters = 10;
 	for (int i = 0; i < iters; ++i) {
-		timer.Reset();
+		trie_timer.Reset();
+		auto R_trie = phmap::flat_hash_map<long, phmap::flat_hash_map<long, bool>>();  // {x -> {y -> 1}}
+		auto S_trie = phmap::flat_hash_map<long, phmap::flat_hash_map<long, bool>>();  // {y -> {z -> 1}}
+		auto T_trie = phmap::flat_hash_map<long, phmap::flat_hash_map<long, bool>>();  // {x -> {z -> 1}}
+
+		build_trie(comment_replyof_post, R_trie);
+		build_trie(post_hastag_tag, S_trie);
+		build_trie(comment_hastag_tag, T_trie);
+		trie_timer.StoreElapsedTime(0);
+
+		query_timer.Reset();
+		auto res = phmap::flat_hash_map<tuple<long, long, long>, bool>();
+		for (auto &R_ent: R_trie) {
+			auto a = R_ent.first;
+			auto R_prime = R_ent.second;
+			if (T_trie.contains(a)) {
+				auto T_prime = T_trie.at(a);
+				for (auto &r_ent: R_prime) {
+					auto b = r_ent.first;
+					if (S_trie.contains(b)) {
+						auto S_prime = S_trie.at(b);
+						for (auto &s_ent: S_prime) {
+							auto c = s_ent.first;
+							if (T_prime.contains(c))
+								res[make_tuple(a, b, c)] = true;
+						}
+					}
+				}
+			}
+		}
+		query_timer.StoreElapsedTime(0);
+	}
+	cout << "Naive: " << round(trie_timer.GetMean(0)) << " / " << round(query_timer.GetMean(0)) << " ms" << endl;
+}
+
+void opt_query_benchmark(string SF) {
+	auto comment_replyof_post = load("../data/LDBC/" + SF + "/comment_replyof_post.csv");
+	auto post_hastag_tag = load("../data/LDBC/" + SF + "/post_hastag_tag.csv");
+	auto comment_hastag_tag = load("../data/LDBC/" + SF + "/comment_hastag_tag.csv");
+
+	auto trie_timer = HighPrecisionTimer();
+	auto query_timer = HighPrecisionTimer();
+
+	auto iters = 10;
+	for (int i = 0; i < iters; ++i) {
+		trie_timer.Reset();
+		vector<pair<long, vector<long>>> R_trie;  // {x -> {y -> 1}}
+		auto S_trie = phmap::flat_hash_map<long, vector<long>>();  // {y -> {z -> 1}}
+		auto T_trie = phmap::flat_hash_map<long, phmap::flat_hash_map<long, bool>>();  // {x -> {z -> 1}}
+
+		build_trie(comment_replyof_post, R_trie);
+		build_trie(post_hastag_tag, S_trie);
+		build_trie(comment_hastag_tag, T_trie);
+		trie_timer.StoreElapsedTime(0);
+
+		query_timer.Reset();
 		vector<tuple<long, long, long>> res;
 		for (auto &R_ent: R_trie) {
 			auto &a = R_ent.first;
@@ -86,13 +134,16 @@ int main() {
 					}
 			}
 		}
-		timer.StoreElapsedTime(0);
+		query_timer.StoreElapsedTime(0);
 	}
-	cout << round(timer.GetMean(0)) << " ms" << endl;
+	cout << "Opt: " << round(trie_timer.GetMean(0)) << " / " << round(query_timer.GetMean(0)) << " ms" << endl;
+}
 
-//	cout << res.size() << endl;
-//	for (auto &ent: res) {
-//		auto [a, b, c] = ent.first;
-//		cout << a << " " << b << " " << c << endl;
-//	}
+int main(int argc, char *argv[]) {
+	string SF = argv[1];
+
+	srand(time(0));
+
+	naive_query_benchmark(SF);
+	opt_query_benchmark(SF);
 }
