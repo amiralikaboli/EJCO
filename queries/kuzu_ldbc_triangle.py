@@ -23,7 +23,7 @@ if __name__ == '__main__':
         for _ in range(iters):
             results = conn.execute(
                 "MATCH (c:Comment)-[:replyOf_Post]->(p:Post)-[:Post_hasTag]->(t:Tag), (c)-[:Comment_hasTag]->(t) "
-                "RETURN c, p, t"
+                "RETURN c.id, p.id, t.id"
             )
         print(round((time.time() - tm) / iters * 1000), "ms")
         # while results.has_next():
