@@ -142,8 +142,6 @@ void opt_query_benchmark(string SF) {
 int main(int argc, char *argv[]) {
 	string SF = argv[1];
 
-	srand(time(0));
-
 	naive_query_benchmark(SF);
 	opt_query_benchmark(SF);
 }
