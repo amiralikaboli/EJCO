@@ -10,9 +10,9 @@
 using namespace std;
 
 void naive_query_benchmark(string SF) {
-	auto comment_replyof_post = load("../data/LDBC/" + SF + "/comment_replyof_post.csv");
-	auto post_hastag_tag = load("../data/LDBC/" + SF + "/post_hastag_tag.csv");
-	auto comment_hastag_tag = load("../data/LDBC/" + SF + "/comment_hastag_tag.csv");
+	auto comment_replyof_post = load("../data/LDBC/" + SF + "/comment_replyof_post.csv", true);
+	auto post_hastag_tag = load("../data/LDBC/" + SF + "/post_hastag_tag.csv", true);
+	auto comment_hastag_tag = load("../data/LDBC/" + SF + "/comment_hastag_tag.csv", true);
 
 	auto trie_timer = HighPrecisionTimer();
 	auto query_timer = HighPrecisionTimer();
@@ -55,9 +55,9 @@ void naive_query_benchmark(string SF) {
 }
 
 void opt_query_benchmark(string SF) {
-	auto comment_replyof_post = load("../data/LDBC/" + SF + "/comment_replyof_post.csv");
-	auto post_hastag_tag = load("../data/LDBC/" + SF + "/post_hastag_tag.csv");
-	auto comment_hastag_tag = load("../data/LDBC/" + SF + "/comment_hastag_tag.csv");
+	auto comment_replyof_post = load("../data/LDBC/" + SF + "/comment_replyof_post.csv", true);
+	auto post_hastag_tag = load("../data/LDBC/" + SF + "/post_hastag_tag.csv", true);
+	auto comment_hastag_tag = load("../data/LDBC/" + SF + "/comment_hastag_tag.csv", true);
 
 	auto trie_timer = HighPrecisionTimer();
 	auto query_timer = HighPrecisionTimer();
@@ -96,9 +96,9 @@ void opt_query_benchmark(string SF) {
 }
 
 void opt2_query_benchmark(string SF) {
-	auto comment_replyof_post = load("../data/LDBC/" + SF + "/comment_replyof_post.csv");
-	auto post_hastag_tag = load("../data/LDBC/" + SF + "/post_hastag_tag.csv");
-	auto comment_hastag_tag = load("../data/LDBC/" + SF + "/comment_hastag_tag.csv");
+	auto comment_replyof_post = load("../data/LDBC/" + SF + "/comment_replyof_post.csv", true);
+	auto post_hastag_tag = load("../data/LDBC/" + SF + "/post_hastag_tag.csv", true);
+	auto comment_hastag_tag = load("../data/LDBC/" + SF + "/comment_hastag_tag.csv", true);
 
 	auto trie_timer = HighPrecisionTimer();
 	auto query_timer = HighPrecisionTimer();

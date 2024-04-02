@@ -7,13 +7,14 @@
 
 using namespace std;
 
-vector<pair<long, long>> load(string path) {
+vector<pair<long, long>> load(string path, bool skip_first_line = false) {
 	ifstream in(path);
 	if (!in)
 		cerr << "Cannot open the File : " << path << endl;
 	string line;
 	string token;
-	getline(in, line);  // skip the first line
+	if (skip_first_line)
+		getline(in, line);
 	vector<pair<long, long>> tuples;
 	while (getline(in, line)) {
 		stringstream ss(line);
