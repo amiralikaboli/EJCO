@@ -9,6 +9,8 @@
 
 using namespace std;
 
+int iters;
+
 void naive_query_benchmark() {
 	auto title = load("../data/JOB/title_compact.csv");
 	auto movie_companies = load("../data/JOB/movie_companies_compact.csv");
@@ -17,7 +19,6 @@ void naive_query_benchmark() {
 	auto trie_timer = HighPrecisionTimer();
 	auto query_timer = HighPrecisionTimer();
 
-	auto iters = 10;
 	for (size_t i = 0; i < iters; ++i) {
 		trie_timer.Reset();
 		auto R_trie = phmap::flat_hash_map<long, phmap::flat_hash_map<long, bool>>();  // {x -> {a -> 1}}
@@ -25,8 +26,8 @@ void naive_query_benchmark() {
 		auto T_trie = phmap::flat_hash_map<long, phmap::flat_hash_map<long, bool>>();  // {x -> {c -> 1}}
 
 		build_trie(movie_info_idx, R_trie);
-		build_trie(movie_companies, S_trie);
-		build_trie(title, T_trie);
+		build_trie(title, S_trie);
+		build_trie(movie_companies, T_trie);
 		trie_timer.StoreElapsedTime(0);
 
 		query_timer.Reset();
@@ -62,7 +63,6 @@ void opt_query_benchmark() {
 	auto trie_timer = HighPrecisionTimer();
 	auto query_timer = HighPrecisionTimer();
 
-	auto iters = 10;
 	for (size_t i = 0; i < iters; ++i) {
 		trie_timer.Reset();
 		auto R_trie = phmap::flat_hash_map<long, vector<long>>();  // {x -> {a -> 1}}
@@ -70,8 +70,8 @@ void opt_query_benchmark() {
 		auto T_trie = phmap::flat_hash_map<long, vector<long>>();  // {x -> {c -> 1}}
 
 		build_trie(movie_info_idx, R_trie);
-		build_trie(movie_companies, S_trie);
-		build_trie(title, T_trie);
+		build_trie(title, S_trie);
+		build_trie(movie_companies, T_trie);
 		trie_timer.StoreElapsedTime(0);
 
 		query_timer.Reset();
@@ -101,7 +101,6 @@ void opt2_query_benchmark() {
 	auto trie_timer = HighPrecisionTimer();
 	auto query_timer = HighPrecisionTimer();
 
-	auto iters = 10;
 	for (size_t i = 0; i < iters; ++i) {
 		trie_timer.Reset();
 		vector<pair<long, vector<long>>> R_trie;;  // {x -> {a -> 1}}
@@ -109,8 +108,8 @@ void opt2_query_benchmark() {
 		auto T_trie = phmap::flat_hash_map<long, vector<long>>();  // {x -> {c -> 1}}
 
 		build_trie(movie_info_idx, R_trie);
-		build_trie(movie_companies, S_trie);
-		build_trie(title, T_trie);
+		build_trie(title, S_trie);
+		build_trie(movie_companies, T_trie);
 		trie_timer.StoreElapsedTime(0);
 
 		query_timer.Reset();
@@ -133,6 +132,8 @@ void opt2_query_benchmark() {
 }
 
 int main(int argc, char *argv[]) {
+	iters = 10;
+
 	naive_query_benchmark();
 	opt_query_benchmark();
 	opt2_query_benchmark();

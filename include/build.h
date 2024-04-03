@@ -33,9 +33,22 @@ void build_trie(vector<pair<long, long>> &tuples, phmap::flat_hash_map<long, phm
 		trie[ent.first][ent.second] = true;
 }
 
-void build_trie(vector<pair<long, long>> &tuples, phmap::flat_hash_map<long, vector<long>> &trie) {
-	for (auto &ent: tuples)
-		trie[ent.first].push_back(ent.second);
+void build_trie(vector<pair<long, long>> &tuples, phmap::flat_hash_map<long, vector<long>> &trie, bool sorted = true) {
+	if (sorted) {
+		sort(tuples.begin(), tuples.end());
+		long last_key = -1;
+		vector<long> *last_vec = nullptr;
+		for (auto &ent: tuples) {
+			if (ent.first != last_key) {
+				last_key = ent.first;
+				last_vec = &trie[last_key];
+			}
+			last_vec->push_back(ent.second);
+		}
+	} else {
+		for (auto &ent: tuples)
+			trie[ent.first].push_back(ent.second);
+	}
 }
 
 void build_trie(vector<pair<long, long>> &tuples, vector<pair<long, vector<long>>> &trie) {
