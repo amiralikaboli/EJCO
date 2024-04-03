@@ -13,9 +13,13 @@ if __name__ == '__main__':
 
         with open(f"../data/LDBC/{SF}/schema.cypher", "r") as schema_file:
             for line in schema_file.readlines():
+                if line.strip()[0] == '/':
+                    continue
                 conn.execute(line)
         with open(f"../data/LDBC/{SF}/copy.cypher", "r") as copy_file:
             for line in copy_file.readlines():
+                if line.strip()[0] == '/':
+                    continue
                 conn.execute(line)
 
         iters = 10
