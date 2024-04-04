@@ -7,7 +7,7 @@
 
 using namespace std;
 
-vector<pair<long, long>> load(string path, bool skip_first_line = false) {
+vector<pair<long, long>> load(string path, bool reversed = false, bool skip_first_line = false) {
 	ifstream in(path);
 	if (!in)
 		cerr << "Cannot open the File : " << path << endl;
@@ -22,10 +22,17 @@ vector<pair<long, long>> load(string path, bool skip_first_line = false) {
 		auto lll = stol(token);
 		getline(ss, token, '|');
 		auto rrr = stol(token);
-		tuples.push_back({lll, rrr});
+		if (reversed)
+			tuples.push_back({rrr, lll});
+		else
+			tuples.push_back({lll, rrr});
 	}
 	in.close();
 	return tuples;
+}
+
+bool cmp(const pair<long, long> &a, const pair<long, long> &b) {
+	return a.first < b.first;
 }
 
 void build_trie(vector<pair<long, long>> &tuples, phmap::flat_hash_map<long, phmap::flat_hash_map<long, bool>> &trie) {
@@ -35,7 +42,7 @@ void build_trie(vector<pair<long, long>> &tuples, phmap::flat_hash_map<long, phm
 
 void build_trie(vector<pair<long, long>> &tuples, phmap::flat_hash_map<long, vector<long>> &trie, bool sorted = true) {
 	if (sorted) {
-		sort(tuples.begin(), tuples.end());
+		sort(tuples.begin(), tuples.end(), cmp);
 		long last_key = -1;
 		vector<long> *last_vec = nullptr;
 		for (auto &ent: tuples) {
@@ -51,13 +58,36 @@ void build_trie(vector<pair<long, long>> &tuples, phmap::flat_hash_map<long, vec
 	}
 }
 
-void build_trie(vector<pair<long, long>> &tuples, vector<pair<long, vector<long>>> &trie) {
-	sort(tuples.begin(), tuples.end());
-	trie.push_back({tuples[0].first, {tuples[0].second}});
-	for (int i = 1; i < tuples.size(); ++i) {
-		if (tuples[i].first == tuples[i - 1].first)
-			trie.back().second.push_back(tuples[i].second);
-		else
-			trie.push_back({tuples[i].first, {tuples[i].second}});
+void build_trie(vector<pair<long, long>> &tuples, vector<pair<long, vector<long>>> &trie, bool flag = false) {
+	sort(tuples.begin(), tuples.end(), cmp);
+	if (flag) {
+		long last_key = -1;
+		vector<long> *last_vec = nullptr;
+		for (auto &ent: tuples) {
+			if (ent.first != last_key) {
+				last_key = ent.first;
+				trie.push_back({last_key, {}});
+				last_vec = &trie.back().second;
+			}
+			last_vec->push_back(ent.second);
+		}
+	} else {
+		trie.push_back({tuples[0].first, {tuples[0].second}});
+		for (int i = 1; i < tuples.size(); ++i) {
+			if (tuples[i].first == tuples[i - 1].first)
+				trie.back().second.push_back(tuples[i].second);
+			else
+				trie.push_back({tuples[i].first, {tuples[i].second}});
+		}
 	}
+}
+
+void build_trie(vector<pair<long, long>> &tuples, vector<pair<long, long>> &trie) {
+	sort(tuples.begin(), tuples.end(), cmp);
+	trie = tuples;
+}
+
+void build_trie(vector<pair<long, long>> &tuples, phmap::flat_hash_map<long, long> &trie) {
+	for (auto &ent: tuples)
+		trie[ent.first] = ent.second;
 }
