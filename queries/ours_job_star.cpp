@@ -13,9 +13,9 @@ int iters;
 bool verbose;
 
 void htht_benchmark() {
-	auto title = load("../data/JOB/title_compact.csv");
-	auto movie_companies = load("../data/JOB/movie_companies_compact.csv");
-	auto movie_info_idx = load("../data/JOB/movie_info_idx_compact.csv");
+	auto R_tuples = load("../data/JOB/movie_info_idx_compact.csv");
+	auto S_tuples = load("../data/JOB/title_compact.csv");
+	auto T_tuples = load("../data/JOB/movie_companies_compact.csv");
 
 	auto trie_timer = HighPrecisionTimer();
 	auto query_timer = HighPrecisionTimer();
@@ -23,13 +23,13 @@ void htht_benchmark() {
 	for (size_t i = 0; i < iters; ++i) {
 		trie_timer.Reset();
 		auto R_trie = phmap::flat_hash_map<long, phmap::flat_hash_map<long, bool>>();  // {x -> {a -> 1}}
-		build_trie(movie_info_idx, R_trie);
+		build_trie(R_tuples, R_trie);
 
 		auto S_trie = phmap::flat_hash_map<long, phmap::flat_hash_map<long, bool>>();  // {x -> {b -> 1}}
-		build_trie(title, S_trie);
+		build_trie(S_tuples, S_trie);
 
 		auto T_trie = phmap::flat_hash_map<long, phmap::flat_hash_map<long, bool>>();  // {x -> {c -> 1}}
-		build_trie(movie_companies, T_trie);
+		build_trie(T_tuples, T_trie);
 		trie_timer.StoreElapsedTime(0);
 
 		query_timer.Reset();
@@ -61,9 +61,9 @@ void htht_benchmark() {
 }
 
 void htvec_benchmark() {
-	auto title = load("../data/JOB/title_compact.csv");
-	auto movie_companies = load("../data/JOB/movie_companies_compact.csv");
-	auto movie_info_idx = load("../data/JOB/movie_info_idx_compact.csv");
+	auto R_tuples = load("../data/JOB/movie_info_idx_compact.csv");
+	auto S_tuples = load("../data/JOB/title_compact.csv");
+	auto T_tuples = load("../data/JOB/movie_companies_compact.csv");
 
 	auto trie_timer = HighPrecisionTimer();
 	auto query_timer = HighPrecisionTimer();
@@ -71,13 +71,13 @@ void htvec_benchmark() {
 	for (size_t i = 0; i < iters; ++i) {
 		trie_timer.Reset();
 		auto R_trie = phmap::flat_hash_map<long, vector<long>>();  // {x -> {a -> 1}}
-		build_trie(movie_info_idx, R_trie);
+		build_trie(R_tuples, R_trie);
 
 		auto S_trie = phmap::flat_hash_map<long, vector<long>>();  // {x -> {b -> 1}}
-		build_trie(title, S_trie);
+		build_trie(S_tuples, S_trie);
 
 		auto T_trie = phmap::flat_hash_map<long, vector<long>>();  // {x -> {c -> 1}}
-		build_trie(movie_companies, T_trie);
+		build_trie(T_tuples, T_trie);
 		trie_timer.StoreElapsedTime(0);
 
 		query_timer.Reset();
@@ -103,23 +103,23 @@ void htvec_benchmark() {
 }
 
 void vecvec_benchmark() {
-	auto title = load("../data/JOB/title_compact.csv");
-	auto movie_companies = load("../data/JOB/movie_companies_compact.csv");
-	auto movie_info_idx = load("../data/JOB/movie_info_idx_compact.csv");
+	auto R_tuples = load("../data/JOB/movie_info_idx_compact.csv");
+	auto S_tuples = load("../data/JOB/title_compact.csv");
+	auto T_tuples = load("../data/JOB/movie_companies_compact.csv");
 
 	auto trie_timer = HighPrecisionTimer();
 	auto query_timer = HighPrecisionTimer();
 
 	for (size_t i = 0; i < iters; ++i) {
 		trie_timer.Reset();
-		vector<pair<long, vector<long>>> R_trie;;  // {x -> {a -> 1}}
-		build_trie(movie_info_idx, R_trie);
+		vector<pair<long, vector<long>>> R_trie;  // {x -> {a -> 1}}
+		build_trie(R_tuples, R_trie);
 
 		auto S_trie = phmap::flat_hash_map<long, vector<long>>();  // {x -> {b -> 1}}
-		build_trie(title, S_trie);
+		build_trie(S_tuples, S_trie);
 
 		auto T_trie = phmap::flat_hash_map<long, vector<long>>();  // {x -> {c -> 1}}
-		build_trie(movie_companies, T_trie);
+		build_trie(T_tuples, T_trie);
 		trie_timer.StoreElapsedTime(0);
 
 		query_timer.Reset();
@@ -145,23 +145,23 @@ void vecvec_benchmark() {
 }
 
 void vec_benchmark() {
-	auto title = load("../data/JOB/title_compact.csv");
-	auto movie_companies = load("../data/JOB/movie_companies_compact.csv");
-	auto movie_info_idx = load("../data/JOB/movie_info_idx_compact.csv");
+	auto R_tuples = load("../data/JOB/movie_info_idx_compact.csv");
+	auto S_tuples = load("../data/JOB/title_compact.csv");
+	auto T_tuples = load("../data/JOB/movie_companies_compact.csv");
 
 	auto trie_timer = HighPrecisionTimer();
 	auto query_timer = HighPrecisionTimer();
 
 	for (size_t i = 0; i < iters; ++i) {
 		trie_timer.Reset();
-		vector<pair<long, long>> R_trie;;  // {x -> {a -> 1}}
-		build_trie(movie_info_idx, R_trie);
+		vector<pair<long, long>> R_trie;  // {x -> {a -> 1}}
+		build_trie(R_tuples, R_trie);
 
 		auto S_trie = phmap::flat_hash_map<long, vector<long>>();  // {x -> {b -> 1}}
-		build_trie(title, S_trie);
+		build_trie(S_tuples, S_trie);
 
 		auto T_trie = phmap::flat_hash_map<long, vector<long>>();  // {x -> {c -> 1}}
-		build_trie(movie_companies, T_trie);
+		build_trie(T_tuples, T_trie);
 		trie_timer.StoreElapsedTime(0);
 
 		query_timer.Reset();
@@ -186,23 +186,23 @@ void vec_benchmark() {
 }
 
 void pk_benchmark() {
-	auto title = load("../data/JOB/title_compact.csv");
-	auto movie_companies = load("../data/JOB/movie_companies_compact.csv");
-	auto movie_info_idx = load("../data/JOB/movie_info_idx_compact.csv");
+	auto R_tuples = load("../data/JOB/movie_info_idx_compact.csv");
+	auto S_tuples = load("../data/JOB/title_compact.csv");
+	auto T_tuples = load("../data/JOB/movie_companies_compact.csv");
 
 	auto trie_timer = HighPrecisionTimer();
 	auto query_timer = HighPrecisionTimer();
 
 	for (size_t i = 0; i < iters; ++i) {
 		trie_timer.Reset();
-		vector<pair<long, long>> R_trie;;  // {x -> {a -> 1}}
-		build_trie(movie_info_idx, R_trie);
+		vector<pair<long, long>> R_trie;  // {x -> {a -> 1}}
+		build_trie(R_tuples, R_trie);
 
 		auto S_trie = phmap::flat_hash_map<long, long>();  // {x -> {b -> 1}}
-		build_trie(title, S_trie);
+		build_trie(S_tuples, S_trie);
 
 		auto T_trie = phmap::flat_hash_map<long, vector<long>>();  // {x -> {c -> 1}}
-		build_trie(movie_companies, T_trie);
+		build_trie(T_tuples, T_trie);
 		trie_timer.StoreElapsedTime(0);
 
 		query_timer.Reset();
