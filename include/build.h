@@ -125,6 +125,28 @@ void build_trie(vector<pair<long, long>> &tuples, phmap::flat_hash_map<long, vec
 	}
 }
 
+void build_trie(vector<pair<long, long>> &tuples, phmap::flat_hash_map<long, vector<long>*> &trie, const size_t size_hint) {
+	sort(tuples.begin(), tuples.end(), cmp);
+	long last_key = tuples[0].first;
+	auto *last_vec = new vector<long>(size_hint);
+	auto cnt = 0;
+	for (auto &ent: tuples) {
+		if (ent.first != last_key) {
+			if (cnt < size_hint)
+				last_vec->resize(cnt);
+			trie[last_key] = last_vec;
+			last_key = ent.first;
+			last_vec = new vector<long>(size_hint);
+			cnt = 0;
+		}
+		if (cnt >= size_hint)
+			last_vec->push_back(ent.second);
+		else
+			(*last_vec)[cnt++] = ent.second;
+	}
+	trie[last_key] = last_vec;
+}
+
 void build_trie(vector<pair<long, long>> &tuples, vector<pair<long, vector<long>>> &trie, bool flag = false) {
 	sort(tuples.begin(), tuples.end(), cmp);
 	if (flag) {
