@@ -7,50 +7,6 @@
 
 using namespace std;
 
-int partition(pair<vector<long>, vector<long>> &tuples, int low, int high) {
-	int pivot_idx = (high + low) >> 1;
-	long pivot = tuples.first[pivot_idx];
-	swap(tuples.first[pivot_idx], tuples.first[high]);
-	swap(tuples.second[pivot_idx], tuples.second[high]);
-	int i = low - 1;
-
-	for (int j = low; j <= high - 1; ++j) {
-		if (tuples.first[j] < pivot) {
-			++i;
-			swap(tuples.first[i], tuples.first[j]);
-			swap(tuples.second[i], tuples.second[j]);
-		}
-	}
-	swap(tuples.first[i + 1], tuples.first[high]);
-	swap(tuples.second[i + 1], tuples.second[high]);
-	return i + 1;
-}
-
-void insertion_sort(std::pair<std::vector<long>, std::vector<long>>& tuples, int low, int high) {
-	for (int i = low + 1; i <= high; i++) {
-		long key1 = tuples.first[i];
-		long key2 = tuples.second[i];
-		int j = i - 1;
-		while (j >= low && tuples.first[j] > key1) {
-			tuples.first[j + 1] = tuples.first[j];
-			tuples.second[j + 1] = tuples.second[j];
-			j--;
-		}
-		tuples.first[j + 1] = key1;
-		tuples.second[j + 1] = key2;
-	}
-}
-
-void sort(pair<vector<long>, vector<long>> &tuples, int low, int high) {
-	if (high - low < 50) {
-		insertion_sort(tuples, low, high);
-	} else {
-		int pi = partition(tuples, low, high);
-		sort(tuples, low, pi - 1);
-		sort(tuples, pi + 1, high);
-	}
-}
-
 void load(string path, vector<pair<long, long>> &tuples, bool reversed = false, bool skip_first_line = false) {
 	ifstream in(path);
 	if (!in)
@@ -98,6 +54,50 @@ void load(string path, pair<vector<long>, vector<long>> &tuples, bool reversed =
 	in.close();
 }
 
+int partition(pair<vector<long>, vector<long>> &tuples, int low, int high) {
+	int pivot_idx = (high + low) >> 1;
+	long pivot = tuples.first[pivot_idx];
+	swap(tuples.first[pivot_idx], tuples.first[high]);
+	swap(tuples.second[pivot_idx], tuples.second[high]);
+	int i = low - 1;
+
+	for (int j = low; j <= high - 1; ++j) {
+		if (tuples.first[j] < pivot) {
+			++i;
+			swap(tuples.first[i], tuples.first[j]);
+			swap(tuples.second[i], tuples.second[j]);
+		}
+	}
+	swap(tuples.first[i + 1], tuples.first[high]);
+	swap(tuples.second[i + 1], tuples.second[high]);
+	return i + 1;
+}
+
+void insertion_sort(std::pair<std::vector<long>, std::vector<long>>& tuples, int low, int high) {
+	for (int i = low + 1; i <= high; i++) {
+		long key1 = tuples.first[i];
+		long key2 = tuples.second[i];
+		int j = i - 1;
+		while (j >= low && tuples.first[j] > key1) {
+			tuples.first[j + 1] = tuples.first[j];
+			tuples.second[j + 1] = tuples.second[j];
+			j--;
+		}
+		tuples.first[j + 1] = key1;
+		tuples.second[j + 1] = key2;
+	}
+}
+
+void sort(pair<vector<long>, vector<long>> &tuples, int low, int high) {
+	if (high - low < 50) {
+		insertion_sort(tuples, low, high);
+	} else {
+		int pi = partition(tuples, low, high);
+		sort(tuples, low, pi - 1);
+		sort(tuples, pi + 1, high);
+	}
+}
+
 bool cmp(const pair<long, long> &a, const pair<long, long> &b) {
 	return a.first < b.first;
 }
@@ -107,67 +107,35 @@ void build_trie(vector<pair<long, long>> &tuples, phmap::flat_hash_map<long, phm
 		trie[ent.first][ent.second] = true;
 }
 
-void build_trie(vector<pair<long, long>> &tuples, phmap::flat_hash_map<long, vector<long>> &trie, bool sorted = true) {
-	if (sorted) {
-		sort(tuples.begin(), tuples.end(), cmp);
-		long last_key = -1;
-		vector<long> *last_vec = nullptr;
-		for (auto &ent: tuples) {
-			if (ent.first != last_key) {
-				last_key = ent.first;
-				last_vec = &trie[last_key];
-			}
-			last_vec->push_back(ent.second);
-		}
-	} else {
-		for (auto &ent: tuples)
-			trie[ent.first].push_back(ent.second);
-	}
-}
-
-void build_trie(vector<pair<long, long>> &tuples, phmap::flat_hash_map<long, vector<long>*> &trie, const size_t size_hint) {
+void build_trie(vector<pair<long, long>> &tuples, phmap::flat_hash_map<long, vector<long>> &trie, const size_t size_hint = 0) {
 	sort(tuples.begin(), tuples.end(), cmp);
-	long last_key = tuples[0].first;
-	auto *last_vec = new vector<long>(size_hint);
-	auto cnt = 0;
+	long last_key = -1;
+	vector<long> *last_vec = nullptr;
 	for (auto &ent: tuples) {
 		if (ent.first != last_key) {
-			if (cnt < size_hint)
-				last_vec->resize(cnt);
-			trie[last_key] = last_vec;
 			last_key = ent.first;
-			last_vec = new vector<long>(size_hint);
-			cnt = 0;
+			last_vec = &trie[last_key];
+			if (size_hint)
+				last_vec->reserve(size_hint);
 		}
-		if (cnt >= size_hint)
-			last_vec->push_back(ent.second);
-		else
-			(*last_vec)[cnt++] = ent.second;
+		last_vec->push_back(ent.second);
 	}
-	trie[last_key] = last_vec;
 }
 
-void build_trie(vector<pair<long, long>> &tuples, vector<pair<long, vector<long>>> &trie, bool flag = false) {
+void build_trie(vector<pair<long, long>> &tuples, vector<pair<long, vector<long>>> &trie, const size_t size_hint = 0) {
 	sort(tuples.begin(), tuples.end(), cmp);
-	if (flag) {
-		long last_key = -1;
-		vector<long> *last_vec = nullptr;
-		for (auto &ent: tuples) {
-			if (ent.first != last_key) {
-				last_key = ent.first;
-				trie.push_back({last_key, {}});
-				last_vec = &trie.back().second;
-			}
-			last_vec->push_back(ent.second);
-		}
-	} else {
-		trie.push_back({tuples[0].first, {tuples[0].second}});
-		for (int i = 1; i < tuples.size(); ++i) {
-			if (tuples[i].first == tuples[i - 1].first)
-				trie.back().second.push_back(tuples[i].second);
+	long last_key = -1;
+	vector<long> *last_vec = nullptr;
+	for (auto &ent: tuples) {
+		if (ent.first != last_key) {
+			last_key = ent.first;
+			if (size_hint)
+				trie.push_back({last_key, vector<long>(size_hint)});
 			else
-				trie.push_back({tuples[i].first, {tuples[i].second}});
+				trie.push_back({last_key, {}});
+			last_vec = &trie.back().second;
 		}
+		last_vec->push_back(ent.second);
 	}
 }
 

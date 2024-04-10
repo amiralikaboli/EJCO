@@ -12,7 +12,7 @@ using namespace std;
 int iters;
 bool verbose;
 
-void htht_benchmark() {
+void ht_ht() {
 	vector<pair<long, long>> movie_info_idx, title, movie_companies;
 	load("../data/JOB/movie_info_idx_compact.csv", movie_info_idx);
 	load("../data/JOB/title_compact.csv", title);
@@ -65,7 +65,7 @@ void htht_benchmark() {
 	cout << "HtHt: " << round(trie_timer.GetMean(0)) << " / " << round(query_timer.GetMean(0)) << " ms" << endl;
 }
 
-void htvec_benchmark() {
+void ht_vec() {
 	vector<pair<long, long>> movie_info_idx, title, movie_companies;
 	load("../data/JOB/movie_info_idx_compact.csv", movie_info_idx);
 	load("../data/JOB/title_compact.csv", title);
@@ -112,7 +112,7 @@ void htvec_benchmark() {
 	cout << "HtVec: " << round(trie_timer.GetMean(0)) << " / " << round(query_timer.GetMean(0)) << " ms" << endl;
 }
 
-void vecvec_benchmark() {
+void ht_vec_hint() {
 	vector<pair<long, long>> movie_info_idx, title, movie_companies;
 	load("../data/JOB/movie_info_idx_compact.csv", movie_info_idx);
 	load("../data/JOB/title_compact.csv", title);
@@ -127,14 +127,14 @@ void vecvec_benchmark() {
 		auto T_tuples = movie_companies;
 
 		trie_timer.Reset();
-		vector<pair<long, vector<long>>> R_trie;  // {x -> {a -> 1}}
-		build_trie(R_tuples, R_trie);
+		auto R_trie = phmap::flat_hash_map<long, vector<long>>();  // {x -> {a -> 1}}
+		build_trie(R_tuples, R_trie, 3);
 
 		auto S_trie = phmap::flat_hash_map<long, vector<long>>();  // {x -> {b -> 1}}
-		build_trie(S_tuples, S_trie);
+		build_trie(S_tuples, S_trie, 1);
 
 		auto T_trie = phmap::flat_hash_map<long, vector<long>>();  // {x -> {c -> 1}}
-		build_trie(T_tuples, T_trie);
+		build_trie(T_tuples, T_trie, 2);
 		trie_timer.StoreElapsedTime(0);
 
 		query_timer.Reset();
@@ -156,10 +156,10 @@ void vecvec_benchmark() {
 		if (verbose)
 			cerr << res.size() << endl;
 	}
-	cout << "VecVec: " << round(trie_timer.GetMean(0)) << " / " << round(query_timer.GetMean(0)) << " ms" << endl;
+	cout << "HtVecHint: " << round(trie_timer.GetMean(0)) << " / " << round(query_timer.GetMean(0)) << " ms" << endl;
 }
 
-void htidx_benchmark() {
+void ht_vec_idx() {
 	pair<vector<long>, vector<long>> movie_info_idx, title, movie_companies;
 	load("../data/JOB/movie_info_idx_compact.csv", movie_info_idx);
 	load("../data/JOB/title_compact.csv", title);
@@ -212,7 +212,101 @@ void htidx_benchmark() {
 	cout << "HtIdx: " << round(trie_timer.GetMean(0)) << " / " << round(query_timer.GetMean(0)) << " ms" << endl;
 }
 
-void vecidx_benchmark() {
+void vec_vec() {
+	vector<pair<long, long>> movie_info_idx, title, movie_companies;
+	load("../data/JOB/movie_info_idx_compact.csv", movie_info_idx);
+	load("../data/JOB/title_compact.csv", title);
+	load("../data/JOB/movie_companies_compact.csv", movie_companies);
+
+	auto trie_timer = HighPrecisionTimer();
+	auto query_timer = HighPrecisionTimer();
+
+	for (size_t x = 0; x < iters; ++x) {
+		auto R_tuples = movie_info_idx;
+		auto S_tuples = title;
+		auto T_tuples = movie_companies;
+
+		trie_timer.Reset();
+		vector<pair<long, vector<long>>> R_trie;  // {x -> {a -> 1}}
+		build_trie(R_tuples, R_trie);
+
+		auto S_trie = phmap::flat_hash_map<long, vector<long>>();  // {x -> {b -> 1}}
+		build_trie(S_tuples, S_trie);
+
+		auto T_trie = phmap::flat_hash_map<long, vector<long>>();  // {x -> {c -> 1}}
+		build_trie(T_tuples, T_trie);
+		trie_timer.StoreElapsedTime(0);
+
+		query_timer.Reset();
+		vector<tuple<long, long, long, long>> res;
+		for (auto &R_ent: R_trie) {
+			auto &x = R_ent.first;
+			auto &R_prime = R_ent.second;
+			if (S_trie.contains(x) && T_trie.contains(x)) {
+				auto &S_prime = S_trie.at(x);
+				auto &T_prime = T_trie.at(x);
+				for (auto &a: R_prime)
+					for (auto &b: S_prime)
+						for (auto &c: T_prime)
+							res.push_back(make_tuple(x, a, b, c));
+			}
+		}
+		query_timer.StoreElapsedTime(0);
+
+		if (verbose)
+			cerr << res.size() << endl;
+	}
+	cout << "VecVec: " << round(trie_timer.GetMean(0)) << " / " << round(query_timer.GetMean(0)) << " ms" << endl;
+}
+
+void vec_vec_hint() {
+	vector<pair<long, long>> movie_info_idx, title, movie_companies;
+	load("../data/JOB/movie_info_idx_compact.csv", movie_info_idx);
+	load("../data/JOB/title_compact.csv", title);
+	load("../data/JOB/movie_companies_compact.csv", movie_companies);
+
+	auto trie_timer = HighPrecisionTimer();
+	auto query_timer = HighPrecisionTimer();
+
+	for (size_t x = 0; x < iters; ++x) {
+		auto R_tuples = movie_info_idx;
+		auto S_tuples = title;
+		auto T_tuples = movie_companies;
+
+		trie_timer.Reset();
+		vector<pair<long, vector<long>>> R_trie;  // {x -> {a -> 1}}
+		build_trie(R_tuples, R_trie, 3);
+
+		auto S_trie = phmap::flat_hash_map<long, vector<long>>();  // {x -> {b -> 1}}
+		build_trie(S_tuples, S_trie, 1);
+
+		auto T_trie = phmap::flat_hash_map<long, vector<long>>();  // {x -> {c -> 1}}
+		build_trie(T_tuples, T_trie, 2);
+		trie_timer.StoreElapsedTime(0);
+
+		query_timer.Reset();
+		vector<tuple<long, long, long, long>> res;
+		for (auto &R_ent: R_trie) {
+			auto &x = R_ent.first;
+			auto &R_prime = R_ent.second;
+			if (S_trie.contains(x) && T_trie.contains(x)) {
+				auto &S_prime = S_trie.at(x);
+				auto &T_prime = T_trie.at(x);
+				for (auto &a: R_prime)
+					for (auto &b: S_prime)
+						for (auto &c: T_prime)
+							res.push_back(make_tuple(x, a, b, c));
+			}
+		}
+		query_timer.StoreElapsedTime(0);
+
+		if (verbose)
+			cerr << res.size() << endl;
+	}
+	cout << "VecVecHint: " << round(trie_timer.GetMean(0)) << " / " << round(query_timer.GetMean(0)) << " ms" << endl;
+}
+
+void vec_vec_idx() {
 	pair<vector<long>, vector<long>> movie_info_idx, title, movie_companies;
 	load("../data/JOB/movie_info_idx_compact.csv", movie_info_idx);
 	load("../data/JOB/title_compact.csv", title);
@@ -263,10 +357,10 @@ void vecidx_benchmark() {
 		if (verbose)
 			cerr << res.size() << endl;
 	}
-	cout << "VecIdx: " << round(trie_timer.GetMean(0)) << " / " << round(query_timer.GetMean(0)) << " ms" << endl;
+	cout << "VecVecIdx: " << round(trie_timer.GetMean(0)) << " / " << round(query_timer.GetMean(0)) << " ms" << endl;
 }
 
-void vec_benchmark() {
+void vec() {
 	vector<pair<long, long>> movie_info_idx, title, movie_companies;
 	load("../data/JOB/movie_info_idx_compact.csv", movie_info_idx);
 	load("../data/JOB/title_compact.csv", title);
@@ -312,7 +406,7 @@ void vec_benchmark() {
 	cout << "Vec: " << round(trie_timer.GetMean(0)) << " / " << round(query_timer.GetMean(0)) << " ms" << endl;
 }
 
-void vecpk_benchmark() {
+void pk() {
 	vector<pair<long, long>> movie_info_idx, title, movie_companies;
 	load("../data/JOB/movie_info_idx_compact.csv", movie_info_idx);
 	load("../data/JOB/title_compact.csv", title);
@@ -354,18 +448,20 @@ void vecpk_benchmark() {
 		if (verbose)
 			cerr << res.size() << endl;
 	}
-	cout << "VecPK: " << round(trie_timer.GetMean(0)) << " / " << round(query_timer.GetMean(0)) << " ms" << endl;
+	cout << "PK: " << round(trie_timer.GetMean(0)) << " / " << round(query_timer.GetMean(0)) << " ms" << endl;
 }
 
 int main(int argc, char *argv[]) {
 	iters = 10;
 	verbose = false;
 
-	htht_benchmark();
-	htvec_benchmark();
-	vecvec_benchmark();
-	htidx_benchmark();
-	vecidx_benchmark();
-	vec_benchmark();
-	vecpk_benchmark();
+	ht_ht();
+	ht_vec();
+	ht_vec_hint();
+	ht_vec_idx();
+	vec_vec();
+	vec_vec_hint();
+	vec_vec_idx();
+	vec();
+	pk();
 }
