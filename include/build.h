@@ -98,6 +98,59 @@ void sort(pair<vector<long>, vector<long>> &tuples, int low, int high) {
 	}
 }
 
+int left_equal_binary_search(vector<pair<long, long>> &vec, const long key, int low, int high) {
+	while (low < high) {
+		int mid = (high + low) >> 1;
+		if (mid == low) {
+			if (vec[low].first == key)
+				return low;
+			else
+				return high;
+		}
+		const long &vec_mid = vec[mid].first;
+		if (key == vec_mid)
+			high = mid;
+		else
+			low = mid;
+	}
+	return low;
+}
+
+int right_equal_binary_search(vector<pair<long, long>> &vec, const long key, int low, int high) {
+	while (low < high) {
+		int mid = (high + low) >> 1;
+		if (mid == low) {
+			if (vec[high].first == key)
+				return high;
+			else
+				return low;
+		}
+		const long &vec_mid = vec[mid].first;
+		if (key == vec_mid)
+			low = mid;
+		else
+			high = mid;
+	}
+	return low;
+}
+
+pair<int, int> binary_search(vector<pair<long, long>> &vec, const long key, int low, int high, bool equal_mode = false) {  // -1 -> first & 1 -> last
+	while (low <= high) {
+		int mid = (high + low) >> 1;
+		const long &vec_mid = vec[mid].first;
+		if (vec_mid == key){
+			if (equal_mode)
+				return {left_equal_binary_search(vec, key, low, mid), right_equal_binary_search(vec, key, mid, high)};
+			return {mid, mid};
+		}
+		else if (vec_mid > key)
+			high = mid - 1;
+		else
+			low = mid + 1;
+	}
+	return make_pair(-1, -1);
+}
+
 bool cmp(const pair<long, long> &a, const pair<long, long> &b) {
 	return a.first < b.first;
 }

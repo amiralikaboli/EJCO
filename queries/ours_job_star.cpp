@@ -501,17 +501,167 @@ void pk() {
 	cout << "PK: " << round(trie_timer.GetMean(0)) << " / " << round(query_timer.GetMean(0)) << " ms" << endl;
 }
 
+void bs_vec_vec() {
+	vector<pair<long, long>> movie_info_idx, title, movie_companies;
+	load("../data/JOB/movie_info_idx_compact.csv", movie_info_idx);
+	load("../data/JOB/title_compact.csv", title);
+	load("../data/JOB/movie_companies_compact.csv", movie_companies);
+
+	auto trie_timer = HighPrecisionTimer();
+	auto query_timer = HighPrecisionTimer();
+
+	for (size_t x = 0; x < iters; ++x) {
+		auto R_tuples = movie_info_idx;
+		auto S_tuples = title;
+		auto T_tuples = movie_companies;
+
+		trie_timer.Reset();
+		vector<pair<long, vector<long>>> R_trie;  // {x -> {a -> 1}}
+		build_trie(R_tuples, R_trie);
+
+		auto S_trie = phmap::flat_hash_map<long, long>();  // {x -> {b -> 1}}
+		build_trie(S_tuples, S_trie);
+
+		sort(T_tuples.begin(), T_tuples.end(), cmp);
+		trie_timer.StoreElapsedTime(0);
+
+		query_timer.Reset();
+		int global_low = 0;
+		vector<tuple<long, long, long, long>> res;
+		for (auto &R_ent: R_trie) {
+			auto &x = R_ent.first;
+			auto &R_prime = R_ent.second;
+			if (S_trie.contains(x)) {
+				auto &b = S_trie.at(x);
+				auto [l_idx, r_idx] = binary_search(T_tuples, x, global_low, T_tuples.size() - 1, true);
+				if (l_idx != -1) {
+					global_low = l_idx;
+					for (int k = l_idx; k <= r_idx; ++k) {
+						auto &c = T_tuples[k].second;
+						for (auto &a: R_prime)
+							res.push_back(make_tuple(x, a, b, c));
+					}
+				}
+			}
+		}
+		query_timer.StoreElapsedTime(0);
+
+		if (verbose)
+			cerr << res.size() << endl;
+	}
+	cout << "BsVecVec: " << round(trie_timer.GetMean(0)) << " / " << round(query_timer.GetMean(0)) << " ms" << endl;
+}
+
+void bs_vec_vec_idx() {
+	vector<pair<long, long>> title, movie_companies;
+	pair<vector<long>, vector<long>> movie_info_idx;
+	load("../data/JOB/movie_info_idx_compact.csv", movie_info_idx);
+	load("../data/JOB/title_compact.csv", title);
+	load("../data/JOB/movie_companies_compact.csv", movie_companies);
+
+	auto trie_timer = HighPrecisionTimer();
+	auto query_timer = HighPrecisionTimer();
+
+	for (size_t x = 0; x < iters; ++x) {
+		auto R_tuples = movie_info_idx;
+		auto S_tuples = title;
+		auto T_tuples = movie_companies;
+
+		trie_timer.Reset();
+		vector<tuple<long, int, int>> R_trie;  // {x -> {a -> 1}}
+		build_trie(R_tuples, R_trie);
+
+		auto S_trie = phmap::flat_hash_map<long, long>();  // {x -> {b -> 1}}
+		build_trie(S_tuples, S_trie);
+
+		sort(T_tuples.begin(), T_tuples.end(), cmp);
+		trie_timer.StoreElapsedTime(0);
+
+		query_timer.Reset();
+		int global_low = 0;
+		vector<tuple<long, long, long, long>> res;
+		for (auto &R_ent: R_trie) {
+			auto &x = get<0>(R_ent);
+			auto &R_l = get<1>(R_ent);
+			auto &R_r = get<2>(R_ent);
+			if (S_trie.contains(x)) {
+				auto &b = S_trie.at(x);
+				auto [l_idx, r_idx] = binary_search(T_tuples, x, global_low, T_tuples.size() - 1, true);
+				if (l_idx != -1) {
+					global_low = l_idx;
+					for (int k = l_idx; k <= r_idx; ++k) {
+						auto &c = T_tuples[k].second;
+						for (int i = R_l; i < R_r; ++i) {
+							auto &a = R_tuples.second[i];
+							res.push_back(make_tuple(x, a, b, c));
+						}
+					}
+				}
+			}
+		}
+		query_timer.StoreElapsedTime(0);
+
+		if (verbose)
+			cerr << res.size() << endl;
+	}
+	cout << "BsVecVecIdx: " << round(trie_timer.GetMean(0)) << " / " << round(query_timer.GetMean(0)) << " ms" << endl;
+}
+
+void bs_vec() {
+	vector<pair<long, long>> movie_info_idx, title, movie_companies;
+	load("../data/JOB/movie_info_idx_compact.csv", movie_info_idx);
+	load("../data/JOB/title_compact.csv", title);
+	load("../data/JOB/movie_companies_compact.csv", movie_companies);
+
+	auto trie_timer = HighPrecisionTimer();
+	auto query_timer = HighPrecisionTimer();
+
+	for (size_t x = 0; x < iters; ++x) {
+		auto R_tuples = movie_info_idx;
+		auto S_tuples = title;
+		auto T_tuples = movie_companies;
+
+		trie_timer.Reset();
+		vector<pair<long, long>> R_trie;  // {x -> {a -> 1}}
+		build_trie(R_tuples, R_trie);
+
+		auto S_trie = phmap::flat_hash_map<long, long>();  // {x -> {b -> 1}}
+		build_trie(S_tuples, S_trie);
+
+		sort(T_tuples.begin(), T_tuples.end(), cmp);
+		trie_timer.StoreElapsedTime(0);
+
+		query_timer.Reset();
+		int global_low = 0;
+		vector<tuple<long, long, long, long>> res;
+		for (auto &R_ent: R_trie) {
+			auto &x = R_ent.first;
+			auto &a = R_ent.second;
+			if (S_trie.contains(x)) {
+				auto &b = S_trie.at(x);
+				auto [l_idx, r_idx] = binary_search(T_tuples, x, global_low, T_tuples.size() - 1, true);
+				if (l_idx != -1) {
+					global_low = l_idx;
+					for (int k = l_idx; k <= r_idx; ++k) {
+						auto &c = T_tuples[k].second;
+						res.push_back(make_tuple(x, a, b, c));
+					}
+				}
+			}
+		}
+		query_timer.StoreElapsedTime(0);
+
+		if (verbose)
+			cerr << res.size() << endl;
+	}
+	cout << "BsVec: " << round(trie_timer.GetMean(0)) << " / " << round(query_timer.GetMean(0)) << " ms" << endl;
+}
+
 int main(int argc, char *argv[]) {
 	iters = 10;
 	verbose = false;
 
-	ht_ht();
-	ht_vec();
-	ht_vec_hint();
-	ht_vec_idx();
-	vec_vec();
-	vec_vec_hint();
-	vec_vec_idx();
-	vec();
-	pk();
+	bs_vec_vec();
+	bs_vec_vec_idx();
+	bs_vec();
 }
