@@ -176,3 +176,9 @@ void build_trie(pair<vector<long>, vector<long>> &tuples, vector<tuple<long, int
 	}
 	trie.push_back({last_key, last_i, tuples.first.size()});
 }
+
+void build_trie(pair<vector<long>, vector<long>> &tuples, vector<pair<long, long>> &trie) {
+	sort(tuples, 0, tuples.first.size() - 1);
+	for (int i = 0; i < tuples.first.size(); ++i)
+		trie.push_back({tuples.first[i], tuples.second[i]});
+}
