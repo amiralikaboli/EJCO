@@ -102,6 +102,34 @@ void build_trie(vector<pair<long, long>> &tuples, phmap::flat_hash_map<long, lon
 		trie[ent.first] = ent.second;
 }
 
+void build_trie(vector<pair<long, long>> &tuples, phmap::flat_hash_map<long, pair<int, int>> &trie) {
+	sort(tuples.begin(), tuples.end(), cmp);
+	auto &last_key = tuples[0].first;
+	auto last_i = 0;
+	for (int i = 1; i < tuples.size(); ++i) {
+		if (tuples[i].first != last_key) {
+			trie[last_key] = {last_i, i};
+			last_key = tuples[i].first;
+			last_i = i;
+		}
+	}
+	trie[last_key] = {last_i, tuples.size()};
+}
+
+void build_trie(vector<pair<long, long>> &tuples, vector<tuple<long, int, int>> &trie) {
+	sort(tuples.begin(), tuples.end(), cmp);
+	auto &last_key = tuples[0].first;
+	auto last_i = 0;
+	for (int i = 1; i < tuples.size(); ++i) {
+		if (tuples[i].first != last_key) {
+			trie.push_back({last_key, last_i, i});
+			last_key = tuples[i].first;
+			last_i = i;
+		}
+	}
+	trie.push_back({last_key, last_i, tuples.size()});
+}
+
 void build_trie(pair<vector<long>, vector<long>> &tuples, phmap::flat_hash_map<long, pair<int, int>> &trie) {
 	sort(tuples, 0, tuples.first.size() - 1);
 	auto &last_key = tuples.first[0];
