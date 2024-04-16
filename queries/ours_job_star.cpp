@@ -553,8 +553,8 @@ void bs_vec_vec() {
 }
 
 void bs_vec_vec_idx() {
-	vector<pair<long, long>> title, movie_companies;
 	pair<vector<long>, vector<long>> movie_info_idx;
+	vector<pair<long, long>> title, movie_companies;
 	load("../data/JOB/movie_info_idx_compact.csv", movie_info_idx);
 	load("../data/JOB/title_compact.csv", title);
 	load("../data/JOB/movie_companies_compact.csv", movie_companies);
