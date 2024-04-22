@@ -97,7 +97,6 @@ class Plan2CPPTranslator:
 			code += f"}}\n"
 			code += f"}}\n"
 
-
 		return code
 
 
@@ -115,6 +114,7 @@ class VariableManager:
 			self.var_num += 1
 			self.var_map[name] = var_name
 			return var_name
+
 
 class PlanParser:
 	def parse(self, query: str) -> List[Tuple]:  # (node, build_plan, compiled_plan)
