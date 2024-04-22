@@ -1,6 +1,6 @@
 #include "../include/parallel_hashmap/phmap.h"
 #include "../include/high_precision_timer.h"
-#include "../include/build.h"
+#include "build.h"
 #include <iostream>
 #include <tuple>
 #include <fstream>

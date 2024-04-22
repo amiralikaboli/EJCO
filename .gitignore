@@ -5,3 +5,5 @@ CMakeLists.txt
 *.csv
 .idea
 benchmarks/db
+plan.txt
+translator/generated
