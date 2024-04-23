@@ -3,6 +3,7 @@
 #include <fstream>
 #include <sstream>
 #include <vector>
+#include <map>
 
 using namespace std;
 
@@ -16,7 +17,6 @@ void load_mk(string path) {
 		cerr << "Cannot open the File : " << path << endl;
 	string line;
 	string token;
-	getline(in, line); // skip schema line
 	while (getline(in, line)) {
 		stringstream ss(line);
 		getline(ss, token, '|');
@@ -48,7 +48,6 @@ void load_t(string path) {
 		cerr << "Cannot open the File : " << path << endl;
 	string line;
 	string token;
-	getline(in, line); // skip schema line
 	while (getline(in, line)) {
 		stringstream ss(line);
 		getline(ss, token, '|');
@@ -75,6 +74,56 @@ void load_t(string path) {
 		t_series_years.push_back(token);
 		getline(ss, token, '|');
 		t_md5sum.push_back(token);
+	}
+	in.close();
+}
+
+vector<int> mi_id;
+vector<int> mi_movie_id;
+vector<int> mi_info_type_id;
+vector <string> mi_info;
+vector<string> mi_note;
+
+void load_mi(string path) {
+	ifstream in(path);
+	if (!in)
+		cerr << "Cannot open the File : " << path << endl;
+	string line;
+	string token;
+	while (getline(in, line)) {
+		stringstream ss(line);
+		getline(ss, token, '|');
+		mi_id.push_back(stoi(token));
+		getline(ss, token, '|');
+		mi_movie_id.push_back(stoi(token));
+		getline(ss, token, '|');
+		mi_info_type_id.push_back(stoi(token));
+		getline(ss, token, '|');
+		mi_info.push_back(token);
+		getline(ss, token, '|');
+		mi_note.push_back(token);
+	}
+	in.close();
+}
+
+vector<int> k_id;
+vector<string> k_keyword;
+vector<string> k_phonetic_code;
+
+void load_k(string path) {
+	ifstream in(path);
+	if (!in)
+		cerr << "Cannot open the File : " << path << endl;
+	string line;
+	string token;
+	while (getline(in, line)) {
+		stringstream ss(line);
+		getline(ss, token, '|');
+		k_id.push_back(stoi(token));
+		getline(ss, token, '|');
+		k_keyword.push_back(token);
+		getline(ss, token, '|');
+		k_phonetic_code.push_back(token);
 	}
 	in.close();
 }

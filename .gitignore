@@ -6,4 +6,3 @@ CMakeLists.txt
 .idea
 benchmarks/db
 plan.txt
-translator/generated
