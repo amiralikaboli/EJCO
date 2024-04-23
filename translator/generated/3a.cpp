@@ -18,7 +18,8 @@ int main() {
 	load_k("/Users/s2522996/Documents/free-join/queries/preprocessed/join-order-benchmark/data/3a/k.csv");
 	auto k_trie0 = phmap::flat_hash_map<int, vector<int>>();
 	build_trie(k_trie0, k_id);
-	vector<tuple < int, int, string>> res;
+
+	vector<tuple<int, int, string>> res;
 	for (const auto &[x0, mi_trie1]: mi_trie0) {
 		if (mk_trie0.contains(x0) && t_trie0.contains(x0)) {
 			auto &mk_trie1 = mk_trie0.at(x0);
@@ -39,5 +40,6 @@ int main() {
 			}
 		}
 	}
+
 	cerr << res.size() << endl;
 }

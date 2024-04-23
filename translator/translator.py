@@ -93,7 +93,9 @@ class Plan2CPPTranslator:
 			cpp_file.write('using namespace std;\n')
 			cpp_file.write('int main(){\n')
 			cpp_file.write(self._translate_build(query, plan[0][1]))
+			cpp_file.write('\n')
 			cpp_file.write(self._translate_compiled(plan[0][1], plan[0][2]))
+			cpp_file.write('\n')
 			cpp_file.write('cerr << res.size() << endl;\n')
 			cpp_file.write('}\n')
 
@@ -207,25 +209,25 @@ class VariableManager:
 
 class PlanParser:
 	def parse(self, query: str) -> List[Tuple]:  # (node, build_plan, compiled_plan)
-		with open(os.path.join(freejoin_path, "logs", "gj_plans", f"{query}.log"), 'r') as log_file:
-			lines = log_file.readlines()
-
-		return [
-			(
-				lines[i + 1].strip(),
-				self._parse_build_plan(lines[i + 2].strip()),
-				self._parse_compiled_plan(lines[i + 3].strip())
-			)
-			for i in range(0, len(lines), 4)
-		]
+		# with open(os.path.join(freejoin_path, "logs", "gj_plans", f"{query}.log"), 'r') as log_file:
+		# 	lines = log_file.readlines()
+		#
 		# return [
 		# 	(
-		# 		"3a",
-		# 		[('mi', ['movie_id'], []), ('mk', ['movie_id', 'keyword_id'], []), ('t', ['id'], ['title']),
-		# 		 ('k', ['id'], [])],
-		# 		[[('mi', 'movie_id'), ('mk', 'movie_id'), ('t', 'id')], [('mk', 'keyword_id'), ('k', 'id')]]
+		# 		lines[i + 1].strip(),
+		# 		self._parse_build_plan(lines[i + 2].strip()),
+		# 		self._parse_compiled_plan(lines[i + 3].strip())
 		# 	)
+		# 	for i in range(0, len(lines), 4)
 		# ]
+		return [
+			(
+				"3a",
+				[('mi', ['movie_id'], []), ('mk', ['movie_id', 'keyword_id'], []), ('t', ['id'], ['title']),
+				 ('k', ['id'], [])],
+				[[('mi', 'movie_id'), ('mk', 'movie_id'), ('t', 'id')], [('mk', 'keyword_id'), ('k', 'id')]]
+			)
+		]
 
 	def _parse_build_plan(self, build_plan: str):
 		build_plan = build_plan[1:-1]
