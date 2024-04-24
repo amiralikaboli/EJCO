@@ -78,7 +78,7 @@ class Plan2CPPTranslator:
 			self._translate(query)
 
 	def _translate(self, query: str):
-		plans = self.parser.parse(query)
+		build_plan, compiled_plan = self.parser.parse(query)
 
 		with open(f"generated/{query}.cpp", 'w') as cpp_file:
 			cpp_file.write("#include <iostream>\n")
@@ -88,24 +88,17 @@ class Plan2CPPTranslator:
 			cpp_file.write('using namespace std;\n\n')
 			cpp_file.write('int main() {\n')
 
-			# TODO: iterate over all plans
-			for node, build_plan, compiled_plan in plans:
-				print(node)
-				print(build_plan)
-				print(compiled_plan)
-				print("=" * 100)
-				for line in self._translate_build_plan(query, build_plan):
-					cpp_file.write('\t' * self.indent + line)
-				cpp_file.write('\n')
+			for line in self._translate_build_plan(query, build_plan):
+				cpp_file.write('\t' * self.indent + line)
+			cpp_file.write('\n')
 
-				for line in self._translate_compiled_plan(build_plan, compiled_plan):
-					cpp_file.write('\t' * self.indent + line)
-				while self.indent > 1:
-					self.indent -= 1
-					cpp_file.write('\t' * self.indent + '}\n')
+			for line in self._translate_compiled_plan(build_plan, compiled_plan):
+				cpp_file.write('\t' * self.indent + line)
+			while self.indent > 1:
+				self.indent -= 1
+				cpp_file.write('\t' * self.indent + '}\n')
 
-				cpp_file.write(f'\tcerr << {self.var_mng.res_var()}.size() << endl;\n\n')
-				self.var_mng.next_res_var()
+			cpp_file.write(f'\tcerr << {self.var_mng.res_var()}.size() << endl;\n')
 
 			cpp_file.write('}\n')
 
@@ -190,7 +183,6 @@ class VariableManager:
 	def __init__(self):
 		self._trie_vars = dict()
 		self._last_x_var = 0
-		self._last_res_var = 0
 
 	def trie_var(self, rel_name: str):
 		if rel_name not in self._trie_vars.keys():
@@ -215,34 +207,26 @@ class VariableManager:
 		return f"{rel_name}_off"
 
 	def res_var(self):
-		return f"res{self._last_res_var}"
-
-	def next_res_var(self):
-		self._last_res_var += 1
-		return f"res{self._last_res_var}"
+		return "res"
 
 
 class PlanParser:
-	def parse(self, query: str) -> List[Tuple]:  # (node, build_plan, compiled_plan)
-		# with open(os.path.join(freejoin_path, "logs", "gj_plans", f"{query}.log"), 'r') as log_file:
-		# 	lines = log_file.readlines()
-		#
-		# return [
-		# 	(
-		# 		lines[i + 1].strip(),
-		# 		self._parse_build_plan(lines[i + 2].strip()),
-		# 		self._parse_compiled_plan(lines[i + 3].strip())
-		# 	)
-		# 	for i in range(0, len(lines), 4)
-		# ]
-		return [
+	def parse(self, query: str) -> Tuple[List, List]:  # (fused_build_plan, fused_compiled_plan)
+		with open(os.path.join(freejoin_path, "logs", "gj_plans", f"{query}.log"), 'r') as log_file:
+			lines = log_file.readlines()
+
+		parsed_plans = [
 			(
-				"3a",
-				[('mi', ['movie_id'], []), ('mk', ['movie_id', 'keyword_id'], []), ('t', ['id'], ['title']),
-				 ('k', ['id'], [])],
-				[[('mi', 'movie_id'), ('mk', 'movie_id'), ('t', 'id')], [('mk', 'keyword_id'), ('k', 'id')]]
+				lines[i + 1].strip(),
+				self._parse_build_plan(lines[i + 2].strip()),
+				self._parse_compiled_plan(lines[i + 3].strip())
 			)
+			for i in range(0, len(lines), 4)
 		]
+
+		fused_plan = self._fuse_plans(parsed_plans)
+
+		return fused_plan
 
 	def _parse_build_plan(self, build_plan: str):
 		build_plan = build_plan[1:-1]
@@ -307,6 +291,40 @@ class PlanParser:
 			else:
 				raise ValueError(f"Unknown operation: {op}")
 		return parsed_plan
+
+	def _fuse_plans(self, plans: List[Tuple[str, List, List]]):
+		node2plans = {node: (build_plan, compiled_plan) for node, build_plan, compiled_plan in plans}
+		for node, build_plan, compiled_plan in plans:
+			fused_build_plan = []
+			fused_compiled_plan = compiled_plan
+			for child, join_cols, proj_cols in build_plan:
+				if child in node2plans.keys():
+					child_build_plan, child_compiled_plan = node2plans[child]
+					fused_build_plan.extend(child_build_plan)
+
+					for idx, par_attr in enumerate(compiled_plan):
+						for child_attr in child_compiled_plan:
+							intersect = set(par_attr).intersection(child_attr)
+							if intersect:
+								# TODO: the order might need more consideration
+								for col in child_attr:
+									if col not in intersect:
+										fused_compiled_plan[idx].append(col)
+				else:
+					fused_build_plan.append((child, join_cols, proj_cols))
+			node2plans[node] = (fused_build_plan, fused_compiled_plan)
+
+		final_fused_build_plan, final_fused_compiled_plan = node2plans[plans[-1][0]]
+		for idx, elem in enumerate(final_fused_build_plan):
+			rel, join_cols, proj_cols = elem
+			for proj_col in proj_cols:
+				for eq_attrs in final_fused_compiled_plan:
+					if (rel, proj_col) in eq_attrs:
+						final_fused_build_plan[idx][2].remove(proj_col)
+						final_fused_build_plan[idx][1].append(proj_col)
+						break
+
+		return final_fused_build_plan, final_fused_compiled_plan
 
 
 if __name__ == '__main__':
