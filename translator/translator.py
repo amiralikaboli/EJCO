@@ -1,6 +1,6 @@
 import re
 import os
-from typing import List, Tuple
+from typing import List, Tuple, Dict
 
 freejoin_path = os.path.join(os.path.dirname(__file__), "..", "..", "free-join")
 preprocessed_data_path = os.path.join(freejoin_path, "queries", "preprocessed", "join-order-benchmark", "data")
@@ -72,6 +72,7 @@ class Plan2CPPTranslator:
 
 		self.rel_schemas = dict()
 		self.var_mng = VariableManager()
+		self.indent = 1
 
 	def translate(self, queries: List[str]):
 		for query in queries:
@@ -89,18 +90,27 @@ class Plan2CPPTranslator:
 			cpp_file.write("#include <iostream>\n")
 			cpp_file.write('#include "../../include/load.h"\n')
 			cpp_file.write('#include "../../include/build.h"\n')
-			cpp_file.write('#include "../../include/parallel_hashmap/phmap.h"\n')
-			cpp_file.write('using namespace std;\n')
-			cpp_file.write('int main(){\n')
-			cpp_file.write(self._translate_build(query, plan[0][1]))
+			cpp_file.write('#include "../../include/parallel_hashmap/phmap.h"\n\n')
+			cpp_file.write('using namespace std;\n\n')
+			cpp_file.write('int main() {\n')
+
+			for line in self._translate_build(query, plan[0][1]):
+				cpp_file.write('\t' * self.indent + line)
 			cpp_file.write('\n')
-			cpp_file.write(self._translate_compiled(plan[0][1], plan[0][2]))
+
+			for line in self._translate_compiled(plan[0][1], plan[0][2]):
+				cpp_file.write('\t' * self.indent + line)
+			while self.indent > 1:
+				self.indent -= 1
+				cpp_file.write('\t' * self.indent + '}\n')
 			cpp_file.write('\n')
-			cpp_file.write('cerr << res.size() << endl;\n')
+
+			cpp_file.write(f'\tcerr << {self.var_mng.res_var()}.size() << endl;\n')
+			self.var_mng.next_res_var()
+
 			cpp_file.write('}\n')
 
 	def _translate_build(self, query: str, build_plan: List[Tuple]):
-		code = ""
 		for rel_name, join_cols, proj_cols in build_plan:
 			if rel_name in self.rel_schemas.keys():
 				continue
@@ -110,79 +120,82 @@ class Plan2CPPTranslator:
 			else:
 				path = os.path.join(raw_data_path, f"{rel_abbrs[rel_name]}.csv")
 
-			code += f'load_{rel_name}("{os.path.normpath(path)}");\n'
-			code += f"auto {self.var_mng.trie_var(rel_name)} = "
-			code += "phmap::flat_hash_map<int, " * len(join_cols)  # TODO: fix types
-			code += "vector<int>"
-			code += ">" * len(join_cols)
-			code += "();\n"
-			code += f"build_trie({self.var_mng.trie_var(rel_name)}, {', '.join([f'{rel_name}_{join_col}' for join_col in join_cols])});\n"
+			yield f'load_{rel_name}("{os.path.normpath(path)}");\n'
+
+			trie_level_types = [f'phmap::flat_hash_map<{rel_types[rel_name][join_col]}, ' for join_col in join_cols]
+			yield f"auto {self.var_mng.trie_var(rel_name)} = {''.join(trie_level_types)}vector<int>{'>' * len(join_cols)}();\n"
+
+			yield f"build_trie({self.var_mng.trie_var(rel_name)}, {', '.join([f'{rel_name}_{join_col}' for join_col in join_cols])});\n"
 			self.rel_schemas[rel_name] = (join_cols, proj_cols)
 
-		return code
-
 	def _translate_compiled(self, build_plan: List[Tuple], compiled_plan: List[List[str]]):
-		build_plan = {
-			rel_name: ([(join_col, -1) for join_col in join_cols], proj_cols)
-			for rel_name, join_cols, proj_cols in build_plan
-		}  # rel -> ([(join_col, idx)], [proj_col])
-		for idx, eq_cols in enumerate(compiled_plan):
-			for rel, col in eq_cols:
-				for i in range(len(build_plan[rel][0])):
-					if build_plan[rel][0][i][0] == col:
-						build_plan[rel][0][i] = (col, idx)
-		print(build_plan)
+		build_plan = self._add_join_idx_to_build_plan(build_plan, compiled_plan)
 
-		col_types = []
-		for rel, cols in build_plan.items():
-			for col, idx in cols[0]:
-				if len(col_types) == idx:
-					col_types.append(rel_types[rel][col])
-		for rel, cols in build_plan.items():
-			for col in cols[1]:
-				col_types.append(rel_types[rel][col])
-		code = f"vector<tuple<{', '.join(col_types)}>> res;\n"
-		open_brackets = 0
+		col_types, res_attrs = self._find_res_types_and_attrs(build_plan)
+		yield f"vector<tuple<{', '.join(col_types)}>> {self.var_mng.res_var()};\n"
+
 		for idx, eq_cols in enumerate(compiled_plan):
 			rel_it = eq_cols[0][0]
-			code += f"for (const auto& [{self.var_mng.x_var(idx)}, {self.var_mng.next_trie_var(rel_it)}] : {self.var_mng.trie_var(rel_it)}) {{\n"
+			yield f"for (const auto &[{self.var_mng.x_var(idx)}, {self.var_mng.next_trie_var(rel_it)}]: {self.var_mng.trie_var(rel_it)}) {{\n"
 			self.var_mng.next_trie_var(rel_it, inplace=True)
-			open_brackets += 1
+			self.indent += 1
+
 			conditions = []
 			assignments = []
 			for rel, _ in eq_cols[1:]:
 				conditions.append(f"{self.var_mng.trie_var(rel)}.contains({self.var_mng.x_var(idx)})")
 				assignments.append(
-					f"auto& {self.var_mng.next_trie_var(rel)} = {self.var_mng.trie_var(rel)}.at({self.var_mng.x_var(idx)});\n")
+					f"auto &{self.var_mng.next_trie_var(rel)} = {self.var_mng.trie_var(rel)}.at({self.var_mng.x_var(idx)});\n"
+				)
 				self.var_mng.next_trie_var(rel, inplace=True)
-			code += "if ("
-			code += ' && '.join(conditions)
-			code += ") {\n"
-			open_brackets += 1
-			code += ''.join(assignments)
+
+			yield f"if ({' && '.join(conditions)}) {{\n"
+			self.indent += 1
+			for assignment in assignments:
+				yield assignment
 
 		for rel, cols in build_plan.items():
-			code += f"for (const auto& {self.var_mng.offset_var(rel)} : {self.var_mng.trie_var(rel)}) {{\n"
-			open_brackets += 1
+			yield f"for (const auto &{self.var_mng.offset_var(rel)}: {self.var_mng.trie_var(rel)}) {{\n"
+			self.indent += 1
 
-		code += "res.push_back({"
-		code += ", ".join([f"{self.var_mng.x_var(idx)}" for idx in range(len(compiled_plan))])
-		code += ", "
-		code += ", ".join([
-			f"{self.var_mng.rel_col_var(rel, col)}[{self.var_mng.offset_var(rel)}]"
-			for rel, cols in build_plan.items() for col in cols[1]
-		])
-		code += "});\n"
-		code += "}" * open_brackets
-		code += "\n"
+		yield f"{self.var_mng.res_var()}.push_back({{{', '.join(res_attrs)}}});\n"
 
-		return code
+	def _add_join_idx_to_build_plan(
+			self, build_plan: List[Tuple], compiled_plan: List[List[str]]
+	) -> Dict[str, Tuple[List[Tuple[str, int]], List[str]]]:
+		# rel -> ([(join_col, idx)], [proj_col])
+		build_plan = {
+			rel_name: ([(join_col, -1) for join_col in join_cols], proj_cols)
+			for rel_name, join_cols, proj_cols in build_plan
+		}
+		for idx, eq_cols in enumerate(compiled_plan):
+			for rel, col in eq_cols:
+				for i in range(len(build_plan[rel][0])):
+					if build_plan[rel][0][i][0] == col:
+						build_plan[rel][0][i] = (col, idx)
+		return build_plan
+
+	def _find_res_types_and_attrs(self, build_plan: Dict[str, Tuple[List[Tuple[str, int]], List[str]]]):
+		col_types = []
+		res_attrs = []
+		last_join_idx = -1
+		for rel, cols in build_plan.items():
+			for col, idx in cols[0]:
+				if last_join_idx < idx:
+					col_types.append(rel_types[rel][col])
+					res_attrs.append(self.var_mng.x_var(idx))
+					last_join_idx = idx
+			for col in cols[1]:
+				col_types.append(rel_types[rel][col])
+				res_attrs.append(f"{self.var_mng.rel_col_var(rel, col)}[{self.var_mng.offset_var(rel)}]")
+		return col_types, res_attrs
 
 
 class VariableManager:
 	def __init__(self):
 		self._trie_vars = dict()
 		self._last_x_var = 0
+		self._last_res_var = 0
 
 	def trie_var(self, rel_name: str):
 		if rel_name not in self._trie_vars.keys():
@@ -205,6 +218,13 @@ class VariableManager:
 
 	def offset_var(self, rel_name: str):
 		return f"{rel_name}_off"
+
+	def res_var(self):
+		return f"res{self._last_res_var}"
+
+	def next_res_var(self):
+		self._last_res_var += 1
+		return f"res{self._last_res_var}"
 
 
 class PlanParser:

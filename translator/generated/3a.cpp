@@ -19,7 +19,7 @@ int main() {
 	auto k_trie0 = phmap::flat_hash_map<int, vector<int>>();
 	build_trie(k_trie0, k_id);
 
-	vector<tuple<int, int, string>> res;
+	vector<tuple<int, int, string>> res0;
 	for (const auto &[x0, mi_trie1]: mi_trie0) {
 		if (mk_trie0.contains(x0) && t_trie0.contains(x0)) {
 			auto &mk_trie1 = mk_trie0.at(x0);
@@ -31,7 +31,7 @@ int main() {
 						for (const auto &mk_off: mk_trie2) {
 							for (const auto &t_off: t_trie1) {
 								for (const auto &k_off: k_trie1) {
-									res.push_back({x0, x1, t_title[t_off]});
+									res0.push_back({x0, x1, t_title[t_off]});
 								}
 							}
 						}
@@ -41,5 +41,5 @@ int main() {
 		}
 	}
 
-	cerr << res.size() << endl;
+	cerr << res0.size() << endl;
 }
