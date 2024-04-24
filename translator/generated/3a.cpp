@@ -40,6 +40,6 @@ int main() {
 			}
 		}
 	}
-
 	cerr << res0.size() << endl;
+
 }

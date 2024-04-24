@@ -70,7 +70,6 @@ class Plan2CPPTranslator:
 	def __init__(self):
 		self.parser = PlanParser()
 
-		self.rel_schemas = dict()
 		self.var_mng = VariableManager()
 		self.indent = 1
 
@@ -79,13 +78,8 @@ class Plan2CPPTranslator:
 			self._translate(query)
 
 	def _translate(self, query: str):
-		plan = self.parser.parse(query)
+		plans = self.parser.parse(query)
 
-		for p in plan:
-			print(*p, sep="\n")
-			print("=" * 100)
-
-		# TODO: iterate over all plans
 		with open(f"generated/{query}.cpp", 'w') as cpp_file:
 			cpp_file.write("#include <iostream>\n")
 			cpp_file.write('#include "../../include/load.h"\n')
@@ -94,41 +88,42 @@ class Plan2CPPTranslator:
 			cpp_file.write('using namespace std;\n\n')
 			cpp_file.write('int main() {\n')
 
-			for line in self._translate_build(query, plan[0][1]):
-				cpp_file.write('\t' * self.indent + line)
-			cpp_file.write('\n')
+			# TODO: iterate over all plans
+			for node, build_plan, compiled_plan in plans:
+				print(node)
+				print(build_plan)
+				print(compiled_plan)
+				print("=" * 100)
+				for line in self._translate_build_plan(query, build_plan):
+					cpp_file.write('\t' * self.indent + line)
+				cpp_file.write('\n')
 
-			for line in self._translate_compiled(plan[0][1], plan[0][2]):
-				cpp_file.write('\t' * self.indent + line)
-			while self.indent > 1:
-				self.indent -= 1
-				cpp_file.write('\t' * self.indent + '}\n')
-			cpp_file.write('\n')
+				for line in self._translate_compiled_plan(build_plan, compiled_plan):
+					cpp_file.write('\t' * self.indent + line)
+				while self.indent > 1:
+					self.indent -= 1
+					cpp_file.write('\t' * self.indent + '}\n')
 
-			cpp_file.write(f'\tcerr << {self.var_mng.res_var()}.size() << endl;\n')
-			self.var_mng.next_res_var()
+				cpp_file.write(f'\tcerr << {self.var_mng.res_var()}.size() << endl;\n\n')
+				self.var_mng.next_res_var()
 
 			cpp_file.write('}\n')
 
-	def _translate_build(self, query: str, build_plan: List[Tuple]):
+	def _translate_build_plan(self, query: str, build_plan: List[Tuple]):
 		for rel_name, join_cols, proj_cols in build_plan:
-			if rel_name in self.rel_schemas.keys():
-				continue
-
+			path = os.path.join(raw_data_path, f"{rel_abbrs[rel_name]}.csv")
 			if os.path.exists(os.path.join(preprocessed_data_path, query, f"{rel_name}.csv")):
 				path = os.path.join(preprocessed_data_path, query, f"{rel_name}.csv")
-			else:
-				path = os.path.join(raw_data_path, f"{rel_abbrs[rel_name]}.csv")
 
 			yield f'load_{rel_name}("{os.path.normpath(path)}");\n'
 
-			trie_level_types = [f'phmap::flat_hash_map<{rel_types[rel_name][join_col]}, ' for join_col in join_cols]
-			yield f"auto {self.var_mng.trie_var(rel_name)} = {''.join(trie_level_types)}vector<int>{'>' * len(join_cols)}();\n"
+			level_types = [rel_types[rel_name][join_col] for join_col in join_cols]
+			trie_type = f"{''.join([f'phmap::flat_hash_map<{ttt}, ' for ttt in level_types])}vector<int>{'>' * len(join_cols)}"
+			yield f"auto {self.var_mng.trie_var(rel_name)} = {trie_type}();\n"
 
-			yield f"build_trie({self.var_mng.trie_var(rel_name)}, {', '.join([f'{rel_name}_{join_col}' for join_col in join_cols])});\n"
-			self.rel_schemas[rel_name] = (join_cols, proj_cols)
+			yield f"build_trie({self.var_mng.trie_var(rel_name)}, {', '.join([self.var_mng.rel_col_var(rel_name, join_col) for join_col in join_cols])});\n"
 
-	def _translate_compiled(self, build_plan: List[Tuple], compiled_plan: List[List[str]]):
+	def _translate_compiled_plan(self, build_plan: List[Tuple], compiled_plan: List[List[str]]):
 		build_plan = self._add_join_idx_to_build_plan(build_plan, compiled_plan)
 
 		col_types, res_attrs = self._find_res_types_and_attrs(build_plan)
