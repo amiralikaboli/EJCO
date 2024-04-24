@@ -1,21 +1,21 @@
 #include <iostream>
 #include "../../include/load.h"
 #include "../../include/build.h"
-#include "../../include/parallel_hashmap/phmap.h"
 
 using namespace std;
 
 int main() {
 	load_mi("/Users/s2522996/Documents/free-join/queries/preprocessed/join-order-benchmark/data/3a/mi.csv");
+	load_mk("/Users/s2522996/Documents/free-join/data/imdb_csv/movie_keyword.csv");
+	load_t("/Users/s2522996/Documents/free-join/queries/preprocessed/join-order-benchmark/data/3a/t.csv");
+	load_k("/Users/s2522996/Documents/free-join/queries/preprocessed/join-order-benchmark/data/3a/k.csv");
+	
 	auto mi_trie0 = phmap::flat_hash_map<int, vector<int>>();
 	build_trie(mi_trie0, mi_movie_id);
-	load_mk("/Users/s2522996/Documents/free-join/data/imdb_csv/movie_keyword.csv");
 	auto mk_trie0 = phmap::flat_hash_map<int, phmap::flat_hash_map<int, vector<int>>>();
 	build_trie(mk_trie0, mk_movie_id, mk_keyword_id);
-	load_t("/Users/s2522996/Documents/free-join/queries/preprocessed/join-order-benchmark/data/3a/t.csv");
 	auto t_trie0 = phmap::flat_hash_map<int, vector<int>>();
 	build_trie(t_trie0, t_id);
-	load_k("/Users/s2522996/Documents/free-join/queries/preprocessed/join-order-benchmark/data/3a/k.csv");
 	auto k_trie0 = phmap::flat_hash_map<int, vector<int>>();
 	build_trie(k_trie0, k_id);
 

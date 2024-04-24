@@ -83,8 +83,7 @@ class Plan2CPPTranslator:
 		with open(f"generated/{query}.cpp", 'w') as cpp_file:
 			cpp_file.write("#include <iostream>\n")
 			cpp_file.write('#include "../../include/load.h"\n')
-			cpp_file.write('#include "../../include/build.h"\n')
-			cpp_file.write('#include "../../include/parallel_hashmap/phmap.h"\n\n')
+			cpp_file.write('#include "../../include/build.h"\n\n')
 			cpp_file.write('using namespace std;\n\n')
 			cpp_file.write('int main() {\n')
 
@@ -107,9 +106,10 @@ class Plan2CPPTranslator:
 			path = os.path.join(raw_data_path, f"{rel_abbrs[rel_name]}.csv")
 			if os.path.exists(os.path.join(preprocessed_data_path, query, f"{rel_name}.csv")):
 				path = os.path.join(preprocessed_data_path, query, f"{rel_name}.csv")
-
 			yield f'load_{rel_name}("{os.path.normpath(path)}");\n'
+		yield '\n'
 
+		for rel_name, join_cols, proj_cols in build_plan:
 			level_types = [rel_types[rel_name][join_col] for join_col in join_cols]
 			trie_type = f"{''.join([f'phmap::flat_hash_map<{ttt}, ' for ttt in level_types])}vector<int>{'>' * len(join_cols)}"
 			yield f"auto {self.var_mng.trie_var(rel_name)} = {trie_type}();\n"
