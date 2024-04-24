@@ -212,7 +212,7 @@ class VariableManager:
 
 class PlanParser:
 	def parse(self, query: str) -> Tuple[List, List]:  # (fused_build_plan, fused_compiled_plan)
-		with open(os.path.join(freejoin_path, "logs", "gj_plans", f"{query}.log"), 'r') as log_file:
+		with open(os.path.join(os.path.dirname(__file__), "plans", f"{query}.log"), 'r') as log_file:
 			lines = log_file.readlines()
 
 		parsed_plans = [
