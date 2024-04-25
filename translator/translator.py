@@ -1,3 +1,4 @@
+import json
 import re
 import os
 from typing import List, Tuple, Dict
@@ -5,70 +6,19 @@ from typing import List, Tuple, Dict
 freejoin_path = os.path.join(os.path.dirname(__file__), "..", "..", "free-join")
 preprocessed_data_path = os.path.join(freejoin_path, "queries", "preprocessed", "join-order-benchmark", "data")
 raw_data_path = os.path.join(freejoin_path, "data", "imdb_csv")
-
-rel_abbrs = {
-	"a": "aka_name",
-	"an": "aka_name",
-	"at": "aka_title",
-	"ci": "cast_info",
-	"chn": "char_name",
-	"cct": "comp_cast_type",
-	"cn": "company_name",
-	"ct": "company_type",
-	"cc": "complete_cast",
-	"it": "info_type",
-	"k": "keyword",
-	"kt": "kind_type",
-	"lt": "link_type",
-	"mc": "movie_companies",
-	"mi": "movie_info",
-	"miidx": "movie_info_idx",
-	"mi_idx": "movie_info_idx",
-	"mk": "movie_keyword",
-	"ml": "movie_link",
-	"n": "name",
-	"pi": "person_info",
-	"rt": "role_type",
-	"t": "title"
-}
-
-rel_types = {
-	"mk": {
-		"id": "int",
-		"movie_id": "int",
-		"keyword_id": "int"
-	},
-	"mi": {
-		"id": "int",
-		"movie_id": "int",
-		"info_type_id": "int",
-		"info": "string",
-		"note": "string"
-	},
-	"t": {
-		"id": "int",
-		"title": "string",
-		"kind_id": "int",
-		"production_year": "int",
-		"imdb_index": "string",
-		"phonetic_code": "string",
-		"episode_of_id": "int",
-		"season_nr": "int",
-		"episode_nr": "int",
-		"series_years": "string",
-		"md5sum": "string"
-	},
-	"k": {
-		"id": "int",
-		"keyword": "string",
-		"phonetic_code": "string"
-	}
-}
+include_dir_path = os.path.join(os.path.dirname(__file__), "..", "include")
 
 
 class Plan2CPPTranslator:
 	def __init__(self):
 		self.parser = PlanParser()
+		with open("rel_abbrs.json", 'r') as json_file:
+			self.rel_abbrs = json.load(json_file)
+		with open("rel_types.json", 'r') as json_file:
+			self.rel_types = json.load(json_file)
+
+		self.trie_types = set()
+		self.loading_rels = set()
 
 		self.var_mng = VariableManager()
 		self.indent = 1
@@ -103,16 +53,22 @@ class Plan2CPPTranslator:
 
 	def _translate_build_plan(self, query: str, build_plan: List[Tuple]):
 		for rel_name, join_cols, proj_cols in build_plan:
-			path = os.path.join(raw_data_path, f"{rel_abbrs[rel_name]}.csv")
-			if os.path.exists(os.path.join(preprocessed_data_path, query, f"{rel_name}.csv")):
-				path = os.path.join(preprocessed_data_path, query, f"{rel_name}.csv")
+			self.loading_rels.add(rel_name)
+			path = os.path.join(preprocessed_data_path, query, f"{rel_name}.csv")
+			if not os.path.exists(path):
+				path = os.path.join(
+					raw_data_path, f"{self.rel_abbrs[rel_name[:-1] if rel_name[-1].isdigit() else rel_name]}.csv"
+				)
 			yield f'load_{rel_name}("{os.path.normpath(path)}");\n'
 		yield '\n'
 
 		for rel_name, join_cols, proj_cols in build_plan:
-			level_types = [rel_types[rel_name][join_col] for join_col in join_cols]
-			trie_type = f"{''.join([f'phmap::flat_hash_map<{ttt}, ' for ttt in level_types])}vector<int>{'>' * len(join_cols)}"
-			yield f"auto {self.var_mng.trie_var(rel_name)} = {trie_type}();\n"
+			level_types = tuple([
+				self.rel_types[rel_name[:-1] if rel_name[-1].isdigit() else rel_name][join_col]
+				for join_col in join_cols
+			])
+			self.trie_types.add(level_types)
+			yield f"auto {self.var_mng.trie_var(rel_name)} = {self.var_mng.trie_type(level_types)}();\n"
 
 			yield f"build_trie({self.var_mng.trie_var(rel_name)}, {', '.join([self.var_mng.rel_col_var(rel_name, join_col) for join_col in join_cols])});\n"
 
@@ -170,11 +126,11 @@ class Plan2CPPTranslator:
 		for rel, cols in build_plan.items():
 			for col, idx in cols[0]:
 				if last_join_idx < idx:
-					col_types.append(rel_types[rel][col])
+					col_types.append(self.rel_types[rel][col])
 					res_attrs.append(self.var_mng.x_var(idx))
 					last_join_idx = idx
 			for col in cols[1]:
-				col_types.append(rel_types[rel][col])
+				col_types.append(self.rel_types[rel][col])
 				res_attrs.append(f"{self.var_mng.rel_col_var(rel, col)}[{self.var_mng.offset_var(rel)}]")
 		return col_types, res_attrs
 
@@ -183,6 +139,9 @@ class VariableManager:
 	def __init__(self):
 		self._trie_vars = dict()
 		self._last_x_var = 0
+
+	def trie_type(self, level_types: Tuple[str]):
+		return f"{''.join([f'phmap::flat_hash_map<{ttt}, ' for ttt in level_types])}vector<int>{'>' * len(level_types)}"
 
 	def trie_var(self, rel_name: str):
 		if rel_name not in self._trie_vars.keys():
@@ -281,10 +240,18 @@ class PlanParser:
 				eqs = op.split(",")
 				eq_cols = []
 				for idx, eq in enumerate(eqs):
-					l_col, r_col = eq.strip().split(" = ")
+					l_side, r_side = eq.strip().split(" = ")
+					l_rc, r_rc = tuple(l_side[4:].split(".")), tuple(r_side[4:].split("."))
 					if idx == 0:
-						eq_cols.append(tuple(l_col[4:].split(".")))
-					eq_cols.append(tuple(r_col[4:].split(".")))
+						eq_cols.append(l_rc)
+						eq_cols.append(r_rc)
+					elif l_rc in eq_cols:
+						eq_cols.append(r_rc)
+					elif r_rc in eq_cols:
+						eq_cols.append(l_rc)
+					else:
+						parsed_plan.append(eq_cols)
+						eq_cols = [l_rc, r_rc]
 				parsed_plan.append(eq_cols)
 			elif op[:9] == "Intersect":
 				op = op[11:-3]
@@ -305,14 +272,20 @@ class PlanParser:
 					child_build_plan, child_compiled_plan = node2plans[child]
 					fused_build_plan.extend(child_build_plan)
 
-					for idx, par_attr in enumerate(compiled_plan):
-						for child_attr in child_compiled_plan:
+					for child_attr in child_compiled_plan:
+						found = False
+						for idx, par_attr in enumerate(compiled_plan):
 							intersect = set(par_attr).intersection(child_attr)
 							if intersect:
-								# TODO: the order might need more consideration
+								# TODO: the order might need to be different
 								for col in child_attr:
 									if col not in intersect:
 										fused_compiled_plan[idx].append(col)
+								found = True
+								break
+						if not found:
+							# TODO: the order might need to be different
+							fused_compiled_plan.append(child_attr)
 				else:
 					fused_build_plan.append((child, join_cols, proj_cols))
 			node2plans[node] = (fused_build_plan, fused_compiled_plan)
