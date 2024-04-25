@@ -8,10 +8,10 @@ using namespace std;
 int main() {
 	HighPrecisionTimer timer;
 
-	load_mi("/Users/s2522996/Documents/free-join/queries/preprocessed/join-order-benchmark/data/3a/mi.csv");
+	load_mi("/Users/s2522996/Documents/free-join/queries/preprocessed/join-order-benchmark/data/3b/mi.csv");
 	load_mk("/Users/s2522996/Documents/free-join/data/imdb_csv/movie_keyword.csv");
-	load_t("/Users/s2522996/Documents/free-join/queries/preprocessed/join-order-benchmark/data/3a/t.csv");
-	load_k("/Users/s2522996/Documents/free-join/queries/preprocessed/join-order-benchmark/data/3a/k.csv");
+	load_t("/Users/s2522996/Documents/free-join/queries/preprocessed/join-order-benchmark/data/3b/t.csv");
+	load_k("/Users/s2522996/Documents/free-join/queries/preprocessed/join-order-benchmark/data/3b/k.csv");
 
 	timer.Reset();
 	auto mi_trie0 = phmap::flat_hash_map<int, vector<int>>();

@@ -25,6 +25,7 @@ class Plan2CPPTranslator:
 
 	def translate(self, queries: List[str]):
 		for query in queries:
+			self.var_mng = VariableManager()
 			self._translate(query)
 
 		self._translate_includes()
@@ -35,12 +36,20 @@ class Plan2CPPTranslator:
 		with open(f"generated/{query}.cpp", 'w') as cpp_file:
 			cpp_file.write("#include <iostream>\n")
 			cpp_file.write('#include "../../include/load.h"\n')
-			cpp_file.write('#include "../../include/build.h"\n\n')
+			cpp_file.write('#include "../../include/build.h"\n')
+			cpp_file.write('#include "../../include/high_precision_timer.h"\n\n')
 			cpp_file.write('using namespace std;\n\n')
 			cpp_file.write('int main() {\n')
+			cpp_file.write('\tHighPrecisionTimer timer;\n\n')
 
-			for line in self._translate_build_plan(query, build_plan):
+			for line in self._translate_loads(query, build_plan):
 				cpp_file.write('\t' * self.indent + line)
+			cpp_file.write('\n')
+
+			cpp_file.write('\ttimer.Reset();\n')
+			for line in self._translate_build_plan(build_plan):
+				cpp_file.write('\t' * self.indent + line)
+			cpp_file.write('\ttimer.PrintElapsedTimeAndReset("Build");\n')
 			cpp_file.write('\n')
 
 			for line in self._translate_compiled_plan(build_plan, compiled_plan):
@@ -48,12 +57,14 @@ class Plan2CPPTranslator:
 			while self.indent > 1:
 				self.indent -= 1
 				cpp_file.write('\t' * self.indent + '}\n')
+			cpp_file.write('\ttimer.PrintElapsedTimeAndReset("Query");\n')
+			cpp_file.write('\n')
 
-			cpp_file.write(f'\tcerr << {self.var_mng.res_var()}.size() << endl;\n')
+			cpp_file.write(f'\tcout << {self.var_mng.res_var()}.size() << endl;\n')
 
 			cpp_file.write('}\n')
 
-	def _translate_build_plan(self, query: str, build_plan: List[Tuple]):
+	def _translate_loads(self, query: str, build_plan: List[Tuple]):
 		for rel_name, join_cols, proj_cols in build_plan:
 			self.loading_rels.add(rel_name)
 			path = os.path.join(preprocessed_data_path, query, f"{rel_name}.csv")
@@ -62,8 +73,8 @@ class Plan2CPPTranslator:
 					raw_data_path, f"{self.rel_abbrs[rel_name[:-1] if rel_name[-1].isdigit() else rel_name]}.csv"
 				)
 			yield f'load_{rel_name}("{os.path.normpath(path)}");\n'
-		yield '\n'
 
+	def _translate_build_plan(self, build_plan: List[Tuple]):
 		for rel_name, join_cols, proj_cols in build_plan:
 			level_types = tuple([
 				self.rel_col_types[rel_name[:-1] if rel_name[-1].isdigit() else rel_name][join_col]
@@ -169,7 +180,7 @@ class Plan2CPPTranslator:
 				cpp_file.write("\n")
 				cpp_file.write(f"void load_{rel}(const string path) {{\n")
 				cpp_file.write(f"\tifstream in(path);\n")
-				cpp_file.write(f"\tif (!in)\n\t\t cerr << \"Cannot open file: \" << path << endl;\n")
+				cpp_file.write(f"\tif (!in)\n\t\t throw path;\n")
 				cpp_file.write(f"\tstring line;\n")
 				cpp_file.write(f"\tstring token;\n")
 				cpp_file.write(f"\twhile (getline(in, line)) {{\n")
@@ -359,7 +370,10 @@ class PlanParser:
 
 
 if __name__ == '__main__':
-	queries = ["3a"]
+	queries = []
+	for filename in sorted(os.listdir(os.path.join(os.path.dirname(__file__), "plans", "raw"))):
+		if int(filename[:-5]) < 6:
+			queries.append(filename[:-4])
 
 	translator = Plan2CPPTranslator()
 	translator.translate(queries)
