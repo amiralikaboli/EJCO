@@ -14,8 +14,8 @@ class Plan2CPPTranslator:
 		self.parser = PlanParser()
 		with open("rel_abbrs.json", 'r') as json_file:
 			self.rel_abbrs = json.load(json_file)
-		with open("rel_types.json", 'r') as json_file:
-			self.rel_types = json.load(json_file)
+		with open("rel_col_types.json", 'r') as json_file:
+			self.rel_col_types = json.load(json_file)
 
 		self.trie_types = set()
 		self.loading_rels = set()
@@ -26,6 +26,8 @@ class Plan2CPPTranslator:
 	def translate(self, queries: List[str]):
 		for query in queries:
 			self._translate(query)
+
+		self._translate_includes()
 
 	def _translate(self, query: str):
 		build_plan, compiled_plan = self.parser.parse(query)
@@ -64,7 +66,7 @@ class Plan2CPPTranslator:
 
 		for rel_name, join_cols, proj_cols in build_plan:
 			level_types = tuple([
-				self.rel_types[rel_name[:-1] if rel_name[-1].isdigit() else rel_name][join_col]
+				self.rel_col_types[rel_name[:-1] if rel_name[-1].isdigit() else rel_name][join_col]
 				for join_col in join_cols
 			])
 			self.trie_types.add(level_types)
@@ -126,13 +128,66 @@ class Plan2CPPTranslator:
 		for rel, cols in build_plan.items():
 			for col, idx in cols[0]:
 				if last_join_idx < idx:
-					col_types.append(self.rel_types[rel][col])
+					col_types.append(self.rel_col_types[rel][col])
 					res_attrs.append(self.var_mng.x_var(idx))
 					last_join_idx = idx
 			for col in cols[1]:
-				col_types.append(self.rel_types[rel][col])
+				col_types.append(self.rel_col_types[rel][col])
 				res_attrs.append(f"{self.var_mng.rel_col_var(rel, col)}[{self.var_mng.offset_var(rel)}]")
 		return col_types, res_attrs
+
+	def _translate_includes(self):
+		with open(os.path.join(include_dir_path, "build.h"), "w") as cpp_file:
+			cpp_file.write('#include <iostream>\n')
+			cpp_file.write('#include <vector>\n')
+			cpp_file.write('#include "parallel_hashmap/phmap.h"\n\n')
+			cpp_file.write('using namespace std;\n')
+
+			for level_types in sorted(self.trie_types):
+				cpp_file.write("\n")
+				cpp_file.write(
+					f"void build_trie({self.var_mng.trie_type(level_types)} &trie, "
+					f"{', '.join([f'vector<{ttt}> &vec{idx}' for idx, ttt in enumerate(level_types)])}){{\n"
+				)
+
+				cpp_file.write(f"\tfor (int i = 0; i < vec0.size(); ++i)\n")
+				cpp_file.write(
+					f"\t\ttrie{''.join(f'[vec{idx}[i]]' for idx in range(len(level_types)))}.push_back(i);\n")
+				cpp_file.write(f"}}\n")
+
+		with open(os.path.join(include_dir_path, "load.h"), "w") as cpp_file:
+			cpp_file.write('#include <iostream>\n')
+			cpp_file.write('#include <fstream>\n')
+			cpp_file.write('#include <sstream>\n')
+			cpp_file.write('#include <vector>\n\n')
+			cpp_file.write('using namespace std;\n')
+
+			for rel in sorted(self.loading_rels):
+				cpp_file.write('\n')
+				for col_n, col_t in self.rel_col_types[rel[:-1] if rel[-1].isdigit() else rel].items():
+					cpp_file.write(f"vector<{col_t}> {self.var_mng.rel_col_var(rel, col_n)};\n")
+				cpp_file.write("\n")
+				cpp_file.write(f"void load_{rel}(const string path) {{\n")
+				cpp_file.write(f"\tifstream in(path);\n")
+				cpp_file.write(f"\tif (!in)\n\t\t cerr << \"Cannot open file: \" << path << endl;\n")
+				cpp_file.write(f"\tstring line;\n")
+				cpp_file.write(f"\tstring token;\n")
+				cpp_file.write(f"\twhile (getline(in, line)) {{\n")
+				cpp_file.write(f"\t\tstringstream ss(line);\n")
+				for col_n, col_t in self.rel_col_types[rel[:-1] if rel[-1].isdigit() else rel].items():
+					cpp_file.write(f"\t\tgetline(ss, token, '|');\n")
+					if col_t == "int":
+						cpp_file.write(
+							f"\t\ttry {{ {self.var_mng.rel_col_var(rel, col_n)}.push_back(stoi(token)); }} "
+							f"catch (...) {{ {self.var_mng.rel_col_var(rel, col_n)}.push_back(-1); }}\n"
+						)
+					elif col_t == "string":
+						cpp_file.write(f"\t\t{self.var_mng.rel_col_var(rel, col_n)}.push_back(token);\n")
+					else:
+						raise ValueError(f"Unknown type: {col_t}")
+				cpp_file.write(f"\t}}\n")
+				cpp_file.write(f"\tin.close();\n")
+				cpp_file.write(f"}}\n")
 
 
 class VariableManager:

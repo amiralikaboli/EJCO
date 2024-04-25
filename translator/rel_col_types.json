@@ -14,9 +14,10 @@
   "t": {
     "id": "int",
     "title": "string",
+    "imdb_index": "string",
     "kind_id": "int",
     "production_year": "int",
-    "imdb_index": "string",
+    "imdb_id": "string",
     "phonetic_code": "string",
     "episode_of_id": "int",
     "season_nr": "int",
