@@ -142,7 +142,7 @@ class Plan2CPPTranslator:
 			for assignment in assignments:
 				yield assignment
 
-		for rel, cols in build_plan.items():
+		for rel, _ in build_plan.items():
 			yield f"for (const auto &{self.var_mng.offset_var(rel)}: {self.var_mng.trie_var(rel)}) {{\n"
 			self.indent += 1
 
@@ -212,7 +212,7 @@ class VariableManager:
 
 class PlanParser:
 	def parse(self, query: str) -> Tuple[List, List]:  # (fused_build_plan, fused_compiled_plan)
-		with open(os.path.join(os.path.dirname(__file__), "plans", f"{query}.log"), 'r') as log_file:
+		with open(os.path.join(os.path.dirname(__file__), "plans", "raw", f"{query}.log"), 'r') as log_file:
 			lines = log_file.readlines()
 
 		parsed_plans = [
@@ -225,6 +225,9 @@ class PlanParser:
 		]
 
 		fused_plan = self._fuse_plans(parsed_plans)
+		with open(os.path.join(os.path.dirname(__file__), "plans", "fused", f"{query}.log"), 'w') as log_file:
+			log_file.write(f"{fused_plan[0]}\n")
+			log_file.write(f"{fused_plan[1]}\n")
 
 		return fused_plan
 
