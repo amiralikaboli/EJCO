@@ -5,6 +5,77 @@
 
 using namespace std;
 
+vector<int> an_id;
+vector<int> an_person_id;
+vector<string> an_name;
+vector<string> an_imdb_index;
+vector<string> an_name_pcode_cf;
+vector<string> an_name_pcode_nf;
+vector<string> an_surname_pcode;
+vector<string> an_md5sum;
+
+void load_an(const string path) {
+	ifstream in(path);
+	if (!in)
+		 throw path;
+	string line;
+	string token;
+	while (getline(in, line)) {
+		stringstream ss(line);
+		getline(ss, token, '|');
+		try { an_id.push_back(stoi(token)); } catch (...) { an_id.push_back(-1); }
+		getline(ss, token, '|');
+		try { an_person_id.push_back(stoi(token)); } catch (...) { an_person_id.push_back(-1); }
+		getline(ss, token, '|');
+		an_name.push_back(token);
+		getline(ss, token, '|');
+		an_imdb_index.push_back(token);
+		getline(ss, token, '|');
+		an_name_pcode_cf.push_back(token);
+		getline(ss, token, '|');
+		an_name_pcode_nf.push_back(token);
+		getline(ss, token, '|');
+		an_surname_pcode.push_back(token);
+		getline(ss, token, '|');
+		an_md5sum.push_back(token);
+	}
+	in.close();
+}
+
+vector<int> ci_id;
+vector<int> ci_person_id;
+vector<int> ci_movie_id;
+vector<int> ci_person_role_id;
+vector<string> ci_note;
+vector<int> ci_nr_order;
+vector<int> ci_role_id;
+
+void load_ci(const string path) {
+	ifstream in(path);
+	if (!in)
+		 throw path;
+	string line;
+	string token;
+	while (getline(in, line)) {
+		stringstream ss(line);
+		getline(ss, token, '|');
+		try { ci_id.push_back(stoi(token)); } catch (...) { ci_id.push_back(-1); }
+		getline(ss, token, '|');
+		try { ci_person_id.push_back(stoi(token)); } catch (...) { ci_person_id.push_back(-1); }
+		getline(ss, token, '|');
+		try { ci_movie_id.push_back(stoi(token)); } catch (...) { ci_movie_id.push_back(-1); }
+		getline(ss, token, '|');
+		try { ci_person_role_id.push_back(stoi(token)); } catch (...) { ci_person_role_id.push_back(-1); }
+		getline(ss, token, '|');
+		ci_note.push_back(token);
+		getline(ss, token, '|');
+		try { ci_nr_order.push_back(stoi(token)); } catch (...) { ci_nr_order.push_back(-1); }
+		getline(ss, token, '|');
+		try { ci_role_id.push_back(stoi(token)); } catch (...) { ci_role_id.push_back(-1); }
+	}
+	in.close();
+}
+
 vector<int> cn_id;
 vector<string> cn_name;
 vector<string> cn_country_code;
@@ -95,6 +166,25 @@ void load_k(const string path) {
 		k_keyword.push_back(token);
 		getline(ss, token, '|');
 		k_phonetic_code.push_back(token);
+	}
+	in.close();
+}
+
+vector<int> lt_id;
+vector<string> lt_name;
+
+void load_lt(const string path) {
+	ifstream in(path);
+	if (!in)
+		 throw path;
+	string line;
+	string token;
+	while (getline(in, line)) {
+		stringstream ss(line);
+		getline(ss, token, '|');
+		try { lt_id.push_back(stoi(token)); } catch (...) { lt_id.push_back(-1); }
+		getline(ss, token, '|');
+		lt_name.push_back(token);
 	}
 	in.close();
 }
@@ -201,6 +291,99 @@ void load_mk(const string path) {
 		try { mk_movie_id.push_back(stoi(token)); } catch (...) { mk_movie_id.push_back(-1); }
 		getline(ss, token, '|');
 		try { mk_keyword_id.push_back(stoi(token)); } catch (...) { mk_keyword_id.push_back(-1); }
+	}
+	in.close();
+}
+
+vector<int> ml_id;
+vector<int> ml_movie_id;
+vector<int> ml_linked_movie_id;
+vector<int> ml_link_type_id;
+
+void load_ml(const string path) {
+	ifstream in(path);
+	if (!in)
+		 throw path;
+	string line;
+	string token;
+	while (getline(in, line)) {
+		stringstream ss(line);
+		getline(ss, token, '|');
+		try { ml_id.push_back(stoi(token)); } catch (...) { ml_id.push_back(-1); }
+		getline(ss, token, '|');
+		try { ml_movie_id.push_back(stoi(token)); } catch (...) { ml_movie_id.push_back(-1); }
+		getline(ss, token, '|');
+		try { ml_linked_movie_id.push_back(stoi(token)); } catch (...) { ml_linked_movie_id.push_back(-1); }
+		getline(ss, token, '|');
+		try { ml_link_type_id.push_back(stoi(token)); } catch (...) { ml_link_type_id.push_back(-1); }
+	}
+	in.close();
+}
+
+vector<int> n_id;
+vector<string> n_name;
+vector<string> n_imdb_index;
+vector<string> n_imdb_id;
+vector<string> n_gender;
+vector<string> n_name_pcode_cf;
+vector<string> n_name_pcode_nf;
+vector<string> n_surname_pcode;
+vector<string> n_md5sum;
+
+void load_n(const string path) {
+	ifstream in(path);
+	if (!in)
+		 throw path;
+	string line;
+	string token;
+	while (getline(in, line)) {
+		stringstream ss(line);
+		getline(ss, token, '|');
+		try { n_id.push_back(stoi(token)); } catch (...) { n_id.push_back(-1); }
+		getline(ss, token, '|');
+		n_name.push_back(token);
+		getline(ss, token, '|');
+		n_imdb_index.push_back(token);
+		getline(ss, token, '|');
+		n_imdb_id.push_back(token);
+		getline(ss, token, '|');
+		n_gender.push_back(token);
+		getline(ss, token, '|');
+		n_name_pcode_cf.push_back(token);
+		getline(ss, token, '|');
+		n_name_pcode_nf.push_back(token);
+		getline(ss, token, '|');
+		n_surname_pcode.push_back(token);
+		getline(ss, token, '|');
+		n_md5sum.push_back(token);
+	}
+	in.close();
+}
+
+vector<int> pi_id;
+vector<int> pi_person_id;
+vector<int> pi_info_type_id;
+vector<string> pi_info;
+vector<string> pi_note;
+
+void load_pi(const string path) {
+	ifstream in(path);
+	if (!in)
+		 throw path;
+	string line;
+	string token;
+	while (getline(in, line)) {
+		stringstream ss(line);
+		getline(ss, token, '|');
+		try { pi_id.push_back(stoi(token)); } catch (...) { pi_id.push_back(-1); }
+		getline(ss, token, '|');
+		try { pi_person_id.push_back(stoi(token)); } catch (...) { pi_person_id.push_back(-1); }
+		getline(ss, token, '|');
+		try { pi_info_type_id.push_back(stoi(token)); } catch (...) { pi_info_type_id.push_back(-1); }
+		getline(ss, token, '|');
+		pi_info.push_back(token);
+		getline(ss, token, '|');
+		pi_note.push_back(token);
 	}
 	in.close();
 }

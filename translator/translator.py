@@ -372,7 +372,7 @@ class PlanParser:
 if __name__ == '__main__':
 	queries = []
 	for filename in sorted(os.listdir(os.path.join(os.path.dirname(__file__), "plans", "raw"))):
-		if int(filename[:-5]) < 6:
+		if int(filename[:-5]) <= 7:
 			queries.append(filename[:-4])
 
 	translator = Plan2CPPTranslator()
