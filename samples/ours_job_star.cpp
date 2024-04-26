@@ -267,6 +267,7 @@ void vec_idx() {
 
 	auto trie_timer = HighPrecisionTimer();
 	auto query_timer = HighPrecisionTimer();
+	query_timer.
 
 	for (size_t x = 0; x < iters; ++x) {
 		auto R_tuples = movie_info_idx;
