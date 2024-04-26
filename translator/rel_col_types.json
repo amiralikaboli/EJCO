@@ -44,6 +44,13 @@
     "info": "string",
     "note": "string"
   },
+  "miidx": {
+    "id": "int",
+    "movie_id": "int",
+    "info_type_id": "int",
+    "info": "string",
+    "note": "string"
+  },
   "it": {
     "id": "int",
     "info": "string"
@@ -96,7 +103,7 @@
   },
   "lt": {
     "id": "int",
-    "name": "string"
+    "link": "string"
   },
   "an": {
     "id": "int",
@@ -119,6 +126,24 @@
     "imdb_id": "int",
     "name_pcode_cf": "string",
     "surname_pcode": "string",
+    "md5sum": "string"
+  },
+  "kt": {
+    "id": "int",
+    "kind": "string"
+  },
+  "at": {
+    "id": "int",
+    "movie_id": "int",
+    "title": "string",
+    "imdb_index": "string",
+    "kind_id": "int",
+    "production_year": "int",
+    "phonetic_code": "string",
+    "episode_of_id": "int",
+    "season_nr": "int",
+    "episode_nr": "int",
+    "note": "string",
     "md5sum": "string"
   }
 }

@@ -13,3 +13,8 @@ void build_trie(phmap::flat_hash_map<int, phmap::flat_hash_map<int, vector<int>>
 	for (int i = 0; i < vec0.size(); ++i)
 		trie[vec0[i]][vec1[i]].push_back(i);
 }
+
+void build_trie(phmap::flat_hash_map<int, phmap::flat_hash_map<int, phmap::flat_hash_map<int, vector<int>>>> &trie, vector<int> &vec0, vector<int> &vec1, vector<int> &vec2){
+	for (int i = 0; i < vec0.size(); ++i)
+		trie[vec0[i]][vec1[i]][vec2[i]].push_back(i);
+}

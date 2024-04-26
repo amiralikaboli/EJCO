@@ -49,7 +49,6 @@ class Plan2CPPTranslator:
 			cpp_file.write('\ttimer.Reset();\n')
 			for line in self._translate_build_plan(build_plan):
 				cpp_file.write('\t' * self.indent + line)
-			cpp_file.write('\ttimer.PrintElapsedTimeAndReset("Build");\n')
 			cpp_file.write('\n')
 
 			for line in self._translate_compiled_plan(build_plan, compiled_plan):
@@ -57,7 +56,7 @@ class Plan2CPPTranslator:
 			while self.indent > 1:
 				self.indent -= 1
 				cpp_file.write('\t' * self.indent + '}\n')
-			cpp_file.write('\ttimer.PrintElapsedTimeAndReset("Query");\n')
+			cpp_file.write('\tcout << timer.GetElapsedTime() << " ms" << endl;\n')
 			cpp_file.write('\n')
 
 			cpp_file.write(f'\tcout << {self.var_mng.res_var()}.size() << endl;\n')
@@ -338,20 +337,24 @@ class PlanParser:
 					child_build_plan, child_compiled_plan = node2plans[child]
 					fused_build_plan.extend(child_build_plan)
 
+					last_idx = -1
 					for child_attr in child_compiled_plan:
 						found = False
-						for idx, par_attr in enumerate(compiled_plan):
+						for idx, par_attr in enumerate(fused_compiled_plan):
 							intersect = set(par_attr).intersection(child_attr)
 							if intersect:
 								# TODO: the order might need to be different
 								for col in child_attr:
 									if col not in intersect:
 										fused_compiled_plan[idx].append(col)
+								last_idx = idx
 								found = True
 								break
 						if not found:
 							# TODO: the order might need to be different
-							fused_compiled_plan.append(child_attr)
+							fused_compiled_plan = fused_compiled_plan[:last_idx + 1] + \
+												  [child_attr] + \
+												  fused_compiled_plan[last_idx + 1:]
 				else:
 					fused_build_plan.append((child, join_cols, proj_cols))
 			node2plans[node] = (fused_build_plan, fused_compiled_plan)
@@ -371,8 +374,8 @@ class PlanParser:
 
 if __name__ == '__main__':
 	queries = []
-	for filename in sorted(os.listdir(os.path.join(os.path.dirname(__file__), "plans", "raw"))):
-		if int(filename[:-5]) <= 7:
+	for filename in os.listdir(os.path.join(os.path.dirname(__file__), "plans", "raw")):
+		if int(filename[:-5]) in [1, 2, 3, 4, 5, 11, 12, 13, 14]:
 			queries.append(filename[:-4])
 
 	translator = Plan2CPPTranslator()

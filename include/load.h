@@ -5,77 +5,6 @@
 
 using namespace std;
 
-vector<int> an_id;
-vector<int> an_person_id;
-vector<string> an_name;
-vector<string> an_imdb_index;
-vector<string> an_name_pcode_cf;
-vector<string> an_name_pcode_nf;
-vector<string> an_surname_pcode;
-vector<string> an_md5sum;
-
-void load_an(const string path) {
-	ifstream in(path);
-	if (!in)
-		 throw path;
-	string line;
-	string token;
-	while (getline(in, line)) {
-		stringstream ss(line);
-		getline(ss, token, '|');
-		try { an_id.push_back(stoi(token)); } catch (...) { an_id.push_back(-1); }
-		getline(ss, token, '|');
-		try { an_person_id.push_back(stoi(token)); } catch (...) { an_person_id.push_back(-1); }
-		getline(ss, token, '|');
-		an_name.push_back(token);
-		getline(ss, token, '|');
-		an_imdb_index.push_back(token);
-		getline(ss, token, '|');
-		an_name_pcode_cf.push_back(token);
-		getline(ss, token, '|');
-		an_name_pcode_nf.push_back(token);
-		getline(ss, token, '|');
-		an_surname_pcode.push_back(token);
-		getline(ss, token, '|');
-		an_md5sum.push_back(token);
-	}
-	in.close();
-}
-
-vector<int> ci_id;
-vector<int> ci_person_id;
-vector<int> ci_movie_id;
-vector<int> ci_person_role_id;
-vector<string> ci_note;
-vector<int> ci_nr_order;
-vector<int> ci_role_id;
-
-void load_ci(const string path) {
-	ifstream in(path);
-	if (!in)
-		 throw path;
-	string line;
-	string token;
-	while (getline(in, line)) {
-		stringstream ss(line);
-		getline(ss, token, '|');
-		try { ci_id.push_back(stoi(token)); } catch (...) { ci_id.push_back(-1); }
-		getline(ss, token, '|');
-		try { ci_person_id.push_back(stoi(token)); } catch (...) { ci_person_id.push_back(-1); }
-		getline(ss, token, '|');
-		try { ci_movie_id.push_back(stoi(token)); } catch (...) { ci_movie_id.push_back(-1); }
-		getline(ss, token, '|');
-		try { ci_person_role_id.push_back(stoi(token)); } catch (...) { ci_person_role_id.push_back(-1); }
-		getline(ss, token, '|');
-		ci_note.push_back(token);
-		getline(ss, token, '|');
-		try { ci_nr_order.push_back(stoi(token)); } catch (...) { ci_nr_order.push_back(-1); }
-		getline(ss, token, '|');
-		try { ci_role_id.push_back(stoi(token)); } catch (...) { ci_role_id.push_back(-1); }
-	}
-	in.close();
-}
-
 vector<int> cn_id;
 vector<string> cn_name;
 vector<string> cn_country_code;
@@ -148,6 +77,44 @@ void load_it(const string path) {
 	in.close();
 }
 
+vector<int> it1_id;
+vector<string> it1_info;
+
+void load_it1(const string path) {
+	ifstream in(path);
+	if (!in)
+		 throw path;
+	string line;
+	string token;
+	while (getline(in, line)) {
+		stringstream ss(line);
+		getline(ss, token, '|');
+		try { it1_id.push_back(stoi(token)); } catch (...) { it1_id.push_back(-1); }
+		getline(ss, token, '|');
+		it1_info.push_back(token);
+	}
+	in.close();
+}
+
+vector<int> it2_id;
+vector<string> it2_info;
+
+void load_it2(const string path) {
+	ifstream in(path);
+	if (!in)
+		 throw path;
+	string line;
+	string token;
+	while (getline(in, line)) {
+		stringstream ss(line);
+		getline(ss, token, '|');
+		try { it2_id.push_back(stoi(token)); } catch (...) { it2_id.push_back(-1); }
+		getline(ss, token, '|');
+		it2_info.push_back(token);
+	}
+	in.close();
+}
+
 vector<int> k_id;
 vector<string> k_keyword;
 vector<string> k_phonetic_code;
@@ -170,8 +137,27 @@ void load_k(const string path) {
 	in.close();
 }
 
+vector<int> kt_id;
+vector<string> kt_kind;
+
+void load_kt(const string path) {
+	ifstream in(path);
+	if (!in)
+		 throw path;
+	string line;
+	string token;
+	while (getline(in, line)) {
+		stringstream ss(line);
+		getline(ss, token, '|');
+		try { kt_id.push_back(stoi(token)); } catch (...) { kt_id.push_back(-1); }
+		getline(ss, token, '|');
+		kt_kind.push_back(token);
+	}
+	in.close();
+}
+
 vector<int> lt_id;
-vector<string> lt_name;
+vector<string> lt_link;
 
 void load_lt(const string path) {
 	ifstream in(path);
@@ -184,7 +170,7 @@ void load_lt(const string path) {
 		getline(ss, token, '|');
 		try { lt_id.push_back(stoi(token)); } catch (...) { lt_id.push_back(-1); }
 		getline(ss, token, '|');
-		lt_name.push_back(token);
+		lt_link.push_back(token);
 	}
 	in.close();
 }
@@ -273,6 +259,34 @@ void load_mi_idx(const string path) {
 	in.close();
 }
 
+vector<int> miidx_id;
+vector<int> miidx_movie_id;
+vector<int> miidx_info_type_id;
+vector<string> miidx_info;
+vector<string> miidx_note;
+
+void load_miidx(const string path) {
+	ifstream in(path);
+	if (!in)
+		 throw path;
+	string line;
+	string token;
+	while (getline(in, line)) {
+		stringstream ss(line);
+		getline(ss, token, '|');
+		try { miidx_id.push_back(stoi(token)); } catch (...) { miidx_id.push_back(-1); }
+		getline(ss, token, '|');
+		try { miidx_movie_id.push_back(stoi(token)); } catch (...) { miidx_movie_id.push_back(-1); }
+		getline(ss, token, '|');
+		try { miidx_info_type_id.push_back(stoi(token)); } catch (...) { miidx_info_type_id.push_back(-1); }
+		getline(ss, token, '|');
+		miidx_info.push_back(token);
+		getline(ss, token, '|');
+		miidx_note.push_back(token);
+	}
+	in.close();
+}
+
 vector<int> mk_id;
 vector<int> mk_movie_id;
 vector<int> mk_keyword_id;
@@ -316,74 +330,6 @@ void load_ml(const string path) {
 		try { ml_linked_movie_id.push_back(stoi(token)); } catch (...) { ml_linked_movie_id.push_back(-1); }
 		getline(ss, token, '|');
 		try { ml_link_type_id.push_back(stoi(token)); } catch (...) { ml_link_type_id.push_back(-1); }
-	}
-	in.close();
-}
-
-vector<int> n_id;
-vector<string> n_name;
-vector<string> n_imdb_index;
-vector<string> n_imdb_id;
-vector<string> n_gender;
-vector<string> n_name_pcode_cf;
-vector<string> n_name_pcode_nf;
-vector<string> n_surname_pcode;
-vector<string> n_md5sum;
-
-void load_n(const string path) {
-	ifstream in(path);
-	if (!in)
-		 throw path;
-	string line;
-	string token;
-	while (getline(in, line)) {
-		stringstream ss(line);
-		getline(ss, token, '|');
-		try { n_id.push_back(stoi(token)); } catch (...) { n_id.push_back(-1); }
-		getline(ss, token, '|');
-		n_name.push_back(token);
-		getline(ss, token, '|');
-		n_imdb_index.push_back(token);
-		getline(ss, token, '|');
-		n_imdb_id.push_back(token);
-		getline(ss, token, '|');
-		n_gender.push_back(token);
-		getline(ss, token, '|');
-		n_name_pcode_cf.push_back(token);
-		getline(ss, token, '|');
-		n_name_pcode_nf.push_back(token);
-		getline(ss, token, '|');
-		n_surname_pcode.push_back(token);
-		getline(ss, token, '|');
-		n_md5sum.push_back(token);
-	}
-	in.close();
-}
-
-vector<int> pi_id;
-vector<int> pi_person_id;
-vector<int> pi_info_type_id;
-vector<string> pi_info;
-vector<string> pi_note;
-
-void load_pi(const string path) {
-	ifstream in(path);
-	if (!in)
-		 throw path;
-	string line;
-	string token;
-	while (getline(in, line)) {
-		stringstream ss(line);
-		getline(ss, token, '|');
-		try { pi_id.push_back(stoi(token)); } catch (...) { pi_id.push_back(-1); }
-		getline(ss, token, '|');
-		try { pi_person_id.push_back(stoi(token)); } catch (...) { pi_person_id.push_back(-1); }
-		getline(ss, token, '|');
-		try { pi_info_type_id.push_back(stoi(token)); } catch (...) { pi_info_type_id.push_back(-1); }
-		getline(ss, token, '|');
-		pi_info.push_back(token);
-		getline(ss, token, '|');
-		pi_note.push_back(token);
 	}
 	in.close();
 }
