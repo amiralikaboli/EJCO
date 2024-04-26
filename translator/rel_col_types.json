@@ -115,6 +115,16 @@
     "surname_pcode": "string",
     "md5sum": "string"
   },
+  "a": {
+    "id": "int",
+    "person_id": "int",
+    "name": "string",
+    "imdb_index": "string",
+    "name_pcode_cf": "string",
+    "name_pcode_nf": "string",
+    "surname_pcode": "string",
+    "md5sum": "string"
+  },
   "rt": {
     "id": "int",
     "name": "string"

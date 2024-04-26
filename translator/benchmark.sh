@@ -2,6 +2,8 @@
 
 set -euo pipefail
 
+rm -rf generated/*
+
 python3 translator.py
 
 cd generated
