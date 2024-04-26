@@ -25,7 +25,6 @@ int main() {
 	build_trie(it_trie0, it_id);
 	auto ct_trie0 = phmap::flat_hash_map<int, vector<int>>();
 	build_trie(ct_trie0, ct_id);
-	timer.PrintElapsedTimeAndReset("Build");
 
 	vector<tuple<int, int, string, string, int>> res;
 	for (const auto &[x0, mc_trie1]: mc_trie0) {
@@ -55,7 +54,7 @@ int main() {
 			}
 		}
 	}
-	timer.PrintElapsedTimeAndReset("Query");
+	cout << timer.GetElapsedTime() << " ms" << endl;
 
 	cout << res.size() << endl;
 }
