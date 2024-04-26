@@ -142,7 +142,7 @@ class Plan2CPPTranslator:
 					res_attrs.append(self.var_mng.x_var(idx))
 					last_join_idx = idx
 			for col in cols[1]:
-				col_types.append(self.rel_col_types[rel][col])
+				col_types.append(self.rel_col_types[rel[:-1] if rel[-1].isdigit() else rel][col])
 				res_attrs.append(f"{self.var_mng.rel_col_var(rel, col)}[{self.var_mng.offset_var(rel)}]")
 		return col_types, res_attrs
 
@@ -375,7 +375,7 @@ class PlanParser:
 if __name__ == '__main__':
 	queries = []
 	for filename in os.listdir(os.path.join(os.path.dirname(__file__), "plans", "raw")):
-		if int(filename[:-5]) in [1, 2, 3, 4, 5, 11, 12, 13, 14]:
+		if int(filename[:-5]) in [1, 2, 3, 4, 5, 11, 12, 13, 14, 21, 32]:
 			queries.append(filename[:-4])
 
 	translator = Plan2CPPTranslator()
