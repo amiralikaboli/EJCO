@@ -46,20 +46,31 @@ class Plan2CPPTranslator:
 				cpp_file.write('\t' * self.indent + line)
 			cpp_file.write('\n')
 
-			cpp_file.write('\ttimer.Reset();\n')
+			cpp_file.write('\tfor (int z = 0; z < 1 + 5; ++z) {\n')
+			self.indent += 1
+			cpp_file.write('\t' * self.indent + 'timer.Reset();\n\n')
 			for line in self._translate_build_plan(build_plan):
 				cpp_file.write('\t' * self.indent + line)
+			cpp_file.write('\t' * self.indent + 'timer.StoreElapsedTime(0);\n')
 			cpp_file.write('\n')
 
 			for line in self._translate_compiled_plan(build_plan, compiled_plan):
 				cpp_file.write('\t' * self.indent + line)
-			while self.indent > 1:
+
+			while self.indent > 2:
 				self.indent -= 1
 				cpp_file.write('\t' * self.indent + '}\n')
-			cpp_file.write('\tcout << timer.GetElapsedTime() << " ms" << endl;\n')
+
+			cpp_file.write('\t' * self.indent + 'timer.StoreElapsedTime(1);\n')
+			cpp_file.write('\t' * self.indent + 'if (z == 0)\n')
+			cpp_file.write('\t' * (self.indent + 1) + f'cout << {self.var_mng.res_var()}.size() << endl;\n')
+			self.indent -= 1
+
+			cpp_file.write('\t}\n')
 			cpp_file.write('\n')
 
-			cpp_file.write(f'\tcout << {self.var_mng.res_var()}.size() << endl;\n')
+			cpp_file.write('\tcout << timer.GetMean(0) << " ms" << endl;\n')
+			cpp_file.write('\tcout << timer.GetMean(1) << " ms" << endl;\n')
 
 			cpp_file.write('}\n')
 
@@ -85,7 +96,7 @@ class Plan2CPPTranslator:
 			yield f"build_trie({self.var_mng.trie_var(rel_name)}, {', '.join([self.var_mng.rel_col_var(rel_name, join_col) for join_col in join_cols])});\n"
 
 	def _translate_compiled_plan(self, build_plan: List[Tuple], compiled_plan: List[List[str]]):
-		build_plan = self._add_join_idx_to_build_plan(build_plan, compiled_plan)
+		build_plan = self.parser.add_join_idx_to_build_plan(build_plan, compiled_plan)
 
 		col_types, res_attrs = self._find_res_types_and_attrs(build_plan)
 		yield f"vector<tuple<{', '.join(col_types)}>> {self.var_mng.res_var()};\n"
@@ -115,21 +126,6 @@ class Plan2CPPTranslator:
 			self.indent += 1
 
 		yield f"{self.var_mng.res_var()}.push_back({{{', '.join(res_attrs)}}});\n"
-
-	def _add_join_idx_to_build_plan(
-			self, build_plan: List[Tuple], compiled_plan: List[List[str]]
-	) -> Dict[str, Tuple[List[Tuple[str, int]], List[str]]]:
-		# rel -> ([(join_col, idx)], [proj_col])
-		build_plan = {
-			rel_name: ([(join_col, -1) for join_col in join_cols], proj_cols)
-			for rel_name, join_cols, proj_cols in build_plan
-		}
-		for idx, eq_cols in enumerate(compiled_plan):
-			for rel, col in eq_cols:
-				for i in range(len(build_plan[rel][0])):
-					if build_plan[rel][0][i][0] == col:
-						build_plan[rel][0][i] = (col, idx)
-		return build_plan
 
 	def _find_res_types_and_attrs(self, build_plan: Dict[str, Tuple[List[Tuple[str, int]], List[str]]]):
 		col_types = []
@@ -370,6 +366,21 @@ class PlanParser:
 						break
 
 		return final_fused_build_plan, final_fused_compiled_plan
+
+	def add_join_idx_to_build_plan(
+			self, build_plan: List[Tuple], compiled_plan: List[List[str]]
+	) -> Dict[str, Tuple[List[Tuple[str, int]], List[str]]]:
+		# rel -> ([(join_col, idx)], [proj_col])
+		build_plan = {
+			rel_name: ([(join_col, -1) for join_col in join_cols], proj_cols)
+			for rel_name, join_cols, proj_cols in build_plan
+		}
+		for idx, eq_cols in enumerate(compiled_plan):
+			for rel, col in eq_cols:
+				for i in range(len(build_plan[rel][0])):
+					if build_plan[rel][0][i][0] == col:
+						build_plan[rel][0][i] = (col, idx)
+		return build_plan
 
 
 if __name__ == '__main__':
