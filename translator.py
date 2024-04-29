@@ -1,5 +1,6 @@
 import json
 import os
+from collections import defaultdict
 from typing import List, Tuple, Dict
 
 from parser import PlanParser
@@ -82,25 +83,25 @@ class Plan2CPPTranslator:
 			cpp_file.write('}\n')
 
 	def _translate_loads(self, query: str, build_plan: List[Tuple]):
-		for rel_name, join_cols, proj_cols in build_plan:
-			self.loading_rels.add(rel_name)
-			path = os.path.join(preprocessed_data_path, query, f"{rel_name}.csv")
+		for rel, join_cols, proj_cols in build_plan:
+			self.loading_rels.add(rel)
+			path = os.path.join(preprocessed_data_path, query, f"{rel}.csv")
 			if not os.path.exists(path):
 				path = os.path.join(
-					raw_data_path, f"{self.rel_abbrs[rel_name[:-1] if rel_name[-1].isdigit() else rel_name]}.csv"
+					raw_data_path, f"{self.rel_abbrs[self.rel_wo_idx(rel)]}.csv"
 				)
-			yield f'load_{rel_name}("{os.path.normpath(path)}");\n'
+			yield f'load_{rel}("{os.path.normpath(path)}");\n'
 
 	def _translate_build_plan(self, build_plan: List[Tuple[str, List[str], List[str]]]):
-		for rel_name, join_cols, proj_cols in build_plan:
+		for rel, join_cols, proj_cols in build_plan:
 			level_types = tuple([
-				self.rel_col_types[rel_name[:-1] if rel_name[-1].isdigit() else rel_name][join_col]
+				self.rel_col_types[self.rel_wo_idx(rel)][join_col][0]
 				for join_col in join_cols
 			])
 			self.trie_types.add(level_types)
-			yield f"auto {self.var_mng.trie_var(rel_name)} = {self.var_mng.trie_type(level_types)}();\n"
+			yield f"auto {self.var_mng.trie_var(rel)} = {self.var_mng.trie_type(level_types)}();\n"
 
-			yield f"build_trie({self.var_mng.trie_var(rel_name)}, {', '.join([self.var_mng.rel_col_var(rel_name, join_col) for join_col in join_cols])});\n"
+			yield f"build_trie({self.var_mng.trie_var(rel)}, {', '.join([self.var_mng.rel_col_var(rel, join_col) for join_col in join_cols])});\n"
 
 	def _translate_compiled_plan(
 			self, build_plan: List[Tuple[str, List[str], List[str]]], compiled_plan: List[List[str]]
@@ -154,14 +155,17 @@ class Plan2CPPTranslator:
 	):
 		col_types = []
 		res_attrs = []
-		for rel, join_cols, _ in build_plan:
-			for col in join_cols:
-				if len(res_attrs) == join_attrs_order[rel][col]:
-					col_types.append(self.rel_col_types[rel[:-1] if rel[-1].isdigit() else rel][col])
-					res_attrs.append(self.var_mng.x_var(join_attrs_order[rel][col]))
+		rel_cols_per_order = defaultdict(list)
+		for rel, col_orders in join_attrs_order.items():
+			for col, order in col_orders.items():
+				rel_cols_per_order[order].append((rel, col))
+		for order, rel_cols in sorted(rel_cols_per_order.items()):
+			rel, col = rel_cols[0]
+			col_types.append(self.rel_col_types[self.rel_wo_idx(rel)][col][0])
+			res_attrs.append(self.var_mng.x_var(join_attrs_order[rel][col]))
 		for rel, _, proj_cols in build_plan:
 			for col in proj_cols:
-				col_types.append(self.rel_col_types[rel[:-1] if rel[-1].isdigit() else rel][col])
+				col_types.append(self.rel_col_types[self.rel_wo_idx(rel)][col][0])
 				res_attrs.append(f"{self.var_mng.rel_col_var(rel, col)}[{self.var_mng.offset_var(rel)}]")
 		return col_types, res_attrs
 
@@ -193,7 +197,8 @@ class Plan2CPPTranslator:
 
 			for rel in sorted(self.loading_rels):
 				cpp_file.write('\n')
-				for col_n, col_t in self.rel_col_types[rel[:-1] if rel[-1].isdigit() else rel].items():
+				for col_n, col_t_nnull in self.rel_col_types[self.rel_wo_idx(rel)].items():
+					col_t, _ = col_t_nnull
 					cpp_file.write(f"vector<{col_t}> {self.var_mng.rel_col_var(rel, col_n)};\n")
 				cpp_file.write("\n")
 				cpp_file.write(f"void load_{rel}(const string path) {{\n")
@@ -203,13 +208,17 @@ class Plan2CPPTranslator:
 				cpp_file.write(f"\tstring token;\n")
 				cpp_file.write(f"\twhile (getline(in, line)) {{\n")
 				cpp_file.write(f"\t\tstringstream ss(line);\n")
-				for col_n, col_t in self.rel_col_types[rel[:-1] if rel[-1].isdigit() else rel].items():
+				for col_n, col_t_nnull in self.rel_col_types[self.rel_wo_idx(rel)].items():
+					col_t, is_not_null = col_t_nnull
 					cpp_file.write(f"\t\tgetline(ss, token, '|');\n")
 					if col_t == "int":
-						cpp_file.write(
-							f"\t\ttry {{ {self.var_mng.rel_col_var(rel, col_n)}.push_back(stoi(token)); }} "
-							f"catch (...) {{ {self.var_mng.rel_col_var(rel, col_n)}.push_back(-1); }}\n"
-						)
+						if is_not_null:
+							cpp_file.write(f"\t\t{self.var_mng.rel_col_var(rel, col_n)}.push_back(stoi(token));\n")
+						else:
+							cpp_file.write(
+								f"\t\ttry {{ {self.var_mng.rel_col_var(rel, col_n)}.push_back(stoi(token)); }} "
+								f"catch (...) {{ {self.var_mng.rel_col_var(rel, col_n)}.push_back(-1); }}\n"
+							)
 					elif col_t == "string":
 						cpp_file.write(f"\t\t{self.var_mng.rel_col_var(rel, col_n)}.push_back(token);\n")
 					else:
@@ -217,6 +226,12 @@ class Plan2CPPTranslator:
 				cpp_file.write(f"\t}}\n")
 				cpp_file.write(f"\tin.close();\n")
 				cpp_file.write(f"}}\n")
+
+	@staticmethod
+	def rel_wo_idx(rel):
+		if rel[-1].isdigit():
+			return rel[:-1]
+		return rel
 
 
 if __name__ == '__main__':
