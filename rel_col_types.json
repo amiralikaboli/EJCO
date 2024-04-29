@@ -155,5 +155,15 @@
     "episode_nr": ["int", 0],
     "note": ["string", 0],
     "md5sum": ["string", 0]
+  },
+  "cc": {
+    "id": ["int", 1],
+    "movie_id": ["int", 0],
+    "subject_id": ["int", 1],
+    "status_id": ["int", 1]
+  },
+  "cct": {
+    "id": ["int", 1],
+    "kind": ["string", 1]
   }
 }

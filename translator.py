@@ -52,6 +52,7 @@ class Plan2CPPTranslator:
 
 			for line in self._translate_loads(query, build_plan):
 				cpp_file.write('\t' * self.indent + line)
+			cpp_file.write('\tcout << timer.GetElapsedTime() << " ms" << endl;\n')
 			cpp_file.write('\n')
 
 			cpp_file.write('\tfor (int z = 0; z < 1 + 5; ++z) {\n')

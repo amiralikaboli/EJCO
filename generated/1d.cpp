@@ -13,6 +13,7 @@ int main() {
 	load_mi_idx("/Users/s2522996/Documents/free-join/data/imdb_csv/movie_info_idx.csv");
 	load_it("/Users/s2522996/Documents/free-join/queries/preprocessed/join-order-benchmark/data/1d/it.csv");
 	load_ct("/Users/s2522996/Documents/free-join/queries/preprocessed/join-order-benchmark/data/1d/ct.csv");
+	cout << timer.GetElapsedTime() << " ms" << endl;
 
 	for (int z = 0; z < 1 + 5; ++z) {
 		timer.Reset();
@@ -30,22 +31,24 @@ int main() {
 		timer.StoreElapsedTime(0);
 
 		vector<tuple<int, int, int, string, string, int>> res;
-		for (const auto &[x0, mc_trie1]: mc_trie0) {
-			if (t_trie0.contains(x0) && mi_idx_trie0.contains(x0)) {
-				auto &t_trie1 = t_trie0.at(x0);
+		for (const auto &[x0, t_trie1]: t_trie0) {
+			if (mi_idx_trie0.contains(x0)) {
 				auto &mi_idx_trie1 = mi_idx_trie0.at(x0);
-				for (const auto &[x1, mi_idx_trie2]: mi_idx_trie1) {
-					if (it_trie0.contains(x1)) {
-						auto &it_trie1 = it_trie0.at(x1);
-						for (const auto &[x2, mc_trie2]: mc_trie1) {
-							if (ct_trie0.contains(x2)) {
-								auto &ct_trie1 = ct_trie0.at(x2);
-								for (const auto &mc_off: mc_trie2) {
-									for (const auto &t_off: t_trie1) {
-										for (const auto &mi_idx_off: mi_idx_trie2) {
-											for (const auto &it_off: it_trie1) {
-												for (const auto &ct_off: ct_trie1) {
-													res.push_back({x0, x1, x2, mc_note[mc_off], t_title[t_off], t_production_year[t_off]});
+				if (mc_trie0.contains(x0)) {
+					auto &mc_trie1 = mc_trie0.at(x0);
+					for (const auto &[x2, mi_idx_trie2]: mi_idx_trie1) {
+						if (it_trie0.contains(x2)) {
+							auto &it_trie1 = it_trie0.at(x2);
+							for (const auto &[x3, mc_trie2]: mc_trie1) {
+								if (ct_trie0.contains(x3)) {
+									auto &ct_trie1 = ct_trie0.at(x3);
+									for (const auto &mc_off: mc_trie2) {
+										for (const auto &t_off: t_trie1) {
+											for (const auto &mi_idx_off: mi_idx_trie2) {
+												for (const auto &it_off: it_trie1) {
+													for (const auto &ct_off: ct_trie1) {
+														res.push_back({x0, x2, x3, mc_note[mc_off], t_title[t_off], t_production_year[t_off]});
+													}
 												}
 											}
 										}

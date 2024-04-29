@@ -12,6 +12,7 @@ int main() {
 	load_mk("/Users/s2522996/Documents/free-join/data/imdb_csv/movie_keyword.csv");
 	load_t("/Users/s2522996/Documents/free-join/queries/preprocessed/join-order-benchmark/data/3a/t.csv");
 	load_k("/Users/s2522996/Documents/free-join/queries/preprocessed/join-order-benchmark/data/3a/k.csv");
+	cout << timer.GetElapsedTime() << " ms" << endl;
 
 	for (int z = 0; z < 1 + 5; ++z) {
 		timer.Reset();
@@ -27,18 +28,20 @@ int main() {
 		timer.StoreElapsedTime(0);
 
 		vector<tuple<int, int, string>> res;
-		for (const auto &[x0, mi_trie1]: mi_trie0) {
-			if (t_trie0.contains(x0) && mk_trie0.contains(x0)) {
+		for (const auto &[x0, mk_trie1]: mk_trie0) {
+			if (t_trie0.contains(x0)) {
 				auto &t_trie1 = t_trie0.at(x0);
-				auto &mk_trie1 = mk_trie0.at(x0);
-				for (const auto &[x1, mk_trie2]: mk_trie1) {
-					if (k_trie0.contains(x1)) {
-						auto &k_trie1 = k_trie0.at(x1);
-						for (const auto &mi_off: mi_trie1) {
-							for (const auto &mk_off: mk_trie2) {
-								for (const auto &t_off: t_trie1) {
-									for (const auto &k_off: k_trie1) {
-										res.push_back({x0, x1, t_title[t_off]});
+				if (mi_trie0.contains(x0)) {
+					auto &mi_trie1 = mi_trie0.at(x0);
+					for (const auto &[x2, mk_trie2]: mk_trie1) {
+						if (k_trie0.contains(x2)) {
+							auto &k_trie1 = k_trie0.at(x2);
+							for (const auto &mi_off: mi_trie1) {
+								for (const auto &mk_off: mk_trie2) {
+									for (const auto &t_off: t_trie1) {
+										for (const auto &k_off: k_trie1) {
+											res.push_back({x0, x2, t_title[t_off]});
+										}
 									}
 								}
 							}

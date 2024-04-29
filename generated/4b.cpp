@@ -13,6 +13,7 @@ int main() {
 	load_mi_idx("/Users/s2522996/Documents/free-join/queries/preprocessed/join-order-benchmark/data/4b/mi_idx.csv");
 	load_k("/Users/s2522996/Documents/free-join/queries/preprocessed/join-order-benchmark/data/4b/k.csv");
 	load_it("/Users/s2522996/Documents/free-join/queries/preprocessed/join-order-benchmark/data/4b/it.csv");
+	cout << timer.GetElapsedTime() << " ms" << endl;
 
 	for (int z = 0; z < 1 + 5; ++z) {
 		timer.Reset();

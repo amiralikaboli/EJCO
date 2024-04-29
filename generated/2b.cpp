@@ -13,6 +13,7 @@ int main() {
 	load_mc("/Users/s2522996/Documents/free-join/data/imdb_csv/movie_companies.csv");
 	load_k("/Users/s2522996/Documents/free-join/queries/preprocessed/join-order-benchmark/data/2b/k.csv");
 	load_cn("/Users/s2522996/Documents/free-join/queries/preprocessed/join-order-benchmark/data/2b/cn.csv");
+	cout << timer.GetElapsedTime() << " ms" << endl;
 
 	for (int z = 0; z < 1 + 5; ++z) {
 		timer.Reset();
