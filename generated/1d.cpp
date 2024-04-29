@@ -29,7 +29,7 @@ int main() {
 		build_trie(ct_trie0, ct_id);
 		timer.StoreElapsedTime(0);
 
-		vector<tuple<int, int, string, string, int>> res;
+		vector<tuple<int, int, int, string, string, int>> res;
 		for (const auto &[x0, mc_trie1]: mc_trie0) {
 			if (t_trie0.contains(x0) && mi_idx_trie0.contains(x0)) {
 				auto &t_trie1 = t_trie0.at(x0);
@@ -45,7 +45,7 @@ int main() {
 										for (const auto &mi_idx_off: mi_idx_trie2) {
 											for (const auto &it_off: it_trie1) {
 												for (const auto &ct_off: ct_trie1) {
-													res.push_back({x0, x2, mc_note[mc_off], t_title[t_off], t_production_year[t_off]});
+													res.push_back({x0, x1, x2, mc_note[mc_off], t_title[t_off], t_production_year[t_off]});
 												}
 											}
 										}

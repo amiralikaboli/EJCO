@@ -5,6 +5,55 @@
 
 using namespace std;
 
+vector<int> at_id;
+vector<int> at_movie_id;
+vector<string> at_title;
+vector<string> at_imdb_index;
+vector<int> at_kind_id;
+vector<int> at_production_year;
+vector<string> at_phonetic_code;
+vector<int> at_episode_of_id;
+vector<int> at_season_nr;
+vector<int> at_episode_nr;
+vector<string> at_note;
+vector<string> at_md5sum;
+
+void load_at(const string path) {
+	ifstream in(path);
+	if (!in)
+		 throw path;
+	string line;
+	string token;
+	while (getline(in, line)) {
+		stringstream ss(line);
+		getline(ss, token, '|');
+		try { at_id.push_back(stoi(token)); } catch (...) { at_id.push_back(-1); }
+		getline(ss, token, '|');
+		try { at_movie_id.push_back(stoi(token)); } catch (...) { at_movie_id.push_back(-1); }
+		getline(ss, token, '|');
+		at_title.push_back(token);
+		getline(ss, token, '|');
+		at_imdb_index.push_back(token);
+		getline(ss, token, '|');
+		try { at_kind_id.push_back(stoi(token)); } catch (...) { at_kind_id.push_back(-1); }
+		getline(ss, token, '|');
+		try { at_production_year.push_back(stoi(token)); } catch (...) { at_production_year.push_back(-1); }
+		getline(ss, token, '|');
+		at_phonetic_code.push_back(token);
+		getline(ss, token, '|');
+		try { at_episode_of_id.push_back(stoi(token)); } catch (...) { at_episode_of_id.push_back(-1); }
+		getline(ss, token, '|');
+		try { at_season_nr.push_back(stoi(token)); } catch (...) { at_season_nr.push_back(-1); }
+		getline(ss, token, '|');
+		try { at_episode_nr.push_back(stoi(token)); } catch (...) { at_episode_nr.push_back(-1); }
+		getline(ss, token, '|');
+		at_note.push_back(token);
+		getline(ss, token, '|');
+		at_md5sum.push_back(token);
+	}
+	in.close();
+}
+
 vector<int> cn_id;
 vector<string> cn_name;
 vector<string> cn_country_code;
@@ -379,6 +428,104 @@ void load_t(const string path) {
 		t_series_years.push_back(token);
 		getline(ss, token, '|');
 		t_md5sum.push_back(token);
+	}
+	in.close();
+}
+
+vector<int> t1_id;
+vector<string> t1_title;
+vector<string> t1_imdb_index;
+vector<int> t1_kind_id;
+vector<int> t1_production_year;
+vector<string> t1_imdb_id;
+vector<string> t1_phonetic_code;
+vector<int> t1_episode_of_id;
+vector<int> t1_season_nr;
+vector<int> t1_episode_nr;
+vector<string> t1_series_years;
+vector<string> t1_md5sum;
+
+void load_t1(const string path) {
+	ifstream in(path);
+	if (!in)
+		 throw path;
+	string line;
+	string token;
+	while (getline(in, line)) {
+		stringstream ss(line);
+		getline(ss, token, '|');
+		try { t1_id.push_back(stoi(token)); } catch (...) { t1_id.push_back(-1); }
+		getline(ss, token, '|');
+		t1_title.push_back(token);
+		getline(ss, token, '|');
+		t1_imdb_index.push_back(token);
+		getline(ss, token, '|');
+		try { t1_kind_id.push_back(stoi(token)); } catch (...) { t1_kind_id.push_back(-1); }
+		getline(ss, token, '|');
+		try { t1_production_year.push_back(stoi(token)); } catch (...) { t1_production_year.push_back(-1); }
+		getline(ss, token, '|');
+		t1_imdb_id.push_back(token);
+		getline(ss, token, '|');
+		t1_phonetic_code.push_back(token);
+		getline(ss, token, '|');
+		try { t1_episode_of_id.push_back(stoi(token)); } catch (...) { t1_episode_of_id.push_back(-1); }
+		getline(ss, token, '|');
+		try { t1_season_nr.push_back(stoi(token)); } catch (...) { t1_season_nr.push_back(-1); }
+		getline(ss, token, '|');
+		try { t1_episode_nr.push_back(stoi(token)); } catch (...) { t1_episode_nr.push_back(-1); }
+		getline(ss, token, '|');
+		t1_series_years.push_back(token);
+		getline(ss, token, '|');
+		t1_md5sum.push_back(token);
+	}
+	in.close();
+}
+
+vector<int> t2_id;
+vector<string> t2_title;
+vector<string> t2_imdb_index;
+vector<int> t2_kind_id;
+vector<int> t2_production_year;
+vector<string> t2_imdb_id;
+vector<string> t2_phonetic_code;
+vector<int> t2_episode_of_id;
+vector<int> t2_season_nr;
+vector<int> t2_episode_nr;
+vector<string> t2_series_years;
+vector<string> t2_md5sum;
+
+void load_t2(const string path) {
+	ifstream in(path);
+	if (!in)
+		 throw path;
+	string line;
+	string token;
+	while (getline(in, line)) {
+		stringstream ss(line);
+		getline(ss, token, '|');
+		try { t2_id.push_back(stoi(token)); } catch (...) { t2_id.push_back(-1); }
+		getline(ss, token, '|');
+		t2_title.push_back(token);
+		getline(ss, token, '|');
+		t2_imdb_index.push_back(token);
+		getline(ss, token, '|');
+		try { t2_kind_id.push_back(stoi(token)); } catch (...) { t2_kind_id.push_back(-1); }
+		getline(ss, token, '|');
+		try { t2_production_year.push_back(stoi(token)); } catch (...) { t2_production_year.push_back(-1); }
+		getline(ss, token, '|');
+		t2_imdb_id.push_back(token);
+		getline(ss, token, '|');
+		t2_phonetic_code.push_back(token);
+		getline(ss, token, '|');
+		try { t2_episode_of_id.push_back(stoi(token)); } catch (...) { t2_episode_of_id.push_back(-1); }
+		getline(ss, token, '|');
+		try { t2_season_nr.push_back(stoi(token)); } catch (...) { t2_season_nr.push_back(-1); }
+		getline(ss, token, '|');
+		try { t2_episode_nr.push_back(stoi(token)); } catch (...) { t2_episode_nr.push_back(-1); }
+		getline(ss, token, '|');
+		t2_series_years.push_back(token);
+		getline(ss, token, '|');
+		t2_md5sum.push_back(token);
 	}
 	in.close();
 }

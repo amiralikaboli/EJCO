@@ -23,11 +23,16 @@ class Plan2CPPTranslator:
 		self.loading_rels = set()
 
 		self.var_mng = VariableManager()
+		self.resolved_attrs = set()
 		self.indent = 1
+
+	def _clear_per_query(self):
+		self.var_mng = VariableManager()
+		self.resolved_attrs = set()
 
 	def translate(self, queries: List[str]):
 		for query in queries:
-			self.var_mng = VariableManager()
+			self._clear_per_query()
 			self._translate(query)
 
 		self._translate_includes()
@@ -37,9 +42,9 @@ class Plan2CPPTranslator:
 
 		with open(f"generated/{query}.cpp", 'w') as cpp_file:
 			cpp_file.write("#include <iostream>\n")
-			cpp_file.write('#include "../../include/load.h"\n')
-			cpp_file.write('#include "../../include/build.h"\n')
-			cpp_file.write('#include "../../include/high_precision_timer.h"\n\n')
+			cpp_file.write('#include "../include/load.h"\n')
+			cpp_file.write('#include "../include/build.h"\n')
+			cpp_file.write('#include "../include/high_precision_timer.h"\n\n')
 			cpp_file.write('using namespace std;\n\n')
 			cpp_file.write('int main() {\n')
 			cpp_file.write('\tHighPrecisionTimer timer;\n\n')
@@ -86,7 +91,7 @@ class Plan2CPPTranslator:
 				)
 			yield f'load_{rel_name}("{os.path.normpath(path)}");\n'
 
-	def _translate_build_plan(self, build_plan: List[Tuple]):
+	def _translate_build_plan(self, build_plan: List[Tuple[str, List[str], List[str]]]):
 		for rel_name, join_cols, proj_cols in build_plan:
 			level_types = tuple([
 				self.rel_col_types[rel_name[:-1] if rel_name[-1].isdigit() else rel_name][join_col]
@@ -97,49 +102,65 @@ class Plan2CPPTranslator:
 
 			yield f"build_trie({self.var_mng.trie_var(rel_name)}, {', '.join([self.var_mng.rel_col_var(rel_name, join_col) for join_col in join_cols])});\n"
 
-	def _translate_compiled_plan(self, build_plan: List[Tuple], compiled_plan: List[List[str]]):
-		build_plan = self.parser.add_join_idx_to_build_plan(build_plan, compiled_plan)
+	def _translate_compiled_plan(
+			self, build_plan: List[Tuple[str, List[str], List[str]]], compiled_plan: List[List[str]]
+	):
+		join_attrs_order = self.parser.find_join_attrs_order(build_plan, compiled_plan)
 
-		col_types, res_attrs = self._find_res_types_and_attrs(build_plan)
+		col_types, res_attrs = self._find_res_types_and_attrs(build_plan, join_attrs_order)
 		yield f"vector<tuple<{', '.join(col_types)}>> {self.var_mng.res_var()};\n"
 
 		for idx, eq_cols in enumerate(compiled_plan):
-			rel_it = eq_cols[0][0]
-			yield f"for (const auto &[{self.var_mng.x_var(idx)}, {self.var_mng.next_trie_var(rel_it)}]: {self.var_mng.trie_var(rel_it)}) {{\n"
-			self.var_mng.next_trie_var(rel_it, inplace=True)
-			self.indent += 1
+			rel_0, col_0 = eq_cols[0]
+			if join_attrs_order[rel_0][col_0] == idx:
+				yield f"for (const auto &[{self.var_mng.x_var(idx)}, {self.var_mng.next_trie_var(rel_0)}]: {self.var_mng.trie_var(rel_0)}) {{\n"
+				self.var_mng.next_trie_var(rel_0, inplace=True)
+				self.indent += 1
+				self.resolved_attrs.add(eq_cols[0])
+				start_offset = 1
+			else:
+				start_offset = 0
 
 			conditions = []
 			assignments = []
-			for rel, _ in eq_cols[1:]:
-				conditions.append(f"{self.var_mng.trie_var(rel)}.contains({self.var_mng.x_var(idx)})")
+			for rel_col in eq_cols[start_offset:]:
+				if rel_col in self.resolved_attrs:
+					continue
+
+				rel, col = rel_col
+				conditions.append(
+					f"{self.var_mng.trie_var(rel)}.contains({self.var_mng.x_var(join_attrs_order[rel][col])})"
+				)
 				assignments.append(
-					f"auto &{self.var_mng.next_trie_var(rel)} = {self.var_mng.trie_var(rel)}.at({self.var_mng.x_var(idx)});\n"
+					f"auto &{self.var_mng.next_trie_var(rel)} = "
+					f"{self.var_mng.trie_var(rel)}.at({self.var_mng.x_var(join_attrs_order[rel][col])});\n"
 				)
 				self.var_mng.next_trie_var(rel, inplace=True)
+				self.resolved_attrs.add(rel_col)
 
 			yield f"if ({' && '.join(conditions)}) {{\n"
 			self.indent += 1
 			for assignment in assignments:
 				yield assignment
 
-		for rel, _ in build_plan.items():
+		for rel, _, _ in build_plan:
 			yield f"for (const auto &{self.var_mng.offset_var(rel)}: {self.var_mng.trie_var(rel)}) {{\n"
 			self.indent += 1
 
 		yield f"{self.var_mng.res_var()}.push_back({{{', '.join(res_attrs)}}});\n"
 
-	def _find_res_types_and_attrs(self, build_plan: Dict[str, Tuple[List[Tuple[str, int]], List[str]]]):
+	def _find_res_types_and_attrs(
+			self, build_plan: List[Tuple[str, List[str], List[str]]], join_attrs_order: Dict[str, Dict[str, int]]
+	):
 		col_types = []
 		res_attrs = []
-		last_join_idx = -1
-		for rel, cols in build_plan.items():
-			for col, idx in cols[0]:
-				if last_join_idx < idx:
-					col_types.append(self.rel_col_types[rel][col])
-					res_attrs.append(self.var_mng.x_var(idx))
-					last_join_idx = idx
-			for col in cols[1]:
+		for rel, join_cols, _ in build_plan:
+			for col in join_cols:
+				if len(res_attrs) == join_attrs_order[rel][col]:
+					col_types.append(self.rel_col_types[rel[:-1] if rel[-1].isdigit() else rel][col])
+					res_attrs.append(self.var_mng.x_var(join_attrs_order[rel][col]))
+		for rel, _, proj_cols in build_plan:
+			for col in proj_cols:
 				col_types.append(self.rel_col_types[rel[:-1] if rel[-1].isdigit() else rel][col])
 				res_attrs.append(f"{self.var_mng.rel_col_var(rel, col)}[{self.var_mng.offset_var(rel)}]")
 		return col_types, res_attrs
@@ -201,7 +222,7 @@ class Plan2CPPTranslator:
 if __name__ == '__main__':
 	queries = []
 	for filename in os.listdir(os.path.join(os.path.dirname(__file__), "plans", "raw")):
-		if int(filename[:-5]) in [1, 2, 3, 4, 5, 11, 12, 13, 14, 21, 32]:
+		if int(filename[:-5]) in [1, 2, 3, 4, 5, 11, 12, 13, 14, 15, 21, 32]:
 			queries.append(filename[:-4])
 
 	translator = Plan2CPPTranslator()

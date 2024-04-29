@@ -32,7 +32,7 @@ int main() {
 		build_trie(k_trie0, k_id);
 		timer.StoreElapsedTime(0);
 
-		vector<tuple<int, int, string, string, string>> res;
+		vector<tuple<int, int, int, int, string, string, string>> res;
 		for (const auto &[x0, mk_trie1]: mk_trie0) {
 			if (ml_trie0.contains(x0) && t1_trie0.contains(x0)) {
 				auto &ml_trie1 = ml_trie0.at(x0);
@@ -52,7 +52,7 @@ int main() {
 													for (const auto &t2_off: t2_trie1) {
 														for (const auto &lt_off: lt_trie1) {
 															for (const auto &k_off: k_trie1) {
-																res.push_back({x0, x3, t1_title[t1_off], t2_title[t2_off], lt_link[lt_off]});
+																res.push_back({x0, x1, x2, x3, t1_title[t1_off], t2_title[t2_off], lt_link[lt_off]});
 															}
 														}
 													}

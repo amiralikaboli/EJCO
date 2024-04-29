@@ -12,3 +12,5 @@ for cpp_file in *.cpp; do
     g++ $cpp_file -O3 -std=c++17 && ./a.out
     echo "--------------------"
 done | tee ../results.txt
+
+cd ../../free-join && rm -rf gj/gj.json && make gj/gj.json > /dev/null

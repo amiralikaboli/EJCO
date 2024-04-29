@@ -1,3 +1,4 @@
+import math
 import os
 from typing import List, Tuple, Dict
 import re
@@ -142,17 +143,15 @@ class PlanParser:
 
 		return final_fused_build_plan, final_fused_compiled_plan
 
-	def add_join_attrs_order_to_build_plan(
-			self, build_plan: List[Tuple], compiled_plan: List[List[str]]
-	) -> Dict[str, Tuple[List[Tuple[str, int]], List[str]]]:
-		# rel -> ([(join_col, idx)], [proj_col])
-		build_plan = {
-			rel_name: ([(join_col, -1) for join_col in join_cols], proj_cols)
-			for rel_name, join_cols, proj_cols in build_plan
+	def find_join_attrs_order(
+			self, build_plan: List[Tuple[str, List[str], List[str]]], compiled_plan: List[List[str]]
+	) -> Dict[str, Dict[str, int]]:  # rel -> col -> idx
+		join_attrs_order = {
+			rel: {col: math.inf for col in join_cols}
+			for rel, join_cols, _ in build_plan
 		}
 		for idx, eq_cols in enumerate(compiled_plan):
+			min_idx = min(idx, *[join_attrs_order[rel][col] for rel, col in eq_cols])
 			for rel, col in eq_cols:
-				for i in range(len(build_plan[rel][0])):
-					if build_plan[rel][0][i][0] == col:
-						build_plan[rel][0][i] = (col, idx)
-		return build_plan
+				join_attrs_order[rel][col] = min_idx
+		return join_attrs_order
