@@ -33,3 +33,6 @@ class VariableManager:
 
 	def res_var(self):
 		return "res"
+
+	def attr_var(self, idx: int):
+		return f"attr{idx}"
