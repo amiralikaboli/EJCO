@@ -27,29 +27,10 @@ void load_at(const string path) {
 	while (getline(in, line)) {
 		stringstream ss(line);
 		getline(ss, token, '|');
-		try { at_id.push_back(stoi(token)); } catch (...) { at_id.push_back(-1); }
 		getline(ss, token, '|');
-		try { at_movie_id.push_back(stoi(token)); } catch (...) { at_movie_id.push_back(-1); }
+		at_movie_id.push_back(stoi(token));
 		getline(ss, token, '|');
 		at_title.push_back(token);
-		getline(ss, token, '|');
-		at_imdb_index.push_back(token);
-		getline(ss, token, '|');
-		try { at_kind_id.push_back(stoi(token)); } catch (...) { at_kind_id.push_back(-1); }
-		getline(ss, token, '|');
-		try { at_production_year.push_back(stoi(token)); } catch (...) { at_production_year.push_back(-1); }
-		getline(ss, token, '|');
-		at_phonetic_code.push_back(token);
-		getline(ss, token, '|');
-		try { at_episode_of_id.push_back(stoi(token)); } catch (...) { at_episode_of_id.push_back(-1); }
-		getline(ss, token, '|');
-		try { at_season_nr.push_back(stoi(token)); } catch (...) { at_season_nr.push_back(-1); }
-		getline(ss, token, '|');
-		try { at_episode_nr.push_back(stoi(token)); } catch (...) { at_episode_nr.push_back(-1); }
-		getline(ss, token, '|');
-		at_note.push_back(token);
-		getline(ss, token, '|');
-		at_md5sum.push_back(token);
 	}
 	in.close();
 }
@@ -71,19 +52,9 @@ void load_cn(const string path) {
 	while (getline(in, line)) {
 		stringstream ss(line);
 		getline(ss, token, '|');
-		try { cn_id.push_back(stoi(token)); } catch (...) { cn_id.push_back(-1); }
+		cn_id.push_back(stoi(token));
 		getline(ss, token, '|');
 		cn_name.push_back(token);
-		getline(ss, token, '|');
-		cn_country_code.push_back(token);
-		getline(ss, token, '|');
-		cn_imdb_id.push_back(token);
-		getline(ss, token, '|');
-		cn_name_pcode_nf.push_back(token);
-		getline(ss, token, '|');
-		cn_name_pcode_sf.push_back(token);
-		getline(ss, token, '|');
-		cn_md5sum.push_back(token);
 	}
 	in.close();
 }
@@ -100,9 +71,7 @@ void load_ct(const string path) {
 	while (getline(in, line)) {
 		stringstream ss(line);
 		getline(ss, token, '|');
-		try { ct_id.push_back(stoi(token)); } catch (...) { ct_id.push_back(-1); }
-		getline(ss, token, '|');
-		ct_kind.push_back(token);
+		ct_id.push_back(stoi(token));
 	}
 	in.close();
 }
@@ -119,9 +88,7 @@ void load_it(const string path) {
 	while (getline(in, line)) {
 		stringstream ss(line);
 		getline(ss, token, '|');
-		try { it_id.push_back(stoi(token)); } catch (...) { it_id.push_back(-1); }
-		getline(ss, token, '|');
-		it_info.push_back(token);
+		it_id.push_back(stoi(token));
 	}
 	in.close();
 }
@@ -138,9 +105,7 @@ void load_it1(const string path) {
 	while (getline(in, line)) {
 		stringstream ss(line);
 		getline(ss, token, '|');
-		try { it1_id.push_back(stoi(token)); } catch (...) { it1_id.push_back(-1); }
-		getline(ss, token, '|');
-		it1_info.push_back(token);
+		it1_id.push_back(stoi(token));
 	}
 	in.close();
 }
@@ -157,9 +122,7 @@ void load_it2(const string path) {
 	while (getline(in, line)) {
 		stringstream ss(line);
 		getline(ss, token, '|');
-		try { it2_id.push_back(stoi(token)); } catch (...) { it2_id.push_back(-1); }
-		getline(ss, token, '|');
-		it2_info.push_back(token);
+		it2_id.push_back(stoi(token));
 	}
 	in.close();
 }
@@ -177,11 +140,7 @@ void load_k(const string path) {
 	while (getline(in, line)) {
 		stringstream ss(line);
 		getline(ss, token, '|');
-		try { k_id.push_back(stoi(token)); } catch (...) { k_id.push_back(-1); }
-		getline(ss, token, '|');
-		k_keyword.push_back(token);
-		getline(ss, token, '|');
-		k_phonetic_code.push_back(token);
+		k_id.push_back(stoi(token));
 	}
 	in.close();
 }
@@ -198,9 +157,7 @@ void load_kt(const string path) {
 	while (getline(in, line)) {
 		stringstream ss(line);
 		getline(ss, token, '|');
-		try { kt_id.push_back(stoi(token)); } catch (...) { kt_id.push_back(-1); }
-		getline(ss, token, '|');
-		kt_kind.push_back(token);
+		kt_id.push_back(stoi(token));
 	}
 	in.close();
 }
@@ -217,7 +174,7 @@ void load_lt(const string path) {
 	while (getline(in, line)) {
 		stringstream ss(line);
 		getline(ss, token, '|');
-		try { lt_id.push_back(stoi(token)); } catch (...) { lt_id.push_back(-1); }
+		lt_id.push_back(stoi(token));
 		getline(ss, token, '|');
 		lt_link.push_back(token);
 	}
@@ -239,13 +196,12 @@ void load_mc(const string path) {
 	while (getline(in, line)) {
 		stringstream ss(line);
 		getline(ss, token, '|');
-		try { mc_id.push_back(stoi(token)); } catch (...) { mc_id.push_back(-1); }
 		getline(ss, token, '|');
-		try { mc_movie_id.push_back(stoi(token)); } catch (...) { mc_movie_id.push_back(-1); }
+		mc_movie_id.push_back(stoi(token));
 		getline(ss, token, '|');
-		try { mc_company_id.push_back(stoi(token)); } catch (...) { mc_company_id.push_back(-1); }
+		mc_company_id.push_back(stoi(token));
 		getline(ss, token, '|');
-		try { mc_company_type_id.push_back(stoi(token)); } catch (...) { mc_company_type_id.push_back(-1); }
+		mc_company_type_id.push_back(stoi(token));
 		getline(ss, token, '|');
 		mc_note.push_back(token);
 	}
@@ -267,15 +223,12 @@ void load_mi(const string path) {
 	while (getline(in, line)) {
 		stringstream ss(line);
 		getline(ss, token, '|');
-		try { mi_id.push_back(stoi(token)); } catch (...) { mi_id.push_back(-1); }
 		getline(ss, token, '|');
-		try { mi_movie_id.push_back(stoi(token)); } catch (...) { mi_movie_id.push_back(-1); }
+		mi_movie_id.push_back(stoi(token));
 		getline(ss, token, '|');
-		try { mi_info_type_id.push_back(stoi(token)); } catch (...) { mi_info_type_id.push_back(-1); }
+		mi_info_type_id.push_back(stoi(token));
 		getline(ss, token, '|');
 		mi_info.push_back(token);
-		getline(ss, token, '|');
-		mi_note.push_back(token);
 	}
 	in.close();
 }
@@ -295,15 +248,12 @@ void load_mi_idx(const string path) {
 	while (getline(in, line)) {
 		stringstream ss(line);
 		getline(ss, token, '|');
-		try { mi_idx_id.push_back(stoi(token)); } catch (...) { mi_idx_id.push_back(-1); }
 		getline(ss, token, '|');
-		try { mi_idx_movie_id.push_back(stoi(token)); } catch (...) { mi_idx_movie_id.push_back(-1); }
+		mi_idx_movie_id.push_back(stoi(token));
 		getline(ss, token, '|');
-		try { mi_idx_info_type_id.push_back(stoi(token)); } catch (...) { mi_idx_info_type_id.push_back(-1); }
+		mi_idx_info_type_id.push_back(stoi(token));
 		getline(ss, token, '|');
 		mi_idx_info.push_back(token);
-		getline(ss, token, '|');
-		mi_idx_note.push_back(token);
 	}
 	in.close();
 }
@@ -323,15 +273,12 @@ void load_miidx(const string path) {
 	while (getline(in, line)) {
 		stringstream ss(line);
 		getline(ss, token, '|');
-		try { miidx_id.push_back(stoi(token)); } catch (...) { miidx_id.push_back(-1); }
 		getline(ss, token, '|');
-		try { miidx_movie_id.push_back(stoi(token)); } catch (...) { miidx_movie_id.push_back(-1); }
+		miidx_movie_id.push_back(stoi(token));
 		getline(ss, token, '|');
-		try { miidx_info_type_id.push_back(stoi(token)); } catch (...) { miidx_info_type_id.push_back(-1); }
+		miidx_info_type_id.push_back(stoi(token));
 		getline(ss, token, '|');
 		miidx_info.push_back(token);
-		getline(ss, token, '|');
-		miidx_note.push_back(token);
 	}
 	in.close();
 }
@@ -349,11 +296,10 @@ void load_mk(const string path) {
 	while (getline(in, line)) {
 		stringstream ss(line);
 		getline(ss, token, '|');
-		try { mk_id.push_back(stoi(token)); } catch (...) { mk_id.push_back(-1); }
 		getline(ss, token, '|');
-		try { mk_movie_id.push_back(stoi(token)); } catch (...) { mk_movie_id.push_back(-1); }
+		mk_movie_id.push_back(stoi(token));
 		getline(ss, token, '|');
-		try { mk_keyword_id.push_back(stoi(token)); } catch (...) { mk_keyword_id.push_back(-1); }
+		mk_keyword_id.push_back(stoi(token));
 	}
 	in.close();
 }
@@ -372,13 +318,12 @@ void load_ml(const string path) {
 	while (getline(in, line)) {
 		stringstream ss(line);
 		getline(ss, token, '|');
-		try { ml_id.push_back(stoi(token)); } catch (...) { ml_id.push_back(-1); }
 		getline(ss, token, '|');
-		try { ml_movie_id.push_back(stoi(token)); } catch (...) { ml_movie_id.push_back(-1); }
+		ml_movie_id.push_back(stoi(token));
 		getline(ss, token, '|');
-		try { ml_linked_movie_id.push_back(stoi(token)); } catch (...) { ml_linked_movie_id.push_back(-1); }
+		ml_linked_movie_id.push_back(stoi(token));
 		getline(ss, token, '|');
-		try { ml_link_type_id.push_back(stoi(token)); } catch (...) { ml_link_type_id.push_back(-1); }
+		ml_link_type_id.push_back(stoi(token));
 	}
 	in.close();
 }
@@ -405,29 +350,14 @@ void load_t(const string path) {
 	while (getline(in, line)) {
 		stringstream ss(line);
 		getline(ss, token, '|');
-		try { t_id.push_back(stoi(token)); } catch (...) { t_id.push_back(-1); }
+		t_id.push_back(stoi(token));
 		getline(ss, token, '|');
 		t_title.push_back(token);
 		getline(ss, token, '|');
-		t_imdb_index.push_back(token);
 		getline(ss, token, '|');
-		try { t_kind_id.push_back(stoi(token)); } catch (...) { t_kind_id.push_back(-1); }
+		t_kind_id.push_back(stoi(token));
 		getline(ss, token, '|');
 		try { t_production_year.push_back(stoi(token)); } catch (...) { t_production_year.push_back(-1); }
-		getline(ss, token, '|');
-		t_imdb_id.push_back(token);
-		getline(ss, token, '|');
-		t_phonetic_code.push_back(token);
-		getline(ss, token, '|');
-		try { t_episode_of_id.push_back(stoi(token)); } catch (...) { t_episode_of_id.push_back(-1); }
-		getline(ss, token, '|');
-		try { t_season_nr.push_back(stoi(token)); } catch (...) { t_season_nr.push_back(-1); }
-		getline(ss, token, '|');
-		try { t_episode_nr.push_back(stoi(token)); } catch (...) { t_episode_nr.push_back(-1); }
-		getline(ss, token, '|');
-		t_series_years.push_back(token);
-		getline(ss, token, '|');
-		t_md5sum.push_back(token);
 	}
 	in.close();
 }
@@ -454,29 +384,9 @@ void load_t1(const string path) {
 	while (getline(in, line)) {
 		stringstream ss(line);
 		getline(ss, token, '|');
-		try { t1_id.push_back(stoi(token)); } catch (...) { t1_id.push_back(-1); }
+		t1_id.push_back(stoi(token));
 		getline(ss, token, '|');
 		t1_title.push_back(token);
-		getline(ss, token, '|');
-		t1_imdb_index.push_back(token);
-		getline(ss, token, '|');
-		try { t1_kind_id.push_back(stoi(token)); } catch (...) { t1_kind_id.push_back(-1); }
-		getline(ss, token, '|');
-		try { t1_production_year.push_back(stoi(token)); } catch (...) { t1_production_year.push_back(-1); }
-		getline(ss, token, '|');
-		t1_imdb_id.push_back(token);
-		getline(ss, token, '|');
-		t1_phonetic_code.push_back(token);
-		getline(ss, token, '|');
-		try { t1_episode_of_id.push_back(stoi(token)); } catch (...) { t1_episode_of_id.push_back(-1); }
-		getline(ss, token, '|');
-		try { t1_season_nr.push_back(stoi(token)); } catch (...) { t1_season_nr.push_back(-1); }
-		getline(ss, token, '|');
-		try { t1_episode_nr.push_back(stoi(token)); } catch (...) { t1_episode_nr.push_back(-1); }
-		getline(ss, token, '|');
-		t1_series_years.push_back(token);
-		getline(ss, token, '|');
-		t1_md5sum.push_back(token);
 	}
 	in.close();
 }
@@ -503,29 +413,9 @@ void load_t2(const string path) {
 	while (getline(in, line)) {
 		stringstream ss(line);
 		getline(ss, token, '|');
-		try { t2_id.push_back(stoi(token)); } catch (...) { t2_id.push_back(-1); }
+		t2_id.push_back(stoi(token));
 		getline(ss, token, '|');
 		t2_title.push_back(token);
-		getline(ss, token, '|');
-		t2_imdb_index.push_back(token);
-		getline(ss, token, '|');
-		try { t2_kind_id.push_back(stoi(token)); } catch (...) { t2_kind_id.push_back(-1); }
-		getline(ss, token, '|');
-		try { t2_production_year.push_back(stoi(token)); } catch (...) { t2_production_year.push_back(-1); }
-		getline(ss, token, '|');
-		t2_imdb_id.push_back(token);
-		getline(ss, token, '|');
-		t2_phonetic_code.push_back(token);
-		getline(ss, token, '|');
-		try { t2_episode_of_id.push_back(stoi(token)); } catch (...) { t2_episode_of_id.push_back(-1); }
-		getline(ss, token, '|');
-		try { t2_season_nr.push_back(stoi(token)); } catch (...) { t2_season_nr.push_back(-1); }
-		getline(ss, token, '|');
-		try { t2_episode_nr.push_back(stoi(token)); } catch (...) { t2_episode_nr.push_back(-1); }
-		getline(ss, token, '|');
-		t2_series_years.push_back(token);
-		getline(ss, token, '|');
-		t2_md5sum.push_back(token);
 	}
 	in.close();
 }

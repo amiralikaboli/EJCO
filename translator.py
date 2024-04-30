@@ -25,6 +25,7 @@ class Plan2CPPTranslator:
 
 		self.var_mng = VariableManager()
 		self.resolved_attrs = set()
+		self.involved_cols = set()
 		self.indent = 1
 
 	def _clear_per_query(self):
@@ -92,6 +93,8 @@ class Plan2CPPTranslator:
 					raw_data_path, f"{self.rel_abbrs[self.rel_wo_idx(rel)]}.csv"
 				)
 			yield f'load_{rel}("{os.path.normpath(path)}");\n'
+			for col in join_cols + proj_cols:
+				self.involved_cols.add((rel, col))
 
 	def _translate_build_plan(self, build_plan: List[Tuple[str, List[str], List[str]]]):
 		for rel, join_cols, proj_cols in build_plan:
@@ -209,21 +212,33 @@ class Plan2CPPTranslator:
 				cpp_file.write(f"\tstring token;\n")
 				cpp_file.write(f"\twhile (getline(in, line)) {{\n")
 				cpp_file.write(f"\t\tstringstream ss(line);\n")
+
+				rel_involved_cols = [
+					col
+					for col, _ in self.rel_col_types[self.rel_wo_idx(rel)].items()
+					if (rel, col) in self.involved_cols
+				]
 				for col_n, col_t_nnull in self.rel_col_types[self.rel_wo_idx(rel)].items():
 					col_t, is_not_null = col_t_nnull
 					cpp_file.write(f"\t\tgetline(ss, token, '|');\n")
-					if col_t == "int":
-						if is_not_null:
-							cpp_file.write(f"\t\t{self.var_mng.rel_col_var(rel, col_n)}.push_back(stoi(token));\n")
+
+					if col_n in rel_involved_cols:
+						if col_t == "int":
+							if is_not_null:
+								cpp_file.write(f"\t\t{self.var_mng.rel_col_var(rel, col_n)}.push_back(stoi(token));\n")
+							else:
+								cpp_file.write(
+									f"\t\ttry {{ {self.var_mng.rel_col_var(rel, col_n)}.push_back(stoi(token)); }} "
+									f"catch (...) {{ {self.var_mng.rel_col_var(rel, col_n)}.push_back(-1); }}\n"
+								)
+						elif col_t == "string":
+							cpp_file.write(f"\t\t{self.var_mng.rel_col_var(rel, col_n)}.push_back(token);\n")
 						else:
-							cpp_file.write(
-								f"\t\ttry {{ {self.var_mng.rel_col_var(rel, col_n)}.push_back(stoi(token)); }} "
-								f"catch (...) {{ {self.var_mng.rel_col_var(rel, col_n)}.push_back(-1); }}\n"
-							)
-					elif col_t == "string":
-						cpp_file.write(f"\t\t{self.var_mng.rel_col_var(rel, col_n)}.push_back(token);\n")
-					else:
-						raise ValueError(f"Unknown type: {col_t}")
+							raise ValueError(f"Unknown type: {col_t}")
+
+					if col_n == rel_involved_cols[-1]:
+						break
+
 				cpp_file.write(f"\t}}\n")
 				cpp_file.write(f"\tin.close();\n")
 				cpp_file.write(f"}}\n")
