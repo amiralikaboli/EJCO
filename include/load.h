@@ -5,18 +5,8 @@
 
 using namespace std;
 
-vector<int> at_id;
 vector<int> at_movie_id;
 vector<string> at_title;
-vector<string> at_imdb_index;
-vector<int> at_kind_id;
-vector<int> at_production_year;
-vector<string> at_phonetic_code;
-vector<int> at_episode_of_id;
-vector<int> at_season_nr;
-vector<int> at_episode_nr;
-vector<string> at_note;
-vector<string> at_md5sum;
 
 void load_at(const string path) {
 	ifstream in(path);
@@ -37,11 +27,6 @@ void load_at(const string path) {
 
 vector<int> cn_id;
 vector<string> cn_name;
-vector<string> cn_country_code;
-vector<string> cn_imdb_id;
-vector<string> cn_name_pcode_nf;
-vector<string> cn_name_pcode_sf;
-vector<string> cn_md5sum;
 
 void load_cn(const string path) {
 	ifstream in(path);
@@ -60,7 +45,6 @@ void load_cn(const string path) {
 }
 
 vector<int> ct_id;
-vector<string> ct_kind;
 
 void load_ct(const string path) {
 	ifstream in(path);
@@ -77,7 +61,6 @@ void load_ct(const string path) {
 }
 
 vector<int> it_id;
-vector<string> it_info;
 
 void load_it(const string path) {
 	ifstream in(path);
@@ -94,7 +77,6 @@ void load_it(const string path) {
 }
 
 vector<int> it1_id;
-vector<string> it1_info;
 
 void load_it1(const string path) {
 	ifstream in(path);
@@ -111,7 +93,6 @@ void load_it1(const string path) {
 }
 
 vector<int> it2_id;
-vector<string> it2_info;
 
 void load_it2(const string path) {
 	ifstream in(path);
@@ -128,8 +109,6 @@ void load_it2(const string path) {
 }
 
 vector<int> k_id;
-vector<string> k_keyword;
-vector<string> k_phonetic_code;
 
 void load_k(const string path) {
 	ifstream in(path);
@@ -146,7 +125,6 @@ void load_k(const string path) {
 }
 
 vector<int> kt_id;
-vector<string> kt_kind;
 
 void load_kt(const string path) {
 	ifstream in(path);
@@ -181,7 +159,6 @@ void load_lt(const string path) {
 	in.close();
 }
 
-vector<int> mc_id;
 vector<int> mc_movie_id;
 vector<int> mc_company_id;
 vector<int> mc_company_type_id;
@@ -208,11 +185,9 @@ void load_mc(const string path) {
 	in.close();
 }
 
-vector<int> mi_id;
 vector<int> mi_movie_id;
 vector<int> mi_info_type_id;
 vector<string> mi_info;
-vector<string> mi_note;
 
 void load_mi(const string path) {
 	ifstream in(path);
@@ -233,11 +208,9 @@ void load_mi(const string path) {
 	in.close();
 }
 
-vector<int> mi_idx_id;
 vector<int> mi_idx_movie_id;
 vector<int> mi_idx_info_type_id;
 vector<string> mi_idx_info;
-vector<string> mi_idx_note;
 
 void load_mi_idx(const string path) {
 	ifstream in(path);
@@ -258,11 +231,9 @@ void load_mi_idx(const string path) {
 	in.close();
 }
 
-vector<int> miidx_id;
 vector<int> miidx_movie_id;
 vector<int> miidx_info_type_id;
 vector<string> miidx_info;
-vector<string> miidx_note;
 
 void load_miidx(const string path) {
 	ifstream in(path);
@@ -283,7 +254,6 @@ void load_miidx(const string path) {
 	in.close();
 }
 
-vector<int> mk_id;
 vector<int> mk_movie_id;
 vector<int> mk_keyword_id;
 
@@ -304,7 +274,6 @@ void load_mk(const string path) {
 	in.close();
 }
 
-vector<int> ml_id;
 vector<int> ml_movie_id;
 vector<int> ml_linked_movie_id;
 vector<int> ml_link_type_id;
@@ -330,16 +299,8 @@ void load_ml(const string path) {
 
 vector<int> t_id;
 vector<string> t_title;
-vector<string> t_imdb_index;
 vector<int> t_kind_id;
 vector<int> t_production_year;
-vector<string> t_imdb_id;
-vector<string> t_phonetic_code;
-vector<int> t_episode_of_id;
-vector<int> t_season_nr;
-vector<int> t_episode_nr;
-vector<string> t_series_years;
-vector<string> t_md5sum;
 
 void load_t(const string path) {
 	ifstream in(path);
@@ -364,16 +325,6 @@ void load_t(const string path) {
 
 vector<int> t1_id;
 vector<string> t1_title;
-vector<string> t1_imdb_index;
-vector<int> t1_kind_id;
-vector<int> t1_production_year;
-vector<string> t1_imdb_id;
-vector<string> t1_phonetic_code;
-vector<int> t1_episode_of_id;
-vector<int> t1_season_nr;
-vector<int> t1_episode_nr;
-vector<string> t1_series_years;
-vector<string> t1_md5sum;
 
 void load_t1(const string path) {
 	ifstream in(path);
@@ -393,16 +344,6 @@ void load_t1(const string path) {
 
 vector<int> t2_id;
 vector<string> t2_title;
-vector<string> t2_imdb_index;
-vector<int> t2_kind_id;
-vector<int> t2_production_year;
-vector<string> t2_imdb_id;
-vector<string> t2_phonetic_code;
-vector<int> t2_episode_of_id;
-vector<int> t2_season_nr;
-vector<int> t2_episode_nr;
-vector<string> t2_series_years;
-vector<string> t2_md5sum;
 
 void load_t2(const string path) {
 	ifstream in(path);

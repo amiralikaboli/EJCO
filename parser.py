@@ -8,22 +8,26 @@ class PlanParser:
 	def parse(self, query: str) -> Tuple[List, List]:  # (fused_build_plan, fused_compiled_plan)
 		plans_path = os.path.join(os.path.dirname(__file__), "plans")
 
-		with open(os.path.join(plans_path, "raw", f"{query}.log"), 'r') as log_file:
-			lines = log_file.readlines()
+		if os.path.exists(os.path.join(plans_path, "fused", f"{query}.log")):
+			with open(os.path.join(plans_path, "fused", f"{query}.log"), 'r') as log_file:
+				fused_plan = [eval(line.strip()) for line in log_file.readlines()]
+		else:
+			with open(os.path.join(plans_path, "raw", f"{query}.log"), 'r') as log_file:
+				lines = log_file.readlines()
 
-		parsed_plans = [
-			(
-				lines[i + 1].strip(),
-				self._parse_build_plan(lines[i + 2].strip()),
-				self._parse_compiled_plan(lines[i + 3].strip())
-			)
-			for i in range(0, len(lines), 4)
-		]
+			parsed_plans = [
+				(
+					lines[i + 1].strip(),
+					self._parse_build_plan(lines[i + 2].strip()),
+					self._parse_compiled_plan(lines[i + 3].strip())
+				)
+				for i in range(0, len(lines), 4)
+			]
 
-		fused_plan = self._fuse_plans(parsed_plans)
-		with open(os.path.join(plans_path, "fused", f"{query}.log"), 'w') as log_file:
-			log_file.write(f"{fused_plan[0]}\n")
-			log_file.write(f"{fused_plan[1]}\n")
+			fused_plan = self._fuse_plans(parsed_plans)
+			with open(os.path.join(plans_path, "fused", f"{query}.log"), 'w') as log_file:
+				log_file.write(f"{fused_plan[0]}\n")
+				log_file.write(f"{fused_plan[1]}\n")
 
 		return fused_plan
 

@@ -202,10 +202,17 @@ class Plan2CPPTranslator:
 			cpp_file.write('using namespace std;\n')
 
 			for rel in sorted(self.loading_rels):
+				rel_involved_cols = [
+					col
+					for col, _ in self.rel_col_types[self.rel_wo_idx(rel)].items()
+					if (rel, col) in self.involved_cols
+				]
+
 				cpp_file.write('\n')
 				for col_n, col_t_nnull in self.rel_col_types[self.rel_wo_idx(rel)].items():
 					col_t, _ = col_t_nnull
-					cpp_file.write(f"vector<{col_t}> {self.var_mng.rel_col_var(rel, col_n)};\n")
+					if col_n in rel_involved_cols:
+						cpp_file.write(f"vector<{col_t}> {self.var_mng.rel_col_var(rel, col_n)};\n")
 				cpp_file.write("\n")
 				cpp_file.write(f"void load_{rel}(const string path) {{\n")
 				cpp_file.write(f"\tifstream in(path);\n")
@@ -215,11 +222,6 @@ class Plan2CPPTranslator:
 				cpp_file.write(f"\twhile (getline(in, line)) {{\n")
 				cpp_file.write(f"\t\tstringstream ss(line);\n")
 
-				rel_involved_cols = [
-					col
-					for col, _ in self.rel_col_types[self.rel_wo_idx(rel)].items()
-					if (rel, col) in self.involved_cols
-				]
 				for col_n, col_t_nnull in self.rel_col_types[self.rel_wo_idx(rel)].items():
 					col_t, is_not_null = col_t_nnull
 					cpp_file.write(f"\t\tgetline(ss, token, '|');\n")
