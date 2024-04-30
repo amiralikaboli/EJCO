@@ -17,7 +17,7 @@ int main() {
 	load_ct("/Users/s2522996/Documents/free-join/data/imdb_csv/company_type.csv");
 	load_cn("/Users/s2522996/Documents/free-join/queries/preprocessed/join-order-benchmark/data/15b/cn.csv");
 	load_at("/Users/s2522996/Documents/free-join/data/imdb_csv/aka_title.csv");
-	cout << timer.GetElapsedTime() << " ms" << endl;
+	cout << timer.GetElapsedTime() / 1000.0 << " s" << endl;
 
 	for (int z = 0; z < 1 + 5; ++z) {
 		timer.Reset();
@@ -95,10 +95,12 @@ int main() {
 			}
 		}
 		timer.StoreElapsedTime(1);
+		cerr << "*" << " ";
 		if (z == 0)
 			cout << res.size() << endl;
 	}
 
+	cerr << endl;
 	cout << timer.GetMean(0) << " ms" << endl;
 	cout << timer.GetMean(1) << " ms" << endl;
 }

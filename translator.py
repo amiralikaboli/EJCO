@@ -53,7 +53,7 @@ class Plan2CPPTranslator:
 
 			for line in self._translate_loads(query, build_plan):
 				cpp_file.write('\t' * self.indent + line)
-			cpp_file.write('\tcout << timer.GetElapsedTime() << " ms" << endl;\n')
+			cpp_file.write('\tcout << timer.GetElapsedTime() / 1000.0 << " s" << endl;\n')
 			cpp_file.write('\n')
 
 			cpp_file.write('\tfor (int z = 0; z < 1 + 5; ++z) {\n')
@@ -72,6 +72,7 @@ class Plan2CPPTranslator:
 				cpp_file.write('\t' * self.indent + '}\n')
 
 			cpp_file.write('\t' * self.indent + 'timer.StoreElapsedTime(1);\n')
+			cpp_file.write('\t' * self.indent + 'cerr << "*" << " ";\n')
 			cpp_file.write('\t' * self.indent + 'if (z == 0)\n')
 			cpp_file.write('\t' * (self.indent + 1) + f'cout << {self.var_mng.res_var()}.size() << endl;\n')
 			self.indent -= 1
@@ -79,6 +80,7 @@ class Plan2CPPTranslator:
 			cpp_file.write('\t}\n')
 			cpp_file.write('\n')
 
+			cpp_file.write('\tcerr << endl;\n')
 			cpp_file.write('\tcout << timer.GetMean(0) << " ms" << endl;\n')
 			cpp_file.write('\tcout << timer.GetMean(1) << " ms" << endl;\n')
 

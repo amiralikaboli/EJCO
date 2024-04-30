@@ -16,7 +16,7 @@ int main() {
 	load_k("/Users/s2522996/Documents/free-join/queries/preprocessed/join-order-benchmark/data/14a/k.csv");
 	load_it2("/Users/s2522996/Documents/free-join/queries/preprocessed/join-order-benchmark/data/14a/it2.csv");
 	load_it1("/Users/s2522996/Documents/free-join/queries/preprocessed/join-order-benchmark/data/14a/it1.csv");
-	cout << timer.GetElapsedTime() << " ms" << endl;
+	cout << timer.GetElapsedTime() / 1000.0 << " s" << endl;
 
 	for (int z = 0; z < 1 + 5; ++z) {
 		timer.Reset();
@@ -87,10 +87,12 @@ int main() {
 			}
 		}
 		timer.StoreElapsedTime(1);
+		cerr << "*" << " ";
 		if (z == 0)
 			cout << res.size() << endl;
 	}
 
+	cerr << endl;
 	cout << timer.GetMean(0) << " ms" << endl;
 	cout << timer.GetMean(1) << " ms" << endl;
 }
