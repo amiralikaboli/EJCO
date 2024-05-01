@@ -125,17 +125,17 @@ class PlanParser:
 					fused_build_plan.append((child, join_cols, proj_cols))
 			node2plans[node] = (fused_build_plan, fused_compiled_plan)
 
-		final_fused_build_plan, final_fused_compiled_plan = node2plans[plans[-1][0]]
-		for idx, elem in enumerate(final_fused_build_plan):
-			rel, join_cols, proj_cols = elem
-			for proj_col in proj_cols:
-				for eq_attrs in final_fused_compiled_plan:
-					if (rel, proj_col) in eq_attrs:
-						final_fused_build_plan[idx][2].remove(proj_col)
-						final_fused_build_plan[idx][1].append(proj_col)
-						break
+		fused_build_plan, fused_compiled_plan = node2plans[plans[-1][0]]
+		rels2cols = {rel: ([], proj_cols) for rel, join_cols, proj_cols in fused_build_plan}
+		for eq_cols in fused_compiled_plan:
+			for rel, col in eq_cols:
+				if col not in rels2cols[rel][0]:
+					rels2cols[rel][0].append(col)
+				if col in rels2cols[rel][1]:
+					rels2cols[rel][1].remove(col)
+		fused_build_plan = [(rel, rels2cols[rel][0], rels2cols[rel][1]) for rel in rels2cols.keys()]
 
-		return final_fused_build_plan, final_fused_compiled_plan
+		return fused_build_plan, fused_compiled_plan
 
 	def find_join_attrs_order(
 			self, build_plan: List[Tuple[str, List[str], List[str]]], compiled_plan: List[List[str]]
