@@ -186,35 +186,12 @@ class Plan2CPPTranslator:
 				cpp_file.write("\n")
 				cpp_file.write(
 					f"void build_trie({self.var_mng.trie_type(level_types)} &trie, "
-					f"{', '.join([f'vector<{ttt}> &{self.var_mng.attr_var(idx)}' for idx, ttt in enumerate(level_types)])}) {{\n"
+					f"{', '.join([f'vector<{ttt}> &{self.var_mng.attr_var(idx)}' for idx, ttt in enumerate(level_types)])}){{\n"
 				)
 
-				cpp_file.write(f"\tvector<int> off({self.var_mng.attr_var(0)}.size());\n")
 				cpp_file.write(f"\tfor (int i = 0; i < {self.var_mng.attr_var(0)}.size(); ++i)\n")
-				cpp_file.write(f"\t\toff[i] = i;\n")
 				cpp_file.write(
-					f"\tsort(off.begin(), off.end(), "
-					f"[{', '.join([f'&{self.var_mng.attr_var(idx)}' for idx in range(len(level_types))])}](const auto &i, const auto &j) {{\n"
-				)
-				for idx in range(len(level_types) - 1):
-					cpp_file.write(
-						f"\t\tif ({self.var_mng.attr_var(idx)}[i] < {self.var_mng.attr_var(idx)}[j]) return true;\n"
-					)
-					cpp_file.write(
-						f"\t\telse if ({self.var_mng.attr_var(idx)}[i] > {self.var_mng.attr_var(idx)}[j]) return false;\n"
-					)
-				cpp_file.write(
-					f"\t\tif ({self.var_mng.attr_var(len(level_types) - 1)}[i] < {self.var_mng.attr_var(len(level_types) - 1)}[j]) return true;\n"
-				)
-				cpp_file.write(f"\t\telse return false;\n")
-				cpp_file.write(f"\t}});\n")
-
-				cpp_file.write(f"\tfor (int i = 0; i < off.size(); ++i) {{\n")
-				cpp_file.write(f"\t\tconst auto &o = off[i];\n")
-				cpp_file.write(
-					f"\t\ttrie{''.join(f'[{self.var_mng.attr_var(idx)}[o]]' for idx in range(len(level_types)))}.push_back(o);\n"
-				)
-				cpp_file.write(f"\t}}\n")
+					f"\t\ttrie{''.join(f'[{self.var_mng.attr_var(idx)}[i]]' for idx in range(len(level_types)))}.push_back(i);\n")
 				cpp_file.write(f"}}\n")
 
 		with open(os.path.join(include_dir_path, "load.h"), "w") as cpp_file:
