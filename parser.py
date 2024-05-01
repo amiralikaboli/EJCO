@@ -112,7 +112,15 @@ class PlanParser:
 				if child in node2plans.keys():
 					child_build_plan, child_compiled_plan = node2plans[child]
 					fused_build_plan.extend(child_build_plan)
-					fused_compiled_plan = child_compiled_plan + fused_compiled_plan
+
+					child_rels = {rel for eq_cols in child_compiled_plan for rel, _ in eq_cols}
+					for idx, eq_cols in enumerate(fused_compiled_plan):
+						rels = {rel for rel, _ in eq_cols}
+						if rels.intersection(child_rels):
+							fused_compiled_plan = (
+									fused_compiled_plan[:idx] + child_compiled_plan + fused_compiled_plan[idx:]
+							)
+							break
 				else:
 					fused_build_plan.append((child, join_cols, proj_cols))
 			node2plans[node] = (fused_build_plan, fused_compiled_plan)
