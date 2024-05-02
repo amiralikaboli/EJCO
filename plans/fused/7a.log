@@ -1,0 +1,2 @@
+[('ci', ['movie_id', 'person_id'], []), ('t', ['id'], ['title']), ('ml', ['linked_movie_id', 'link_type_id'], []), ('lt', ['id'], []), ('n', ['id'], ['name']), ('pi', ['person_id', 'info_type_id'], []), ('it', ['id'], []), ('an', ['person_id'], [])]
+[[('t', 'id'), ('ml', 'linked_movie_id')], [('ml', 'link_type_id'), ('lt', 'id')], [('ci', 'movie_id'), ('t', 'id')], [('n', 'id'), ('pi', 'person_id')], [('pi', 'info_type_id'), ('it', 'id')], [('ci', 'person_id'), ('pi', 'person_id'), ('an', 'person_id')]]

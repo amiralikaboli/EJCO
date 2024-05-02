@@ -18,3 +18,8 @@ void build_trie(phmap::flat_hash_map<int, phmap::flat_hash_map<int, phmap::flat_
 	for (int i = 0; i < attr0.size(); ++i)
 		trie[attr0[i]][attr1[i]][attr2[i]].push_back(i);
 }
+
+void build_trie(phmap::flat_hash_map<int, phmap::flat_hash_map<int, phmap::flat_hash_map<int, phmap::flat_hash_map<int, vector<int>>>>> &trie, vector<int> &attr0, vector<int> &attr1, vector<int> &attr2, vector<int> &attr3){
+	for (int i = 0; i < attr0.size(); ++i)
+		trie[attr0[i]][attr1[i]][attr2[i]][attr3[i]].push_back(i);
+}

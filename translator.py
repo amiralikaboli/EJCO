@@ -257,8 +257,7 @@ class Plan2CPPTranslator:
 if __name__ == '__main__':
 	queries = []
 	for filename in os.listdir(os.path.join(os.path.dirname(__file__), "plans", "raw")):
-		if int(filename[:-5]) in [1, 2, 3, 4, 5, 11, 12, 13, 14, 15, 21, 32]:
-			queries.append(filename[:-4])
+		queries.append(filename[:-4])
 
 	translator = Plan2CPPTranslator()
 	translator.translate(queries)

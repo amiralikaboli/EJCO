@@ -1,0 +1,120 @@
+#include <iostream>
+#include "../include/load.h"
+#include "../include/build.h"
+#include "../include/high_precision_timer.h"
+
+using namespace std;
+
+int main() {
+	HighPrecisionTimer timer;
+
+	load_ci("/Users/s2522996/Documents/free-join/data/imdb_csv/cast_info.csv");
+	load_n("/Users/s2522996/Documents/free-join/queries/preprocessed/join-order-benchmark/data/20b/n.csv");
+	load_mk("/Users/s2522996/Documents/free-join/data/imdb_csv/movie_keyword.csv");
+	load_t("/Users/s2522996/Documents/free-join/queries/preprocessed/join-order-benchmark/data/20b/t.csv");
+	load_kt("/Users/s2522996/Documents/free-join/queries/preprocessed/join-order-benchmark/data/20b/kt.csv");
+	load_k("/Users/s2522996/Documents/free-join/queries/preprocessed/join-order-benchmark/data/20b/k.csv");
+	load_chn("/Users/s2522996/Documents/free-join/queries/preprocessed/join-order-benchmark/data/20b/chn.csv");
+	load_cc("/Users/s2522996/Documents/free-join/data/imdb_csv/complete_cast.csv");
+	load_cct1("/Users/s2522996/Documents/free-join/queries/preprocessed/join-order-benchmark/data/20b/cct1.csv");
+	load_cct2("/Users/s2522996/Documents/free-join/queries/preprocessed/join-order-benchmark/data/20b/cct2.csv");
+	cout << timer.GetElapsedTime() / 1000.0 << " s" << endl;
+
+	for (int z = 0; z < 1 + 5; ++z) {
+		timer.Reset();
+
+		auto ci_trie0 = phmap::flat_hash_map<int, phmap::flat_hash_map<int, phmap::flat_hash_map<int, vector<int>>>>();
+		build_trie(ci_trie0, ci_person_id, ci_movie_id, ci_person_role_id);
+		auto n_trie0 = phmap::flat_hash_map<int, vector<int>>();
+		build_trie(n_trie0, n_id);
+		auto mk_trie0 = phmap::flat_hash_map<int, phmap::flat_hash_map<int, vector<int>>>();
+		build_trie(mk_trie0, mk_movie_id, mk_keyword_id);
+		auto t_trie0 = phmap::flat_hash_map<int, phmap::flat_hash_map<int, vector<int>>>();
+		build_trie(t_trie0, t_id, t_kind_id);
+		auto kt_trie0 = phmap::flat_hash_map<int, vector<int>>();
+		build_trie(kt_trie0, kt_id);
+		auto k_trie0 = phmap::flat_hash_map<int, vector<int>>();
+		build_trie(k_trie0, k_id);
+		auto chn_trie0 = phmap::flat_hash_map<int, vector<int>>();
+		build_trie(chn_trie0, chn_id);
+		auto cc_trie0 = phmap::flat_hash_map<int, phmap::flat_hash_map<int, phmap::flat_hash_map<int, vector<int>>>>();
+		build_trie(cc_trie0, cc_subject_id, cc_status_id, cc_movie_id);
+		auto cct1_trie0 = phmap::flat_hash_map<int, vector<int>>();
+		build_trie(cct1_trie0, cct1_id);
+		auto cct2_trie0 = phmap::flat_hash_map<int, vector<int>>();
+		build_trie(cct2_trie0, cct2_id);
+		timer.StoreElapsedTime(0);
+
+		vector<tuple<int, int, int, int, int, int, int, string>> res;
+		for (const auto &[x0, ci_trie1]: ci_trie0) {
+			if (n_trie0.contains(x0)) {
+				auto &n_trie1 = n_trie0.at(x0);
+				for (const auto &[x1, mk_trie1]: mk_trie0) {
+					if (t_trie0.contains(x1)) {
+						auto &t_trie1 = t_trie0.at(x1);
+						for (const auto &[x2, t_trie2]: t_trie1) {
+							if (kt_trie0.contains(x2)) {
+								auto &kt_trie1 = kt_trie0.at(x2);
+								for (const auto &[x3, mk_trie2]: mk_trie1) {
+									if (k_trie0.contains(x3)) {
+										auto &k_trie1 = k_trie0.at(x3);
+										if (ci_trie1.contains(x1)) {
+											auto &ci_trie2 = ci_trie1.at(x1);
+											for (const auto &[x5, ci_trie3]: ci_trie2) {
+												if (chn_trie0.contains(x5)) {
+													auto &chn_trie1 = chn_trie0.at(x5);
+													for (const auto &[x6, cc_trie1]: cc_trie0) {
+														if (cct1_trie0.contains(x6)) {
+															auto &cct1_trie1 = cct1_trie0.at(x6);
+															for (const auto &[x7, cc_trie2]: cc_trie1) {
+																if (cct2_trie0.contains(x7)) {
+																	auto &cct2_trie1 = cct2_trie0.at(x7);
+																	if (cc_trie2.contains(x1)) {
+																		auto &cc_trie3 = cc_trie2.at(x1);
+																		for (const auto &ci_off: ci_trie3) {
+																			for (const auto &n_off: n_trie1) {
+																				for (const auto &mk_off: mk_trie2) {
+																					for (const auto &t_off: t_trie2) {
+																						for (const auto &kt_off: kt_trie1) {
+																							for (const auto &k_off: k_trie1) {
+																								for (const auto &chn_off: chn_trie1) {
+																									for (const auto &cc_off: cc_trie3) {
+																										for (const auto &cct1_off: cct1_trie1) {
+																											for (const auto &cct2_off: cct2_trie1) {
+																												res.push_back({x0, x1, x2, x3, x5, x6, x7, t_title[t_off]});
+																											}
+																										}
+																									}
+																								}
+																							}
+																						}
+																					}
+																				}
+																			}
+																		}
+																	}
+																}
+															}
+														}
+													}
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		timer.StoreElapsedTime(1);
+		cerr << "*" << " ";
+		if (z == 0)
+			cout << res.size() << endl;
+	}
+
+	cerr << endl;
+	cout << timer.GetMean(0) << " ms" << endl;
+	cout << timer.GetMean(1) << " ms" << endl;
+}
