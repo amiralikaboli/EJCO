@@ -31,5 +31,6 @@ if __name__ == '__main__':
 	with open(gj_json_path, "w") as json_file:
 		json.dump(gj_results, json_file, indent=2)
 
+	print("# Valid:", len(times))
 	print("Invalid:", invalids)
 	print("Timeout:", timeouts)

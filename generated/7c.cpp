@@ -1,5 +1,5 @@
 #include <iostream>
-#include "7c_load.h"
+#include "load/7c.h"
 #include "../include/build.h"
 #include "../include/high_precision_timer.h"
 

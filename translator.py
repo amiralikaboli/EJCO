@@ -48,7 +48,7 @@ class Plan2CPPTranslator:
 
 		with open(os.path.join(generated_dir_path, f"{query}.cpp"), 'w') as cpp_file:
 			cpp_file.write("#include <iostream>\n")
-			cpp_file.write(f'#include "{query}_load.h"\n')
+			cpp_file.write(f'#include "load/{query}.h"\n')
 			cpp_file.write('#include "../include/build.h"\n')
 			cpp_file.write('#include "../include/high_precision_timer.h"\n\n')
 			cpp_file.write('using namespace std;\n\n')
@@ -199,7 +199,7 @@ class Plan2CPPTranslator:
 				cpp_file.write(f"}}\n")
 
 	def _translate_load_files(self, query: str):
-		with open(os.path.join(generated_dir_path, f"{query}_load.h"), "w") as cpp_file:
+		with open(os.path.join(generated_dir_path, "load", f"{query}.h"), "w") as cpp_file:
 			cpp_file.write('#include <iostream>\n')
 			cpp_file.write('#include <fstream>\n')
 			cpp_file.write('#include <sstream>\n')

@@ -1,5 +1,5 @@
 #include <iostream>
-#include "15a_load.h"
+#include "load/15a.h"
 #include "../include/build.h"
 #include "../include/high_precision_timer.h"
 

@@ -1,5 +1,5 @@
 #include <iostream>
-#include "6e_load.h"
+#include "load/6e.h"
 #include "../include/build.h"
 #include "../include/high_precision_timer.h"
 

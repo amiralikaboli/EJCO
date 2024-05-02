@@ -1,5 +1,5 @@
 #include <iostream>
-#include "31b_load.h"
+#include "load/31b.h"
 #include "../include/build.h"
 #include "../include/high_precision_timer.h"
 

@@ -1,5 +1,5 @@
 #include <iostream>
-#include "10c_load.h"
+#include "load/10c.h"
 #include "../include/build.h"
 #include "../include/high_precision_timer.h"
 
