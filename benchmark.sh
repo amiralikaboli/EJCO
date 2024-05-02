@@ -1,6 +1,7 @@
 #!/bin/bash
 
-rm -rf generated/*
+rm -rf generated/*.cpp
+rm -rf generated/load/*.h
 
 python3 translator.py
 

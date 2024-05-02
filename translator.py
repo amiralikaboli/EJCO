@@ -35,16 +35,16 @@ class Plan2CPPTranslator:
 		self.involved_cols = set()
 		self.loading_rels = set()
 
-	def translate(self, queries: List[str]):
+	def translate(self, queries: List[str], use_cache: bool = False):
 		for query in queries:
 			self._clear_per_query()
-			self._translate(query)
+			self._translate(query, use_cache)
 			self._translate_load_files(query)
 
 		self._translate_build_file()
 
-	def _translate(self, query: str):
-		build_plan, compiled_plan = self.parser.parse(query)
+	def _translate(self, query: str, use_cache: bool = False):
+		build_plan, compiled_plan = self.parser.parse(query, use_cache)
 
 		with open(os.path.join(generated_dir_path, f"{query}.cpp"), 'w') as cpp_file:
 			cpp_file.write("#include <iostream>\n")
@@ -265,4 +265,4 @@ if __name__ == '__main__':
 		queries.append(filename[:-4])
 
 	translator = Plan2CPPTranslator()
-	translator.translate(queries)
+	translator.translate(queries, use_cache=True)
