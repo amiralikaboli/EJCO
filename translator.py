@@ -10,6 +10,7 @@ freejoin_path = os.path.join(os.path.dirname(__file__), "..", "free-join")
 preprocessed_data_path = os.path.join(freejoin_path, "queries", "preprocessed", "join-order-benchmark", "data")
 raw_data_path = os.path.join(freejoin_path, "data", "imdb_csv")
 include_dir_path = os.path.join(os.path.dirname(__file__), "include")
+generated_dir_path = os.path.join(os.path.dirname(__file__), "generated")
 
 
 class Plan2CPPTranslator:
@@ -21,30 +22,33 @@ class Plan2CPPTranslator:
 			self.rel_col_types = json.load(json_file)
 
 		self.trie_types = set()
-		self.loading_rels = set()
 
 		self.var_mng = VariableManager()
 		self.resolved_attrs = set()
 		self.involved_cols = set()
+		self.loading_rels = set()
 		self.indent = 1
 
 	def _clear_per_query(self):
 		self.var_mng = VariableManager()
 		self.resolved_attrs = set()
+		self.involved_cols = set()
+		self.loading_rels = set()
 
 	def translate(self, queries: List[str]):
 		for query in queries:
 			self._clear_per_query()
 			self._translate(query)
+			self._translate_load_files(query)
 
-		self._translate_includes()
+		self._translate_build_file()
 
 	def _translate(self, query: str):
 		build_plan, compiled_plan = self.parser.parse(query)
 
-		with open(f"generated/{query}.cpp", 'w') as cpp_file:
+		with open(os.path.join(generated_dir_path, f"{query}.cpp"), 'w') as cpp_file:
 			cpp_file.write("#include <iostream>\n")
-			cpp_file.write('#include "../include/load.h"\n')
+			cpp_file.write(f'#include "{query}_load.h"\n')
 			cpp_file.write('#include "../include/build.h"\n')
 			cpp_file.write('#include "../include/high_precision_timer.h"\n\n')
 			cpp_file.write('using namespace std;\n\n')
@@ -175,7 +179,7 @@ class Plan2CPPTranslator:
 				res_attrs.append(f"{self.var_mng.rel_col_var(rel, col)}[{self.var_mng.offset_var(rel)}]")
 		return col_types, res_attrs
 
-	def _translate_includes(self):
+	def _translate_build_file(self):
 		with open(os.path.join(include_dir_path, "build.h"), "w") as cpp_file:
 			cpp_file.write('#include <iostream>\n')
 			cpp_file.write('#include <vector>\n')
@@ -194,7 +198,8 @@ class Plan2CPPTranslator:
 					f"\t\ttrie{''.join(f'[{self.var_mng.attr_var(idx)}[i]]' for idx in range(len(level_types)))}.push_back(i);\n")
 				cpp_file.write(f"}}\n")
 
-		with open(os.path.join(include_dir_path, "load.h"), "w") as cpp_file:
+	def _translate_load_files(self, query: str):
+		with open(os.path.join(generated_dir_path, f"{query}_load.h"), "w") as cpp_file:
 			cpp_file.write('#include <iostream>\n')
 			cpp_file.write('#include <fstream>\n')
 			cpp_file.write('#include <sstream>\n')
