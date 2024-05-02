@@ -82,11 +82,14 @@ class Plan2CPPTranslator:
 			self.indent -= 1
 
 			cpp_file.write('\t}\n')
+			cpp_file.write('\tcerr << endl;\n')
 			cpp_file.write('\n')
 
-			cpp_file.write('\tcerr << endl;\n')
-			cpp_file.write('\tcout << timer.GetMean(0) << " ms" << endl;\n')
-			cpp_file.write('\tcout << timer.GetMean(1) << " ms" << endl;\n')
+			cpp_file.write('\tauto build_time = timer.GetMean(0);\n')
+			cpp_file.write('\tauto total_time = timer.GetMean(1);\n')
+			cpp_file.write('\tcout << build_time << " ms" << endl;\n')
+			cpp_file.write('\tcout << total_time - build_time << " ms" << endl;\n')
+			cpp_file.write('\tcout << total_time << " ms" << endl;\n')
 
 			cpp_file.write('}\n')
 
@@ -196,6 +199,65 @@ class Plan2CPPTranslator:
 				cpp_file.write(f"\tfor (int i = 0; i < {self.var_mng.attr_var(0)}.size(); ++i)\n")
 				cpp_file.write(
 					f"\t\ttrie{''.join(f'[{self.var_mng.attr_var(idx)}[i]]' for idx in range(len(level_types)))}.push_back(i);\n")
+				cpp_file.write(f"}}\n")
+
+	def _translate_build_file_using_sort(self):
+		with open(os.path.join(include_dir_path, "build.h"), "w") as cpp_file:
+			cpp_file.write('#include <iostream>\n')
+			cpp_file.write('#include <vector>\n')
+			cpp_file.write('#include "parallel_hashmap/phmap.h"\n\n')
+			cpp_file.write('using namespace std;\n')
+
+			for level_types in sorted(self.trie_types):
+				cpp_file.write("\n")
+				cpp_file.write(
+					f"void build_trie({self.var_mng.trie_type(level_types)} &trie, "
+					f"{', '.join([f'vector<{ttt}> &{self.var_mng.attr_var(idx)}' for idx, ttt in enumerate(level_types)])}) {{\n"
+				)
+
+				cpp_file.write(f"\tvector<int> off({self.var_mng.attr_var(0)}.size());\n")
+				cpp_file.write(f"\tfor (int i = 0; i < {self.var_mng.attr_var(0)}.size(); ++i)\n")
+				cpp_file.write(f"\t\toff[i] = i;\n")
+				cpp_file.write(
+					f"\tsort(off.begin(), off.end(), "
+					f"[{', '.join([f'&{self.var_mng.attr_var(idx)}' for idx in range(len(level_types))])}](const auto &i, const auto &j) {{\n"
+				)
+				for idx in range(len(level_types) - 1):
+					cpp_file.write(
+						f"\t\tif ({self.var_mng.attr_var(idx)}[i] < {self.var_mng.attr_var(idx)}[j]) return true;\n"
+					)
+					cpp_file.write(
+						f"\t\telse if ({self.var_mng.attr_var(idx)}[i] > {self.var_mng.attr_var(idx)}[j]) return false;\n"
+					)
+				cpp_file.write(
+					f"\t\tif ({self.var_mng.attr_var(len(level_types) - 1)}[i] < {self.var_mng.attr_var(len(level_types) - 1)}[j]) return true;\n"
+				)
+				cpp_file.write(f"\t\telse return false;\n")
+				cpp_file.write(f"\t}});\n")
+
+				for idx in range(len(level_types)):
+					cpp_file.write(
+						f"\tauto last_{self.var_mng.attr_var(idx)} = {self.var_mng.attr_var(idx)}[off[0]];\n"
+					)
+				cpp_file.write(f"\tauto start_idx = 0;\n")
+				cpp_file.write(f"\tfor (int i = 1; i < off.size(); ++i) {{\n")
+				cpp_file.write(f"\t\tconst auto &o = off[i];\n")
+				cpp_file.write(
+					f"\t\tif ({' || '.join([f'{self.var_mng.attr_var(idx)}[o] != last_{self.var_mng.attr_var(idx)}' for idx in range(len(level_types))])}) {{\n"
+				)
+				cpp_file.write(
+					f"\t\t\ttrie{''.join([f'[last_{self.var_mng.attr_var(idx)}]' for idx in range(len(level_types))])} = "
+					f"vector<int>(off.begin() + start_idx, off.begin() + i);\n"
+				)
+				for idx in range(len(level_types)):
+					cpp_file.write(f"\t\t\tlast_{self.var_mng.attr_var(idx)} = {self.var_mng.attr_var(idx)}[o];\n")
+				cpp_file.write(f"\t\t\tstart_idx = i;\n")
+				cpp_file.write(f"\t\t}}\n")
+				cpp_file.write(f"\t}}\n")
+				cpp_file.write(
+					f"\ttrie{''.join([f'[last_{self.var_mng.attr_var(idx)}]' for idx in range(len(level_types))])} = "
+					f"vector<int>(off.begin() + start_idx, off.end());\n"
+				)
 				cpp_file.write(f"}}\n")
 
 	def _translate_load_files(self, query: str):
