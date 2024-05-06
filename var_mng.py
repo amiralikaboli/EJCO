@@ -31,8 +31,8 @@ class VariableManager:
 	def offset_var(self, rel: str):
 		return f"{rel}_off"
 
-	def res_var(self):
-		return "res"
-
 	def attr_var(self, idx: int):
 		return f"attr{idx}"
+
+	def mn_var(self, rel: str, col: str):
+		return f"mn_{self.rel_col_var(rel, col)}"

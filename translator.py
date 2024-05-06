@@ -1,7 +1,6 @@
 import json
 import os
-from collections import defaultdict
-from typing import List, Tuple, Dict
+from typing import List, Tuple
 
 from parser import PlanParser
 from var_mng import VariableManager
@@ -48,6 +47,7 @@ class Plan2CPPTranslator:
 
 		with open(os.path.join(generated_dir_path, f"{query}.cpp"), 'w') as cpp_file:
 			cpp_file.write("#include <iostream>\n")
+			cpp_file.write("#include <limits>\n")
 			cpp_file.write(f'#include "load/{query}.h"\n')
 			cpp_file.write('#include "../include/build.h"\n')
 			cpp_file.write('#include "../include/high_precision_timer.h"\n\n')
@@ -78,7 +78,12 @@ class Plan2CPPTranslator:
 			cpp_file.write('\t' * self.indent + 'timer.StoreElapsedTime(1);\n')
 			cpp_file.write('\t' * self.indent + 'cerr << "*" << " ";\n')
 			cpp_file.write('\t' * self.indent + 'if (z == 0)\n')
-			cpp_file.write('\t' * (self.indent + 1) + f'cout << {self.var_mng.res_var()}.size() << endl;\n')
+			proj_relcols, _ = self._find_all_proj_cols_and_types(build_plan)
+			delimiter = ' << " | " << '
+			cpp_file.write(
+				'\t' * (self.indent + 1) +
+				f'cout << {delimiter.join([self.var_mng.mn_var(rel, col) for rel, col in proj_relcols])} << endl;\n'
+			)
 			self.indent -= 1
 
 			cpp_file.write('\t}\n')
@@ -121,8 +126,10 @@ class Plan2CPPTranslator:
 	):
 		join_attrs_order = self.parser.find_join_attrs_order(build_plan, compiled_plan)
 
-		col_types, res_attrs = self._find_res_types_and_attrs(build_plan, join_attrs_order)
-		yield f"vector<tuple<{', '.join(col_types)}>> {self.var_mng.res_var()};\n"
+		proj_relcols, proj_col_types = self._find_all_proj_cols_and_types(build_plan)
+		for (rel, col), col_type in zip(proj_relcols, proj_col_types):
+			inf_val = "numeric_limits<int>::max()" if col_type == "int" else '"zzzzz"'
+			yield f'{col_type} {self.var_mng.mn_var(rel, col)} = {inf_val};\n'
 
 		for idx, eq_cols in enumerate(compiled_plan):
 			rel_0, col_0 = eq_cols[0]
@@ -161,26 +168,16 @@ class Plan2CPPTranslator:
 			yield f"for (const auto &{self.var_mng.offset_var(rel)}: {self.var_mng.trie_var(rel)}) {{\n"
 			self.indent += 1
 
-		yield f"{self.var_mng.res_var()}.push_back({{{', '.join(res_attrs)}}});\n"
+		for (rel, col), col_type in zip(proj_relcols, proj_col_types):
+			yield f'{self.var_mng.mn_var(rel, col)} = min({self.var_mng.mn_var(rel, col)}, {self.var_mng.rel_col_var(rel, col)}[{self.var_mng.offset_var(rel)}]);\n'
 
-	def _find_res_types_and_attrs(
-			self, build_plan: List[Tuple[str, List[str], List[str]]], join_attrs_order: Dict[str, Dict[str, int]]
-	):
-		col_types = []
-		res_attrs = []
-		rel_cols_per_order = defaultdict(list)
-		for rel, col_orders in join_attrs_order.items():
-			for col, order in col_orders.items():
-				rel_cols_per_order[order].append((rel, col))
-		for order, rel_cols in sorted(rel_cols_per_order.items()):
-			rel, col = rel_cols[0]
-			col_types.append(self.rel_col_types[self.rel_wo_idx(rel)][col][0])
-			res_attrs.append(self.var_mng.x_var(join_attrs_order[rel][col]))
+	def _find_all_proj_cols_and_types(self, build_plan: List[Tuple[str, List[str], List[str]]]):
+		relcols, col_types = [], []
 		for rel, _, proj_cols in build_plan:
 			for col in proj_cols:
+				relcols.append((rel, col))
 				col_types.append(self.rel_col_types[self.rel_wo_idx(rel)][col][0])
-				res_attrs.append(f"{self.var_mng.rel_col_var(rel, col)}[{self.var_mng.offset_var(rel)}]")
-		return col_types, res_attrs
+		return relcols, col_types
 
 	def _translate_build_file(self):
 		with open(os.path.join(include_dir_path, "build.h"), "w") as cpp_file:
@@ -327,4 +324,4 @@ if __name__ == '__main__':
 		queries.append(filename[:-4])
 
 	translator = Plan2CPPTranslator()
-	translator.translate(queries, use_cache=True)
+	translator.translate(queries, use_cache=False)
