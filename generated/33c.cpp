@@ -1,4 +1,5 @@
 #include <iostream>
+#include <limits>
 #include "load/33c.h"
 #include "../include/build.h"
 #include "../include/high_precision_timer.h"
@@ -57,7 +58,12 @@ int main() {
 		build_trie(lt_trie0, lt_id);
 		timer.StoreElapsedTime(0);
 
-		vector<tuple<int, int, int, int, int, int, int, int, int, string, string, string, string, string, string>> res;
+		string mn_cn2_name = "zzzzz";
+		string mn_cn1_name = "zzzzz";
+		string mn_t2_title = "zzzzz";
+		string mn_t1_title = "zzzzz";
+		string mn_mi_idx2_info = "zzzzz";
+		string mn_mi_idx1_info = "zzzzz";
 		for (const auto &[x0, mc2_trie1]: mc2_trie0) {
 			if (cn2_trie0.contains(x0)) {
 				auto &cn2_trie1 = cn2_trie0.at(x0);
@@ -107,7 +113,12 @@ int main() {
 																																			for (const auto &it1_off: it1_trie1) {
 																																				for (const auto &ml_off: ml_trie3) {
 																																					for (const auto &lt_off: lt_trie1) {
-																																						res.push_back({x0, x1, x2, x3, x4, x5, x6, x7, x8, cn2_name[cn2_off], cn1_name[cn1_off], t2_title[t2_off], t1_title[t1_off], mi_idx2_info[mi_idx2_off], mi_idx1_info[mi_idx1_off]});
+																																						mn_cn2_name = min(mn_cn2_name, cn2_name[cn2_off]);
+																																						mn_cn1_name = min(mn_cn1_name, cn1_name[cn1_off]);
+																																						mn_t2_title = min(mn_t2_title, t2_title[t2_off]);
+																																						mn_t1_title = min(mn_t1_title, t1_title[t1_off]);
+																																						mn_mi_idx2_info = min(mn_mi_idx2_info, mi_idx2_info[mi_idx2_off]);
+																																						mn_mi_idx1_info = min(mn_mi_idx1_info, mi_idx1_info[mi_idx1_off]);
 																																					}
 																																				}
 																																			}
@@ -147,10 +158,13 @@ int main() {
 		timer.StoreElapsedTime(1);
 		cerr << "*" << " ";
 		if (z == 0)
-			cout << res.size() << endl;
+			cout << mn_cn2_name << " | " << mn_cn1_name << " | " << mn_t2_title << " | " << mn_t1_title << " | " << mn_mi_idx2_info << " | " << mn_mi_idx1_info << endl;
 	}
-
 	cerr << endl;
-	cout << timer.GetMean(0) << " ms" << endl;
-	cout << timer.GetMean(1) << " ms" << endl;
+
+	auto build_time = timer.GetMean(0);
+	auto total_time = timer.GetMean(1);
+	cout << build_time << " ms" << endl;
+	cout << total_time - build_time << " ms" << endl;
+	cout << total_time << " ms" << endl;
 }

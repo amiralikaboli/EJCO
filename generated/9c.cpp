@@ -1,4 +1,5 @@
 #include <iostream>
+#include <limits>
 #include "load/9c.h"
 #include "../include/build.h"
 #include "../include/high_precision_timer.h"
@@ -39,7 +40,10 @@ int main() {
 		build_trie(an_trie0, an_person_id);
 		timer.StoreElapsedTime(0);
 
-		vector<tuple<int, int, int, int, int, string, string, string, string>> res;
+		string mn_n_name = "zzzzz";
+		string mn_t_title = "zzzzz";
+		string mn_chn_name = "zzzzz";
+		string mn_an_name = "zzzzz";
 		for (const auto &[x0, ci_trie1]: ci_trie0) {
 			if (n_trie0.contains(x0)) {
 				auto &n_trie1 = n_trie0.at(x0);
@@ -67,7 +71,10 @@ int main() {
 																			for (const auto &t_off: t_trie1) {
 																				for (const auto &chn_off: chn_trie1) {
 																					for (const auto &an_off: an_trie1) {
-																						res.push_back({x0, x1, x2, x3, x5, n_name[n_off], t_title[t_off], chn_name[chn_off], an_name[an_off]});
+																						mn_n_name = min(mn_n_name, n_name[n_off]);
+																						mn_t_title = min(mn_t_title, t_title[t_off]);
+																						mn_chn_name = min(mn_chn_name, chn_name[chn_off]);
+																						mn_an_name = min(mn_an_name, an_name[an_off]);
 																					}
 																				}
 																			}
@@ -91,10 +98,13 @@ int main() {
 		timer.StoreElapsedTime(1);
 		cerr << "*" << " ";
 		if (z == 0)
-			cout << res.size() << endl;
+			cout << mn_n_name << " | " << mn_t_title << " | " << mn_chn_name << " | " << mn_an_name << endl;
 	}
-
 	cerr << endl;
-	cout << timer.GetMean(0) << " ms" << endl;
-	cout << timer.GetMean(1) << " ms" << endl;
+
+	auto build_time = timer.GetMean(0);
+	auto total_time = timer.GetMean(1);
+	cout << build_time << " ms" << endl;
+	cout << total_time - build_time << " ms" << endl;
+	cout << total_time << " ms" << endl;
 }

@@ -1,4 +1,5 @@
 #include <iostream>
+#include <limits>
 #include "load/23c.h"
 #include "../include/build.h"
 #include "../include/high_precision_timer.h"
@@ -48,7 +49,8 @@ int main() {
 		build_trie(cct1_trie0, cct1_id);
 		timer.StoreElapsedTime(0);
 
-		vector<tuple<int, int, int, int, int, int, int, string, string>> res;
+		string mn_t_title = "zzzzz";
+		string mn_kt_kind = "zzzzz";
 		for (const auto &[x0, mi_trie1]: mi_trie0) {
 			if (it1_trie0.contains(x0)) {
 				auto &it1_trie1 = it1_trie0.at(x0);
@@ -87,7 +89,8 @@ int main() {
 																											for (const auto &kt_off: kt_trie1) {
 																												for (const auto &cc_off: cc_trie2) {
 																													for (const auto &cct1_off: cct1_trie1) {
-																														res.push_back({x0, x1, x2, x3, x4, x5, x6, t_title[t_off], kt_kind[kt_off]});
+																														mn_t_title = min(mn_t_title, t_title[t_off]);
+																														mn_kt_kind = min(mn_kt_kind, kt_kind[kt_off]);
 																													}
 																												}
 																											}
@@ -119,10 +122,13 @@ int main() {
 		timer.StoreElapsedTime(1);
 		cerr << "*" << " ";
 		if (z == 0)
-			cout << res.size() << endl;
+			cout << mn_t_title << " | " << mn_kt_kind << endl;
 	}
-
 	cerr << endl;
-	cout << timer.GetMean(0) << " ms" << endl;
-	cout << timer.GetMean(1) << " ms" << endl;
+
+	auto build_time = timer.GetMean(0);
+	auto total_time = timer.GetMean(1);
+	cout << build_time << " ms" << endl;
+	cout << total_time - build_time << " ms" << endl;
+	cout << total_time << " ms" << endl;
 }

@@ -1,4 +1,5 @@
 #include <iostream>
+#include <limits>
 #include "load/3a.h"
 #include "../include/build.h"
 #include "../include/high_precision_timer.h"
@@ -27,7 +28,7 @@ int main() {
 		build_trie(k_trie0, k_id);
 		timer.StoreElapsedTime(0);
 
-		vector<tuple<int, int, string>> res;
+		string mn_t_title = "zzzzz";
 		for (const auto &[x0, mk_trie1]: mk_trie0) {
 			if (t_trie0.contains(x0)) {
 				auto &t_trie1 = t_trie0.at(x0);
@@ -40,7 +41,7 @@ int main() {
 								for (const auto &mk_off: mk_trie2) {
 									for (const auto &t_off: t_trie1) {
 										for (const auto &k_off: k_trie1) {
-											res.push_back({x0, x2, t_title[t_off]});
+											mn_t_title = min(mn_t_title, t_title[t_off]);
 										}
 									}
 								}
@@ -53,10 +54,13 @@ int main() {
 		timer.StoreElapsedTime(1);
 		cerr << "*" << " ";
 		if (z == 0)
-			cout << res.size() << endl;
+			cout << mn_t_title << endl;
 	}
-
 	cerr << endl;
-	cout << timer.GetMean(0) << " ms" << endl;
-	cout << timer.GetMean(1) << " ms" << endl;
+
+	auto build_time = timer.GetMean(0);
+	auto total_time = timer.GetMean(1);
+	cout << build_time << " ms" << endl;
+	cout << total_time - build_time << " ms" << endl;
+	cout << total_time << " ms" << endl;
 }
