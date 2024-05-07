@@ -23,16 +23,16 @@ int main() {
 		build_trie(mc_trie0, mc_movie_id, mc_company_type_id);
 		auto t_trie0 = phmap::flat_hash_map<int, vector<int>>();
 		build_trie(t_trie0, t_id);
-		auto mi_idx_trie0 = phmap::flat_hash_map<int, phmap::flat_hash_map<int, vector<int>>>();
-		build_trie(mi_idx_trie0, mi_idx_movie_id, mi_idx_info_type_id);
-		auto it_trie0 = phmap::flat_hash_map<int, vector<int>>();
-		build_trie(it_trie0, it_id);
-		auto ct_trie0 = phmap::flat_hash_map<int, vector<int>>();
-		build_trie(ct_trie0, ct_id);
+		auto mi_idx_trie0 = phmap::flat_hash_map<int, phmap::flat_hash_map<int, bool>>();
+		build_trie_bool(mi_idx_trie0, mi_idx_movie_id, mi_idx_info_type_id);
+		auto it_trie0 = phmap::flat_hash_map<int, bool>();
+		build_trie_bool(it_trie0, it_id);
+		auto ct_trie0 = phmap::flat_hash_map<int, bool>();
+		build_trie_bool(ct_trie0, ct_id);
 		timer.StoreElapsedTime(0);
 
-		string mn_mc_note = "zzzzz";
-		string mn_t_title = "zzzzz";
+		string mn_mc_note = "zzzzzzzz";
+		string mn_t_title = "zzzzzzzz";
 		int mn_t_production_year = numeric_limits<int>::max();
 		for (const auto &[x0, t_trie1]: t_trie0) {
 			if (mi_idx_trie0.contains(x0)) {
@@ -46,17 +46,11 @@ int main() {
 								if (ct_trie0.contains(x3)) {
 									auto &ct_trie1 = ct_trie0.at(x3);
 									for (const auto &mc_off: mc_trie2) {
-										for (const auto &t_off: t_trie1) {
-											for (const auto &mi_idx_off: mi_idx_trie2) {
-												for (const auto &it_off: it_trie1) {
-													for (const auto &ct_off: ct_trie1) {
-														mn_mc_note = min(mn_mc_note, mc_note[mc_off]);
-														mn_t_title = min(mn_t_title, t_title[t_off]);
-														mn_t_production_year = min(mn_t_production_year, t_production_year[t_off]);
-													}
-												}
-											}
-										}
+										mn_mc_note = min(mn_mc_note, mc_note[mc_off]);
+									}
+									for (const auto &t_off: t_trie1) {
+										mn_t_title = min(mn_t_title, t_title[t_off]);
+										mn_t_production_year = min(mn_t_production_year, t_production_year[t_off]);
 									}
 								}
 							}

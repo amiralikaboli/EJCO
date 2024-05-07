@@ -25,32 +25,32 @@ int main() {
 	for (int z = 0; z < 1 + 5; ++z) {
 		timer.Reset();
 
-		auto mi_trie0 = phmap::flat_hash_map<int, phmap::flat_hash_map<int, vector<int>>>();
-		build_trie(mi_trie0, mi_info_type_id, mi_movie_id);
-		auto it1_trie0 = phmap::flat_hash_map<int, vector<int>>();
-		build_trie(it1_trie0, it1_id);
-		auto mk_trie0 = phmap::flat_hash_map<int, phmap::flat_hash_map<int, vector<int>>>();
-		build_trie(mk_trie0, mk_keyword_id, mk_movie_id);
-		auto k_trie0 = phmap::flat_hash_map<int, vector<int>>();
-		build_trie(k_trie0, k_id);
-		auto mc_trie0 = phmap::flat_hash_map<int, phmap::flat_hash_map<int, phmap::flat_hash_map<int, vector<int>>>>();
-		build_trie(mc_trie0, mc_company_type_id, mc_company_id, mc_movie_id);
-		auto ct_trie0 = phmap::flat_hash_map<int, vector<int>>();
-		build_trie(ct_trie0, ct_id);
-		auto cn_trie0 = phmap::flat_hash_map<int, vector<int>>();
-		build_trie(cn_trie0, cn_id);
+		auto mi_trie0 = phmap::flat_hash_map<int, phmap::flat_hash_map<int, bool>>();
+		build_trie_bool(mi_trie0, mi_info_type_id, mi_movie_id);
+		auto it1_trie0 = phmap::flat_hash_map<int, bool>();
+		build_trie_bool(it1_trie0, it1_id);
+		auto mk_trie0 = phmap::flat_hash_map<int, phmap::flat_hash_map<int, bool>>();
+		build_trie_bool(mk_trie0, mk_keyword_id, mk_movie_id);
+		auto k_trie0 = phmap::flat_hash_map<int, bool>();
+		build_trie_bool(k_trie0, k_id);
+		auto mc_trie0 = phmap::flat_hash_map<int, phmap::flat_hash_map<int, phmap::flat_hash_map<int, bool>>>();
+		build_trie_bool(mc_trie0, mc_company_type_id, mc_company_id, mc_movie_id);
+		auto ct_trie0 = phmap::flat_hash_map<int, bool>();
+		build_trie_bool(ct_trie0, ct_id);
+		auto cn_trie0 = phmap::flat_hash_map<int, bool>();
+		build_trie_bool(cn_trie0, cn_id);
 		auto t_trie0 = phmap::flat_hash_map<int, phmap::flat_hash_map<int, vector<int>>>();
 		build_trie(t_trie0, t_kind_id, t_id);
 		auto kt_trie0 = phmap::flat_hash_map<int, vector<int>>();
 		build_trie(kt_trie0, kt_id);
-		auto cc_trie0 = phmap::flat_hash_map<int, phmap::flat_hash_map<int, vector<int>>>();
-		build_trie(cc_trie0, cc_status_id, cc_movie_id);
-		auto cct1_trie0 = phmap::flat_hash_map<int, vector<int>>();
-		build_trie(cct1_trie0, cct1_id);
+		auto cc_trie0 = phmap::flat_hash_map<int, phmap::flat_hash_map<int, bool>>();
+		build_trie_bool(cc_trie0, cc_status_id, cc_movie_id);
+		auto cct1_trie0 = phmap::flat_hash_map<int, bool>();
+		build_trie_bool(cct1_trie0, cct1_id);
 		timer.StoreElapsedTime(0);
 
-		string mn_t_title = "zzzzz";
-		string mn_kt_kind = "zzzzz";
+		string mn_t_title = "zzzzzzzz";
+		string mn_kt_kind = "zzzzzzzz";
 		for (const auto &[x0, mi_trie1]: mi_trie0) {
 			if (it1_trie0.contains(x0)) {
 				auto &it1_trie1 = it1_trie0.at(x0);
@@ -78,29 +78,11 @@ int main() {
 																		auto &mk_trie2 = mk_trie1.at(x6);
 																		if (mi_trie1.contains(x6)) {
 																			auto &mi_trie2 = mi_trie1.at(x6);
-																			for (const auto &mi_off: mi_trie2) {
-																				for (const auto &it1_off: it1_trie1) {
-																					for (const auto &mk_off: mk_trie2) {
-																						for (const auto &k_off: k_trie1) {
-																							for (const auto &mc_off: mc_trie3) {
-																								for (const auto &ct_off: ct_trie1) {
-																									for (const auto &cn_off: cn_trie1) {
-																										for (const auto &t_off: t_trie2) {
-																											for (const auto &kt_off: kt_trie1) {
-																												for (const auto &cc_off: cc_trie2) {
-																													for (const auto &cct1_off: cct1_trie1) {
-																														mn_t_title = min(mn_t_title, t_title[t_off]);
-																														mn_kt_kind = min(mn_kt_kind, kt_kind[kt_off]);
-																													}
-																												}
-																											}
-																										}
-																									}
-																								}
-																							}
-																						}
-																					}
-																				}
+																			for (const auto &t_off: t_trie2) {
+																				mn_t_title = min(mn_t_title, t_title[t_off]);
+																			}
+																			for (const auto &kt_off: kt_trie1) {
+																				mn_kt_kind = min(mn_kt_kind, kt_kind[kt_off]);
 																			}
 																		}
 																	}

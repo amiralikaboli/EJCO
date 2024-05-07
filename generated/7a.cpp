@@ -22,26 +22,26 @@ int main() {
 	for (int z = 0; z < 1 + 5; ++z) {
 		timer.Reset();
 
-		auto ci_trie0 = phmap::flat_hash_map<int, phmap::flat_hash_map<int, vector<int>>>();
-		build_trie(ci_trie0, ci_movie_id, ci_person_id);
+		auto ci_trie0 = phmap::flat_hash_map<int, phmap::flat_hash_map<int, bool>>();
+		build_trie_bool(ci_trie0, ci_movie_id, ci_person_id);
 		auto t_trie0 = phmap::flat_hash_map<int, vector<int>>();
 		build_trie(t_trie0, t_id);
-		auto ml_trie0 = phmap::flat_hash_map<int, phmap::flat_hash_map<int, vector<int>>>();
-		build_trie(ml_trie0, ml_linked_movie_id, ml_link_type_id);
-		auto lt_trie0 = phmap::flat_hash_map<int, vector<int>>();
-		build_trie(lt_trie0, lt_id);
+		auto ml_trie0 = phmap::flat_hash_map<int, phmap::flat_hash_map<int, bool>>();
+		build_trie_bool(ml_trie0, ml_linked_movie_id, ml_link_type_id);
+		auto lt_trie0 = phmap::flat_hash_map<int, bool>();
+		build_trie_bool(lt_trie0, lt_id);
 		auto n_trie0 = phmap::flat_hash_map<int, vector<int>>();
 		build_trie(n_trie0, n_id);
-		auto pi_trie0 = phmap::flat_hash_map<int, phmap::flat_hash_map<int, vector<int>>>();
-		build_trie(pi_trie0, pi_person_id, pi_info_type_id);
-		auto it_trie0 = phmap::flat_hash_map<int, vector<int>>();
-		build_trie(it_trie0, it_id);
-		auto an_trie0 = phmap::flat_hash_map<int, vector<int>>();
-		build_trie(an_trie0, an_person_id);
+		auto pi_trie0 = phmap::flat_hash_map<int, phmap::flat_hash_map<int, bool>>();
+		build_trie_bool(pi_trie0, pi_person_id, pi_info_type_id);
+		auto it_trie0 = phmap::flat_hash_map<int, bool>();
+		build_trie_bool(it_trie0, it_id);
+		auto an_trie0 = phmap::flat_hash_map<int, bool>();
+		build_trie_bool(an_trie0, an_person_id);
 		timer.StoreElapsedTime(0);
 
-		string mn_t_title = "zzzzz";
-		string mn_n_name = "zzzzz";
+		string mn_t_title = "zzzzzzzz";
+		string mn_n_name = "zzzzzzzz";
 		for (const auto &[x0, t_trie1]: t_trie0) {
 			if (ml_trie0.contains(x0)) {
 				auto &ml_trie1 = ml_trie0.at(x0);
@@ -59,23 +59,11 @@ int main() {
 											if (ci_trie1.contains(x3) && an_trie0.contains(x3)) {
 												auto &ci_trie2 = ci_trie1.at(x3);
 												auto &an_trie1 = an_trie0.at(x3);
-												for (const auto &ci_off: ci_trie2) {
-													for (const auto &t_off: t_trie1) {
-														for (const auto &ml_off: ml_trie2) {
-															for (const auto &lt_off: lt_trie1) {
-																for (const auto &n_off: n_trie1) {
-																	for (const auto &pi_off: pi_trie2) {
-																		for (const auto &it_off: it_trie1) {
-																			for (const auto &an_off: an_trie1) {
-																				mn_t_title = min(mn_t_title, t_title[t_off]);
-																				mn_n_name = min(mn_n_name, n_name[n_off]);
-																			}
-																		}
-																	}
-																}
-															}
-														}
-													}
+												for (const auto &t_off: t_trie1) {
+													mn_t_title = min(mn_t_title, t_title[t_off]);
+												}
+												for (const auto &n_off: n_trie1) {
+													mn_n_name = min(mn_n_name, n_name[n_off]);
 												}
 											}
 										}

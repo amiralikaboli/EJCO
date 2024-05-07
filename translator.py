@@ -103,10 +103,8 @@ class Plan2CPPTranslator:
 			self.loading_rels.add(rel)
 			path = os.path.join(preprocessed_data_path, query, f"{rel}.csv")
 			if not os.path.exists(path):
-				path = os.path.join(
-					raw_data_path, f"{self.rel_abbrs[self.rel_wo_idx(rel)]}.csv"
-				)
-			yield f'load_{rel}("{os.path.normpath(path)}");\n'
+				path = os.path.join(raw_data_path, f"{self.rel_abbrs[self.rel_wo_idx(rel)]}.csv")
+			yield f'{self.var_mng.load_func(rel)}("{os.path.normpath(path)}");\n'
 			for col in join_cols + proj_cols:
 				self.involved_cols.add((rel, col))
 
@@ -117,9 +115,12 @@ class Plan2CPPTranslator:
 				for join_col in join_cols
 			])
 			self.trie_types.add(level_types)
-			yield f"auto {self.var_mng.trie_var(rel)} = {self.var_mng.trie_type(level_types)}();\n"
-
-			yield f"build_trie({self.var_mng.trie_var(rel)}, {', '.join([self.var_mng.rel_col_var(rel, join_col) for join_col in join_cols])});\n"
+			if proj_cols:
+				yield f"auto {self.var_mng.trie_var(rel)} = {self.var_mng.trie_type(level_types)}();\n"
+				yield f"{self.var_mng.build_func()}({self.var_mng.trie_var(rel)}, {', '.join([self.var_mng.rel_col_var(rel, join_col) for join_col in join_cols])});\n"
+			else:
+				yield f"auto {self.var_mng.trie_var(rel)} = {self.var_mng.trie_bool_type(level_types)}();\n"
+				yield f"{self.var_mng.build_bool_func()}({self.var_mng.trie_var(rel)}, {', '.join([self.var_mng.rel_col_var(rel, join_col) for join_col in join_cols])});\n"
 
 	def _translate_compiled_plan(
 			self, build_plan: List[Tuple[str, List[str], List[str]]], compiled_plan: List[List[str]]
@@ -128,7 +129,7 @@ class Plan2CPPTranslator:
 
 		proj_relcols, proj_col_types = self._find_all_proj_cols_and_types(build_plan)
 		for (rel, col), col_type in zip(proj_relcols, proj_col_types):
-			inf_val = "numeric_limits<int>::max()" if col_type == "int" else '"zzzzz"'
+			inf_val = "numeric_limits<int>::max()" if col_type == "int" else '"zzzzzzzz"'
 			yield f'{col_type} {self.var_mng.mn_var(rel, col)} = {inf_val};\n'
 
 		for idx, eq_cols in enumerate(compiled_plan):
@@ -164,12 +165,14 @@ class Plan2CPPTranslator:
 			for assignment in assignments:
 				yield assignment
 
-		for rel, _, _ in build_plan:
+		rel2proj_cols = {rel: proj_cols for rel, _, proj_cols in build_plan if proj_cols}
+		for rel, proj_cols in rel2proj_cols.items():
 			yield f"for (const auto &{self.var_mng.offset_var(rel)}: {self.var_mng.trie_var(rel)}) {{\n"
 			self.indent += 1
-
-		for (rel, col), col_type in zip(proj_relcols, proj_col_types):
-			yield f'{self.var_mng.mn_var(rel, col)} = min({self.var_mng.mn_var(rel, col)}, {self.var_mng.rel_col_var(rel, col)}[{self.var_mng.offset_var(rel)}]);\n'
+			for col in proj_cols:
+				yield f'{self.var_mng.mn_var(rel, col)} = min({self.var_mng.mn_var(rel, col)}, {self.var_mng.rel_col_var(rel, col)}[{self.var_mng.offset_var(rel)}]);\n'
+			self.indent -= 1
+			yield '}\n'
 
 	def _find_all_proj_cols_and_types(self, build_plan: List[Tuple[str, List[str], List[str]]]):
 		relcols, col_types = [], []
@@ -186,17 +189,26 @@ class Plan2CPPTranslator:
 			cpp_file.write('#include "parallel_hashmap/phmap.h"\n\n')
 			cpp_file.write('using namespace std;\n')
 
-			for level_types in sorted(self.trie_types):
-				cpp_file.write("\n")
-				cpp_file.write(
-					f"void build_trie({self.var_mng.trie_type(level_types)} &trie, "
-					f"{', '.join([f'vector<{ttt}> &{self.var_mng.attr_var(idx)}' for idx, ttt in enumerate(level_types)])}){{\n"
-				)
-
-				cpp_file.write(f"\tfor (int i = 0; i < {self.var_mng.attr_var(0)}.size(); ++i)\n")
-				cpp_file.write(
-					f"\t\ttrie{''.join(f'[{self.var_mng.attr_var(idx)}[i]]' for idx in range(len(level_types)))}.push_back(i);\n")
-				cpp_file.write(f"}}\n")
+			for is_for_proj in [True, False]:
+				for level_types in sorted(self.trie_types):
+					cpp_file.write("\n")
+					if is_for_proj:
+						build_func = self.var_mng.build_func()
+						trie_type = self.var_mng.trie_type(level_types)
+					else:
+						build_func = self.var_mng.build_bool_func()
+						trie_type = self.var_mng.trie_bool_type(level_types)
+					cpp_file.write(
+						f"void {build_func}({trie_type} &trie, "
+						f"{', '.join([f'vector<{ttt}> &{self.var_mng.attr_var(idx)}' for idx, ttt in enumerate(level_types)])}){{\n"
+					)
+					cpp_file.write(f"\tfor (int i = 0; i < {self.var_mng.attr_var(0)}.size(); ++i)\n")
+					trie_var = f"trie{''.join(f'[{self.var_mng.attr_var(idx)}[i]]' for idx in range(len(level_types)))}"
+					if is_for_proj:
+						cpp_file.write(f"\t\t{trie_var}.push_back(i);\n")
+					else:
+						cpp_file.write(f"\t\t{trie_var} = true;\n")
+					cpp_file.write(f"}}\n")
 
 	def _translate_build_file_using_sort(self):
 		with open(os.path.join(include_dir_path, "build.h"), "w") as cpp_file:
@@ -208,10 +220,9 @@ class Plan2CPPTranslator:
 			for level_types in sorted(self.trie_types):
 				cpp_file.write("\n")
 				cpp_file.write(
-					f"void build_trie({self.var_mng.trie_type(level_types)} &trie, "
+					f"void {self.var_mng.build_func()}({self.var_mng.trie_type(level_types)} &trie, "
 					f"{', '.join([f'vector<{ttt}> &{self.var_mng.attr_var(idx)}' for idx, ttt in enumerate(level_types)])}) {{\n"
 				)
-
 				cpp_file.write(f"\tvector<int> off({self.var_mng.attr_var(0)}.size());\n")
 				cpp_file.write(f"\tfor (int i = 0; i < {self.var_mng.attr_var(0)}.size(); ++i)\n")
 				cpp_file.write(f"\t\toff[i] = i;\n")
@@ -231,7 +242,6 @@ class Plan2CPPTranslator:
 				)
 				cpp_file.write(f"\t\telse return false;\n")
 				cpp_file.write(f"\t}});\n")
-
 				for idx in range(len(level_types)):
 					cpp_file.write(
 						f"\tauto last_{self.var_mng.attr_var(idx)} = {self.var_mng.attr_var(idx)}[off[0]];\n"
@@ -278,7 +288,7 @@ class Plan2CPPTranslator:
 					if col_n in rel_involved_cols:
 						cpp_file.write(f"vector<{col_t}> {self.var_mng.rel_col_var(rel, col_n)};\n")
 				cpp_file.write("\n")
-				cpp_file.write(f"void load_{rel}(const string path) {{\n")
+				cpp_file.write(f"void {self.var_mng.load_func(rel)}(const string path) {{\n")
 				cpp_file.write(f"\tifstream in(path);\n")
 				cpp_file.write(f"\tif (!in)\n\t\t throw path;\n")
 				cpp_file.write(f"\tstring line;\n")

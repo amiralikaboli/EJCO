@@ -28,42 +28,42 @@ int main() {
 	for (int z = 0; z < 1 + 5; ++z) {
 		timer.Reset();
 
-		auto mc2_trie0 = phmap::flat_hash_map<int, phmap::flat_hash_map<int, vector<int>>>();
-		build_trie(mc2_trie0, mc2_company_id, mc2_movie_id);
+		auto mc2_trie0 = phmap::flat_hash_map<int, phmap::flat_hash_map<int, bool>>();
+		build_trie_bool(mc2_trie0, mc2_company_id, mc2_movie_id);
 		auto cn2_trie0 = phmap::flat_hash_map<int, vector<int>>();
 		build_trie(cn2_trie0, cn2_id);
-		auto mc1_trie0 = phmap::flat_hash_map<int, phmap::flat_hash_map<int, vector<int>>>();
-		build_trie(mc1_trie0, mc1_company_id, mc1_movie_id);
+		auto mc1_trie0 = phmap::flat_hash_map<int, phmap::flat_hash_map<int, bool>>();
+		build_trie_bool(mc1_trie0, mc1_company_id, mc1_movie_id);
 		auto cn1_trie0 = phmap::flat_hash_map<int, vector<int>>();
 		build_trie(cn1_trie0, cn1_id);
 		auto t2_trie0 = phmap::flat_hash_map<int, phmap::flat_hash_map<int, vector<int>>>();
 		build_trie(t2_trie0, t2_kind_id, t2_id);
-		auto kt2_trie0 = phmap::flat_hash_map<int, vector<int>>();
-		build_trie(kt2_trie0, kt2_id);
+		auto kt2_trie0 = phmap::flat_hash_map<int, bool>();
+		build_trie_bool(kt2_trie0, kt2_id);
 		auto t1_trie0 = phmap::flat_hash_map<int, phmap::flat_hash_map<int, vector<int>>>();
 		build_trie(t1_trie0, t1_kind_id, t1_id);
-		auto kt1_trie0 = phmap::flat_hash_map<int, vector<int>>();
-		build_trie(kt1_trie0, kt1_id);
+		auto kt1_trie0 = phmap::flat_hash_map<int, bool>();
+		build_trie_bool(kt1_trie0, kt1_id);
 		auto mi_idx2_trie0 = phmap::flat_hash_map<int, phmap::flat_hash_map<int, vector<int>>>();
 		build_trie(mi_idx2_trie0, mi_idx2_info_type_id, mi_idx2_movie_id);
-		auto it2_trie0 = phmap::flat_hash_map<int, vector<int>>();
-		build_trie(it2_trie0, it2_id);
+		auto it2_trie0 = phmap::flat_hash_map<int, bool>();
+		build_trie_bool(it2_trie0, it2_id);
 		auto mi_idx1_trie0 = phmap::flat_hash_map<int, phmap::flat_hash_map<int, vector<int>>>();
 		build_trie(mi_idx1_trie0, mi_idx1_info_type_id, mi_idx1_movie_id);
-		auto it1_trie0 = phmap::flat_hash_map<int, vector<int>>();
-		build_trie(it1_trie0, it1_id);
-		auto ml_trie0 = phmap::flat_hash_map<int, phmap::flat_hash_map<int, phmap::flat_hash_map<int, vector<int>>>>();
-		build_trie(ml_trie0, ml_link_type_id, ml_movie_id, ml_linked_movie_id);
-		auto lt_trie0 = phmap::flat_hash_map<int, vector<int>>();
-		build_trie(lt_trie0, lt_id);
+		auto it1_trie0 = phmap::flat_hash_map<int, bool>();
+		build_trie_bool(it1_trie0, it1_id);
+		auto ml_trie0 = phmap::flat_hash_map<int, phmap::flat_hash_map<int, phmap::flat_hash_map<int, bool>>>();
+		build_trie_bool(ml_trie0, ml_link_type_id, ml_movie_id, ml_linked_movie_id);
+		auto lt_trie0 = phmap::flat_hash_map<int, bool>();
+		build_trie_bool(lt_trie0, lt_id);
 		timer.StoreElapsedTime(0);
 
-		string mn_cn2_name = "zzzzz";
-		string mn_cn1_name = "zzzzz";
-		string mn_t2_title = "zzzzz";
-		string mn_t1_title = "zzzzz";
-		string mn_mi_idx2_info = "zzzzz";
-		string mn_mi_idx1_info = "zzzzz";
+		string mn_cn2_name = "zzzzzzzz";
+		string mn_cn1_name = "zzzzzzzz";
+		string mn_t2_title = "zzzzzzzz";
+		string mn_t1_title = "zzzzzzzz";
+		string mn_mi_idx2_info = "zzzzzzzz";
+		string mn_mi_idx1_info = "zzzzzzzz";
 		for (const auto &[x0, mc2_trie1]: mc2_trie0) {
 			if (cn2_trie0.contains(x0)) {
 				auto &cn2_trie1 = cn2_trie0.at(x0);
@@ -99,39 +99,23 @@ int main() {
 																							auto &mc1_trie2 = mc1_trie1.at(x7);
 																							if (mc2_trie1.contains(x8)) {
 																								auto &mc2_trie2 = mc2_trie1.at(x8);
-																								for (const auto &mc2_off: mc2_trie2) {
-																									for (const auto &cn2_off: cn2_trie1) {
-																										for (const auto &mc1_off: mc1_trie2) {
-																											for (const auto &cn1_off: cn1_trie1) {
-																												for (const auto &t2_off: t2_trie2) {
-																													for (const auto &kt2_off: kt2_trie1) {
-																														for (const auto &t1_off: t1_trie2) {
-																															for (const auto &kt1_off: kt1_trie1) {
-																																for (const auto &mi_idx2_off: mi_idx2_trie2) {
-																																	for (const auto &it2_off: it2_trie1) {
-																																		for (const auto &mi_idx1_off: mi_idx1_trie2) {
-																																			for (const auto &it1_off: it1_trie1) {
-																																				for (const auto &ml_off: ml_trie3) {
-																																					for (const auto &lt_off: lt_trie1) {
-																																						mn_cn2_name = min(mn_cn2_name, cn2_name[cn2_off]);
-																																						mn_cn1_name = min(mn_cn1_name, cn1_name[cn1_off]);
-																																						mn_t2_title = min(mn_t2_title, t2_title[t2_off]);
-																																						mn_t1_title = min(mn_t1_title, t1_title[t1_off]);
-																																						mn_mi_idx2_info = min(mn_mi_idx2_info, mi_idx2_info[mi_idx2_off]);
-																																						mn_mi_idx1_info = min(mn_mi_idx1_info, mi_idx1_info[mi_idx1_off]);
-																																					}
-																																				}
-																																			}
-																																		}
-																																	}
-																																}
-																															}
-																														}
-																													}
-																												}
-																											}
-																										}
-																									}
+																								for (const auto &cn2_off: cn2_trie1) {
+																									mn_cn2_name = min(mn_cn2_name, cn2_name[cn2_off]);
+																								}
+																								for (const auto &cn1_off: cn1_trie1) {
+																									mn_cn1_name = min(mn_cn1_name, cn1_name[cn1_off]);
+																								}
+																								for (const auto &t2_off: t2_trie2) {
+																									mn_t2_title = min(mn_t2_title, t2_title[t2_off]);
+																								}
+																								for (const auto &t1_off: t1_trie2) {
+																									mn_t1_title = min(mn_t1_title, t1_title[t1_off]);
+																								}
+																								for (const auto &mi_idx2_off: mi_idx2_trie2) {
+																									mn_mi_idx2_info = min(mn_mi_idx2_info, mi_idx2_info[mi_idx2_off]);
+																								}
+																								for (const auto &mi_idx1_off: mi_idx1_trie2) {
+																									mn_mi_idx1_info = min(mn_mi_idx1_info, mi_idx1_info[mi_idx1_off]);
 																								}
 																							}
 																						}

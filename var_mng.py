@@ -6,8 +6,13 @@ class VariableManager:
 		self._trie_vars = dict()
 		self._last_x_var = 0
 
-	def trie_type(self, level_types: Tuple[str]):
+	@staticmethod
+	def trie_type(level_types: Tuple[str]):
 		return f"{''.join([f'phmap::flat_hash_map<{ttt}, ' for ttt in level_types])}vector<int>{'>' * len(level_types)}"
+
+	@staticmethod
+	def trie_bool_type(level_types: Tuple[str]):
+		return f"{''.join([f'phmap::flat_hash_map<{ttt}, ' for ttt in level_types])}bool{'>' * len(level_types)}"
 
 	def trie_var(self, rel: str):
 		if rel not in self._trie_vars.keys():
@@ -22,17 +27,37 @@ class VariableManager:
 			self._trie_vars[rel] = next_level_trie
 		return next_level_trie
 
-	def x_var(self, idx: int):
+	@staticmethod
+	def x_var(idx: int):
 		return f"x{idx}"
 
-	def rel_col_var(self, rel: str, col: str):
+	@staticmethod
+	def rel_col_var(rel: str, col: str):
 		return f"{rel}_{col}"
 
-	def offset_var(self, rel: str):
+	@staticmethod
+	def offset_var(rel: str):
 		return f"{rel}_off"
 
-	def attr_var(self, idx: int):
+	@staticmethod
+	def attr_var(idx: int):
 		return f"attr{idx}"
 
 	def mn_var(self, rel: str, col: str):
 		return f"mn_{self.rel_col_var(rel, col)}"
+
+	@staticmethod
+	def load_func(rel: str):
+		return f"load_{rel}"
+
+	@staticmethod
+	def build_func():
+		return "build_trie"
+
+	@staticmethod
+	def build_bool_func():
+		return "build_trie_bool"
+
+	@staticmethod
+	def build_ordered_func():
+		return "build_trie_ordered"
