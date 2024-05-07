@@ -9,8 +9,8 @@ cd generated
 for cpp_file in *.cpp; do
     echo $cpp_file
     g++ $cpp_file -O3 -std=c++17
-    timeout -v 210 ./a.out
+    timeout -v 120 ./a.out
     echo "--------------------"
 done | tee ../results.txt
 
-cd ../../free-join && rm -rf gj/gj.json && make gj/gj.json > /dev/null
+cd ../../free-join && rm -rf gj/gj.json && make gj/gj.json > ../WCOJ/gj.log

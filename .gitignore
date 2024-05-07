@@ -6,3 +6,4 @@ CMakeLists.txt
 .idea
 samples/benchmarks/db
 plan.txt
+gj.log
