@@ -1,5 +1,6 @@
 import json
 import os
+from collections import defaultdict
 from typing import List, Tuple
 
 from parser import PlanParser
@@ -44,6 +45,7 @@ class Plan2CPPTranslator:
 
 	def _translate(self, query: str, use_cache: bool = False):
 		build_plan, compiled_plan = self.parser.parse(query, use_cache)
+		build_plan = self._make_join_cols_order_consistent(build_plan, compiled_plan)
 
 		with open(os.path.join(generated_dir_path, f"{query}.cpp"), 'w') as cpp_file:
 			cpp_file.write("#include <iostream>\n")
@@ -181,6 +183,14 @@ class Plan2CPPTranslator:
 				relcols.append((rel, col))
 				col_types.append(self.rel_col_types[self.rel_wo_idx(rel)][col][0])
 		return relcols, col_types
+
+	def _make_join_cols_order_consistent(self, build_plan, compiled_plan):
+		rel2join_cols = defaultdict(list)
+		for eq_cols in compiled_plan:
+			for rel, col in eq_cols:
+				if col not in rel2join_cols[rel]:
+					rel2join_cols[rel].append(col)
+		return [(rel, rel2join_cols[rel], proj_cols) for rel, _, proj_cols in build_plan]
 
 	def _translate_build_file(self):
 		with open(os.path.join(include_dir_path, "build.h"), "w") as cpp_file:
@@ -334,4 +344,4 @@ if __name__ == '__main__':
 		queries.append(filename[:-4])
 
 	translator = Plan2CPPTranslator()
-	translator.translate(queries, use_cache=False)
+	translator.translate(queries, use_cache=True)

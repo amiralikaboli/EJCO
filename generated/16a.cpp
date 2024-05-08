@@ -23,11 +23,11 @@ int main() {
 		timer.Reset();
 
 		auto ci_trie0 = phmap::flat_hash_map<int, phmap::flat_hash_map<int, bool>>();
-		build_trie_bool(ci_trie0, ci_person_id, ci_movie_id);
+		build_trie_bool(ci_trie0, ci_movie_id, ci_person_id);
 		auto n_trie0 = phmap::flat_hash_map<int, bool>();
 		build_trie_bool(n_trie0, n_id);
 		auto mk_trie0 = phmap::flat_hash_map<int, phmap::flat_hash_map<int, bool>>();
-		build_trie_bool(mk_trie0, mk_movie_id, mk_keyword_id);
+		build_trie_bool(mk_trie0, mk_keyword_id, mk_movie_id);
 		auto t_trie0 = phmap::flat_hash_map<int, vector<int>>();
 		build_trie(t_trie0, t_id);
 		auto mc_trie0 = phmap::flat_hash_map<int, phmap::flat_hash_map<int, bool>>();
@@ -42,23 +42,23 @@ int main() {
 
 		string mn_t_title = "zzzzzzzz";
 		string mn_an_name = "zzzzzzzz";
-		for (const auto &[x0, ci_trie1]: ci_trie0) {
-			if (n_trie0.contains(x0)) {
-				auto &n_trie1 = n_trie0.at(x0);
-				for (const auto &[x1, mk_trie1]: mk_trie0) {
+		for (const auto &[x0, mk_trie1]: mk_trie0) {
+			if (k_trie0.contains(x0)) {
+				auto &k_trie1 = k_trie0.at(x0);
+				for (const auto &[x1, mk_trie2]: mk_trie1) {
 					if (t_trie0.contains(x1) && mc_trie0.contains(x1)) {
 						auto &t_trie1 = t_trie0.at(x1);
 						auto &mc_trie1 = mc_trie0.at(x1);
-						for (const auto &[x2, mk_trie2]: mk_trie1) {
-							if (k_trie0.contains(x2)) {
-								auto &k_trie1 = k_trie0.at(x2);
-								for (const auto &[x3, mc_trie2]: mc_trie1) {
-									if (cn_trie0.contains(x3)) {
-										auto &cn_trie1 = cn_trie0.at(x3);
-										if (ci_trie1.contains(x1)) {
-											auto &ci_trie2 = ci_trie1.at(x1);
-											if (an_trie0.contains(x0)) {
-												auto &an_trie1 = an_trie0.at(x0);
+						for (const auto &[x2, mc_trie2]: mc_trie1) {
+							if (cn_trie0.contains(x2)) {
+								auto &cn_trie1 = cn_trie0.at(x2);
+								if (ci_trie0.contains(x1)) {
+									auto &ci_trie1 = ci_trie0.at(x1);
+									for (const auto &[x4, ci_trie2]: ci_trie1) {
+										if (an_trie0.contains(x4)) {
+											auto &an_trie1 = an_trie0.at(x4);
+											if (n_trie0.contains(x4)) {
+												auto &n_trie1 = n_trie0.at(x4);
 												for (const auto &t_off: t_trie1) {
 													mn_t_title = min(mn_t_title, t_title[t_off]);
 												}

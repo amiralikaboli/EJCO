@@ -40,32 +40,28 @@ int main() {
 		string mn_mi_info = "zzzzzzzz";
 		string mn_t_title = "zzzzzzzz";
 		string mn_mi_idx_info = "zzzzzzzz";
-		for (const auto &[x0, ci_trie1]: ci_trie0) {
-			if (n_trie0.contains(x0)) {
-				auto &n_trie1 = n_trie0.at(x0);
-				for (const auto &[x1, t_trie1]: t_trie0) {
-					if (mi_idx_trie0.contains(x1)) {
+		for (const auto &[x0, n_trie1]: n_trie0) {
+			if (ci_trie0.contains(x0)) {
+				auto &ci_trie1 = ci_trie0.at(x0);
+				for (const auto &[x1, ci_trie2]: ci_trie1) {
+					if (mi_trie0.contains(x1) && t_trie0.contains(x1) && mi_idx_trie0.contains(x1)) {
+						auto &mi_trie1 = mi_trie0.at(x1);
+						auto &t_trie1 = t_trie0.at(x1);
 						auto &mi_idx_trie1 = mi_idx_trie0.at(x1);
-						if (mi_trie0.contains(x1)) {
-							auto &mi_trie1 = mi_trie0.at(x1);
-							for (const auto &[x3, mi_idx_trie2]: mi_idx_trie1) {
-								if (it2_trie0.contains(x3)) {
-									auto &it2_trie1 = it2_trie0.at(x3);
-									for (const auto &[x4, mi_trie2]: mi_trie1) {
-										if (it1_trie0.contains(x4)) {
-											auto &it1_trie1 = it1_trie0.at(x4);
-											if (ci_trie1.contains(x1)) {
-												auto &ci_trie2 = ci_trie1.at(x1);
-												for (const auto &mi_off: mi_trie2) {
-													mn_mi_info = min(mn_mi_info, mi_info[mi_off]);
-												}
-												for (const auto &t_off: t_trie1) {
-													mn_t_title = min(mn_t_title, t_title[t_off]);
-												}
-												for (const auto &mi_idx_off: mi_idx_trie2) {
-													mn_mi_idx_info = min(mn_mi_idx_info, mi_idx_info[mi_idx_off]);
-												}
-											}
+						for (const auto &[x2, it2_trie1]: it2_trie0) {
+							if (mi_idx_trie1.contains(x2)) {
+								auto &mi_idx_trie2 = mi_idx_trie1.at(x2);
+								for (const auto &[x3, it1_trie1]: it1_trie0) {
+									if (mi_trie1.contains(x3)) {
+										auto &mi_trie2 = mi_trie1.at(x3);
+										for (const auto &mi_off: mi_trie2) {
+											mn_mi_info = min(mn_mi_info, mi_info[mi_off]);
+										}
+										for (const auto &t_off: t_trie1) {
+											mn_t_title = min(mn_t_title, t_title[t_off]);
+										}
+										for (const auto &mi_idx_off: mi_idx_trie2) {
+											mn_mi_idx_info = min(mn_mi_idx_info, mi_idx_info[mi_idx_off]);
 										}
 									}
 								}
