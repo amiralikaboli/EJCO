@@ -140,11 +140,11 @@ int main() {
 			}
 		}
 		timer.StoreElapsedTime(1);
-		cerr << "*" << " ";
 		if (z == 0)
 			cout << mn_cn2_name << " | " << mn_cn1_name << " | " << mn_t2_title << " | " << mn_t1_title << " | " << mn_mi_idx2_info << " | " << mn_mi_idx1_info << endl;
+		cout << "*" << " " << flush;
 	}
-	cerr << endl;
+	cout << endl;
 
 	auto build_time = timer.GetMean(0);
 	auto total_time = timer.GetMean(1);

@@ -35,7 +35,7 @@ The Money Man | follows | Filmlance International AB
 --------------------
 11d.cpp
 2.911 s
-...denn sie wissen nicht, was sie tun | "(2010) (USA) (DVD) (Included in ""Agatha Christie's Poirot: The Movie Collection Set 5"")" | 13th Street
+...denn sie wissen nicht, was sie tun | (1954) (UK) (TV) | 13th Street
 581.6 ms
 24.6 ms
 606.2 ms
@@ -519,7 +519,7 @@ Bassett, Angela | Blue Harvest | Airport Announcer | AJ
 --------------------
 9c.cpp
 4.619 s
-Alborg, Ana Esther | (1975-01-20) | 2nd Balladeer | "Annie (""Dolly"" by her father)"
+Alborg, Ana Esther | (1975-01-20) | 2nd Balladeer | 'Annette'
 668.6 ms
 9140.2 ms
 9808.8 ms

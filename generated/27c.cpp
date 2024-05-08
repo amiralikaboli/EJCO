@@ -112,11 +112,11 @@ int main() {
 			}
 		}
 		timer.StoreElapsedTime(1);
-		cerr << "*" << " ";
 		if (z == 0)
 			cout << mn_cn_name << " | " << mn_t_title << " | " << mn_lt_link << endl;
+		cout << "*" << " " << flush;
 	}
-	cerr << endl;
+	cout << endl;
 
 	auto build_time = timer.GetMean(0);
 	auto total_time = timer.GetMean(1);

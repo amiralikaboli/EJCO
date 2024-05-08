@@ -76,7 +76,6 @@ class Plan2CPPTranslator:
 				cpp_file.write('\t' * self.indent + '}\n')
 
 			cpp_file.write('\t' * self.indent + 'timer.StoreElapsedTime(1);\n')
-			cpp_file.write('\t' * self.indent + 'cerr << "*" << " ";\n')
 			cpp_file.write('\t' * self.indent + 'if (z == 0)\n')
 			proj_relcols, _ = self._find_all_proj_cols_and_types(build_plan)
 			delimiter = ' << " | " << '
@@ -84,10 +83,11 @@ class Plan2CPPTranslator:
 				'\t' * (self.indent + 1) +
 				f'cout << {delimiter.join([self.var_mng.mn_var(rel, col) for rel, col in proj_relcols])} << endl;\n'
 			)
+			cpp_file.write('\t' * self.indent + 'cout << "*" << " " << flush;\n')
 			self.indent -= 1
 
 			cpp_file.write('\t}\n')
-			cpp_file.write('\tcerr << endl;\n')
+			cpp_file.write('\tcout << endl;\n')
 			cpp_file.write('\n')
 
 			cpp_file.write('\tauto build_time = timer.GetMean(0);\n')
