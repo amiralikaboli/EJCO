@@ -7,12 +7,16 @@ class VariableManager:
 		self._last_x_var = 0
 
 	@staticmethod
-	def trie_type(level_types: Tuple[str]):
-		return f"{''.join([f'phmap::flat_hash_map<{ttt}, ' for ttt in level_types])}vector<int>{'>' * len(level_types)}"
+	def _trie_def_template(hash_table: str, level_types: Tuple[str]):
+		return f"{''.join([f'{hash_table}<{ttt}, ' for ttt in level_types])}{{value_type}}{'>' * len(level_types)}"
 
 	@staticmethod
-	def trie_bool_type(level_types: Tuple[str]):
-		return f"{''.join([f'phmap::flat_hash_map<{ttt}, ' for ttt in level_types])}bool{'>' * len(level_types)}"
+	def trie_def(hash_table: str, level_types: Tuple[str]):
+		return VariableManager._trie_def_template(hash_table, level_types).format(value_type="vector<int>")
+
+	@staticmethod
+	def trie_bool_def(hash_table: str, level_types: Tuple[str]):
+		return VariableManager._trie_def_template(hash_table, level_types).format(value_type="bool")
 
 	def trie_var(self, rel: str):
 		if rel not in self._trie_vars.keys():
@@ -43,8 +47,9 @@ class VariableManager:
 	def attr_var(idx: int):
 		return f"attr{idx}"
 
-	def mn_var(self, rel: str, col: str):
-		return f"mn_{self.rel_col_var(rel, col)}"
+	@staticmethod
+	def mn_var(rel: str, col: str):
+		return f"mn_{VariableManager.rel_col_var(rel, col)}"
 
 	@staticmethod
 	def load_func(rel: str):

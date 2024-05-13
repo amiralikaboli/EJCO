@@ -1,3 +1,4 @@
+import enum
 import json
 import os
 from collections import defaultdict
@@ -13,8 +14,15 @@ include_dir_path = os.path.join(os.path.dirname(__file__), "include")
 generated_dir_path = os.path.join(os.path.dirname(__file__), "generated")
 
 
+class HashTable(enum.Enum):
+	# (hash_map_type, include_path)
+	PHMAP = ("phmap::flat_hash_map", "parallel_hashmap/phmap.h")
+	EMHASH6 = ("emhash6::HashMap", "emhash6.hpp")
+
+
 class Plan2CPPTranslator:
-	def __init__(self):
+	def __init__(self, hash_table: HashTable = HashTable.PHMAP):
+		self.ht = hash_table
 		self.parser = PlanParser()
 		with open("rel_abbrs.json", 'r') as json_file:
 			self.rel_abbrs = json.load(json_file)
@@ -118,10 +126,10 @@ class Plan2CPPTranslator:
 			])
 			self.trie_types.add(level_types)
 			if proj_cols:
-				yield f"auto {self.var_mng.trie_var(rel)} = {self.var_mng.trie_type(level_types)}();\n"
+				yield f"auto {self.var_mng.trie_var(rel)} = {self.var_mng.trie_def(self.ht.value[0], level_types)}();\n"
 				yield f"{self.var_mng.build_func()}({self.var_mng.trie_var(rel)}, {', '.join([self.var_mng.rel_col_var(rel, join_col) for join_col in join_cols])});\n"
 			else:
-				yield f"auto {self.var_mng.trie_var(rel)} = {self.var_mng.trie_bool_type(level_types)}();\n"
+				yield f"auto {self.var_mng.trie_var(rel)} = {self.var_mng.trie_bool_def(self.ht.value[0], level_types)}();\n"
 				yield f"{self.var_mng.build_bool_func()}({self.var_mng.trie_var(rel)}, {', '.join([self.var_mng.rel_col_var(rel, join_col) for join_col in join_cols])});\n"
 
 	def _translate_compiled_plan(
@@ -137,7 +145,7 @@ class Plan2CPPTranslator:
 		for idx, eq_cols in enumerate(compiled_plan):
 			rel_0, col_0 = eq_cols[0]
 			if join_attrs_order[rel_0][col_0] == idx:
-				yield f"for (const auto &[{self.var_mng.x_var(idx)}, {self.var_mng.next_trie_var(rel_0)}]: {self.var_mng.trie_var(rel_0)}) {{\n"
+				yield f"for (const auto &[{self._loop_body_foreach_ht(rel_0, idx)}) {{\n"
 				self.var_mng.next_trie_var(rel_0, inplace=True)
 				self.indent += 1
 				self.resolved_attrs.add(eq_cols[0])
@@ -176,6 +184,14 @@ class Plan2CPPTranslator:
 			self.indent -= 1
 			yield '}\n'
 
+	def _loop_body_foreach_ht(self, rel, x_idx):
+		if self.ht == HashTable.PHMAP:
+			return f"{self.var_mng.x_var(x_idx)}, {self.var_mng.next_trie_var(rel)}]: {self.var_mng.trie_var(rel)}"
+		elif self.ht == HashTable.EMHASH6:
+			return f"{self.var_mng.next_trie_var(rel)}, _, {self.var_mng.x_var(x_idx)}]: {self.var_mng.trie_var(rel)}"
+		else:
+			raise ValueError(f"Unknown hash table: {self.ht}")
+
 	def _find_all_proj_cols_and_types(self, build_plan: List[Tuple[str, List[str], List[str]]]):
 		relcols, col_types = [], []
 		for rel, _, proj_cols in build_plan:
@@ -196,7 +212,7 @@ class Plan2CPPTranslator:
 		with open(os.path.join(include_dir_path, "build.h"), "w") as cpp_file:
 			cpp_file.write('#include <iostream>\n')
 			cpp_file.write('#include <vector>\n')
-			cpp_file.write('#include "parallel_hashmap/phmap.h"\n\n')
+			cpp_file.write(f'#include "{self.ht.value[1]}"\n\n')
 			cpp_file.write('using namespace std;\n')
 
 			for is_for_proj in [True, False]:
@@ -204,10 +220,10 @@ class Plan2CPPTranslator:
 					cpp_file.write("\n")
 					if is_for_proj:
 						build_func = self.var_mng.build_func()
-						trie_type = self.var_mng.trie_type(level_types)
+						trie_type = self.var_mng.trie_def(self.ht.value[0], level_types)
 					else:
 						build_func = self.var_mng.build_bool_func()
-						trie_type = self.var_mng.trie_bool_type(level_types)
+						trie_type = self.var_mng.trie_bool_def(self.ht.value[0], level_types)
 					cpp_file.write(
 						f"void {build_func}({trie_type} &trie, "
 						f"{', '.join([f'vector<{ttt}> &{self.var_mng.attr_var(idx)}' for idx, ttt in enumerate(level_types)])}){{\n"
@@ -224,7 +240,7 @@ class Plan2CPPTranslator:
 		with open(os.path.join(include_dir_path, "build.h"), "w") as cpp_file:
 			cpp_file.write('#include <iostream>\n')
 			cpp_file.write('#include <vector>\n')
-			cpp_file.write('#include "parallel_hashmap/phmap.h"\n\n')
+			cpp_file.write(f'#include "{self.ht.value[1]}"\n\n')
 			cpp_file.write('using namespace std;\n')
 
 			for is_for_proj in [True, False]:
@@ -232,10 +248,10 @@ class Plan2CPPTranslator:
 					cpp_file.write("\n")
 					if is_for_proj:
 						build_func = self.var_mng.build_func()
-						trie_type = self.var_mng.trie_type(level_types)
+						trie_type = self.var_mng.trie_def(self.ht.value[0], level_types)
 					else:
 						build_func = self.var_mng.build_bool_func()
-						trie_type = self.var_mng.trie_bool_type(level_types)
+						trie_type = self.var_mng.trie_bool_def(self.ht.value[0], level_types)
 					cpp_file.write(
 						f"void {build_func}({trie_type} &trie, "
 						f"{', '.join([f'vector<{ttt}> &{self.var_mng.attr_var(idx)}' for idx, ttt in enumerate(level_types)])}) {{\n"
@@ -354,9 +370,15 @@ class Plan2CPPTranslator:
 
 
 if __name__ == '__main__':
+	skip_queries = [
+		'16b', '16c', '16d', '17a', '17b', '17c', '17d', '17e', '17f', '18b', '18c', '19c', '20a', '20b', '20c', '22a',
+		'22b', '22c', '22d', '23a', '23b', '23c', '24a', '24b', '25a', '25b', '25c', '26a', '26b', '26c', '27a', '27b',
+		'27c', '28a', '28b', '28c', '29c', '30a', '30b', '30c', '31a', '31b', '31c', '33a', '33b', '33c', '8c', '8d'
+	]
 	queries = []
 	for filename in os.listdir(os.path.join(os.path.dirname(__file__), "plans", "raw")):
-		queries.append(filename[:-4])
+		if filename[:-4] not in skip_queries:
+			queries.append(filename[:-4])
 
-	translator = Plan2CPPTranslator()
+	translator = Plan2CPPTranslator(hash_table=HashTable.EMHASH6)
 	translator.translate(queries, use_cache=True)

@@ -22,39 +22,39 @@ int main() {
 	for (int z = 0; z < 1 + 5; ++z) {
 		timer.Reset();
 
-		auto ci_trie0 = phmap::flat_hash_map<int, phmap::flat_hash_map<int, bool>>();
+		auto ci_trie0 = emhash6::HashMap<int, emhash6::HashMap<int, bool>>();
 		build_trie_bool(ci_trie0, ci_movie_id, ci_person_id);
-		auto n_trie0 = phmap::flat_hash_map<int, bool>();
+		auto n_trie0 = emhash6::HashMap<int, bool>();
 		build_trie_bool(n_trie0, n_id);
-		auto mk_trie0 = phmap::flat_hash_map<int, phmap::flat_hash_map<int, bool>>();
+		auto mk_trie0 = emhash6::HashMap<int, emhash6::HashMap<int, bool>>();
 		build_trie_bool(mk_trie0, mk_keyword_id, mk_movie_id);
-		auto t_trie0 = phmap::flat_hash_map<int, vector<int>>();
+		auto t_trie0 = emhash6::HashMap<int, vector<int>>();
 		build_trie(t_trie0, t_id);
-		auto mc_trie0 = phmap::flat_hash_map<int, phmap::flat_hash_map<int, bool>>();
+		auto mc_trie0 = emhash6::HashMap<int, emhash6::HashMap<int, bool>>();
 		build_trie_bool(mc_trie0, mc_movie_id, mc_company_id);
-		auto k_trie0 = phmap::flat_hash_map<int, bool>();
+		auto k_trie0 = emhash6::HashMap<int, bool>();
 		build_trie_bool(k_trie0, k_id);
-		auto cn_trie0 = phmap::flat_hash_map<int, bool>();
+		auto cn_trie0 = emhash6::HashMap<int, bool>();
 		build_trie_bool(cn_trie0, cn_id);
-		auto an_trie0 = phmap::flat_hash_map<int, vector<int>>();
+		auto an_trie0 = emhash6::HashMap<int, vector<int>>();
 		build_trie(an_trie0, an_person_id);
 		timer.StoreElapsedTime(0);
 
 		string mn_t_title = "zzzzzzzz";
 		string mn_an_name = "zzzzzzzz";
-		for (const auto &[x0, mk_trie1]: mk_trie0) {
+		for (const auto &[mk_trie1, _, x0]: mk_trie0) {
 			if (k_trie0.contains(x0)) {
 				auto &k_trie1 = k_trie0.at(x0);
-				for (const auto &[x1, mk_trie2]: mk_trie1) {
+				for (const auto &[mk_trie2, _, x1]: mk_trie1) {
 					if (t_trie0.contains(x1) && mc_trie0.contains(x1)) {
 						auto &t_trie1 = t_trie0.at(x1);
 						auto &mc_trie1 = mc_trie0.at(x1);
-						for (const auto &[x2, mc_trie2]: mc_trie1) {
+						for (const auto &[mc_trie2, _, x2]: mc_trie1) {
 							if (cn_trie0.contains(x2)) {
 								auto &cn_trie1 = cn_trie0.at(x2);
 								if (ci_trie0.contains(x1)) {
 									auto &ci_trie1 = ci_trie0.at(x1);
-									for (const auto &[x4, ci_trie2]: ci_trie1) {
+									for (const auto &[ci_trie2, _, x4]: ci_trie1) {
 										if (an_trie0.contains(x4)) {
 											auto &an_trie1 = an_trie0.at(x4);
 											if (n_trie0.contains(x4)) {

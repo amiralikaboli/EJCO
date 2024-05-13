@@ -19,28 +19,28 @@ int main() {
 	for (int z = 0; z < 1 + 5; ++z) {
 		timer.Reset();
 
-		auto ci_trie0 = phmap::flat_hash_map<int, phmap::flat_hash_map<int, bool>>();
+		auto ci_trie0 = emhash6::HashMap<int, emhash6::HashMap<int, bool>>();
 		build_trie_bool(ci_trie0, ci_person_id, ci_movie_id);
-		auto n_trie0 = phmap::flat_hash_map<int, vector<int>>();
+		auto n_trie0 = emhash6::HashMap<int, vector<int>>();
 		build_trie(n_trie0, n_id);
-		auto mk_trie0 = phmap::flat_hash_map<int, phmap::flat_hash_map<int, bool>>();
+		auto mk_trie0 = emhash6::HashMap<int, emhash6::HashMap<int, bool>>();
 		build_trie_bool(mk_trie0, mk_movie_id, mk_keyword_id);
-		auto t_trie0 = phmap::flat_hash_map<int, vector<int>>();
+		auto t_trie0 = emhash6::HashMap<int, vector<int>>();
 		build_trie(t_trie0, t_id);
-		auto k_trie0 = phmap::flat_hash_map<int, vector<int>>();
+		auto k_trie0 = emhash6::HashMap<int, vector<int>>();
 		build_trie(k_trie0, k_id);
 		timer.StoreElapsedTime(0);
 
 		string mn_n_name = "zzzzzzzz";
 		string mn_t_title = "zzzzzzzz";
 		string mn_k_keyword = "zzzzzzzz";
-		for (const auto &[x0, ci_trie1]: ci_trie0) {
+		for (const auto &[ci_trie1, _, x0]: ci_trie0) {
 			if (n_trie0.contains(x0)) {
 				auto &n_trie1 = n_trie0.at(x0);
-				for (const auto &[x1, mk_trie1]: mk_trie0) {
+				for (const auto &[mk_trie1, _, x1]: mk_trie0) {
 					if (t_trie0.contains(x1)) {
 						auto &t_trie1 = t_trie0.at(x1);
-						for (const auto &[x2, mk_trie2]: mk_trie1) {
+						for (const auto &[mk_trie2, _, x2]: mk_trie1) {
 							if (k_trie0.contains(x2)) {
 								auto &k_trie1 = k_trie0.at(x2);
 								if (ci_trie1.contains(x1)) {
