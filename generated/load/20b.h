@@ -5,10 +5,11 @@
 
 using namespace std;
 
-vector<int> an_person_id;
-vector<string> an_name;
+vector<int> cc_movie_id;
+vector<int> cc_subject_id;
+vector<int> cc_status_id;
 
-void load_an(const string path) {
+void load_cc(const string path) {
 	ifstream in(path);
 	if (!in)
 		 throw path;
@@ -18,15 +19,48 @@ void load_an(const string path) {
 		stringstream ss(line);
 		getline(ss, token, '|');
 		getline(ss, token, '|');
-		an_person_id.push_back(stoi(token));
+		cc_movie_id.push_back(stoi(token));
 		getline(ss, token, '|');
-		an_name.push_back(token);
+		cc_subject_id.push_back(stoi(token));
+		getline(ss, token, '|');
+		cc_status_id.push_back(stoi(token));
+	}
+	in.close();
+}
+
+vector<int> cct1_id;
+
+void load_cct1(const string path) {
+	ifstream in(path);
+	if (!in)
+		 throw path;
+	string line;
+	string token;
+	while (getline(in, line)) {
+		stringstream ss(line);
+		getline(ss, token, '|');
+		cct1_id.push_back(stoi(token));
+	}
+	in.close();
+}
+
+vector<int> cct2_id;
+
+void load_cct2(const string path) {
+	ifstream in(path);
+	if (!in)
+		 throw path;
+	string line;
+	string token;
+	while (getline(in, line)) {
+		stringstream ss(line);
+		getline(ss, token, '|');
+		cct2_id.push_back(stoi(token));
 	}
 	in.close();
 }
 
 vector<int> chn_id;
-vector<string> chn_name;
 
 void load_chn(const string path) {
 	ifstream in(path);
@@ -38,8 +72,6 @@ void load_chn(const string path) {
 		stringstream ss(line);
 		getline(ss, token, '|');
 		chn_id.push_back(stoi(token));
-		getline(ss, token, '|');
-		chn_name.push_back(token);
 	}
 	in.close();
 }
@@ -47,7 +79,6 @@ void load_chn(const string path) {
 vector<int> ci_person_id;
 vector<int> ci_movie_id;
 vector<int> ci_person_role_id;
-vector<int> ci_role_id;
 
 void load_ci(const string path) {
 	ifstream in(path);
@@ -64,17 +95,13 @@ void load_ci(const string path) {
 		ci_movie_id.push_back(stoi(token));
 		getline(ss, token, '|');
 		ci_person_role_id.push_back(stoi(token));
-		getline(ss, token, '|');
-		getline(ss, token, '|');
-		getline(ss, token, '|');
-		ci_role_id.push_back(stoi(token));
 	}
 	in.close();
 }
 
-vector<int> cn_id;
+vector<int> k_id;
 
-void load_cn(const string path) {
+void load_k(const string path) {
 	ifstream in(path);
 	if (!in)
 		 throw path;
@@ -83,15 +110,31 @@ void load_cn(const string path) {
 	while (getline(in, line)) {
 		stringstream ss(line);
 		getline(ss, token, '|');
-		cn_id.push_back(stoi(token));
+		k_id.push_back(stoi(token));
 	}
 	in.close();
 }
 
-vector<int> mc_movie_id;
-vector<int> mc_company_id;
+vector<int> kt_id;
 
-void load_mc(const string path) {
+void load_kt(const string path) {
+	ifstream in(path);
+	if (!in)
+		 throw path;
+	string line;
+	string token;
+	while (getline(in, line)) {
+		stringstream ss(line);
+		getline(ss, token, '|');
+		kt_id.push_back(stoi(token));
+	}
+	in.close();
+}
+
+vector<int> mk_movie_id;
+vector<int> mk_keyword_id;
+
+void load_mk(const string path) {
 	ifstream in(path);
 	if (!in)
 		 throw path;
@@ -101,15 +144,14 @@ void load_mc(const string path) {
 		stringstream ss(line);
 		getline(ss, token, '|');
 		getline(ss, token, '|');
-		mc_movie_id.push_back(stoi(token));
+		mk_movie_id.push_back(stoi(token));
 		getline(ss, token, '|');
-		mc_company_id.push_back(stoi(token));
+		mk_keyword_id.push_back(stoi(token));
 	}
 	in.close();
 }
 
 vector<int> n_id;
-vector<string> n_name;
 
 void load_n(const string path) {
 	ifstream in(path);
@@ -121,30 +163,13 @@ void load_n(const string path) {
 		stringstream ss(line);
 		getline(ss, token, '|');
 		n_id.push_back(stoi(token));
-		getline(ss, token, '|');
-		n_name.push_back(token);
-	}
-	in.close();
-}
-
-vector<int> rt_id;
-
-void load_rt(const string path) {
-	ifstream in(path);
-	if (!in)
-		 throw path;
-	string line;
-	string token;
-	while (getline(in, line)) {
-		stringstream ss(line);
-		getline(ss, token, '|');
-		rt_id.push_back(stoi(token));
 	}
 	in.close();
 }
 
 vector<int> t_id;
 vector<string> t_title;
+vector<int> t_kind_id;
 
 void load_t(const string path) {
 	ifstream in(path);
@@ -158,6 +183,9 @@ void load_t(const string path) {
 		t_id.push_back(stoi(token));
 		getline(ss, token, '|');
 		t_title.push_back(token);
+		getline(ss, token, '|');
+		getline(ss, token, '|');
+		t_kind_id.push_back(stoi(token));
 	}
 	in.close();
 }

@@ -100,7 +100,7 @@ void load_t(const string path) {
 		getline(ss, token, '|');
 		getline(ss, token, '|');
 		getline(ss, token, '|');
-		try { t_production_year.push_back(stoi(token)); } catch (...) { t_production_year.push_back(-1); }
+		t_production_year.push_back(stoi(token));
 	}
 	in.close();
 }

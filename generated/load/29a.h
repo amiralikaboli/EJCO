@@ -36,7 +36,7 @@ void load_cc(const string path) {
 		stringstream ss(line);
 		getline(ss, token, '|');
 		getline(ss, token, '|');
-		try { cc_movie_id.push_back(stoi(token)); } catch (...) { cc_movie_id.push_back(-1); }
+		cc_movie_id.push_back(stoi(token));
 		getline(ss, token, '|');
 		cc_subject_id.push_back(stoi(token));
 		getline(ss, token, '|');
@@ -115,7 +115,7 @@ void load_ci(const string path) {
 		getline(ss, token, '|');
 		ci_movie_id.push_back(stoi(token));
 		getline(ss, token, '|');
-		try { ci_person_role_id.push_back(stoi(token)); } catch (...) { ci_person_role_id.push_back(-1); }
+		ci_person_role_id.push_back(stoi(token));
 		getline(ss, token, '|');
 		getline(ss, token, '|');
 		getline(ss, token, '|');

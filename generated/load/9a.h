@@ -63,7 +63,7 @@ void load_ci(const string path) {
 		getline(ss, token, '|');
 		ci_movie_id.push_back(stoi(token));
 		getline(ss, token, '|');
-		try { ci_person_role_id.push_back(stoi(token)); } catch (...) { ci_person_role_id.push_back(-1); }
+		ci_person_role_id.push_back(stoi(token));
 		getline(ss, token, '|');
 		getline(ss, token, '|');
 		getline(ss, token, '|');

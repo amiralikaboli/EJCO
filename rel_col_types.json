@@ -1,169 +1,169 @@
 {
   "mk": {
-    "id": ["int", 1],
-    "movie_id": ["int", 1],
-    "keyword_id": ["int", 1]
+    "id": "int",
+    "movie_id": "int",
+    "keyword_id": "int"
   },
   "mi": {
-    "id": ["int", 1],
-    "movie_id": ["int", 1],
-    "info_type_id": ["int", 1],
-    "info": ["string", 1],
-    "note": ["string", 0]
+    "id": "int",
+    "movie_id": "int",
+    "info_type_id": "int",
+    "info": "string",
+    "note": "string"
   },
   "t": {
-    "id": ["int", 1],
-    "title": ["string", 1],
-    "imdb_index": ["string", 0],
-    "kind_id": ["int", 1],
-    "production_year": ["int", 0],
-    "imdb_id": ["string", 0],
-    "phonetic_code": ["string", 0],
-    "episode_of_id": ["int", 0],
-    "season_nr": ["int", 0],
-    "episode_nr": ["int", 0],
-    "series_years": ["string", 0],
-    "md5sum": ["string", 0]
+    "id": "int",
+    "title": "string",
+    "imdb_index": "string",
+    "kind_id": "int",
+    "production_year": "int",
+    "imdb_id": "string",
+    "phonetic_code": "string",
+    "episode_of_id": "int",
+    "season_nr": "int",
+    "episode_nr": "int",
+    "series_years": "string",
+    "md5sum": "string"
   },
   "k": {
-    "id": ["int", 1],
-    "keyword": ["string", 1],
-    "phonetic_code": ["string", 0]
+    "id": "int",
+    "keyword": "string",
+    "phonetic_code": "string"
   },
   "mc": {
-    "id": ["int", 1],
-    "movie_id": ["int", 1],
-    "company_id": ["int", 1],
-    "company_type_id": ["int", 1],
-    "note": ["string", 0]
+    "id": "int",
+    "movie_id": "int",
+    "company_id": "int",
+    "company_type_id": "int",
+    "note": "string"
   },
   "mi_idx": {
-    "id": ["int", 1],
-    "movie_id": ["int", 1],
-    "info_type_id": ["int", 1],
-    "info": ["string", 1],
-    "note": ["string", 0]
+    "id": "int",
+    "movie_id": "int",
+    "info_type_id": "int",
+    "info": "string",
+    "note": "string"
   },
   "miidx": {
-    "id": ["int", 1],
-    "movie_id": ["int", 1],
-    "info_type_id": ["int", 1],
-    "info": ["string", 1],
-    "note": ["string", 0]
+    "id": "int",
+    "movie_id": "int",
+    "info_type_id": "int",
+    "info": "string",
+    "note": "string"
   },
   "it": {
-    "id": ["int", 1],
-    "info": ["string", 1]
+    "id": "int",
+    "info": "string"
   },
   "ct": {
-    "id": ["int", 1],
-    "kind": ["string", 0]
+    "id": "int",
+    "kind": "string"
   },
   "cn": {
-    "id": ["int", 1],
-    "name": ["string", 1],
-    "country_code": ["string", 0],
-    "imdb_id": ["string", 0],
-    "name_pcode_nf": ["string", 0],
-    "name_pcode_sf": ["string", 0],
-    "md5sum": ["string", 0]
+    "id": "int",
+    "name": "string",
+    "country_code": "string",
+    "imdb_id": "string",
+    "name_pcode_nf": "string",
+    "name_pcode_sf": "string",
+    "md5sum": "string"
   },
   "ci": {
-    "id": ["int", 1],
-    "person_id": ["int", 1],
-    "movie_id": ["int", 1],
-    "person_role_id": ["int", 0],
-    "note": ["string", 0],
-    "nr_order": ["int", 0],
-    "role_id": ["int", 1]
+    "id": "int",
+    "person_id": "int",
+    "movie_id": "int",
+    "person_role_id": "int",
+    "note": "string",
+    "nr_order": "int",
+    "role_id": "int"
   },
   "n": {
-    "id": ["int", 1],
-    "name": ["string", 1],
-    "imdb_index": ["string", 0],
-    "imdb_id": ["string", 0],
-    "gender": ["string", 0],
-    "name_pcode_cf": ["string", 0],
-    "name_pcode_nf": ["string", 0],
-    "surname_pcode": ["string", 0],
-    "md5sum": ["string", 0]
+    "id": "int",
+    "name": "string",
+    "imdb_index": "string",
+    "imdb_id": "string",
+    "gender": "string",
+    "name_pcode_cf": "string",
+    "name_pcode_nf": "string",
+    "surname_pcode": "string",
+    "md5sum": "string"
   },
   "pi": {
-    "id": ["int", 1],
-    "person_id": ["int", 1],
-    "info_type_id": ["int", 1],
-    "info": ["string", 1],
-    "note": ["string", 0]
+    "id": "int",
+    "person_id": "int",
+    "info_type_id": "int",
+    "info": "string",
+    "note": "string"
   },
   "ml": {
-    "id": ["int", 1],
-    "movie_id": ["int", 1],
-    "linked_movie_id": ["int", 1],
-    "link_type_id": ["int", 1]
+    "id": "int",
+    "movie_id": "int",
+    "linked_movie_id": "int",
+    "link_type_id": "int"
   },
   "lt": {
-    "id": ["int", 1],
-    "link": ["string", 1]
+    "id": "int",
+    "link": "string"
   },
   "an": {
-    "id": ["int", 1],
-    "person_id": ["int", 1],
-    "name": ["string", 0],
-    "imdb_index": ["string", 0],
-    "name_pcode_cf": ["string", 0],
-    "name_pcode_nf": ["string", 0],
-    "surname_pcode": ["string", 0],
-    "md5sum": ["string", 0]
+    "id": "int",
+    "person_id": "int",
+    "name": "string",
+    "imdb_index": "string",
+    "name_pcode_cf": "string",
+    "name_pcode_nf": "string",
+    "surname_pcode": "string",
+    "md5sum": "string"
   },
   "a": {
-    "id": ["int", 1],
-    "person_id": ["int", 1],
-    "name": ["string", 0],
-    "imdb_index": ["string", 0],
-    "name_pcode_cf": ["string", 0],
-    "name_pcode_nf": ["string", 0],
-    "surname_pcode": ["string", 0],
-    "md5sum": ["string", 0]
+    "id": "int",
+    "person_id": "int",
+    "name": "string",
+    "imdb_index": "string",
+    "name_pcode_cf": "string",
+    "name_pcode_nf": "string",
+    "surname_pcode": "string",
+    "md5sum": "string"
   },
   "rt": {
-    "id": ["int", 1],
-    "role": ["string", 1]
+    "id": "int",
+    "role": "string"
   },
   "chn": {
-    "id": ["int", 1],
-    "name": ["string", 1],
-    "imdb_index": ["string", 0],
-    "imdb_id": ["int", 0],
-    "name_pcode_cf": ["string", 0],
-    "surname_pcode": ["string", 0],
-    "md5sum": ["string", 0]
+    "id": "int",
+    "name": "string",
+    "imdb_index": "string",
+    "imdb_id": "int",
+    "name_pcode_cf": "string",
+    "surname_pcode": "string",
+    "md5sum": "string"
   },
   "kt": {
-    "id": ["int", 1],
-    "kind": ["string", 0]
+    "id": "int",
+    "kind": "string"
   },
   "at": {
-    "id": ["int", 1],
-    "movie_id": ["int", 1],
-    "title": ["string", 0],
-    "imdb_index": ["string", 0],
-    "kind_id": ["int", 1],
-    "production_year": ["int", 0],
-    "phonetic_code": ["string", 0],
-    "episode_of_id": ["int", 0],
-    "season_nr": ["int", 0],
-    "episode_nr": ["int", 0],
-    "note": ["string", 0],
-    "md5sum": ["string", 0]
+    "id": "int",
+    "movie_id": "int",
+    "title": "string",
+    "imdb_index": "string",
+    "kind_id": "int",
+    "production_year": "int",
+    "phonetic_code": "string",
+    "episode_of_id": "int",
+    "season_nr": "int",
+    "episode_nr": "int",
+    "note": "string",
+    "md5sum": "string"
   },
   "cc": {
-    "id": ["int", 1],
-    "movie_id": ["int", 0],
-    "subject_id": ["int", 1],
-    "status_id": ["int", 1]
+    "id": "int",
+    "movie_id": "int",
+    "subject_id": "int",
+    "status_id": "int"
   },
   "cct": {
-    "id": ["int", 1],
-    "kind": ["string", 1]
+    "id": "int",
+    "kind": "string"
   }
 }

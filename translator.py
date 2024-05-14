@@ -121,7 +121,7 @@ class Plan2CPPTranslator:
 	def _translate_build_plan(self, build_plan: List[Tuple[str, List[str], List[str]]]):
 		for rel, join_cols, proj_cols in build_plan:
 			level_types = tuple([
-				self.rel_col_types[self.rel_wo_idx(rel)][join_col][0]
+				self.rel_col_types[self.rel_wo_idx(rel)][join_col]
 				for join_col in join_cols
 			])
 			self.trie_types.add(level_types)
@@ -197,7 +197,7 @@ class Plan2CPPTranslator:
 		for rel, _, proj_cols in build_plan:
 			for col in proj_cols:
 				relcols.append((rel, col))
-				col_types.append(self.rel_col_types[self.rel_wo_idx(rel)][col][0])
+				col_types.append(self.rel_col_types[self.rel_wo_idx(rel)][col])
 		return relcols, col_types
 
 	def _make_join_cols_order_consistent(self, build_plan, compiled_plan):
@@ -324,8 +324,7 @@ class Plan2CPPTranslator:
 				]
 
 				cpp_file.write('\n')
-				for col_n, col_t_nnull in self.rel_col_types[self.rel_wo_idx(rel)].items():
-					col_t, _ = col_t_nnull
+				for col_n, col_t in self.rel_col_types[self.rel_wo_idx(rel)].items():
 					if col_n in rel_involved_cols:
 						cpp_file.write(f"vector<{col_t}> {self.var_mng.rel_col_var(rel, col_n)};\n")
 				cpp_file.write("\n")
@@ -337,19 +336,12 @@ class Plan2CPPTranslator:
 				cpp_file.write(f"\twhile (getline(in, line)) {{\n")
 				cpp_file.write(f"\t\tstringstream ss(line);\n")
 
-				for col_n, col_t_nnull in self.rel_col_types[self.rel_wo_idx(rel)].items():
-					col_t, is_not_null = col_t_nnull
+				for col_n, col_t in self.rel_col_types[self.rel_wo_idx(rel)].items():
 					cpp_file.write(f"\t\tgetline(ss, token, '|');\n")
 
 					if col_n in rel_involved_cols:
 						if col_t == "int":
-							if is_not_null:
-								cpp_file.write(f"\t\t{self.var_mng.rel_col_var(rel, col_n)}.push_back(stoi(token));\n")
-							else:
-								cpp_file.write(
-									f"\t\ttry {{ {self.var_mng.rel_col_var(rel, col_n)}.push_back(stoi(token)); }} "
-									f"catch (...) {{ {self.var_mng.rel_col_var(rel, col_n)}.push_back(-1); }}\n"
-								)
+							cpp_file.write(f"\t\t{self.var_mng.rel_col_var(rel, col_n)}.push_back(stoi(token));\n")
 						elif col_t == "string":
 							cpp_file.write(f"\t\t{self.var_mng.rel_col_var(rel, col_n)}.push_back(token);\n")
 						else:
