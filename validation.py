@@ -1,11 +1,15 @@
 import json
 import os
 import re
+import sys
 
 freejoin_path = os.path.join(os.path.dirname(__file__), "..", "free-join")
 
 if __name__ == '__main__':
-	with open("results.txt", "r") as txt_file:
+	args = sys.argv[1:]
+	results_file = args[0] if args else "results.txt"
+
+	with open(results_file, "r") as txt_file:
 		stats = [res.strip().split("\n") for res in txt_file.read().split("-" * 20)[:-1]]
 	with open("gj.log", "r") as txt_file:
 		gj_log = txt_file.read()

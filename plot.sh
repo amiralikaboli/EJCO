@@ -2,6 +2,8 @@
 
 set -euo pipefail
 
-python3 validation.py
+RESULTS_FILE=${1:-results.txt}
+
+python3 validation.py $RESULTS_FILE
 
 python3 ../free-join/scripts/plot_sep.py
