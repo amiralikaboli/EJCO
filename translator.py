@@ -1,23 +1,11 @@
-import enum
 import json
 import os
 from collections import defaultdict
 from typing import List, Tuple
 
+from consts import HashTable, preprocessed_data_path, raw_data_path, include_dir_path, generated_dir_path
 from parser import PlanParser
 from var_mng import VariableManager
-
-freejoin_path = os.path.join(os.path.dirname(__file__), "..", "free-join")
-preprocessed_data_path = os.path.join(freejoin_path, "queries", "preprocessed", "join-order-benchmark", "data")
-raw_data_path = os.path.join(freejoin_path, "data", "imdb_csv")
-include_dir_path = os.path.join(os.path.dirname(__file__), "include")
-generated_dir_path = os.path.join(os.path.dirname(__file__), "generated")
-
-
-class HashTable(enum.Enum):
-	# (hash_map_type, include_path)
-	PHMAP = ("phmap::flat_hash_map", "parallel_hashmap/phmap.h")
-	EMHASH6 = ("emhash6::HashMap", "emhash6.hpp")
 
 
 class Plan2CPPTranslator:
@@ -363,9 +351,14 @@ class Plan2CPPTranslator:
 
 if __name__ == '__main__':
 	skip_queries = [
-		'16b', '16c', '16d', '17a', '17b', '17d', '17e', '17f', '18b', '18c', '19c', '20a', '22b', '22c', '22d', '23b',
-		'23c', '24b', '25b', '25c', '26b', '26c', '27b', '27c', '28b', '28c', '29c', '30b', '30c', '31b', '31c', '33a',
-		'33b', '33c', '8c', '8d'
+		'16a', '16b', '16c', '16d', '17a', '17b', '17c', '17d', '17e', '17f', '18a', '18b', '18c', '19c', '19d', '20a',
+		'20c', '22a', '22b', '22c', '22d', '23a', '23b', '23c', '24a', '24b', '25a', '25b', '25c', '26a', '26b', '26c',
+		'27a', '27b', '27c', '28a', '28b', '28c', '29c', '30a', '30b', '30c', '31a', '31b', '31c', '33a', '33b', '33c',
+		'6f', '7c', '8c', '8d', '9d'
+	]
+	hand_opt_queries = [
+		'16a', '17c', '18a', '19d', '20c', '22a', '23a', '24a', '25a', '26a', '27a', '28a', '30a', '31a', '6f', '7c',
+		'9d'
 	]
 	queries = []
 	for filename in os.listdir(os.path.join(os.path.dirname(__file__), "plans", "raw")):
@@ -373,4 +366,4 @@ if __name__ == '__main__':
 			queries.append(filename[:-4])
 
 	translator = Plan2CPPTranslator(hash_table=HashTable.EMHASH6)
-	translator.translate(queries, use_cache=True)
+	translator.translate(queries, use_cache=False)

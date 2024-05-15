@@ -82,49 +82,39 @@ int main() {
 								for (const auto &[pi_trie2, _, x3]: pi_trie1) {
 									if (it3_trie0.contains(x3)) {
 										auto &it3_trie1 = it3_trie0.at(x3);
-										if (n_trie0.contains(x2)) {
+										if (n_trie0.contains(x2) && ci_trie2.contains(x2)) {
 											auto &n_trie1 = n_trie0.at(x2);
-											if (ci_trie2.contains(x2)) {
-												auto &ci_trie3 = ci_trie2.at(x2);
-												for (const auto &[mi_trie1, _, x6]: mi_trie0) {
-													if (it_trie0.contains(x6)) {
-														auto &it_trie1 = it_trie0.at(x6);
-														for (const auto &[mk_trie1, _, x7]: mk_trie0) {
-															if (k_trie0.contains(x7)) {
-																auto &k_trie1 = k_trie0.at(x7);
-																for (const auto &[mc_trie1, _, x8]: mc_trie0) {
-																	if (cn_trie0.contains(x8)) {
-																		auto &cn_trie1 = cn_trie0.at(x8);
-																		for (const auto &[cc_trie1, _, x9]: cc_trie0) {
-																			if (cct1_trie0.contains(x9)) {
-																				auto &cct1_trie1 = cct1_trie0.at(x9);
-																				for (const auto &[cc_trie2, _, x10]: cc_trie1) {
-																					if (cct2_trie0.contains(x10)) {
-																						auto &cct2_trie1 = cct2_trie0.at(x10);
-																						for (const auto &[t_trie1, _, x11]: t_trie0) {
-																							if (cc_trie2.contains(x11)) {
-																								auto &cc_trie3 = cc_trie2.at(x11);
-																								if (mc_trie1.contains(x11)) {
-																									auto &mc_trie2 = mc_trie1.at(x11);
-																									if (mk_trie1.contains(x11)) {
-																										auto &mk_trie2 = mk_trie1.at(x11);
-																										if (mi_trie1.contains(x11)) {
-																											auto &mi_trie2 = mi_trie1.at(x11);
-																											if (ci_trie3.contains(x11)) {
-																												auto &ci_trie4 = ci_trie3.at(x11);
-																												for (const auto &chn_off: chn_trie1) {
-																													mn_chn_name = min(mn_chn_name, chn_name[chn_off]);
-																												}
-																												for (const auto &n_off: n_trie1) {
-																													mn_n_name = min(mn_n_name, n_name[n_off]);
-																												}
-																												for (const auto &t_off: t_trie1) {
-																													mn_t_title = min(mn_t_title, t_title[t_off]);
-																												}
-																											}
-																										}
-																									}
-																								}
+											auto &ci_trie3 = ci_trie2.at(x2);
+											for (const auto &[mi_trie1, _, x5]: mi_trie0) {
+												if (it_trie0.contains(x5)) {
+													auto &it_trie1 = it_trie0.at(x5);
+													for (const auto &[mk_trie1, _, x6]: mk_trie0) {
+														if (k_trie0.contains(x6)) {
+															auto &k_trie1 = k_trie0.at(x6);
+															for (const auto &[mc_trie1, _, x7]: mc_trie0) {
+																if (cn_trie0.contains(x7)) {
+																	auto &cn_trie1 = cn_trie0.at(x7);
+																	for (const auto &[cc_trie1, _, x8]: cc_trie0) {
+																		if (cct1_trie0.contains(x8)) {
+																			auto &cct1_trie1 = cct1_trie0.at(x8);
+																			for (const auto &[cc_trie2, _, x9]: cc_trie1) {
+																				if (cct2_trie0.contains(x9)) {
+																					auto &cct2_trie1 = cct2_trie0.at(x9);
+																					for (const auto &[t_trie1, _, x10]: t_trie0) {
+																						if (cc_trie2.contains(x10) && mc_trie1.contains(x10) && mk_trie1.contains(x10) && mi_trie1.contains(x10) && ci_trie3.contains(x10)) {
+																							auto &cc_trie3 = cc_trie2.at(x10);
+																							auto &mc_trie2 = mc_trie1.at(x10);
+																							auto &mk_trie2 = mk_trie1.at(x10);
+																							auto &mi_trie2 = mi_trie1.at(x10);
+																							auto &ci_trie4 = ci_trie3.at(x10);
+																							for (const auto &chn_off: chn_trie1) {
+																								mn_chn_name = min(mn_chn_name, chn_name[chn_off]);
+																							}
+																							for (const auto &n_off: n_trie1) {
+																								mn_n_name = min(mn_n_name, n_name[n_off]);
+																							}
+																							for (const auto &t_off: t_trie1) {
+																								mn_t_title = min(mn_t_title, t_title[t_off]);
 																							}
 																						}
 																					}

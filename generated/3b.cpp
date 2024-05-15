@@ -30,16 +30,14 @@ int main() {
 
 		string mn_t_title = "zzzzzzzz";
 		for (const auto &[mk_trie1, _, x0]: mk_trie0) {
-			if (t_trie0.contains(x0)) {
+			if (t_trie0.contains(x0) && mi_trie0.contains(x0)) {
 				auto &t_trie1 = t_trie0.at(x0);
-				if (mi_trie0.contains(x0)) {
-					auto &mi_trie1 = mi_trie0.at(x0);
-					for (const auto &[mk_trie2, _, x2]: mk_trie1) {
-						if (k_trie0.contains(x2)) {
-							auto &k_trie1 = k_trie0.at(x2);
-							for (const auto &t_off: t_trie1) {
-								mn_t_title = min(mn_t_title, t_title[t_off]);
-							}
+				auto &mi_trie1 = mi_trie0.at(x0);
+				for (const auto &[mk_trie2, _, x1]: mk_trie1) {
+					if (k_trie0.contains(x1)) {
+						auto &k_trie1 = k_trie0.at(x1);
+						for (const auto &t_off: t_trie1) {
+							mn_t_title = min(mn_t_title, t_title[t_off]);
 						}
 					}
 				}

@@ -1,0 +1,2 @@
+[('ci', ['movie_id', 'person_id'], []), ('n', ['id'], ['name']), ('mk', ['keyword_id', 'movie_id'], []), ('t', ['id'], ['title']), ('k', ['id'], ['keyword'])]
+[[('k', 'id'), ('mk', 'keyword_id')], [('mk', 'movie_id'), ('t', 'id'), ('ci', 'movie_id')], [('ci', 'person_id'), ('n', 'id')]]

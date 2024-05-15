@@ -35,23 +35,21 @@ int main() {
 		string mn_t_title = "zzzzzzzz";
 		int mn_t_production_year = numeric_limits<int>::max();
 		for (const auto &[t_trie1, _, x0]: t_trie0) {
-			if (mi_idx_trie0.contains(x0)) {
+			if (mi_idx_trie0.contains(x0) && mc_trie0.contains(x0)) {
 				auto &mi_idx_trie1 = mi_idx_trie0.at(x0);
-				if (mc_trie0.contains(x0)) {
-					auto &mc_trie1 = mc_trie0.at(x0);
-					for (const auto &[mi_idx_trie2, _, x2]: mi_idx_trie1) {
-						if (it_trie0.contains(x2)) {
-							auto &it_trie1 = it_trie0.at(x2);
-							for (const auto &[mc_trie2, _, x3]: mc_trie1) {
-								if (ct_trie0.contains(x3)) {
-									auto &ct_trie1 = ct_trie0.at(x3);
-									for (const auto &mc_off: mc_trie2) {
-										mn_mc_note = min(mn_mc_note, mc_note[mc_off]);
-									}
-									for (const auto &t_off: t_trie1) {
-										mn_t_title = min(mn_t_title, t_title[t_off]);
-										mn_t_production_year = min(mn_t_production_year, t_production_year[t_off]);
-									}
+				auto &mc_trie1 = mc_trie0.at(x0);
+				for (const auto &[mi_idx_trie2, _, x1]: mi_idx_trie1) {
+					if (it_trie0.contains(x1)) {
+						auto &it_trie1 = it_trie0.at(x1);
+						for (const auto &[mc_trie2, _, x2]: mc_trie1) {
+							if (ct_trie0.contains(x2)) {
+								auto &ct_trie1 = ct_trie0.at(x2);
+								for (const auto &mc_off: mc_trie2) {
+									mn_mc_note = min(mn_mc_note, mc_note[mc_off]);
+								}
+								for (const auto &t_off: t_trie1) {
+									mn_t_title = min(mn_t_title, t_title[t_off]);
+									mn_t_production_year = min(mn_t_production_year, t_production_year[t_off]);
 								}
 							}
 						}
