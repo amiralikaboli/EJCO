@@ -35,7 +35,7 @@ class Plan2CPPTranslator:
 		for query in queries:
 			self._clear_per_query()
 			self._translate(query, use_cache)
-			self._translate_load_files(query)
+			self._translate_load_file(query)
 
 		self._translate_build_file()
 
@@ -296,7 +296,7 @@ class Plan2CPPTranslator:
 					)
 					cpp_file.write(f"}}\n")
 
-	def _translate_load_files(self, query: str):
+	def _translate_load_file(self, query: str):
 		with open(os.path.join(generated_dir_path, "load", f"{query}.h"), "w") as cpp_file:
 			cpp_file.write('#include <iostream>\n')
 			cpp_file.write('#include <fstream>\n')
