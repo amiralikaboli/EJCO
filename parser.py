@@ -14,7 +14,7 @@ class PlanParser:
 
 		with open(os.path.join(freejoin_path, "logs", "plan-profiles", f"{query}.json"), 'r') as json_file:
 			tree_plan = json.load(json_file)
-		fused_compiled_plan = self._linearize_plan_tree(tree_plan)
+		fused_compiled_plan = self._fuse_compiled_plan(tree_plan)
 
 		with open(os.path.join(plans_path, "raw", f"{query}.log"), 'r') as log_file:
 			lines = log_file.readlines()
@@ -90,7 +90,21 @@ class PlanParser:
 					rels2cols[rel][1].remove(col)
 		return [(rel, rels2cols[rel][0], rels2cols[rel][1]) for rel in rels2cols.keys()]
 
-	def _linearize_plan_tree(self, node):
+	def _fuse_compiled_plan(self, tree_plan: Dict) -> List[List[Tuple[str, str]]]:
+		compiled_plan = self._linearize_plan_tree(tree_plan)
+		duplicates = [[] for _ in compiled_plan]
+		for r_i in range(len(compiled_plan)):
+			for relcol in compiled_plan[r_i]:
+				for l_i in range(r_i):
+					if relcol in compiled_plan[l_i]:
+						duplicates[r_i].append(relcol)
+						break
+		for eq_cols, dups in zip(compiled_plan, duplicates):
+			for dup in dups[1:]:
+				eq_cols.remove(dup)
+		return compiled_plan
+
+	def _linearize_plan_tree(self, node) -> List[List[Tuple[str, str]]]:
 		for child in node["children"]:
 			if child["name"] == PlanNode.ChunkScan.value:
 				node["children"].remove(child)
