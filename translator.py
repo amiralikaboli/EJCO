@@ -362,8 +362,7 @@ if __name__ == '__main__':
 	]
 	queries = []
 	for filename in os.listdir(os.path.join(os.path.dirname(__file__), "plans", "raw")):
-		if filename[:-4] not in skip_queries:
-			queries.append(filename[:-4])
+		queries.append(filename[:-4])
 
-	translator = Plan2CPPTranslator(hash_table=HashTable.EMHASH6)
+	translator = Plan2CPPTranslator(hash_table=HashTable.PHMAP)
 	translator.translate(queries, use_cache=False)

@@ -114,9 +114,12 @@ class PlanParser:
 		if len(node["children"]) == 1:
 			return self._linearize_plan_tree(node["children"][0])
 
-		left_child_plan = self._linearize_plan_tree(node["children"][0])
-		right_child_plan = self._linearize_plan_tree(node["children"][1])
-		plan = left_child_plan + right_child_plan
+		left_child = node["children"][0]
+		right_child = node["children"][1]
+
+		left_child_plan = self._linearize_plan_tree(left_child)
+		right_child_plan = self._linearize_plan_tree(right_child)
+		plan = right_child_plan + left_child_plan
 		if node["name"] == PlanNode.HashJoin.value:
 			eqs = [tuple(side.strip() for side in eq.split(" = ")) for eq in node["extra_info"][5:].strip().split("\n")]
 			for eq in eqs:

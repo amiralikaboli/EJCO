@@ -20,35 +20,35 @@ int main() {
 	for (int z = 0; z < 1 + 5; ++z) {
 		timer.Reset();
 
-		auto mk_trie0 = emhash6::HashMap<int, emhash6::HashMap<int, bool>>();
+		auto mk_trie0 = phmap::flat_hash_map<int, phmap::flat_hash_map<int, bool>>();
 		build_trie_bool(mk_trie0, mk_movie_id, mk_keyword_id);
-		auto t1_trie0 = emhash6::HashMap<int, vector<int>>();
+		auto t1_trie0 = phmap::flat_hash_map<int, vector<int>>();
 		build_trie(t1_trie0, t1_id);
-		auto ml_trie0 = emhash6::HashMap<int, emhash6::HashMap<int, emhash6::HashMap<int, bool>>>();
+		auto ml_trie0 = phmap::flat_hash_map<int, phmap::flat_hash_map<int, phmap::flat_hash_map<int, bool>>>();
 		build_trie_bool(ml_trie0, ml_movie_id, ml_linked_movie_id, ml_link_type_id);
-		auto t2_trie0 = emhash6::HashMap<int, vector<int>>();
+		auto t2_trie0 = phmap::flat_hash_map<int, vector<int>>();
 		build_trie(t2_trie0, t2_id);
-		auto lt_trie0 = emhash6::HashMap<int, vector<int>>();
+		auto lt_trie0 = phmap::flat_hash_map<int, vector<int>>();
 		build_trie(lt_trie0, lt_id);
-		auto k_trie0 = emhash6::HashMap<int, bool>();
+		auto k_trie0 = phmap::flat_hash_map<int, bool>();
 		build_trie_bool(k_trie0, k_id);
 		timer.StoreElapsedTime(0);
 
 		string mn_t1_title = "zzzzzzzz";
 		string mn_t2_title = "zzzzzzzz";
 		string mn_lt_link = "zzzzzzzz";
-		for (const auto &[t1_trie1, _, x0]: t1_trie0) {
+		for (const auto &[x0, t1_trie1]: t1_trie0) {
 			if (ml_trie0.contains(x0)) {
 				auto &ml_trie1 = ml_trie0.at(x0);
-				for (const auto &[ml_trie2, _, x1]: ml_trie1) {
+				for (const auto &[x1, ml_trie2]: ml_trie1) {
 					if (t2_trie0.contains(x1)) {
 						auto &t2_trie1 = t2_trie0.at(x1);
 						if (mk_trie0.contains(x0)) {
 							auto &mk_trie1 = mk_trie0.at(x0);
-							for (const auto &[ml_trie3, _, x3]: ml_trie2) {
+							for (const auto &[x3, ml_trie3]: ml_trie2) {
 								if (lt_trie0.contains(x3)) {
 									auto &lt_trie1 = lt_trie0.at(x3);
-									for (const auto &[mk_trie2, _, x4]: mk_trie1) {
+									for (const auto &[x4, mk_trie2]: mk_trie1) {
 										if (k_trie0.contains(x4)) {
 											auto &k_trie1 = k_trie0.at(x4);
 											for (const auto &t1_off: t1_trie1) {
