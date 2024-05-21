@@ -47,18 +47,18 @@ int main() {
 				auto &mi_idx_trie1 = mi_idx_trie0.at(x0);
 				auto &mc_trie1 = mc_trie0.at(x0);
 				auto &mi_trie1 = mi_trie0.at(x0);
-				for (const auto &[x1, it2_trie1]: it2_trie0) {
-					if (mi_idx_trie1.contains(x1)) {
-						auto &mi_idx_trie2 = mi_idx_trie1.at(x1);
-						for (const auto &[x2, it1_trie1]: it1_trie0) {
-							if (mi_trie1.contains(x2)) {
-								auto &mi_trie2 = mi_trie1.at(x2);
-								for (const auto &[x3, ct_trie1]: ct_trie0) {
-									if (mc_trie1.contains(x3)) {
-										auto &mc_trie2 = mc_trie1.at(x3);
-										for (const auto &[x4, mc_trie3]: mc_trie2) {
-											if (cn_trie0.contains(x4)) {
-												auto &cn_trie1 = cn_trie0.at(x4);
+				for (const auto &[x1, mi_idx_trie2]: mi_idx_trie1) {
+					if (it2_trie0.contains(x1)) {
+						auto &it2_trie1 = it2_trie0.at(x1);
+						for (const auto &[x2, mi_trie2]: mi_trie1) {
+							if (it1_trie0.contains(x2)) {
+								auto &it1_trie1 = it1_trie0.at(x2);
+								for (const auto &[x3, mc_trie2]: mc_trie1) {
+									if (ct_trie0.contains(x3)) {
+										auto &ct_trie1 = ct_trie0.at(x3);
+										for (const auto &[x4, cn_trie1]: cn_trie0) {
+											if (mc_trie2.contains(x4)) {
+												auto &mc_trie3 = mc_trie2.at(x4);
 												for (const auto &mi_off: mi_trie2) {
 													mn_mi_info = min(mn_mi_info, mi_info[mi_off]);
 												}

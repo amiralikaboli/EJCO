@@ -12,10 +12,10 @@ class Plan2CPPTranslator:
 	def __init__(self, hash_table: HashTable = HashTable.PHMAP):
 		self.ht = hash_table
 		self.parser = PlanParser()
-		with open("rel_abbrs.json", 'r') as json_file:
-			self.rel_abbrs = json.load(json_file)
-		with open("rel_col_types.json", 'r') as json_file:
-			self.rel_col_types = json.load(json_file)
+		with open("abbr2rel.json", 'r') as json_file:
+			self.abbr2rel = json.load(json_file)
+		with open("rel2col2type.json", 'r') as json_file:
+			self.rel2col2type = json.load(json_file)
 
 		self.trie_types = set()
 
@@ -101,7 +101,7 @@ class Plan2CPPTranslator:
 			self.loading_rels.add(rel)
 			path = os.path.join(preprocessed_data_path, query, f"{rel}.csv")
 			if not os.path.exists(path):
-				path = os.path.join(raw_data_path, f"{self.rel_abbrs[self.rel_wo_idx(rel)]}.csv")
+				path = os.path.join(raw_data_path, f"{self.abbr2rel[self.rel_wo_idx(rel)]}.csv")
 			yield f'{self.var_mng.load_func(rel)}("{os.path.normpath(path)}");\n'
 			for col in join_cols + proj_cols:
 				self.involved_cols.add((rel, col))
@@ -109,7 +109,7 @@ class Plan2CPPTranslator:
 	def _translate_build_plan(self, build_plan: List[Tuple[str, List[str], List[str]]]):
 		for rel, join_cols, proj_cols in build_plan:
 			level_types = tuple([
-				self.rel_col_types[self.rel_wo_idx(rel)][join_col]
+				self.rel2col2type[self.rel_wo_idx(rel)][join_col]
 				for join_col in join_cols
 			])
 			self.trie_types.add(level_types)
@@ -185,7 +185,7 @@ class Plan2CPPTranslator:
 		for rel, _, proj_cols in build_plan:
 			for col in proj_cols:
 				relcols.append((rel, col))
-				col_types.append(self.rel_col_types[self.rel_wo_idx(rel)][col])
+				col_types.append(self.rel2col2type[self.rel_wo_idx(rel)][col])
 		return relcols, col_types
 
 	def _make_join_cols_order_consistent(self, build_plan, compiled_plan):
@@ -307,12 +307,12 @@ class Plan2CPPTranslator:
 			for rel in sorted(self.loading_rels):
 				rel_involved_cols = [
 					col
-					for col, _ in self.rel_col_types[self.rel_wo_idx(rel)].items()
+					for col, _ in self.rel2col2type[self.rel_wo_idx(rel)].items()
 					if (rel, col) in self.involved_cols
 				]
 
 				cpp_file.write('\n')
-				for col_n, col_t in self.rel_col_types[self.rel_wo_idx(rel)].items():
+				for col_n, col_t in self.rel2col2type[self.rel_wo_idx(rel)].items():
 					if col_n in rel_involved_cols:
 						cpp_file.write(f"vector<{col_t}> {self.var_mng.rel_col_var(rel, col_n)};\n")
 				cpp_file.write("\n")
@@ -324,7 +324,7 @@ class Plan2CPPTranslator:
 				cpp_file.write(f"\twhile (getline(in, line)) {{\n")
 				cpp_file.write(f"\t\tstringstream ss(line);\n")
 
-				for col_n, col_t in self.rel_col_types[self.rel_wo_idx(rel)].items():
+				for col_n, col_t in self.rel2col2type[self.rel_wo_idx(rel)].items():
 					cpp_file.write(f"\t\tgetline(ss, token, '|');\n")
 
 					if col_n in rel_involved_cols:

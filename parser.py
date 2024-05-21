@@ -14,7 +14,7 @@ class PlanParser:
 
 		with open(os.path.join(freejoin_path, "logs", "plan-profiles", f"{query}.json"), 'r') as json_file:
 			tree_plan = json.load(json_file)
-		fused_compiled_plan = self._fuse_compiled_plan(tree_plan)
+		fused_compiled_plan = self._fuse_compiled_plan(query, tree_plan)
 
 		with open(os.path.join(plans_path, "raw", f"{query}.log"), 'r') as log_file:
 			lines = log_file.readlines()
@@ -90,11 +90,11 @@ class PlanParser:
 					rels2cols[rel][1].remove(col)
 		return [(rel, rels2cols[rel][0], rels2cols[rel][1]) for rel in rels2cols.keys()]
 
-	def _fuse_compiled_plan(self, tree_plan: Dict) -> List[List[Tuple[str, str]]]:
+	def _fuse_compiled_plan(self, query: str, tree_plan: Dict) -> List[List[Tuple[str, str]]]:
 		tree_plan = self._clean_plan_tree(tree_plan)
 		compiled_plan = self._linearize_plan_tree(tree_plan)
 		compiled_plan = self._remove_compiled_plan_dups(compiled_plan)
-		compiled_plan = self._fix_attr_rels_order(tree_plan, compiled_plan)
+		compiled_plan = self._fix_attr_rels_order(query, compiled_plan)
 		return compiled_plan
 
 	def _clean_plan_tree(self, node: Dict) -> Dict:
@@ -167,35 +167,32 @@ class PlanParser:
 
 	@staticmethod
 	def _fix_attr_rels_order(
-			tree_plan: Dict,
+			query: str,
 			compiled_plan: List[List[Tuple[str, str]]]
 	) -> List[List[Tuple[str, str]]]:
-		involved_abbrs = set(rel for eq_cols in compiled_plan for rel, _ in eq_cols)
+		involved_rels = set(rel for eq_cols in compiled_plan for rel, _ in eq_cols)
+		rel2col2nunique = dict()
+		for rel in involved_rels:
+			with open(os.path.join(os.path.dirname(__file__), "stats", query, f"{rel}.json"), "r") as json_file:
+				rel2col2nunique[rel] = json.load(json_file)
 
-		rel_sizes = dict()
-		que = [tree_plan]
-		while que:
-			node = que.pop()
-			if node["name"] == PlanNode.HashJoin.value:
-				for idx, child in enumerate(node["children"]):
-					if child["name"] == PlanNode.SeqScan.value:
-						cardinality = child["cardinality"]
-						rel = node["extra_info"].split("\n")[1].split("=")[idx].strip().split(".")[0]
-						rel_sizes[rel] = cardinality
-			que.extend(node["children"])
-
-		rel2involved_cols = {rel: list() for rel in involved_abbrs}
+		rel2involved_cols = dict()
 		sized_compiled_plan = []
 		for eq_cols in compiled_plan:
 			sized_eq_cols = []
 			for rel, col in eq_cols:
-				if col not in rel2involved_cols[rel]:
-					rel2involved_cols[rel].append(col)
-					sized_eq_cols.append(
-						(rel, col, math.ceil(rel_sizes[rel] ** (1 / (rel2involved_cols[rel].index(col) + 1))))
-					)
+				if rel in rel2involved_cols:
+					if col not in rel2involved_cols[rel]:
+						last_layer = rel2involved_cols[rel][-1]
+						sized_eq_cols.append(
+							(rel, col, math.ceil(rel2col2nunique[rel][col] / rel2col2nunique[rel][last_layer]))
+						)
+						rel2involved_cols[rel].append(col)
+					else:
+						sized_eq_cols.append((rel, col, 0))
 				else:
-					sized_eq_cols.append((rel, col, 1))
+					rel2involved_cols[rel] = [col]
+					sized_eq_cols.append((rel, col, rel2col2nunique[rel][col]))
 			sized_compiled_plan.append(sized_eq_cols)
 		compiled_plan = [
 			[(rel, col) for rel, col, _ in sorted(sized_eq_cols, key=lambda x: x[2])]
