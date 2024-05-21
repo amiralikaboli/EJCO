@@ -27,5 +27,8 @@ if __name__ == '__main__':
 					df = pd.read_parquet(
 						os.path.join(raw_data_path, f"{abbr2rel[rel if not rel[-1].isdigit() else rel[:-1]]}.parquet")
 					)
+
+				stats = {col: int(num) for col, num in dict(df.nunique()).items()}
+				stats["rows"] = df.shape[0]
 				with open(os.path.join(here_path, query, f"{rel}.json"), "w") as stats_file:
-					json.dump({col: int(num) for col, num in dict(df.nunique()).items()}, stats_file, indent=2)
+					json.dump(stats, stats_file, indent=2)
