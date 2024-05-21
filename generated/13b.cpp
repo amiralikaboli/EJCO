@@ -47,22 +47,22 @@ int main() {
 		string mn_miidx_info = "zzzzzzzz";
 		string mn_cn_name = "zzzzzzzz";
 		for (const auto &[x0, t_trie1]: t_trie0) {
-			if (miidx_trie0.contains(x0) && mi_trie0.contains(x0) && mc_trie0.contains(x0)) {
+			if (miidx_trie0.contains(x0) && mc_trie0.contains(x0) && mi_trie0.contains(x0)) {
 				auto &miidx_trie1 = miidx_trie0.at(x0);
-				auto &mi_trie1 = mi_trie0.at(x0);
 				auto &mc_trie1 = mc_trie0.at(x0);
-				for (const auto &[x1, t_trie2]: t_trie1) {
-					if (kt_trie0.contains(x1)) {
-						auto &kt_trie1 = kt_trie0.at(x1);
-						for (const auto &[x2, mi_trie2]: mi_trie1) {
-							if (it2_trie0.contains(x2)) {
-								auto &it2_trie1 = it2_trie0.at(x2);
-								for (const auto &[x3, miidx_trie2]: miidx_trie1) {
-									if (it_trie0.contains(x3)) {
-										auto &it_trie1 = it_trie0.at(x3);
-										for (const auto &[x4, mc_trie2]: mc_trie1) {
-											if (ct_trie0.contains(x4)) {
-												auto &ct_trie1 = ct_trie0.at(x4);
+				auto &mi_trie1 = mi_trie0.at(x0);
+				for (const auto &[x1, kt_trie1]: kt_trie0) {
+					if (t_trie1.contains(x1)) {
+						auto &t_trie2 = t_trie1.at(x1);
+						for (const auto &[x2, it2_trie1]: it2_trie0) {
+							if (mi_trie1.contains(x2)) {
+								auto &mi_trie2 = mi_trie1.at(x2);
+								for (const auto &[x3, it_trie1]: it_trie0) {
+									if (miidx_trie1.contains(x3)) {
+										auto &miidx_trie2 = miidx_trie1.at(x3);
+										for (const auto &[x4, ct_trie1]: ct_trie0) {
+											if (mc_trie1.contains(x4)) {
+												auto &mc_trie2 = mc_trie1.at(x4);
 												for (const auto &[x5, mc_trie3]: mc_trie2) {
 													if (cn_trie0.contains(x5)) {
 														auto &cn_trie1 = cn_trie0.at(x5);

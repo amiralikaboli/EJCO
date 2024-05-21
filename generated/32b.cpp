@@ -37,20 +37,20 @@ int main() {
 		string mn_t1_title = "zzzzzzzz";
 		string mn_t2_title = "zzzzzzzz";
 		string mn_lt_link = "zzzzzzzz";
-		for (const auto &[x0, t1_trie1]: t1_trie0) {
-			if (ml_trie0.contains(x0)) {
-				auto &ml_trie1 = ml_trie0.at(x0);
+		for (const auto &[x0, ml_trie1]: ml_trie0) {
+			if (t1_trie0.contains(x0)) {
+				auto &t1_trie1 = t1_trie0.at(x0);
 				for (const auto &[x1, ml_trie2]: ml_trie1) {
 					if (t2_trie0.contains(x1)) {
 						auto &t2_trie1 = t2_trie0.at(x1);
 						if (mk_trie0.contains(x0)) {
 							auto &mk_trie1 = mk_trie0.at(x0);
-							for (const auto &[x3, ml_trie3]: ml_trie2) {
-								if (lt_trie0.contains(x3)) {
-									auto &lt_trie1 = lt_trie0.at(x3);
-									for (const auto &[x4, mk_trie2]: mk_trie1) {
-										if (k_trie0.contains(x4)) {
-											auto &k_trie1 = k_trie0.at(x4);
+							for (const auto &[x3, lt_trie1]: lt_trie0) {
+								if (ml_trie2.contains(x3)) {
+									auto &ml_trie3 = ml_trie2.at(x3);
+									for (const auto &[x4, k_trie1]: k_trie0) {
+										if (mk_trie1.contains(x4)) {
+											auto &mk_trie2 = mk_trie1.at(x4);
 											for (const auto &t1_off: t1_trie1) {
 												mn_t1_title = min(mn_t1_title, t1_title[t1_off]);
 											}

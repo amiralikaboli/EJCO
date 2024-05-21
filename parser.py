@@ -91,7 +91,68 @@ class PlanParser:
 		return [(rel, rels2cols[rel][0], rels2cols[rel][1]) for rel in rels2cols.keys()]
 
 	def _fuse_compiled_plan(self, tree_plan: Dict) -> List[List[Tuple[str, str]]]:
+		tree_plan = self._clean_plan_tree(tree_plan)
 		compiled_plan = self._linearize_plan_tree(tree_plan)
+		compiled_plan = self._remove_compiled_plan_dups(compiled_plan)
+		compiled_plan = self._fix_attr_rels_order(tree_plan, compiled_plan)
+		return compiled_plan
+
+	def _clean_plan_tree(self, node: Dict) -> Dict:
+		node["extra_info"] = node["extra_info"].strip()
+
+		if node["name"] == PlanNode.ChunkScan.value:
+			return None
+		elif node["name"] == PlanNode.Filter.value:
+			child = self._clean_plan_tree(node["children"][0])
+			child["cardinality"] = node["cardinality"]
+			return child
+		elif node["name"] == PlanNode.SeqScan.value and 'Filter' in node["extra_info"]:
+			node["extra_info"] = "\n".join(node["extra_info"].split("\n")[:-2])
+			return node
+		elif node["name"] in [PlanNode.Projection.value, PlanNode.Aggregate.value]:
+			return self._clean_plan_tree(node["children"][0])
+
+		new_children = []
+		for child in node["children"]:
+			new_child = self._clean_plan_tree(child)
+			if new_child:
+				new_children.append(new_child)
+		if node["name"] == PlanNode.HashJoin.value and len(new_children) == 1:
+			child = new_children[0]
+			child["cardinality"] = node["cardinality"]
+			return child
+		node["children"] = new_children
+		return node
+
+	def _linearize_plan_tree(self, node: Dict) -> List[List[Tuple[str, str]]]:
+		if len(node["children"]) == 0:
+			return []
+		if len(node["children"]) == 1:
+			return self._linearize_plan_tree(node["children"][0])
+
+		left_child = node["children"][0]
+		right_child = node["children"][1]
+		left_child_plan = self._linearize_plan_tree(left_child)
+		right_child_plan = self._linearize_plan_tree(right_child)
+		plan = right_child_plan + left_child_plan
+		eqs = [tuple(side.strip() for side in eq.split(" = ")) for eq in node["extra_info"][5:].strip().split("\n")]
+		for eq in eqs:
+			left_side, right_side = eq
+			left_attr, right_attr = tuple(left_side.split('.')), tuple(right_side.split('.'))
+
+			if not plan:
+				plan.append([left_attr, right_attr])
+			elif left_attr in plan[-1] and right_attr in plan[-1]:
+				pass
+			elif left_attr in plan[-1]:
+				plan[-1].append(right_attr)
+			elif right_attr in plan[-1]:
+				plan[-1].append(left_attr)
+			else:
+				plan.append([left_attr, right_attr])
+		return plan
+
+	def _remove_compiled_plan_dups(self, compiled_plan: List[List[Tuple[str, str]]]) -> List[List[Tuple[str, str]]]:
 		duplicates = [[] for _ in compiled_plan]
 		for r_i in range(len(compiled_plan)):
 			for relcol in compiled_plan[r_i]:
@@ -104,41 +165,44 @@ class PlanParser:
 				eq_cols.remove(dup)
 		return compiled_plan
 
-	def _linearize_plan_tree(self, node) -> List[List[Tuple[str, str]]]:
-		for child in node["children"]:
-			if child["name"] == PlanNode.ChunkScan.value:
-				node["children"].remove(child)
+	@staticmethod
+	def _fix_attr_rels_order(
+			tree_plan: Dict,
+			compiled_plan: List[List[Tuple[str, str]]]
+	) -> List[List[Tuple[str, str]]]:
+		involved_abbrs = set(rel for eq_cols in compiled_plan for rel, _ in eq_cols)
 
-		if len(node["children"]) == 0:
-			return []
-		if len(node["children"]) == 1:
-			return self._linearize_plan_tree(node["children"][0])
+		rel_sizes = dict()
+		que = [tree_plan]
+		while que:
+			node = que.pop()
+			if node["name"] == PlanNode.HashJoin.value:
+				for idx, child in enumerate(node["children"]):
+					if child["name"] == PlanNode.SeqScan.value:
+						cardinality = child["cardinality"]
+						rel = node["extra_info"].split("\n")[1].split("=")[idx].strip().split(".")[0]
+						rel_sizes[rel] = cardinality
+			que.extend(node["children"])
 
-		left_child = node["children"][0]
-		right_child = node["children"][1]
-
-		left_child_plan = self._linearize_plan_tree(left_child)
-		right_child_plan = self._linearize_plan_tree(right_child)
-		plan = right_child_plan + left_child_plan
-		if node["name"] == PlanNode.HashJoin.value:
-			eqs = [tuple(side.strip() for side in eq.split(" = ")) for eq in node["extra_info"][5:].strip().split("\n")]
-			for eq in eqs:
-				left_side, right_side = eq
-				left_attr, right_attr = tuple(left_side.split('.')), tuple(right_side.split('.'))
-
-				if not plan:
-					plan.append([left_attr, right_attr])
-				elif left_attr in plan[-1] and right_attr in plan[-1]:
-					pass
-				elif left_attr in plan[-1]:
-					plan[-1].append(right_attr)
-				elif right_attr in plan[-1]:
-					plan[-1].append(left_attr)
+		rel2involved_cols = {rel: list() for rel in involved_abbrs}
+		sized_compiled_plan = []
+		for eq_cols in compiled_plan:
+			sized_eq_cols = []
+			for rel, col in eq_cols:
+				if col not in rel2involved_cols[rel]:
+					rel2involved_cols[rel].append(col)
+					sized_eq_cols.append(
+						(rel, col, math.ceil(rel_sizes[rel] ** (1 / (rel2involved_cols[rel].index(col) + 1))))
+					)
 				else:
-					plan.append([left_attr, right_attr])
-		else:
-			raise ValueError(f"Unknown node type: {node['name']}")
-		return plan
+					sized_eq_cols.append((rel, col, 1))
+			sized_compiled_plan.append(sized_eq_cols)
+		compiled_plan = [
+			[(rel, col) for rel, col, _ in sorted(sized_eq_cols, key=lambda x: x[2])]
+			for sized_eq_cols in sized_compiled_plan
+		]
+
+		return compiled_plan
 
 	@staticmethod
 	def find_join_attrs_order(

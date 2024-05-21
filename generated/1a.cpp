@@ -34,16 +34,16 @@ int main() {
 		string mn_mc_note = "zzzzzzzz";
 		string mn_t_title = "zzzzzzzz";
 		int mn_t_production_year = numeric_limits<int>::max();
-		for (const auto &[x0, t_trie1]: t_trie0) {
-			if (mi_idx_trie0.contains(x0) && mc_trie0.contains(x0)) {
+		for (const auto &[x0, mc_trie1]: mc_trie0) {
+			if (mi_idx_trie0.contains(x0) && t_trie0.contains(x0)) {
 				auto &mi_idx_trie1 = mi_idx_trie0.at(x0);
-				auto &mc_trie1 = mc_trie0.at(x0);
-				for (const auto &[x1, mi_idx_trie2]: mi_idx_trie1) {
-					if (it_trie0.contains(x1)) {
-						auto &it_trie1 = it_trie0.at(x1);
-						for (const auto &[x2, mc_trie2]: mc_trie1) {
-							if (ct_trie0.contains(x2)) {
-								auto &ct_trie1 = ct_trie0.at(x2);
+				auto &t_trie1 = t_trie0.at(x0);
+				for (const auto &[x1, it_trie1]: it_trie0) {
+					if (mi_idx_trie1.contains(x1)) {
+						auto &mi_idx_trie2 = mi_idx_trie1.at(x1);
+						for (const auto &[x2, ct_trie1]: ct_trie0) {
+							if (mc_trie1.contains(x2)) {
+								auto &mc_trie2 = mc_trie1.at(x2);
 								for (const auto &mc_off: mc_trie2) {
 									mn_mc_note = min(mn_mc_note, mc_note[mc_off]);
 								}
