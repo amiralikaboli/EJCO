@@ -38,19 +38,19 @@ int main() {
 		timer.StoreElapsedTime(0);
 
 		string mn_n_name = "zzzzzzzz";
-		for (const auto &[x0, mk_trie1]: mk_trie0) {
-			if (mc_trie0.contains(x0) && t_trie0.contains(x0)) {
+		for (const auto &[x0, t_trie1]: t_trie0) {
+			if (mc_trie0.contains(x0) && mk_trie0.contains(x0)) {
 				auto &mc_trie1 = mc_trie0.at(x0);
-				auto &t_trie1 = t_trie0.at(x0);
-				for (const auto &[x1, mk_trie2]: mk_trie1) {
-					if (k_trie0.contains(x1)) {
-						auto &k_trie1 = k_trie0.at(x1);
+				auto &mk_trie1 = mk_trie0.at(x0);
+				for (const auto &[x1, k_trie1]: k_trie0) {
+					if (mk_trie1.contains(x1)) {
+						auto &mk_trie2 = mk_trie1.at(x1);
 						for (const auto &[x2, mc_trie2]: mc_trie1) {
 							if (cn_trie0.contains(x2)) {
 								auto &cn_trie1 = cn_trie0.at(x2);
-								for (const auto &[x3, ci_trie1]: ci_trie0) {
-									if (n_trie0.contains(x3)) {
-										auto &n_trie1 = n_trie0.at(x3);
+								for (const auto &[x3, n_trie1]: n_trie0) {
+									if (ci_trie0.contains(x3)) {
+										auto &ci_trie1 = ci_trie0.at(x3);
 										if (ci_trie1.contains(x0)) {
 											auto &ci_trie2 = ci_trie1.at(x0);
 											for (const auto &n_off: n_trie1) {

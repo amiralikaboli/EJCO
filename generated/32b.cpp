@@ -48,9 +48,9 @@ int main() {
 							for (const auto &[x3, ml_trie3]: ml_trie2) {
 								if (lt_trie0.contains(x3)) {
 									auto &lt_trie1 = lt_trie0.at(x3);
-									for (const auto &[x4, mk_trie2]: mk_trie1) {
-										if (k_trie0.contains(x4)) {
-											auto &k_trie1 = k_trie0.at(x4);
+									for (const auto &[x4, k_trie1]: k_trie0) {
+										if (mk_trie1.contains(x4)) {
+											auto &mk_trie2 = mk_trie1.at(x4);
 											for (const auto &t1_off: t1_trie1) {
 												mn_t1_title = min(mn_t1_title, t1_title[t1_off]);
 											}

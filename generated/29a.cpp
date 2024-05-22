@@ -73,9 +73,9 @@ int main() {
 		for (const auto &[x0, cct1_trie1]: cct1_trie0) {
 			if (cc_trie0.contains(x0)) {
 				auto &cc_trie1 = cc_trie0.at(x0);
-				for (const auto &[x1, cc_trie2]: cc_trie1) {
-					if (cct2_trie0.contains(x1)) {
-						auto &cct2_trie1 = cct2_trie0.at(x1);
+				for (const auto &[x1, cct2_trie1]: cct2_trie0) {
+					if (cc_trie1.contains(x1)) {
+						auto &cc_trie2 = cc_trie1.at(x1);
 						for (const auto &[x2, t_trie1]: t_trie0) {
 							if (cc_trie2.contains(x2)) {
 								auto &cc_trie3 = cc_trie2.at(x2);
@@ -94,20 +94,20 @@ int main() {
 																auto &mi_trie1 = mi_trie0.at(x7);
 																if (mi_trie1.contains(x2)) {
 																	auto &mi_trie2 = mi_trie1.at(x2);
-																	for (const auto &[x9, pi_trie1]: pi_trie0) {
-																		if (an_trie0.contains(x9)) {
-																			auto &an_trie1 = an_trie0.at(x9);
-																			for (const auto &[x10, pi_trie2]: pi_trie1) {
-																				if (it3_trie0.contains(x10)) {
-																					auto &it3_trie1 = it3_trie0.at(x10);
+																	for (const auto &[x9, an_trie1]: an_trie0) {
+																		if (pi_trie0.contains(x9)) {
+																			auto &pi_trie1 = pi_trie0.at(x9);
+																			for (const auto &[x10, it3_trie1]: it3_trie0) {
+																				if (pi_trie1.contains(x10)) {
+																					auto &pi_trie2 = pi_trie1.at(x10);
 																					if (n_trie0.contains(x9)) {
 																						auto &n_trie1 = n_trie0.at(x9);
 																						for (const auto &[x12, chn_trie1]: chn_trie0) {
 																							if (ci_trie0.contains(x12)) {
 																								auto &ci_trie1 = ci_trie0.at(x12);
-																								for (const auto &[x13, ci_trie2]: ci_trie1) {
-																									if (rt_trie0.contains(x13)) {
-																										auto &rt_trie1 = rt_trie0.at(x13);
+																								for (const auto &[x13, rt_trie1]: rt_trie0) {
+																									if (ci_trie1.contains(x13)) {
+																										auto &ci_trie2 = ci_trie1.at(x13);
 																										if (ci_trie2.contains(x9)) {
 																											auto &ci_trie3 = ci_trie2.at(x9);
 																											if (ci_trie3.contains(x2)) {

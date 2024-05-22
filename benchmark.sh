@@ -13,4 +13,4 @@ for cpp_file in *.cpp; do
     echo "--------------------"
 done | tee ../results.txt
 
-cd ../../free-join && rm -rf gj/gj.json && make gj/gj.json > ../WCOJ/gj.log
+#cd ../../free-join && rm -rf gj/gj.json && make gj/gj.json > ../WCOJ/gj.log

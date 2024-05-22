@@ -94,9 +94,9 @@ int main() {
 																				auto &mc1_trie1 = mc1_trie0.at(x9);
 																				if (mc1_trie1.contains(x2)) {
 																					auto &mc1_trie2 = mc1_trie1.at(x2);
-																					for (const auto &[x11, mc2_trie1]: mc2_trie0) {
-																						if (cn2_trie0.contains(x11)) {
-																							auto &cn2_trie1 = cn2_trie0.at(x11);
+																					for (const auto &[x11, cn2_trie1]: cn2_trie0) {
+																						if (mc2_trie0.contains(x11)) {
+																							auto &mc2_trie1 = mc2_trie0.at(x11);
 																							if (mc2_trie1.contains(x4)) {
 																								auto &mc2_trie2 = mc2_trie1.at(x4);
 																								for (const auto &cn2_off: cn2_trie1) {

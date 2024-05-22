@@ -37,9 +37,9 @@ int main() {
 		for (const auto &[x0, t_trie1]: t_trie0) {
 			if (mk_trie0.contains(x0)) {
 				auto &mk_trie1 = mk_trie0.at(x0);
-				for (const auto &[x1, mk_trie2]: mk_trie1) {
-					if (k_trie0.contains(x1)) {
-						auto &k_trie1 = k_trie0.at(x1);
+				for (const auto &[x1, k_trie1]: k_trie0) {
+					if (mk_trie1.contains(x1)) {
+						auto &mk_trie2 = mk_trie1.at(x1);
 						for (const auto &[x2, n_trie1]: n_trie0) {
 							if (ci_trie0.contains(x2)) {
 								auto &ci_trie1 = ci_trie0.at(x2);

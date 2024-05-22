@@ -176,23 +176,18 @@ class PlanParser:
 			with open(os.path.join(os.path.dirname(__file__), "stats", query, f"{rel}.json"), "r") as json_file:
 				rel2col2nunique[rel] = json.load(json_file)
 
-		rel2involved_cols = dict()
+		rel2involved_cols = {rel: set() for rel in involved_rels}
 		sized_compiled_plan = []
 		for eq_cols in compiled_plan:
 			sized_eq_cols = []
 			for rel, col in eq_cols:
-				if rel in rel2involved_cols:
-					if col not in rel2involved_cols[rel]:
-						last_layer = rel2involved_cols[rel][-1]
-						sized_eq_cols.append(
-							(rel, col, math.ceil(rel2col2nunique[rel][col] / rel2col2nunique[rel][last_layer]))
-						)
-						rel2involved_cols[rel].append(col)
-					else:
-						sized_eq_cols.append((rel, col, 0))
+				if col not in rel2involved_cols[rel]:
+					sized_eq_cols.append(
+						(rel, col, math.ceil(rel2col2nunique[rel]['rows'] ** (2 ** -len(rel2involved_cols[rel]))))
+					)
+					rel2involved_cols[rel].add(col)
 				else:
-					rel2involved_cols[rel] = [col]
-					sized_eq_cols.append((rel, col, rel2col2nunique[rel][col]))
+					sized_eq_cols.append((rel, col, 0))
 			sized_compiled_plan.append(sized_eq_cols)
 		compiled_plan = [
 			[(rel, col) for rel, col, _ in sorted(sized_eq_cols, key=lambda x: x[2])]

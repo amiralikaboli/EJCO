@@ -49,12 +49,12 @@ int main() {
 		string mn_n_name = "zzzzzzzz";
 		string mn_t_title = "zzzzzzzz";
 		for (const auto &[x0, mi_trie1]: mi_trie0) {
-			if (mc_trie0.contains(x0) && t_trie0.contains(x0)) {
-				auto &mc_trie1 = mc_trie0.at(x0);
+			if (t_trie0.contains(x0) && mc_trie0.contains(x0)) {
 				auto &t_trie1 = t_trie0.at(x0);
-				for (const auto &[x1, mi_trie2]: mi_trie1) {
-					if (it_trie0.contains(x1)) {
-						auto &it_trie1 = it_trie0.at(x1);
+				auto &mc_trie1 = mc_trie0.at(x0);
+				for (const auto &[x1, it_trie1]: it_trie0) {
+					if (mi_trie1.contains(x1)) {
+						auto &mi_trie2 = mi_trie1.at(x1);
 						for (const auto &[x2, mc_trie2]: mc_trie1) {
 							if (cn_trie0.contains(x2)) {
 								auto &cn_trie1 = cn_trie0.at(x2);
