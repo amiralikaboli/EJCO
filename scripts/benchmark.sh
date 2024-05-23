@@ -1,7 +1,10 @@
 #!/bin/bash
 
+RESULTS_FILE=${1:-results/results.txt}
+
 rm -rf generated/*.cpp
 rm -rf generated/load/*.h
+rm -rf generated/stats/*.h
 
 python3 translator.py
 
@@ -11,6 +14,6 @@ for cpp_file in *.cpp; do
     g++ $cpp_file -O3 -std=c++17
     timeout -v 120 ./a.out
     echo "--------------------"
-done | tee ../results.txt
+done | tee ../$RESULTS_FILE
 
 #cd ../../free-join && rm -rf gj/gj.json && make gj/gj.json > ../WCOJ/gj.log

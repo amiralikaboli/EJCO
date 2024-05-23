@@ -12,9 +12,9 @@ class Plan2CPPTranslator:
 	def __init__(self, hash_table: HashTable = HashTable.PHMAP):
 		self.ht = hash_table
 		self.parser = PlanParser()
-		with open("abbr2rel.json", 'r') as json_file:
+		with open("utils/abbr2rel.json", 'r') as json_file:
 			self.abbr2rel = json.load(json_file)
-		with open("rel2col2type.json", 'r') as json_file:
+		with open("utils/rel2col2type.json", 'r') as json_file:
 			self.rel2col2type = json.load(json_file)
 
 		self.trie_types = set()
