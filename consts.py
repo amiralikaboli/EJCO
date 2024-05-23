@@ -32,7 +32,13 @@ def rel_wo_idx(rel):
 	return rel
 
 
+def perm2str(perm):
+	return ", ".join(perm)
+
+
 with open("utils/abbr2rel.json", 'r') as json_file:
 	abbr2rel = json.load(json_file)
 with open("utils/rel2col2type.json", 'r') as json_file:
 	rel2col2type = json.load(json_file)
+with open("results/stats.json", 'r') as json_file:
+	query2rel2perm2stats = json.load(json_file)

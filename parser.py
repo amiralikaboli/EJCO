@@ -3,7 +3,7 @@ import math
 import os
 from typing import List, Tuple, Dict
 
-from consts import PlanNode, freejoin_path, plans_path
+from consts import PlanNode, freejoin_path, plans_path, perm2str, query2rel2perm2stats
 
 
 class PlanParser:
@@ -171,24 +171,26 @@ class PlanParser:
 			compiled_plan: List[List[Tuple[str, str]]]
 	) -> List[List[Tuple[str, str]]]:
 		involved_rels = set(rel for eq_cols in compiled_plan for rel, _ in eq_cols)
-		rel2col2nunique = dict()
-		for rel in involved_rels:
-			with open(os.path.join(os.path.dirname(__file__), "stats", query, f"{rel}.json"), "r") as json_file:
-				rel2col2nunique[rel] = json.load(json_file)
 
-		rel2involved_cols = {rel: set() for rel in involved_rels}
+		rel2join_cols = {rel: list() for rel in involved_rels}
+		for eq_cols in compiled_plan:
+			for rel, col in eq_cols:
+				if col not in rel2join_cols[rel]:
+					rel2join_cols[rel].append(col)
+
+		rel2visited_cols = {rel: set() for rel in involved_rels}
 		sized_compiled_plan = []
 		for eq_cols in compiled_plan:
 			sized_eq_cols = []
 			for rel, col in eq_cols:
-				if col not in rel2involved_cols[rel]:
-					sized_eq_cols.append(
-						(rel, col, math.ceil(rel2col2nunique[rel]['rows'] ** (2 ** -len(rel2involved_cols[rel]))))
-					)
-					rel2involved_cols[rel].add(col)
+				if col not in rel2visited_cols[rel]:
+					stats = query2rel2perm2stats[query][rel][perm2str(rel2join_cols[rel])]
+					sized_eq_cols.append((rel, col, stats[rel2join_cols[rel].index(col)]))
+					rel2visited_cols[rel].add(col)
 				else:
 					sized_eq_cols.append((rel, col, 0))
 			sized_compiled_plan.append(sized_eq_cols)
+
 		compiled_plan = [
 			[(rel, col) for rel, col, _ in sorted(sized_eq_cols, key=lambda x: x[2])]
 			for sized_eq_cols in sized_compiled_plan
