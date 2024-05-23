@@ -1,0 +1,80 @@
+{
+  "mi": {
+    "id": 1771,
+    "movie_id": 1755,
+    "info_type_id": 1,
+    "info": 1057,
+    "note": 13,
+    "rows": 1771
+  },
+  "mk": {
+    "id": 4523930,
+    "movie_id": 476794,
+    "keyword_id": 134170,
+    "rows": 4523930
+  },
+  "t": {
+    "id": 1381453,
+    "title": 795052,
+    "imdb_index": 21,
+    "kind_id": 6,
+    "production_year": 18,
+    "imdb_id": 0,
+    "phonetic_code": 22381,
+    "episode_of_id": 32268,
+    "season_nr": 83,
+    "episode_nr": 14781,
+    "series_years": 126,
+    "md5sum": 1381453,
+    "rows": 1381453
+  },
+  "mc": {
+    "id": 61664,
+    "movie_id": 56532,
+    "company_id": 10907,
+    "company_type_id": 2,
+    "note": 1293,
+    "rows": 61664
+  },
+  "k": {
+    "id": 134170,
+    "keyword": 134170,
+    "phonetic_code": 15481,
+    "rows": 134170
+  },
+  "it1": {
+    "id": 1,
+    "info": 1,
+    "rows": 1
+  },
+  "ct": {
+    "id": 4,
+    "kind": 4,
+    "rows": 4
+  },
+  "cn": {
+    "id": 84843,
+    "name": 84843,
+    "country_code": 1,
+    "imdb_id": 0,
+    "name_pcode_nf": 14292,
+    "name_pcode_sf": 12986,
+    "md5sum": 84843,
+    "rows": 84843
+  },
+  "at": {
+    "id": 361472,
+    "movie_id": 205631,
+    "title": 313624,
+    "imdb_index": 12,
+    "kind_id": 6,
+    "production_year": 128,
+    "phonetic_code": 20013,
+    "episode_of_id": 754,
+    "season_nr": 40,
+    "episode_nr": 162,
+    "note": 3360,
+    "md5sum": 346289,
+    "rows": 361472
+  }
+}

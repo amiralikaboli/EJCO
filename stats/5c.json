@@ -1,0 +1,43 @@
+{
+  "mi": {
+    "id": 706674,
+    "movie_id": 637305,
+    "info_type_id": 8,
+    "info": 8,
+    "note": 194,
+    "rows": 706674
+  },
+  "t": {
+    "id": 1749032,
+    "title": 986953,
+    "imdb_index": 21,
+    "kind_id": 6,
+    "production_year": 28,
+    "imdb_id": 0,
+    "phonetic_code": 22741,
+    "episode_of_id": 38959,
+    "season_nr": 90,
+    "episode_nr": 14787,
+    "series_years": 338,
+    "md5sum": 1749032,
+    "rows": 1749032
+  },
+  "mc": {
+    "id": 295628,
+    "movie_id": 207514,
+    "company_id": 21092,
+    "company_type_id": 2,
+    "note": 13017,
+    "rows": 295628
+  },
+  "it": {
+    "id": 113,
+    "info": 113,
+    "rows": 113
+  },
+  "ct": {
+    "id": 1,
+    "kind": 1,
+    "rows": 1
+  }
+}

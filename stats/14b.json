@@ -1,0 +1,60 @@
+{
+  "mi": {
+    "id": 706674,
+    "movie_id": 637305,
+    "info_type_id": 8,
+    "info": 8,
+    "note": 194,
+    "rows": 706674
+  },
+  "mk": {
+    "id": 4523930,
+    "movie_id": 476794,
+    "keyword_id": 134170,
+    "rows": 4523930
+  },
+  "t": {
+    "id": 455,
+    "title": 434,
+    "imdb_index": 2,
+    "kind_id": 6,
+    "production_year": 5,
+    "imdb_id": 0,
+    "phonetic_code": 256,
+    "episode_of_id": 149,
+    "season_nr": 22,
+    "episode_nr": 80,
+    "series_years": 3,
+    "md5sum": 455,
+    "rows": 455
+  },
+  "mi_idx": {
+    "id": 373409,
+    "movie_id": 312444,
+    "info_type_id": 5,
+    "info": 3891,
+    "note": 0,
+    "rows": 373409
+  },
+  "kt": {
+    "id": 1,
+    "kind": 1,
+    "rows": 1
+  },
+  "k": {
+    "id": 1,
+    "keyword": 1,
+    "phonetic_code": 1,
+    "rows": 1
+  },
+  "it2": {
+    "id": 1,
+    "info": 1,
+    "rows": 1
+  },
+  "it1": {
+    "id": 1,
+    "info": 1,
+    "rows": 1
+  }
+}

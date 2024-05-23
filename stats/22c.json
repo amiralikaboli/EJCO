@@ -1,0 +1,83 @@
+{
+  "mi": {
+    "id": 716210,
+    "movie_id": 637362,
+    "info_type_id": 8,
+    "info": 9,
+    "note": 197,
+    "rows": 716210
+  },
+  "it1": {
+    "id": 1,
+    "info": 1,
+    "rows": 1
+  },
+  "mk": {
+    "id": 4523930,
+    "movie_id": 476794,
+    "keyword_id": 134170,
+    "rows": 4523930
+  },
+  "k": {
+    "id": 3,
+    "keyword": 3,
+    "phonetic_code": 3,
+    "rows": 3
+  },
+  "mc": {
+    "id": 303271,
+    "movie_id": 176915,
+    "company_id": 25463,
+    "company_type_id": 2,
+    "note": 13361,
+    "rows": 303271
+  },
+  "cn": {
+    "id": 126230,
+    "name": 120792,
+    "country_code": 214,
+    "imdb_id": 0,
+    "name_pcode_nf": 15992,
+    "name_pcode_sf": 15626,
+    "md5sum": 126230,
+    "rows": 126230
+  },
+  "ct": {
+    "id": 4,
+    "kind": 4,
+    "rows": 4
+  },
+  "t": {
+    "id": 1012920,
+    "title": 605424,
+    "imdb_index": 21,
+    "kind_id": 6,
+    "production_year": 13,
+    "imdb_id": 0,
+    "phonetic_code": 21847,
+    "episode_of_id": 25879,
+    "season_nr": 83,
+    "episode_nr": 14351,
+    "series_years": 62,
+    "md5sum": 1012920,
+    "rows": 1012920
+  },
+  "mi_idx": {
+    "id": 1337634,
+    "movie_id": 459925,
+    "info_type_id": 5,
+    "info": 145004,
+    "note": 0,
+    "rows": 1337634
+  },
+  "kt": {
+    "id": 2,
+    "kind": 2,
+    "rows": 2
+  },
+  "it2": {
+    "id": 1,
+    "info": 1,
+    "rows": 1
+  }
+}

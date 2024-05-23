@@ -1,0 +1,83 @@
+{
+  "ci": {
+    "id": 867477,
+    "person_id": 98809,
+    "movie_id": 171193,
+    "person_role_id": 150104,
+    "note": 4,
+    "nr_order": 334,
+    "role_id": 4,
+    "rows": 867477
+  },
+  "n": {
+    "id": 6768,
+    "name": 6127,
+    "imdb_index": 75,
+    "imdb_id": 0,
+    "gender": 1,
+    "name_pcode_cf": 1968,
+    "name_pcode_nf": 518,
+    "surname_pcode": 1373,
+    "md5sum": 6768,
+    "rows": 6768
+  },
+  "mc": {
+    "id": 590994,
+    "movie_id": 439927,
+    "company_id": 36865,
+    "company_type_id": 2,
+    "note": 18559,
+    "rows": 590994
+  },
+  "cn": {
+    "id": 84843,
+    "name": 84843,
+    "country_code": 1,
+    "imdb_id": 0,
+    "name_pcode_nf": 14292,
+    "name_pcode_sf": 12986,
+    "md5sum": 84843,
+    "rows": 84843
+  },
+  "rt": {
+    "id": 1,
+    "role": 1,
+    "rows": 1
+  },
+  "t": {
+    "id": 1107888,
+    "title": 655249,
+    "imdb_index": 21,
+    "kind_id": 6,
+    "production_year": 11,
+    "imdb_id": 0,
+    "phonetic_code": 22008,
+    "episode_of_id": 27572,
+    "season_nr": 83,
+    "episode_nr": 14592,
+    "series_years": 71,
+    "md5sum": 1107888,
+    "rows": 1107888
+  },
+  "chn": {
+    "id": 3140339,
+    "name": 3139743,
+    "imdb_index": 6,
+    "imdb_id": 0,
+    "name_pcode_nf": 23076,
+    "surname_pcode": 17198,
+    "md5sum": 3140339,
+    "rows": 3140339
+  },
+  "an": {
+    "id": 901343,
+    "person_id": 588222,
+    "name": 810620,
+    "imdb_index": 5,
+    "name_pcode_cf": 22017,
+    "name_pcode_nf": 21138,
+    "surname_pcode": 4312,
+    "md5sum": 810625,
+    "rows": 901343
+  }
+}

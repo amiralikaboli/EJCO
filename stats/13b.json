@@ -1,0 +1,71 @@
+{
+  "mi": {
+    "id": 14835720,
+    "movie_id": 2468825,
+    "info_type_id": 71,
+    "info": 2720930,
+    "note": 133610,
+    "rows": 14835720
+  },
+  "t": {
+    "id": 2218,
+    "title": 1955,
+    "imdb_index": 4,
+    "kind_id": 6,
+    "production_year": 111,
+    "imdb_id": 0,
+    "phonetic_code": 707,
+    "episode_of_id": 471,
+    "season_nr": 32,
+    "episode_nr": 145,
+    "series_years": 68,
+    "md5sum": 2218,
+    "rows": 2218
+  },
+  "miidx": {
+    "id": 1380035,
+    "movie_id": 459925,
+    "info_type_id": 5,
+    "info": 146245,
+    "note": 0,
+    "rows": 1380035
+  },
+  "mc": {
+    "id": 2609129,
+    "movie_id": 1087236,
+    "company_id": 234997,
+    "company_type_id": 2,
+    "note": 66450,
+    "rows": 2609129
+  },
+  "kt": {
+    "id": 1,
+    "kind": 1,
+    "rows": 1
+  },
+  "it2": {
+    "id": 1,
+    "info": 1,
+    "rows": 1
+  },
+  "it": {
+    "id": 1,
+    "info": 1,
+    "rows": 1
+  },
+  "ct": {
+    "id": 1,
+    "kind": 1,
+    "rows": 1
+  },
+  "cn": {
+    "id": 84843,
+    "name": 84843,
+    "country_code": 1,
+    "imdb_id": 0,
+    "name_pcode_nf": 14292,
+    "name_pcode_sf": 12986,
+    "md5sum": 84843,
+    "rows": 84843
+  }
+}
