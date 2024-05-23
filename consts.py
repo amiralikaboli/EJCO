@@ -1,4 +1,5 @@
 import enum
+import json
 import os
 
 freejoin_path = os.path.join(os.path.dirname(__file__), "..", "free-join")
@@ -23,3 +24,15 @@ class PlanNode(enum.Enum):
 	Filter = "FILTER"
 	Aggregate = "SIMPLE_AGGREGATE"
 	ChunkScan = "CHUNK_SCAN"
+
+
+def rel_wo_idx(rel):
+	if rel[-1].isdigit():
+		return rel[:-1]
+	return rel
+
+
+with open("utils/abbr2rel.json", 'r') as json_file:
+	abbr2rel = json.load(json_file)
+with open("utils/rel2col2type.json", 'r') as json_file:
+	rel2col2type = json.load(json_file)
