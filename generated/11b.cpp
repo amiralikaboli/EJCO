@@ -44,10 +44,10 @@ int main() {
 		string mn_lt_link = "zzzzzzzz";
 		string mn_cn_name = "zzzzzzzz";
 		for (const auto &[x0, t_trie1]: t_trie0) {
-			if (ml_trie0.contains(x0) && mc_trie0.contains(x0) && mk_trie0.contains(x0)) {
+			if (ml_trie0.contains(x0) && mk_trie0.contains(x0) && mc_trie0.contains(x0)) {
 				auto &ml_trie1 = ml_trie0.at(x0);
-				auto &mc_trie1 = mc_trie0.at(x0);
 				auto &mk_trie1 = mk_trie0.at(x0);
+				auto &mc_trie1 = mc_trie0.at(x0);
 				for (const auto &[x1, lt_trie1]: lt_trie0) {
 					if (ml_trie1.contains(x1)) {
 						auto &ml_trie2 = ml_trie1.at(x1);

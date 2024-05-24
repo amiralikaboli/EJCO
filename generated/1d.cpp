@@ -34,9 +34,9 @@ int main() {
 		string mn_mc_note = "zzzzzzzz";
 		string mn_t_title = "zzzzzzzz";
 		int mn_t_production_year = numeric_limits<int>::max();
-		for (const auto &[x0, mc_trie1]: mc_trie0) {
-			if (mi_idx_trie0.contains(x0) && t_trie0.contains(x0)) {
-				auto &mi_idx_trie1 = mi_idx_trie0.at(x0);
+		for (const auto &[x0, mi_idx_trie1]: mi_idx_trie0) {
+			if (mc_trie0.contains(x0) && t_trie0.contains(x0)) {
+				auto &mc_trie1 = mc_trie0.at(x0);
 				auto &t_trie1 = t_trie0.at(x0);
 				for (const auto &[x1, it_trie1]: it_trie0) {
 					if (mi_idx_trie1.contains(x1)) {

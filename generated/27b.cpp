@@ -58,22 +58,22 @@ int main() {
 		for (const auto &[x0, lt_trie1]: lt_trie0) {
 			if (ml_trie0.contains(x0)) {
 				auto &ml_trie1 = ml_trie0.at(x0);
-				for (const auto &[x1, cct1_trie1]: cct1_trie0) {
-					if (cc_trie0.contains(x1)) {
-						auto &cc_trie1 = cc_trie0.at(x1);
+				for (const auto &[x1, cc_trie1]: cc_trie0) {
+					if (cct1_trie0.contains(x1)) {
+						auto &cct1_trie1 = cct1_trie0.at(x1);
 						for (const auto &[x2, cct2_trie1]: cct2_trie0) {
 							if (cc_trie1.contains(x2)) {
 								auto &cc_trie2 = cc_trie1.at(x2);
-								for (const auto &[x3, cc_trie3]: cc_trie2) {
-									if (ml_trie1.contains(x3) && t_trie0.contains(x3)) {
-										auto &ml_trie2 = ml_trie1.at(x3);
+								for (const auto &[x3, ml_trie2]: ml_trie1) {
+									if (cc_trie2.contains(x3) && t_trie0.contains(x3)) {
+										auto &cc_trie3 = cc_trie2.at(x3);
 										auto &t_trie1 = t_trie0.at(x3);
 										for (const auto &[x4, ct_trie1]: ct_trie0) {
 											if (mc_trie0.contains(x4)) {
 												auto &mc_trie1 = mc_trie0.at(x4);
-												for (const auto &[x5, mc_trie2]: mc_trie1) {
-													if (cn_trie0.contains(x5)) {
-														auto &cn_trie1 = cn_trie0.at(x5);
+												for (const auto &[x5, cn_trie1]: cn_trie0) {
+													if (mc_trie1.contains(x5)) {
+														auto &mc_trie2 = mc_trie1.at(x5);
 														if (mc_trie2.contains(x3)) {
 															auto &mc_trie3 = mc_trie2.at(x3);
 															for (const auto &[x7, k_trie1]: k_trie0) {

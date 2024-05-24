@@ -56,18 +56,18 @@ int main() {
 		string mn_mi_info = "zzzzzzzz";
 		string mn_t_title = "zzzzzzzz";
 		string mn_mi_idx_info = "zzzzzzzz";
-		for (const auto &[x0, cct1_trie1]: cct1_trie0) {
-			if (cc_trie0.contains(x0)) {
-				auto &cc_trie1 = cc_trie0.at(x0);
+		for (const auto &[x0, cc_trie1]: cc_trie0) {
+			if (cct1_trie0.contains(x0)) {
+				auto &cct1_trie1 = cct1_trie0.at(x0);
 				for (const auto &[x1, cct2_trie1]: cct2_trie0) {
 					if (cc_trie1.contains(x1)) {
 						auto &cc_trie2 = cc_trie1.at(x1);
 						for (const auto &[x2, it2_trie1]: it2_trie0) {
 							if (mi_idx_trie0.contains(x2)) {
 								auto &mi_idx_trie1 = mi_idx_trie0.at(x2);
-								for (const auto &[x3, cc_trie3]: cc_trie2) {
-									if (t_trie0.contains(x3) && mi_idx_trie1.contains(x3)) {
-										auto &t_trie1 = t_trie0.at(x3);
+								for (const auto &[x3, t_trie1]: t_trie0) {
+									if (cc_trie2.contains(x3) && mi_idx_trie1.contains(x3)) {
+										auto &cc_trie3 = cc_trie2.at(x3);
 										auto &mi_idx_trie2 = mi_idx_trie1.at(x3);
 										for (const auto &[x4, k_trie1]: k_trie0) {
 											if (mk_trie0.contains(x4)) {

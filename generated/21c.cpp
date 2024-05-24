@@ -47,14 +47,14 @@ int main() {
 		string mn_lt_link = "zzzzzzzz";
 		string mn_cn_name = "zzzzzzzz";
 		for (const auto &[x0, ml_trie1]: ml_trie0) {
-			if (mi_trie0.contains(x0) && mc_trie0.contains(x0) && t_trie0.contains(x0) && mk_trie0.contains(x0)) {
+			if (mk_trie0.contains(x0) && mi_trie0.contains(x0) && mc_trie0.contains(x0) && t_trie0.contains(x0)) {
+				auto &mk_trie1 = mk_trie0.at(x0);
 				auto &mi_trie1 = mi_trie0.at(x0);
 				auto &mc_trie1 = mc_trie0.at(x0);
 				auto &t_trie1 = t_trie0.at(x0);
-				auto &mk_trie1 = mk_trie0.at(x0);
-				for (const auto &[x1, lt_trie1]: lt_trie0) {
-					if (ml_trie1.contains(x1)) {
-						auto &ml_trie2 = ml_trie1.at(x1);
+				for (const auto &[x1, ml_trie2]: ml_trie1) {
+					if (lt_trie0.contains(x1)) {
+						auto &lt_trie1 = lt_trie0.at(x1);
 						for (const auto &[x2, k_trie1]: k_trie0) {
 							if (mk_trie1.contains(x2)) {
 								auto &mk_trie2 = mk_trie1.at(x2);

@@ -1,2 +1,2 @@
 [('ci', ['person_id', 'movie_id', 'role_id'], []), ('n1', ['id'], []), ('mc', ['company_id', 'movie_id'], []), ('cn', ['id'], []), ('rt', ['id'], []), ('t', ['id'], ['title']), ('an1', ['person_id'], ['name'])]
-[[('cn', 'id'), ('mc', 'company_id')], [('n1', 'id'), ('ci', 'person_id')], [('mc', 'movie_id'), ('ci', 'movie_id')], [('rt', 'id'), ('ci', 'role_id')], [('ci', 'movie_id'), ('t', 'id')], [('n1', 'id'), ('an1', 'person_id')]]
+[[('cn', 'id'), ('mc', 'company_id')], [('ci', 'person_id'), ('n1', 'id')], [('ci', 'movie_id'), ('mc', 'movie_id')], [('rt', 'id'), ('ci', 'role_id')], [('ci', 'movie_id'), ('t', 'id')], [('n1', 'id'), ('an1', 'person_id')]]

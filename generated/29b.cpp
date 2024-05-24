@@ -94,9 +94,9 @@ int main() {
 																auto &mi_trie1 = mi_trie0.at(x7);
 																if (mi_trie1.contains(x2)) {
 																	auto &mi_trie2 = mi_trie1.at(x2);
-																	for (const auto &[x9, an_trie1]: an_trie0) {
-																		if (pi_trie0.contains(x9)) {
-																			auto &pi_trie1 = pi_trie0.at(x9);
+																	for (const auto &[x9, pi_trie1]: pi_trie0) {
+																		if (an_trie0.contains(x9)) {
+																			auto &an_trie1 = an_trie0.at(x9);
 																			for (const auto &[x10, it3_trie1]: it3_trie0) {
 																				if (pi_trie1.contains(x10)) {
 																					auto &pi_trie2 = pi_trie1.at(x10);

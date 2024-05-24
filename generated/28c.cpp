@@ -78,12 +78,12 @@ int main() {
 												auto &t_trie1 = t_trie0.at(x4);
 												if (t_trie1.contains(x3)) {
 													auto &t_trie2 = t_trie1.at(x3);
-													for (const auto &[x6, cn_trie1]: cn_trie0) {
-														if (mc_trie0.contains(x6)) {
-															auto &mc_trie1 = mc_trie0.at(x6);
-															for (const auto &[x7, ct_trie1]: ct_trie0) {
-																if (mc_trie1.contains(x7)) {
-																	auto &mc_trie2 = mc_trie1.at(x7);
+													for (const auto &[x6, mc_trie1]: mc_trie0) {
+														if (cn_trie0.contains(x6)) {
+															auto &cn_trie1 = cn_trie0.at(x6);
+															for (const auto &[x7, mc_trie2]: mc_trie1) {
+																if (ct_trie0.contains(x7)) {
+																	auto &ct_trie1 = ct_trie0.at(x7);
 																	if (mc_trie2.contains(x3)) {
 																		auto &mc_trie3 = mc_trie2.at(x3);
 																		for (const auto &[x9, k_trie1]: k_trie0) {
