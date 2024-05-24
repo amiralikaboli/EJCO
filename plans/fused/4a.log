@@ -1,2 +1,2 @@
 [('mk', ['movie_id', 'keyword_id'], []), ('t', ['id'], ['title']), ('mi_idx', ['movie_id', 'info_type_id'], ['info']), ('k', ['id'], []), ('it', ['id'], [])]
-[[('mi_idx', 'movie_id'), ('mk', 'movie_id'), ('t', 'id')], [('k', 'id'), ('mk', 'keyword_id')], [('it', 'id'), ('mi_idx', 'info_type_id')]]
+[[('mi_idx', 'movie_id'), ('mk', 'movie_id'), ('t', 'id')], [('mk', 'keyword_id'), ('k', 'id')], [('it', 'id'), ('mi_idx', 'info_type_id')]]

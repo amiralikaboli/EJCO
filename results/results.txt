@@ -1,499 +1,573 @@
 10a.cpp
-2.774 s
+2.697 s
 12 Rounds | Actor
 * * * * * * 
-628.8 ms
-80.2 ms
-709 ms
+618.4 ms
+79.8 ms
+698.2 ms
 --------------------
 10c.cpp
-3.747 s
+3.742 s
 Evil Eyes: Behind the Scenes | Himself
 * * * * * * 
-812.4 ms
-191.4 ms
-1003.8 ms
+808 ms
+191.2 ms
+999.2 ms
 --------------------
 11a.cpp
-2.014 s
+1.963 s
 Batman Beyond | followed by | Churchill Films
 * * * * * * 
-388 ms
-0.6 ms
-388.6 ms
+375.2 ms
+0.4 ms
+375.6 ms
 --------------------
 11b.cpp
-1.521 s
+1.507 s
 The Money Man | follows | Filmlance International AB
 * * * * * * 
-339.2 ms
+331.6 ms
 0 ms
-339.2 ms
+331.6 ms
 --------------------
 11c.cpp
-2.814 s
+2.832 s
 24 | (1997-2002) (worldwide) (all media) | 20th Century Fox Home Entertainment
 * * * * * * 
-507.8 ms
-0.8 ms
-508.6 ms
+501.6 ms
+1 ms
+502.6 ms
 --------------------
 11d.cpp
-2.93 s
+2.921 s
 ...denn sie wissen nicht, was sie tun | (1954) (UK) (TV) | 13th Street
 * * * * * * 
-513.6 ms
-1 ms
-514.6 ms
+506 ms
+0.8 ms
+506.8 ms
 --------------------
 12a.cpp
-1.302 s
+1.3 s
 3:20 | 8.1 | 10th Grade Reunion Films
 * * * * * * 
-380.4 ms
-2 ms
-382.4 ms
+380 ms
+1.8 ms
+381.8 ms
 --------------------
 12b.cpp
-9.415 s
+9.424 s
 $10,000 | Birdemic: Shock and Terror
 * * * * * * 
-2438.8 ms
-0 ms
-2438.8 ms
+2421.4 ms
+0.2 ms
+2421.6 ms
 --------------------
 12c.cpp
-1.636 s
+1.632 s
 $1.11 | 7.1 | "Oh That Gus!"
 * * * * * * 
-443 ms
+439.4 ms
 8 ms
-451 ms
+447.4 ms
 --------------------
 13b.cpp
-7.565 s
+7.561 s
 5 Time Champion | 1.8 | 501audio
 * * * * * * 
-1810.6 ms
-0.2 ms
-1810.8 ms
+1785.6 ms
+0 ms
+1785.6 ms
 --------------------
 13c.cpp
-7.533 s
+7.555 s
 Champion | 1.8 | DL Sites
 * * * * * * 
-1802.8 ms
+1787.6 ms
 0 ms
-1802.8 ms
+1787.6 ms
 --------------------
 14a.cpp
-1.88 s
+1.877 s
 $lowdown | 1.0
 * * * * * * 
-358.2 ms
-7 ms
-365.2 ms
+358.6 ms
+7.2 ms
+365.8 ms
 --------------------
 14b.cpp
-1.374 s
+1.372 s
 Of Dolls and Murder | 6.4
 * * * * * * 
-267.6 ms
+268.2 ms
 0 ms
-267.6 ms
+268.2 ms
 --------------------
 14c.cpp
-2.214 s
+2.207 s
 $lowdown | 1.0
 * * * * * * 
-443 ms
-20 ms
-463 ms
+440.8 ms
+19.8 ms
+460.6 ms
 --------------------
 15a.cpp
-2.068 s
+2.058 s
 USA:1 June 2007 | Battlestar Galactica: The Resistance
 * * * * * * 
-279.8 ms
-0.2 ms
-280 ms
+277.2 ms
+0.4 ms
+277.6 ms
 --------------------
 15b.cpp
-1.661 s
+1.672 s
 USA:27 April 2007 | RoboCop vs Terminator
 * * * * * * 
-228.8 ms
-0.2 ms
+228.4 ms
+0.6 ms
 229 ms
 --------------------
 15c.cpp
-3.046 s
+3.033 s
 USA:1 April 2003 | 24: Day Six - Debrief
 * * * * * * 
-635.8 ms
-0.8 ms
-636.6 ms
+629 ms
+0.6 ms
+629.6 ms
 --------------------
 15d.cpp
-3.093 s
+3.097 s
 06/05 | (Not So) Instant Photo
 * * * * * * 
-656.6 ms
-2.4 ms
-659 ms
+644 ms
+2.6 ms
+646.6 ms
 --------------------
 16a.cpp
-15.97 s
+15.989 s
 Carol Burnett vs. Anthony Perkins | Adams, Stan
 * * * * * * 
-2366.2 ms
-2847.6 ms
-5213.8 ms
+2358.8 ms
+2834.6 ms
+5193.4 ms
+--------------------
+16b.cpp
+17.07 s
+--------------------
+16c.cpp
+16.322 s
+--------------------
+16d.cpp
+16.208 s
+--------------------
+17a.cpp
+15.093 s
+--------------------
+17b.cpp
+15.028 s
 --------------------
 17c.cpp
-15.013 s
+14.998 s
 X'Volaitis, John
 * * * * * * 
-2263.4 ms
-4884.4 ms
-7147.8 ms
+2239.6 ms
+4870.2 ms
+7109.8 ms
 --------------------
 17d.cpp
-14.993 s
+15.006 s
 Abrahamsson, Bertil
 * * * * * * 
-2259.8 ms
-11526 ms
-13785.8 ms
+2239.8 ms
+11515.4 ms
+13755.2 ms
+--------------------
+17e.cpp
+16.705 s
+--------------------
+17f.cpp
+15.268 s
 --------------------
 18a.cpp
-10.507 s
+10.443 s
 $1,000 | 40 Days and 40 Nights | 10
 * * * * * * 
-2569.2 ms
-3344.2 ms
-5913.4 ms
+2378.8 ms
+3387.6 ms
+5766.4 ms
 --------------------
 18b.cpp
 1.261 s
 Horror | Agorable | 8.1
 * * * * * * 
-118.2 ms
-478.8 ms
-597 ms
+117.2 ms
+479 ms
+596.2 ms
+--------------------
+18c.cpp
+2.757 s
+--------------------
+19a.cpp
+2.663 s
 --------------------
 19b.cpp
-1.965 s
+1.976 s
 Jolie, Angelina | Kung Fu Panda
 * * * * * * 
-166.8 ms
-2092.8 ms
-2259.6 ms
+164.4 ms
+2135.6 ms
+2300 ms
+--------------------
+19c.cpp
+3.629 s
+--------------------
+19d.cpp
+9.647 s
 --------------------
 1a.cpp
-1.772 s
+1.828 s
 (A Warner Bros.-First National Picture) (presents) | A Clockwork Orange | 1934
 * * * * * * 
-249.2 ms
-1.8 ms
+249 ms
+2 ms
 251 ms
 --------------------
 1b.cpp
-1.434 s
+1.465 s
 (Set Decoration Rentals) (uncredited) | Disaster Movie | 2008
 * * * * * * 
-208.2 ms
-13.2 ms
-221.4 ms
+206.8 ms
+12.8 ms
+219.6 ms
 --------------------
 1c.cpp
-0.644 s
+0.65 s
 (co-production) | Intouchables | 2011
 * * * * * * 
-86.4 ms
+85.2 ms
 0.2 ms
-86.6 ms
+85.4 ms
 --------------------
 1d.cpp
-1.788 s
+1.808 s
 (Set Decoration Rentals) (uncredited) | Disaster Movie | 2004
 * * * * * * 
-258 ms
-15.4 ms
-273.4 ms
+255 ms
+15.2 ms
+270.2 ms
 --------------------
 20a.cpp
-17.305 s
+17.372 s
 --------------------
 20b.cpp
-15.261 s
+15.79 s
 Iron Man
 * * * * * * 
-3643.2 ms
-66 ms
-3709.2 ms
+3967.2 ms
+69.8 ms
+4037 ms
 --------------------
 20c.cpp
-17.15 s
+17.644 s
 --------------------
 21a.cpp
-2.016 s
+2.017 s
 Der Serienkiller - Klinge des Todes | followed by | Det Danske Filminstitut
 * * * * * * 
-383.6 ms
+380 ms
 0.2 ms
-383.8 ms
+380.2 ms
 --------------------
 21b.cpp
-2.049 s
+2.048 s
 Hämndens pris | followed by | Filmlance International AB
 * * * * * * 
-404.2 ms
-0.2 ms
-404.4 ms
+396.8 ms
+0 ms
+396.8 ms
 --------------------
 21c.cpp
-2.645 s
+2.651 s
 Batman Beyond | followed by | Churchill Films
 * * * * * * 
-494 ms
-0.6 ms
-494.6 ms
+485.4 ms
+0.4 ms
+485.8 ms
 --------------------
+22a.cpp
+2.184 s
+01 Distribution | 12 Rounds | 2.1
+* * * * * --------------------
 22b.cpp
-2.104 s
+2.116 s
 Boll Kino Beteiligungs GmbH & Co. KG | A Small Act | 3.0
 * * * * * * 
-430 ms
-15827 ms
-16257 ms
+422.6 ms
+15291.4 ms
+15714 ms
+--------------------
+22c.cpp
+2.385 s
+01 Distribution | (#1.1) | 1.9
+* * --------------------
+22d.cpp
+3.162 s
 --------------------
 23a.cpp
-2.791 s
+2.795 s
 The Analysts | movie
 * * * * * * 
-517.6 ms
-16541.2 ms
-17058.8 ms
+498.8 ms
+16356.2 ms
+16855 ms
 --------------------
 23b.cpp
-2.776 s
+2.774 s
 The Big Mope | movie
 * * * * * * 
-514.8 ms
-2924.8 ms
-3439.6 ms
+508.2 ms
+2842.6 ms
+3350.8 ms
 --------------------
+23c.cpp
+2.965 s
+Dirt Merchant | movie
+* --------------------
+24a.cpp
+4.383 s
+--------------------
+24b.cpp
+4.186 s
+--------------------
+25a.cpp
+3.905 s
+Abdallah, Damon | Horror | -- And Now the Screaming Starts! | 10
+* * --------------------
 25b.cpp
-2.725 s
+2.726 s
 Campbell, Jeremiah | Horror | Vampire Boys | 138
 * * * * * * 
-426.4 ms
-42.4 ms
-468.8 ms
+421 ms
+41.4 ms
+462.4 ms
+--------------------
+25c.cpp
+3.921 s
+--------------------
+26a.cpp
+18.263 s
 --------------------
 26b.cpp
-16.571 s
+16.666 s
 Bank Manager | Inception | 8.2
 * * * * * * 
-3106 ms
+3088 ms
 1982.6 ms
-5088.6 ms
+5070.6 ms
+--------------------
+26c.cpp
+17.237 s
 --------------------
 27a.cpp
-2.04 s
+2.054 s
 Det Danske Filminstitut | Spår i mörker | followed by
 * * * * * * 
-395.6 ms
+398.4 ms
 54.2 ms
-449.8 ms
+452.6 ms
 --------------------
 27b.cpp
-1.619 s
+1.613 s
 Filmlance International AB | Vita nätter | followed by
 * * * * * * 
-337.6 ms
-4.2 ms
-341.8 ms
+336.8 ms
+4 ms
+340.8 ms
 --------------------
 27c.cpp
-2.679 s
+2.688 s
 Det Danske Filminstitut | Spår i mörker | followed by
 * * * * * * 
-509.8 ms
-77.2 ms
-587 ms
+494 ms
+77 ms
+571 ms
 --------------------
 28a.cpp
-2.658 s
+2.647 s
 01 Distribuzione | (#1.1) | 2.9
 * * * * * * 
-487.6 ms
-2848.4 ms
-3336 ms
+481.2 ms
+2839.2 ms
+3320.4 ms
 --------------------
 28b.cpp
-1.971 s
+1.963 s
 20th Century Fox | (#1.1) | 6.6
 * * * * * * 
-353.8 ms
-1667.6 ms
-2021.4 ms
+364 ms
+1654.4 ms
+2018.4 ms
 --------------------
 28c.cpp
-2.423 s
+2.418 s
 01 Distribuzione | (#1.1) | 1.9
 * * * * * * 
-449.4 ms
-2985.4 ms
-3434.8 ms
+444.4 ms
+3087.2 ms
+3531.6 ms
 --------------------
 29a.cpp
-4.712 s
+4.714 s
 Queen | Andrews, Julie | Shrek 2
 * * * * * * 
-639.2 ms
-115.8 ms
-755 ms
+632.8 ms
+115.4 ms
+748.2 ms
 --------------------
 29b.cpp
-4.666 s
+4.641 s
 Queen | Andrews, Julie | Shrek 2
 * * * * * * 
-636.4 ms
-106.2 ms
-742.6 ms
+640.6 ms
+105.6 ms
+746.2 ms
+--------------------
+29c.cpp
+6.485 s
 --------------------
 2a.cpp
-3.064 s
+3.106 s
 'Doc'
 * * * * * * 
-591.2 ms
-29.8 ms
-621 ms
+579.8 ms
+29 ms
+608.8 ms
 --------------------
 2b.cpp
-3.06 s
+3.061 s
 'Doc'
 * * * * * * 
-584.4 ms
-28.4 ms
-612.8 ms
+579.6 ms
+28.2 ms
+607.8 ms
 --------------------
 2d.cpp
-3.097 s
+3.084 s
 & Teller
 * * * * * * 
-592.8 ms
-34.6 ms
-627.4 ms
+583.4 ms
+34.2 ms
+617.6 ms
 --------------------
 30a.cpp
-3.409 s
+3.435 s
 Abrams, J.J. | Horror | 16 Blocks | 100356
 * * * * * * 
-615.4 ms
-4694.6 ms
-5310 ms
+614.6 ms
+4614.4 ms
+5229 ms
 --------------------
 30b.cpp
-2.756 s
+2.778 s
 Shannon, Damian | Horror | Freddy vs. Jason | 194782
 * * * * * * 
-528 ms
-38.8 ms
-566.8 ms
+517.2 ms
+37.4 ms
+554.6 ms
 --------------------
+30c.cpp
+3.956 s
+Abernathy, Lewis | Action | $ | 100356
+* * --------------------
 31a.cpp
-4.728 s
+4.726 s
 Agnew, Jim | Horror | 2001 Maniacs | 1040
 * * * * * * 
-841.6 ms
-3824.2 ms
-4665.8 ms
+841.8 ms
+3765.8 ms
+4607.6 ms
 --------------------
 31b.cpp
-2.732 s
+2.746 s
 Bousman, Darren Lynn | Horror | Saw | 129755
 * * * * * * 
-437.6 ms
-131.2 ms
-568.8 ms
+433 ms
+129.2 ms
+562.2 ms
 --------------------
 31c.cpp
-5.753 s
+5.812 s
 Abraham, Brad | Action | 11:14 | 1008
 * * * * * * 
-1077.8 ms
-8343.2 ms
-9421 ms
+1073.4 ms
+8365.4 ms
+9438.8 ms
 --------------------
 32b.cpp
-3.42 s
+3.462 s
 12 oz. Mouse | 'Angel': Season 2 Overview | alternate language version of
 * * * * * * 
-551.4 ms
+533.8 ms
 3.8 ms
-555.2 ms
+537.6 ms
 --------------------
 33a.cpp
-3.991 s
+4.02 s
 495 Productions | 495 Productions | A Shot at Love with Tila Tequila | A Double Shot at Love | 2.7 | 3.3
 * * * * * * 
-637 ms
-23.6 ms
-660.6 ms
+626 ms
+23.2 ms
+649.2 ms
 --------------------
 33b.cpp
-3.782 s
+3.775 s
 495 Productions | MTV Netherlands | A Shot at Love with Tila Tequila | A Double Shot at Love | 2.7 | 3.3
 * * * * * * 
-618 ms
-6.8 ms
-624.8 ms
+608.8 ms
+6.2 ms
+615 ms
 --------------------
 33c.cpp
-4.316 s
+4.319 s
 495 Productions | 2BE | A Double Shot at Love | A Double Shot at Love | 1.0 | 1.3
 * * * * * * 
-674.6 ms
-302.6 ms
-977.2 ms
+668 ms
+306.4 ms
+974.4 ms
 --------------------
 3a.cpp
-1.593 s
+1.603 s
 2 Days in New York
 * * * * * * 
-241.8 ms
-4.8 ms
-246.6 ms
+237 ms
+3.8 ms
+240.8 ms
 --------------------
 3b.cpp
-1.264 s
+1.271 s
 300: Rise of an Empire
 * * * * * * 
-190 ms
+193.8 ms
 0.2 ms
-190.2 ms
+194 ms
 --------------------
 3c.cpp
-2.052 s
+2.066 s
 & Teller 2
 * * * * * * 
-296.6 ms
-46.6 ms
-343.2 ms
+295.4 ms
+32 ms
+327.4 ms
 --------------------
 4a.cpp
-1.686 s
+1.7 s
 & Teller 2 | 5.1
 * * * * * * 
-278.2 ms
-19.6 ms
-297.8 ms
+280 ms
+16.8 ms
+296.8 ms
 --------------------
 4b.cpp
-1.254 s
+1.27 s
 Batman: Arkham City | 9.1
 * * * * * * 
 192.2 ms
@@ -501,110 +575,130 @@ Batman: Arkham City | 9.1
 192.6 ms
 --------------------
 4c.cpp
-2.112 s
+2.127 s
 & Teller 2 | 2.1
 * * * * * * 
-349.4 ms
-45.6 ms
-395 ms
+352.6 ms
+37.4 ms
+390 ms
 --------------------
 5c.cpp
-1.148 s
+1.179 s
 11,830,420
 * * * * * * 
-185.2 ms
+182.8 ms
 10 ms
-195.2 ms
+192.8 ms
 --------------------
 6a.cpp
-13.314 s
+13.358 s
 Downey Jr., Robert | Iron Man 3 | marvel-cinematic-universe
 * * * * * * 
-1923.8 ms
-6.6 ms
-1930.4 ms
+1931 ms
+6.2 ms
+1937.2 ms
 --------------------
 6b.cpp
-13.129 s
+13.163 s
 Downey Jr., Robert | The Avengers 2 | based-on-comic
 * * * * * * 
-1911.4 ms
-0.2 ms
-1911.6 ms
+1899.4 ms
+0 ms
+1899.4 ms
 --------------------
 6c.cpp
-13.118 s
+13.148 s
 Downey Jr., Robert | The Avengers 2 | marvel-cinematic-universe
 * * * * * * 
-1901.2 ms
+1897 ms
 0 ms
-1901.2 ms
+1897 ms
 --------------------
 6d.cpp
-13.799 s
+13.794 s
 Downey Jr., Robert | 2008 MTV Movie Awards | based-on-comic
 * * * * * * 
-2016.6 ms
-28.2 ms
-2044.8 ms
+1978.4 ms
+27.2 ms
+2005.6 ms
 --------------------
 6e.cpp
-13.802 s
+13.774 s
 Downey Jr., Robert | Iron Man 3 | marvel-cinematic-universe
 * * * * * * 
-1988 ms
-13.2 ms
-2001.2 ms
+1979.2 ms
+13.4 ms
+1992.6 ms
+--------------------
+6f.cpp
+15.559 s
 --------------------
 7a.cpp
-12.79 s
+12.859 s
 Dressed to Kill | Antonioni, Michelangelo
 * * * * * * 
-5065.8 ms
-5 ms
-5070.8 ms
+5035.6 ms
+4.6 ms
+5040.2 ms
 --------------------
 7b.cpp
-12.477 s
+12.456 s
 Dressed to Kill | De Palma, Brian
 * * * * * * 
-4991.8 ms
-0.6 ms
-4992.4 ms
+4926.4 ms
+0.4 ms
+4926.8 ms
 --------------------
 7c.cpp
-13.874 s
+14.027 s
 50 Cent | """Boo"" Arnold was born Earl Arnold in Hattiesburg, Mississippi in 1966. His father gave him the nickname 'Boo' early in life and it stuck through grade school, high school, and college. He is still known as ""Boo"" to family and friends.  Raised in central Texas, Arnold played baseball at Texas Tech University where he graduated with a BA in Advertising and Marketing. While at Texas Tech he was also a member of the Texas Epsilon chapter of Phi Delta Theta fraternity. After college he worked with Young Life, an outreach to high school students, in San Antonio, Texas.  While with Young Life Arnold began taking extension courses through Fuller Theological Seminary and ultimately went full-time to Gordon-Conwell Theological Seminary in Boston, Massachusetts. At Gordon-Conwell he completed a Master's Degree in Divinity studying Theology, Philosophy, Church History, Biblical Languages (Hebrew & Greek), and Exegetical Methods. Following seminary he was involved with reconciliation efforts in the former Yugoslavia shortly after the war ended there in1995.  Arnold started acting in his early thirties in Texas. After an encouraging visit to Los Angeles where he spent time with childhood friend George Eads (of CSI Las Vegas) he decided to move to Los Angeles in 2001 to pursue acting full-time. While in Los Angeles he has studied acting with Judith Weston at Judith Weston Studio for Actors and Directors.  Arnold's acting career has been one of steady development, booking co-star and guest-star roles in nighttime television. He guest-starred opposite of Jane Seymour on the night time television drama Justice. He played the lead, Michael Hollister, in the film The Seer, written and directed by Patrick Masset (Friday Night Lights).  He was nominated Best Actor in the168 Film Festival for the role of Phil Stevens in the short-film Useless. In Useless he played a US Marshal who must choose between mercy and justice as he confronts the man who murdered his father. Arnold's performance in Useless confirmed his ability to carry lead roles, and he continues to work toward solidifying himself as a male lead in film and television.  Arnold married fellow Texan Stacy Rudd of San Antonio in 2003 and they are now raising their three children in the Los Angeles area."
-* * * * * --------------------
+* * * * * * 
+4927 ms
+10142.6 ms
+15069.6 ms
+--------------------
 8a.cpp
-1.79 s
+1.78 s
 .hack//Quantum | Chambers, Linda
 * * * * * * 
-234.8 ms
-101.8 ms
-336.6 ms
+229.2 ms
+103 ms
+332.2 ms
 --------------------
 8b.cpp
-0.562 s
+0.565 s
 Dragon Ball Z: Shin Budokai | Chambers, Linda
 * * * * * * 
-53 ms
-27.8 ms
-80.8 ms
+51.8 ms
+28.8 ms
+80.6 ms
+--------------------
+8c.cpp
+19.953 s
+--------------------
+8d.cpp
+19.941 s
 --------------------
 9a.cpp
-3.004 s
+3.005 s
 Blue Harvest | Airport Announcer | AJ
 * * * * * * 
-437.8 ms
-1355 ms
-1792.8 ms
+433.4 ms
+1358.8 ms
+1792.2 ms
 --------------------
 9b.cpp
-2.472 s
+2.461 s
 Bassett, Angela | Blue Harvest | Airport Announcer | AJ
 * * * * * * 
-367.6 ms
-447.4 ms
-815 ms
+361.8 ms
+451.6 ms
+813.4 ms
+--------------------
+9c.cpp
+4.257 s
+Alborg, Ana Esther | (1975-01-20) | 2nd Balladeer | 'Annette'
+* * --------------------
+9d.cpp
+4.677 s
 --------------------

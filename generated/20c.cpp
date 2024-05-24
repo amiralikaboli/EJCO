@@ -60,9 +60,9 @@ int main() {
 								for (const auto &[x3, t_trie2]: t_trie1) {
 									if (kt_trie0.contains(x3)) {
 										auto &kt_trie1 = kt_trie0.at(x3);
-										for (const auto &[x4, k_trie1]: k_trie0) {
-											if (mk_trie1.contains(x4)) {
-												auto &mk_trie2 = mk_trie1.at(x4);
+										for (const auto &[x4, mk_trie2]: mk_trie1) {
+											if (k_trie0.contains(x4)) {
+												auto &k_trie1 = k_trie0.at(x4);
 												for (const auto &[x5, ci_trie1]: ci_trie0) {
 													if (n_trie0.contains(x5)) {
 														auto &n_trie1 = n_trie0.at(x5);

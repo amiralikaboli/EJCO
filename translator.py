@@ -342,13 +342,12 @@ class Plan2CPPTranslator:
 
 if __name__ == '__main__':
 	skip_queries = [
-		'16b', '16c', '16d', '17a', '17b', '17e', '17f', '18c', '19a', '19c', '19d', '22a', '22c', '22d', '23c', '24a',
-		'24b', '25a', '25c', '26a', '26c', '29c', '30c', '6f', '8c', '8d', '9c', '9d'
+		'16b', '16c', '16d', '17a', '17b', '17e', '17f', '18c', '19a', '19c', '19d', '20a', '20c', '22a', '22c', '22d',
+		'23c', '24a', '24b', '25a', '25c', '26a', '26c', '29c', '30c', '6f', '8c', '8d', '9c', '9d'
 	]
 	queries = []
 	for filename in os.listdir(os.path.join(os.path.dirname(__file__), "plans", "raw")):
-		if filename[:-4] not in skip_queries:
-			queries.append(filename[:-4])
+		queries.append(filename[:-4])
 
 	translator = Plan2CPPTranslator(hash_table=HashTable.PHMAP)
 	translator.translate(queries, use_cache=False)
