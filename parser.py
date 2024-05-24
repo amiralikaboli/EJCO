@@ -184,7 +184,7 @@ class PlanParser:
 			sized_eq_cols = []
 			for rel, col in eq_cols:
 				if col not in rel2visited_cols[rel]:
-					stats = query2rel2perm2stats[query][rel][perm2str(rel2join_cols[rel])]["avg"]
+					stats = query2rel2perm2stats[query][rel][perm2str(rel2join_cols[rel])]["max"]
 					sized_eq_cols.append((rel, col, stats[rel2join_cols[rel].index(col)]))
 					rel2visited_cols[rel].add(col)
 				else:

@@ -1,2 +1,2 @@
 [('mi', ['movie_id'], []), ('mk', ['movie_id', 'keyword_id'], []), ('t', ['id'], ['title']), ('k', ['id'], [])]
-[[('mk', 'movie_id'), ('mi', 'movie_id'), ('t', 'id')], [('mk', 'keyword_id'), ('k', 'id')]]
+[[('mk', 'movie_id'), ('mi', 'movie_id'), ('t', 'id')], [('k', 'id'), ('mk', 'keyword_id')]]
