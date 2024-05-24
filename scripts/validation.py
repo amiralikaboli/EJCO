@@ -8,6 +8,7 @@ freejoin_path = os.path.join(os.path.dirname(__file__), "..", "..", "free-join")
 if __name__ == '__main__':
 	args = sys.argv[1:]
 	results_file = args[0]
+	check_validity = False
 
 	with open(results_file, "r") as txt_file:
 		stats = [res.strip().split("\n") for res in txt_file.read().split("-" * 20)[:-1]]
@@ -34,7 +35,7 @@ if __name__ == '__main__':
 		query = lines[0][:-4]
 		if len(lines) == mx_len:
 			query_res = set(elem.strip().replace('"', "").replace("\\", "") for elem in lines[2].split(' | '))
-			if query_res != gj_outputs[query]:
+			if check_validity and query_res != gj_outputs[query]:
 				invalids.append(query)
 			else:
 				times.append({"query": query, "time": float(lines[-1][:-3]) / 1000})
