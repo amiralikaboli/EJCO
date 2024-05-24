@@ -55,8 +55,8 @@ if __name__ == '__main__':
 			for line in res.split("\n"):
 				perm, stats = line.split(":")
 				perm = perm.strip().split(", ")
-				stats = [int(x) for x in stats.strip().split(" ")]
-				rel_stats[perm2str(perm)] = stats
+				stats = [[int(x) for x in op_stats.strip().split(" ")] for op_stats in stats.strip().split(" | ")]
+				rel_stats[perm2str(perm)] = {"avg": stats[0], "max": stats[1]}
 			query_stats[rel] = rel_stats
 
 		total_stats[query] = query_stats
