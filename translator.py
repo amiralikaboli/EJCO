@@ -119,7 +119,7 @@ class Plan2CPPTranslator:
 	def _translate_compiled_plan(
 			self, build_plan: List[Tuple[str, List[str], List[str]]], compiled_plan: List[List[str]]
 	):
-		join_attrs_order = self.parser.find_join_attrs_order(build_plan, compiled_plan)
+		join_attrs_order = self.parser.order_join_cols_based_on_compiled_plan(build_plan, compiled_plan)
 
 		proj_relcols, proj_col_types = self._find_all_proj_cols_and_types(build_plan)
 		for (rel, col), col_type in zip(proj_relcols, proj_col_types):

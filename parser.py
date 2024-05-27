@@ -10,7 +10,8 @@ class PlanParser:
 	def parse(self, query: str, use_cache: bool = False) -> Tuple[List, List]:  # (build_plan, compiled_plan)
 		if use_cache and os.path.exists(os.path.join(plans_path, "fused", f"{query}.log")):
 			with open(os.path.join(plans_path, "fused", f"{query}.log"), 'r') as log_file:
-				return [eval(line.strip()) for line in log_file.readlines()]
+				build_plan, compiled_plan = [eval(line.strip()) for line in log_file.readlines()]
+				return build_plan, self._fix_attr_rels_order(query, compiled_plan)
 
 		with open(os.path.join(freejoin_path, "logs", "plan-profiles", f"{query}.json"), 'r') as json_file:
 			tree_plan = json.load(json_file)
@@ -166,10 +167,7 @@ class PlanParser:
 		return compiled_plan
 
 	@staticmethod
-	def _fix_attr_rels_order(
-			query: str,
-			compiled_plan: List[List[Tuple[str, str]]]
-	) -> List[List[Tuple[str, str]]]:
+	def _fix_attr_rels_order(query: str, compiled_plan: List[List[Tuple[str, str]]]) -> List[List[Tuple[str, str]]]:
 		involved_rels = set(rel for eq_cols in compiled_plan for rel, _ in eq_cols)
 
 		rel2join_cols = {rel: list() for rel in involved_rels}
@@ -199,7 +197,7 @@ class PlanParser:
 		return compiled_plan
 
 	@staticmethod
-	def find_join_attrs_order(
+	def order_join_cols_based_on_compiled_plan(
 			build_plan: List[Tuple[str, List[str], List[str]]], compiled_plan: List[List[str]]
 	) -> Dict[str, Dict[str, int]]:  # rel -> col -> idx
 		join_attrs_order = {
