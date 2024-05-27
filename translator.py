@@ -1,10 +1,9 @@
-import json
 import os
 from collections import defaultdict
 from typing import List, Tuple
 
 from consts import HashTable, preprocessed_data_path, raw_data_path, include_dir_path, generated_dir_path, rel_wo_idx, \
-	abbr2rel, rel2col2type
+	abbr2rel, rel2col2type, inf_values
 from parser import PlanParser
 from var_mng import VariableManager
 
@@ -124,8 +123,7 @@ class Plan2CPPTranslator:
 
 		proj_relcols, proj_col_types = self._find_all_proj_cols_and_types(build_plan)
 		for (rel, col), col_type in zip(proj_relcols, proj_col_types):
-			inf_val = "numeric_limits<int>::max()" if col_type == "int" else '"zzzzzzzz"'
-			yield f'{col_type} {self.var_mng.mn_var(rel, col)} = {inf_val};\n'
+			yield f'{col_type} {self.var_mng.mn_var(rel, col)} = {inf_values[col_type]};\n'
 
 		for idx, eq_cols in enumerate(compiled_plan):
 			rel_0, col_0 = eq_cols[0]
@@ -135,30 +133,23 @@ class Plan2CPPTranslator:
 				self.indent += 1
 				self.resolved_attrs.add(eq_cols[0])
 				start_offset = 1
+			elif eq_cols[0] in self.resolved_attrs:
+				start_offset = 1
 			else:
 				start_offset = 0
 
 			conditions = []
-			assignments = []
-			for rel_col in eq_cols[start_offset:]:
-				if rel_col in self.resolved_attrs:
-					continue
-
-				rel, col = rel_col
+			for rel, col in eq_cols[start_offset:]:
 				conditions.append(
 					f"{self.var_mng.trie_var(rel)}.contains({self.var_mng.x_var(join_attrs_order[rel][col])})"
 				)
-				assignments.append(
-					f"auto &{self.var_mng.next_trie_var(rel)} = "
-					f"{self.var_mng.trie_var(rel)}.at({self.var_mng.x_var(join_attrs_order[rel][col])});\n"
-				)
-				self.var_mng.next_trie_var(rel, inplace=True)
-				self.resolved_attrs.add(rel_col)
-
 			yield f"if ({' && '.join(conditions)}) {{\n"
 			self.indent += 1
-			for assignment in assignments:
-				yield assignment
+
+			for rel, col in eq_cols[start_offset:]:
+				yield f"auto &{self.var_mng.next_trie_var(rel)} = {self.var_mng.trie_var(rel)}.at({self.var_mng.x_var(join_attrs_order[rel][col])});\n"
+				self.var_mng.next_trie_var(rel, inplace=True)
+				self.resolved_attrs.add((rel, col))
 
 		rel2proj_cols = {rel: proj_cols for rel, _, proj_cols in build_plan if proj_cols}
 		for rel, proj_cols in rel2proj_cols.items():
