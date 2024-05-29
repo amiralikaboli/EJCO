@@ -27,13 +27,12 @@ if __name__ == '__main__':
 			output.add(elem)
 		gj_outputs[query_log[:newline_idx].strip()] = output
 
-	mx_len = max(len(lines) for lines in stats)
 	times = []
 	timeouts = []
 	invalids = []
 	for lines in stats:
 		query = lines[0][:-4]
-		if len(lines) == mx_len:
+		if len(lines) > 4:
 			query_res = set(elem.strip().replace('"', "").replace("\\", "") for elem in lines[2].split(' | '))
 			if check_validity and query_res != gj_outputs[query]:
 				invalids.append(query)

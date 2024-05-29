@@ -9,9 +9,9 @@ using namespace std;
 int main() {
 	HighPrecisionTimer timer;
 
-	load_mi("/Users/s2522996/Documents/free-join/data/imdb_csv/movie_info.csv");
 	load_t("/Users/s2522996/Documents/free-join/queries/preprocessed/join-order-benchmark/data/12b/t.csv");
 	load_mi_idx("/Users/s2522996/Documents/free-join/data/imdb_csv/movie_info_idx.csv");
+	load_mi("/Users/s2522996/Documents/free-join/data/imdb_csv/movie_info.csv");
 	load_mc("/Users/s2522996/Documents/free-join/data/imdb_csv/movie_companies.csv");
 	load_it2("/Users/s2522996/Documents/free-join/queries/preprocessed/join-order-benchmark/data/12b/it2.csv");
 	load_it1("/Users/s2522996/Documents/free-join/queries/preprocessed/join-order-benchmark/data/12b/it1.csv");
@@ -22,12 +22,33 @@ int main() {
 	for (int z = 0; z < 1 + 5; ++z) {
 		timer.Reset();
 
-		auto mi_trie0 = phmap::flat_hash_map<int, phmap::flat_hash_map<int, vector<int>>>();
-		build_trie(mi_trie0, mi_movie_id, mi_info_type_id);
 		auto t_trie0 = phmap::flat_hash_map<int, vector<int>>();
 		build_trie(t_trie0, t_id);
-		auto mi_idx_trie0 = phmap::flat_hash_map<int, phmap::flat_hash_map<int, bool>>();
-		build_trie_bool(mi_idx_trie0, mi_idx_movie_id, mi_idx_info_type_id);
+		auto mi_idx_trie0 = phmap::flat_hash_map<int, vector<int>>();
+		build_trie(mi_idx_trie0, mi_idx_movie_id);
+		timer.StoreElapsedTime(0);
+
+		vector<int> interm0_col0;
+		vector<string> interm0_col1;
+		vector<int> interm0_col2;
+		for (const auto &[x0, t_trie1]: t_trie0) {
+			if (mi_idx_trie0.contains(x0)) {
+				auto &mi_idx_trie1 = mi_idx_trie0.at(x0);
+				for (const auto &t_off: t_trie1) {
+					for (const auto &mi_idx_off: mi_idx_trie1) {
+						interm0_col0.push_back(t_id[t_off]);
+						interm0_col1.push_back(t_title[t_off]);
+						interm0_col2.push_back(mi_idx_info_type_id[mi_idx_off]);
+					}
+				}
+			}
+		}
+		timer.StoreElapsedTime(1);
+
+		auto mi_trie0 = phmap::flat_hash_map<int, phmap::flat_hash_map<int, vector<int>>>();
+		build_trie(mi_trie0, mi_movie_id, mi_info_type_id);
+		auto interm0_trie0 = phmap::flat_hash_map<int, phmap::flat_hash_map<int, vector<int>>>();
+		build_trie(interm0_trie0, interm0_col0, interm0_col2);
 		auto mc_trie0 = phmap::flat_hash_map<int, phmap::flat_hash_map<int, phmap::flat_hash_map<int, bool>>>();
 		build_trie_bool(mc_trie0, mc_movie_id, mc_company_type_id, mc_company_id);
 		auto it2_trie0 = phmap::flat_hash_map<int, bool>();
@@ -38,21 +59,20 @@ int main() {
 		build_trie_bool(ct_trie0, ct_id);
 		auto cn_trie0 = phmap::flat_hash_map<int, bool>();
 		build_trie_bool(cn_trie0, cn_id);
-		timer.StoreElapsedTime(0);
+		timer.StoreElapsedTime(2);
 
 		string mn_mi_info = "zzzzzzzz";
-		string mn_t_title = "zzzzzzzz";
-		for (const auto &[x0, t_trie1]: t_trie0) {
-			if (mi_idx_trie0.contains(x0) && mc_trie0.contains(x0) && mi_trie0.contains(x0)) {
-				auto &mi_idx_trie1 = mi_idx_trie0.at(x0);
+		string mn_interm0_col1 = "zzzzzzzz";
+		for (const auto &[x0, mi_trie1]: mi_trie0) {
+			if (interm0_trie0.contains(x0) && mc_trie0.contains(x0)) {
+				auto &interm0_trie1 = interm0_trie0.at(x0);
 				auto &mc_trie1 = mc_trie0.at(x0);
-				auto &mi_trie1 = mi_trie0.at(x0);
-				for (const auto &[x1, it2_trie1]: it2_trie0) {
-					if (mi_idx_trie1.contains(x1)) {
-						auto &mi_idx_trie2 = mi_idx_trie1.at(x1);
-						for (const auto &[x2, it1_trie1]: it1_trie0) {
-							if (mi_trie1.contains(x2)) {
-								auto &mi_trie2 = mi_trie1.at(x2);
+				for (const auto &[x1, interm0_trie2]: interm0_trie1) {
+					if (it2_trie0.contains(x1)) {
+						auto &it2_trie1 = it2_trie0.at(x1);
+						for (const auto &[x2, mi_trie2]: mi_trie1) {
+							if (it1_trie0.contains(x2)) {
+								auto &it1_trie1 = it1_trie0.at(x2);
 								for (const auto &[x3, mc_trie2]: mc_trie1) {
 									if (ct_trie0.contains(x3)) {
 										auto &ct_trie1 = ct_trie0.at(x3);
@@ -62,8 +82,8 @@ int main() {
 												for (const auto &mi_off: mi_trie2) {
 													mn_mi_info = min(mn_mi_info, mi_info[mi_off]);
 												}
-												for (const auto &t_off: t_trie1) {
-													mn_t_title = min(mn_t_title, t_title[t_off]);
+												for (const auto &interm0_off: interm0_trie2) {
+													mn_interm0_col1 = min(mn_interm0_col1, interm0_col1[interm0_off]);
 												}
 											}
 										}
@@ -75,16 +95,18 @@ int main() {
 				}
 			}
 		}
-		timer.StoreElapsedTime(1);
+		timer.StoreElapsedTime(3);
+
 		if (z == 0)
-			cout << mn_mi_info << " | " << mn_t_title << endl;
+			cout << mn_mi_info << " | " << mn_interm0_col1 << endl;
 		cout << "*" << " " << flush;
 	}
 	cout << endl;
 
-	auto build_time = timer.GetMean(0);
-	auto total_time = timer.GetMean(1);
-	cout << build_time << " ms" << endl;
-	cout << total_time - build_time << " ms" << endl;
-	cout << total_time << " ms" << endl;
+	vector<double> tm{0};
+	for (int i = 0; i < 2 * 2; ++i)
+		tm.push_back(timer.GetMean(i));
+	for (int i = 0; i < 2 * 2; i += 2)
+		cout << tm[i + 1] - tm[i] << " | " << tm[i + 2] - tm[i + 1] << " ms" << endl;
+	cout << tm[4] << " ms" << endl;
 }

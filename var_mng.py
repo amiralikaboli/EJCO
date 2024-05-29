@@ -68,3 +68,23 @@ class VariableManager:
 	@staticmethod
 	def build_ordered_func():
 		return f"{Templates.BuildFunc.value}_ordered"
+
+	@staticmethod
+	def interm_rel(idx: int):
+		return f"{Templates.IntermRel.value}{idx}"
+
+	@staticmethod
+	def is_interm_rel(rel: str):
+		return rel.startswith(Templates.IntermRel.value)
+
+	@staticmethod
+	def interm_col(idx: int):
+		return f"{Templates.IntermCol.value}{idx}"
+
+	@staticmethod
+	def root_rel():
+		return Templates.RootRel.value
+
+	@staticmethod
+	def is_root_rel(rel: str):
+		return rel == Templates.RootRel.value

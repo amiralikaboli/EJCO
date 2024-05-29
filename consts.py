@@ -23,16 +23,10 @@ class Templates(enum.Enum):
 	IntermCol = "col"
 	RootRel = "root"
 
-class PlanNode(enum.Enum):
-	Query = "Query"
-	HashJoin = "HASH_JOIN"
-	SeqScan = "SEQ_SCAN"
-	Projection = "PROJECTION"
-	Filter = "FILTER"
-	Aggregate = "SIMPLE_AGGREGATE"
-	ChunkScan = "CHUNK_SCAN"
 
 def rel_wo_idx(rel: str) -> str:
+	if Templates.IntermRel.value in rel:
+		return rel
 	if rel[-1].isdigit():
 		return rel[:-1]
 	return rel

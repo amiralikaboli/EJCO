@@ -28,14 +28,17 @@ class Plan2CPPTranslator:
 	def translate(self, queries: List[str], use_cache: bool = False):
 		for query in queries:
 			self._clear_per_query()
-			self._translate(query, use_cache)
+			plans = self.parser.parse(query, use_cache)
+			if plans is None:
+				continue
+			self._translate(query, plans)
 			self._translate_load_file(query)
 
 		self._translate_build_file()
 
-	def _translate(self, query: str, use_cache: bool = False):
-		build_plan, compiled_plan = self.parser.parse(query, use_cache)
-		build_plan = self._make_join_cols_order_consistent(build_plan, compiled_plan)
+	def _translate(self, query: str, plans: List[Tuple[Tuple[str, List], List, List]]):
+		for idx, (node, build_plan, compiled_plan) in enumerate(plans):
+			plans[idx] = (node, self._make_join_cols_order_consistent(build_plan, compiled_plan), compiled_plan)
 
 		with open(os.path.join(generated_dir_path, f"{query}.cpp"), 'w') as cpp_file:
 			cpp_file.write("#include <iostream>\n")
@@ -47,29 +50,34 @@ class Plan2CPPTranslator:
 			cpp_file.write('int main() {\n')
 			cpp_file.write('\tHighPrecisionTimer timer;\n\n')
 
-			for line in self._translate_loads(query, build_plan):
-				cpp_file.write('\t' * self.indent + line)
+			for _, build_plan, _ in plans:
+				for line in self._translate_loads(query, build_plan):
+					cpp_file.write('\t' * self.indent + line)
 			cpp_file.write('\tcout << timer.GetElapsedTime() / 1000.0 << " s" << endl;\n')
 			cpp_file.write('\n')
 
 			cpp_file.write('\tfor (int z = 0; z < 1 + 5; ++z) {\n')
 			self.indent += 1
 			cpp_file.write('\t' * self.indent + 'timer.Reset();\n\n')
-			for line in self._translate_build_plan(build_plan):
-				cpp_file.write('\t' * self.indent + line)
-			cpp_file.write('\t' * self.indent + 'timer.StoreElapsedTime(0);\n')
-			cpp_file.write('\n')
 
-			for line in self._translate_compiled_plan(build_plan, compiled_plan):
-				cpp_file.write('\t' * self.indent + line)
+			for idx, (node, build_plan, compiled_plan) in enumerate(plans):
+				interm_rel, interm_cols = node
+				for line in self._translate_build_plan(interm_rel, build_plan):
+					cpp_file.write('\t' * self.indent + line)
+				cpp_file.write('\t' * self.indent + f'timer.StoreElapsedTime({idx * 2});\n')
+				cpp_file.write('\n')
 
-			while self.indent > 2:
-				self.indent -= 1
-				cpp_file.write('\t' * self.indent + '}\n')
+				for line in self._translate_compiled_plan(node, build_plan, compiled_plan):
+					cpp_file.write('\t' * self.indent + line)
+				while self.indent > 2:
+					self.indent -= 1
+					cpp_file.write('\t' * self.indent + '}\n')
+				cpp_file.write('\t' * self.indent + f'timer.StoreElapsedTime({idx * 2 + 1});\n')
+				cpp_file.write('\n')
 
-			cpp_file.write('\t' * self.indent + 'timer.StoreElapsedTime(1);\n')
+			root_build_plan = plans[-1][1]
 			cpp_file.write('\t' * self.indent + 'if (z == 0)\n')
-			proj_relcols, _ = self._find_all_proj_cols_and_types(build_plan)
+			proj_relcols, _ = self._find_all_proj_cols_and_types(root_build_plan)
 			delimiter = ' << " | " << '
 			cpp_file.write(
 				'\t' * (self.indent + 1) +
@@ -82,16 +90,19 @@ class Plan2CPPTranslator:
 			cpp_file.write('\tcout << endl;\n')
 			cpp_file.write('\n')
 
-			cpp_file.write('\tauto build_time = timer.GetMean(0);\n')
-			cpp_file.write('\tauto total_time = timer.GetMean(1);\n')
-			cpp_file.write('\tcout << build_time << " ms" << endl;\n')
-			cpp_file.write('\tcout << total_time - build_time << " ms" << endl;\n')
-			cpp_file.write('\tcout << total_time << " ms" << endl;\n')
+			cpp_file.write('\tvector<double> tm{0};\n')
+			cpp_file.write(f'\tfor (int i = 0; i < {len(plans)} * 2; ++i)\n')
+			cpp_file.write('\t\ttm.push_back(timer.GetMean(i));\n')
+			cpp_file.write(f'\tfor (int i = 0; i < 2 * {len(plans)}; i += 2)\n')
+			cpp_file.write(f'\t\tcout << tm[i + 1] - tm[i] << " + " << tm[i + 2] - tm[i + 1] << " = " << tm[i + 2] - tm[i] << " ms" << endl;\n')
+			cpp_file.write(f'\tcout << tm[{len(plans) * 2}] << " ms" << endl;\n')
 
 			cpp_file.write('}\n')
 
 	def _translate_loads(self, query: str, build_plan: List[Tuple]):
 		for rel, join_cols, proj_cols in build_plan:
+			if self.var_mng.is_interm_rel(rel):
+				continue
 			self.loaded_rels.add(rel)
 			path = os.path.join(preprocessed_data_path, query, f"{rel}.csv")
 			if not os.path.exists(path):
@@ -100,11 +111,11 @@ class Plan2CPPTranslator:
 			for col in join_cols + proj_cols:
 				self.involved_cols.add((rel, col))
 
-	def _translate_build_plan(self, build_plan: List[Tuple[str, List[str], List[str]]]):
+	def _translate_build_plan(self, interm_rel: str, build_plan: List[Tuple[str, List[str], List[str]]]):
 		for rel, join_cols, proj_cols in build_plan:
 			level_types = tuple([rel2col2type[rel_wo_idx(rel)][join_col] for join_col in join_cols])
 			self.trie_types.add(level_types)
-			if proj_cols:
+			if self.var_mng.is_interm_rel(interm_rel) or proj_cols:
 				yield f"auto {self.var_mng.trie_var(rel)} = {self.var_mng.trie_def(level_types)}();\n"
 				yield f"{self.var_mng.build_func()}({self.var_mng.trie_var(rel)}, {', '.join([self.var_mng.rel_col_var(rel, join_col) for join_col in join_cols])});\n"
 			else:
@@ -112,14 +123,22 @@ class Plan2CPPTranslator:
 				yield f"{self.var_mng.build_bool_func()}({self.var_mng.trie_var(rel)}, {', '.join([self.var_mng.rel_col_var(rel, join_col) for join_col in join_cols])});\n"
 
 	def _translate_compiled_plan(
-			self, build_plan: List[Tuple[str, List[str], List[str]]], compiled_plan: List[List[str]]
+			self,
+			node: Tuple[str, List[Tuple[str, str]]],
+			build_plan: List[Tuple[str, List[str], List[str]]],
+			compiled_plan: List[List[str]]
 	):
+		interm_rel, interm_cols = node
+
+		if self.var_mng.is_root_rel(interm_rel):
+			proj_relcols, proj_col_types = self._find_all_proj_cols_and_types(build_plan)
+			for (rel, col), col_type in zip(proj_relcols, proj_col_types):
+				yield f'{col_type} {self.var_mng.mn_var(rel, col)} = {inf_values[col_type]};\n'
+		else:
+			for idx, (rel, col) in enumerate(interm_cols):
+				yield f'vector<{rel2col2type[rel_wo_idx(rel)][col]}> {self.var_mng.rel_col_var(interm_rel, self.var_mng.interm_col(idx))};\n'
+
 		join_attrs_order = self.parser.order_join_cols_based_on_compiled_plan(build_plan, compiled_plan)
-
-		proj_relcols, proj_col_types = self._find_all_proj_cols_and_types(build_plan)
-		for (rel, col), col_type in zip(proj_relcols, proj_col_types):
-			yield f'{col_type} {self.var_mng.mn_var(rel, col)} = {inf_values[col_type]};\n'
-
 		for idx, eq_cols in enumerate(compiled_plan):
 			rel_0, col_0 = eq_cols[0]
 			if join_attrs_order[rel_0][col_0] == idx:
@@ -146,22 +165,32 @@ class Plan2CPPTranslator:
 				self.var_mng.next_trie_var(rel, inplace=True)
 				self.resolved_attrs.add((rel, col))
 
-		rel2proj_cols = {rel: proj_cols for rel, _, proj_cols in build_plan if proj_cols}
-		for rel, proj_cols in rel2proj_cols.items():
-			yield f"for (const auto &{self.var_mng.offset_var(rel)}: {self.var_mng.trie_var(rel)}) {{\n"
-			self.indent += 1
-			for col in proj_cols:
-				yield f'{self.var_mng.mn_var(rel, col)} = min({self.var_mng.mn_var(rel, col)}, {self.var_mng.rel_col_var(rel, col)}[{self.var_mng.offset_var(rel)}]);\n'
-			self.indent -= 1
-			yield '}\n'
-
-	def _loop_body_foreach_ht(self, rel, x_idx):
-		if self.ht == HashTable.PHMAP:
-			return f"{self.var_mng.x_var(x_idx)}, {self.var_mng.next_trie_var(rel)}]: {self.var_mng.trie_var(rel)}"
-		elif self.ht == HashTable.EMHASH6:
-			return f"{self.var_mng.next_trie_var(rel)}, _, {self.var_mng.x_var(x_idx)}]: {self.var_mng.trie_var(rel)}"
+		if self.var_mng.is_root_rel(interm_rel):
+			rel2proj_cols = {rel: proj_cols for rel, _, proj_cols in build_plan if proj_cols}
+			for rel, proj_cols in rel2proj_cols.items():
+				yield f"for (const auto &{self.var_mng.offset_var(rel)}: {self.var_mng.trie_var(rel)}) {{\n"
+				self.indent += 1
+				for col in proj_cols:
+					yield f'{self.var_mng.mn_var(rel, col)} = min({self.var_mng.mn_var(rel, col)}, {self.var_mng.rel_col_var(rel, col)}[{self.var_mng.offset_var(rel)}]);\n'
+				self.indent -= 1
+				yield '}\n'
 		else:
-			raise ValueError(f"Unknown hash table: {self.ht}")
+			interm_rel2cols = defaultdict(list)
+			for rel, col in interm_cols:
+				interm_rel2cols[rel].append(col)
+			rel2col2type[interm_rel] = dict()
+			for rel, cols in interm_rel2cols.items():
+				yield f"for (const auto &{self.var_mng.offset_var(rel)}: {self.var_mng.trie_var(rel)}) {{\n"
+				self.indent += 1
+			for rel, cols in interm_rel2cols.items():
+				for col in cols:
+					interm_col = self.var_mng.interm_col(interm_cols.index((rel, col)))
+					interm_col_type = rel2col2type[rel_wo_idx(rel)][col]
+					rel2col2type[interm_rel][interm_col] = interm_col_type
+					yield f'{self.var_mng.rel_col_var(interm_rel, interm_col)}.push_back({self.var_mng.rel_col_var(rel, col)}[{self.var_mng.offset_var(rel)}]);\n'
+			for _ in range(len(interm_rel2cols)):
+				self.indent -= 1
+				yield '}\n'
 
 	def _find_all_proj_cols_and_types(self, build_plan: List[Tuple[str, List[str], List[str]]]):
 		relcols, col_types = [], []

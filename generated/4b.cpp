@@ -33,16 +33,16 @@ int main() {
 
 		string mn_t_title = "zzzzzzzz";
 		string mn_mi_idx_info = "zzzzzzzz";
-		for (const auto &[x0, mi_idx_trie1]: mi_idx_trie0) {
-			if (t_trie0.contains(x0) && mk_trie0.contains(x0)) {
+		for (const auto &[x0, mk_trie1]: mk_trie0) {
+			if (t_trie0.contains(x0) && mi_idx_trie0.contains(x0)) {
 				auto &t_trie1 = t_trie0.at(x0);
-				auto &mk_trie1 = mk_trie0.at(x0);
+				auto &mi_idx_trie1 = mi_idx_trie0.at(x0);
 				for (const auto &[x1, mk_trie2]: mk_trie1) {
 					if (k_trie0.contains(x1)) {
 						auto &k_trie1 = k_trie0.at(x1);
-						for (const auto &[x2, it_trie1]: it_trie0) {
-							if (mi_idx_trie1.contains(x2)) {
-								auto &mi_idx_trie2 = mi_idx_trie1.at(x2);
+						for (const auto &[x2, mi_idx_trie2]: mi_idx_trie1) {
+							if (it_trie0.contains(x2)) {
+								auto &it_trie1 = it_trie0.at(x2);
 								for (const auto &t_off: t_trie1) {
 									mn_t_title = min(mn_t_title, t_title[t_off]);
 								}
@@ -56,15 +56,17 @@ int main() {
 			}
 		}
 		timer.StoreElapsedTime(1);
+
 		if (z == 0)
 			cout << mn_t_title << " | " << mn_mi_idx_info << endl;
 		cout << "*" << " " << flush;
 	}
 	cout << endl;
 
-	auto build_time = timer.GetMean(0);
-	auto total_time = timer.GetMean(1);
-	cout << build_time << " ms" << endl;
-	cout << total_time - build_time << " ms" << endl;
-	cout << total_time << " ms" << endl;
+	vector<double> tm{0};
+	for (int i = 0; i < 1 * 2; ++i)
+		tm.push_back(timer.GetMean(i));
+	for (int i = 0; i < 2 * 1; i += 2)
+		cout << tm[i + 1] - tm[i] << " | " << tm[i + 2] - tm[i + 1] << " ms" << endl;
+	cout << tm[2] << " ms" << endl;
 }
