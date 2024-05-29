@@ -2,30 +2,28 @@ import os
 from collections import defaultdict
 from typing import List, Tuple
 
-from consts import HashTable, preprocessed_data_path, raw_data_path, include_dir_path, generated_dir_path, rel_wo_idx, \
-	abbr2rel, rel2col2type, inf_values
+from consts import preprocessed_data_path, raw_data_path, include_dir_path, generated_dir_path, rel_wo_idx, abbr2rel, \
+	rel2col2type, inf_values
 from parser import PlanParser
 from var_mng import VariableManager
 
 
 class Plan2CPPTranslator:
-	def __init__(self, hash_table: HashTable = HashTable.PHMAP):
-		self.ht = hash_table
-		self.parser = PlanParser()
-
+	def __init__(self):
 		self.trie_types = set()
-
 		self.var_mng = VariableManager()
 		self.resolved_attrs = set()
 		self.involved_cols = set()
-		self.loading_rels = set()
+		self.loaded_rels = set()
 		self.indent = 1
 
+		self.parser = PlanParser(self.var_mng)
+
 	def _clear_per_query(self):
-		self.var_mng = VariableManager()
+		self.var_mng.clear()
 		self.resolved_attrs = set()
 		self.involved_cols = set()
-		self.loading_rels = set()
+		self.loaded_rels = set()
 
 	def translate(self, queries: List[str], use_cache: bool = False):
 		for query in queries:
@@ -94,7 +92,7 @@ class Plan2CPPTranslator:
 
 	def _translate_loads(self, query: str, build_plan: List[Tuple]):
 		for rel, join_cols, proj_cols in build_plan:
-			self.loading_rels.add(rel)
+			self.loaded_rels.add(rel)
 			path = os.path.join(preprocessed_data_path, query, f"{rel}.csv")
 			if not os.path.exists(path):
 				path = os.path.join(raw_data_path, f"{abbr2rel[rel_wo_idx(rel)]}.csv")
@@ -104,16 +102,13 @@ class Plan2CPPTranslator:
 
 	def _translate_build_plan(self, build_plan: List[Tuple[str, List[str], List[str]]]):
 		for rel, join_cols, proj_cols in build_plan:
-			level_types = tuple([
-				rel2col2type[rel_wo_idx(rel)][join_col]
-				for join_col in join_cols
-			])
+			level_types = tuple([rel2col2type[rel_wo_idx(rel)][join_col] for join_col in join_cols])
 			self.trie_types.add(level_types)
 			if proj_cols:
-				yield f"auto {self.var_mng.trie_var(rel)} = {self.var_mng.trie_def(self.ht.value[0], level_types)}();\n"
+				yield f"auto {self.var_mng.trie_var(rel)} = {self.var_mng.trie_def(level_types)}();\n"
 				yield f"{self.var_mng.build_func()}({self.var_mng.trie_var(rel)}, {', '.join([self.var_mng.rel_col_var(rel, join_col) for join_col in join_cols])});\n"
 			else:
-				yield f"auto {self.var_mng.trie_var(rel)} = {self.var_mng.trie_bool_def(self.ht.value[0], level_types)}();\n"
+				yield f"auto {self.var_mng.trie_var(rel)} = {self.var_mng.trie_def(level_types, 'bool')}();\n"
 				yield f"{self.var_mng.build_bool_func()}({self.var_mng.trie_var(rel)}, {', '.join([self.var_mng.rel_col_var(rel, join_col) for join_col in join_cols])});\n"
 
 	def _translate_compiled_plan(
@@ -128,7 +123,7 @@ class Plan2CPPTranslator:
 		for idx, eq_cols in enumerate(compiled_plan):
 			rel_0, col_0 = eq_cols[0]
 			if join_attrs_order[rel_0][col_0] == idx:
-				yield f"for (const auto &[{self._loop_body_foreach_ht(rel_0, idx)}) {{\n"
+				yield f"for (const auto &[{self.var_mng.x_var(idx)}, {self.var_mng.next_trie_var(rel_0)}]: {self.var_mng.trie_var(rel_0)}) {{\n"
 				self.var_mng.next_trie_var(rel_0, inplace=True)
 				self.indent += 1
 				self.resolved_attrs.add(eq_cols[0])
@@ -188,7 +183,7 @@ class Plan2CPPTranslator:
 		with open(os.path.join(include_dir_path, "build.h"), "w") as cpp_file:
 			cpp_file.write('#include <iostream>\n')
 			cpp_file.write('#include <vector>\n')
-			cpp_file.write(f'#include "{self.ht.value[1]}"\n\n')
+			cpp_file.write(f'#include "parallel_hashmap/phmap.h"\n\n')
 			cpp_file.write('using namespace std;\n')
 
 			for is_for_proj in [True, False]:
@@ -196,10 +191,10 @@ class Plan2CPPTranslator:
 					cpp_file.write("\n")
 					if is_for_proj:
 						build_func = self.var_mng.build_func()
-						trie_type = self.var_mng.trie_def(self.ht.value[0], level_types)
+						trie_type = self.var_mng.trie_def(level_types)
 					else:
 						build_func = self.var_mng.build_bool_func()
-						trie_type = self.var_mng.trie_bool_def(self.ht.value[0], level_types)
+						trie_type = self.var_mng.trie_def(level_types, "bool")
 					cpp_file.write(
 						f"void {build_func}({trie_type} &trie, "
 						f"{', '.join([f'vector<{ttt}> &{self.var_mng.attr_var(idx)}' for idx, ttt in enumerate(level_types)])}){{\n"
@@ -216,7 +211,7 @@ class Plan2CPPTranslator:
 		with open(os.path.join(include_dir_path, "build.h"), "w") as cpp_file:
 			cpp_file.write('#include <iostream>\n')
 			cpp_file.write('#include <vector>\n')
-			cpp_file.write(f'#include "{self.ht.value[1]}"\n\n')
+			cpp_file.write(f'#include "parallel_hashmap/phmap.h"\n\n')
 			cpp_file.write('using namespace std;\n')
 
 			for is_for_proj in [True, False]:
@@ -224,10 +219,10 @@ class Plan2CPPTranslator:
 					cpp_file.write("\n")
 					if is_for_proj:
 						build_func = self.var_mng.build_func()
-						trie_type = self.var_mng.trie_def(self.ht.value[0], level_types)
+						trie_type = self.var_mng.trie_def(level_types)
 					else:
 						build_func = self.var_mng.build_bool_func()
-						trie_type = self.var_mng.trie_bool_def(self.ht.value[0], level_types)
+						trie_type = self.var_mng.trie_def(level_types, "bool")
 					cpp_file.write(
 						f"void {build_func}({trie_type} &trie, "
 						f"{', '.join([f'vector<{ttt}> &{self.var_mng.attr_var(idx)}' for idx, ttt in enumerate(level_types)])}) {{\n"
@@ -292,7 +287,7 @@ class Plan2CPPTranslator:
 			cpp_file.write('#include <vector>\n\n')
 			cpp_file.write('using namespace std;\n')
 
-			for rel in sorted(self.loading_rels):
+			for rel in sorted(self.loaded_rels):
 				rel_involved_cols = [
 					col
 					for col, _ in rel2col2type[rel_wo_idx(rel)].items()
@@ -340,5 +335,5 @@ if __name__ == '__main__':
 	for filename in os.listdir(os.path.join(os.path.dirname(__file__), "plans", "raw")):
 		queries.append(filename[:-4])
 
-	translator = Plan2CPPTranslator(hash_table=HashTable.PHMAP)
+	translator = Plan2CPPTranslator()
 	translator.translate(queries, use_cache=False)
