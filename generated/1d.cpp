@@ -91,6 +91,6 @@ int main() {
 	for (int i = 0; i < 2 * 2; ++i)
 		tm.push_back(timer.GetMean(i));
 	for (int i = 0; i < 2 * 2; i += 2)
-		cout << tm[i + 1] - tm[i] << " | " << tm[i + 2] - tm[i + 1] << " ms" << endl;
+		cout << tm[i + 1] - tm[i] << " + " << tm[i + 2] - tm[i + 1] << " = " << tm[i + 2] - tm[i] << " ms" << endl;
 	cout << tm[4] << " ms" << endl;
 }
