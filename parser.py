@@ -34,7 +34,7 @@ class PlanParser:
 			)
 			for i in range(0, len(lines), 4)
 		]
-		if not len(parsed_plans) <= 2:
+		if not len(parsed_plans) <= 3:
 			return None
 
 		parsed_plans = self._resolve_intermediate_stuff(parsed_plans)
@@ -140,6 +140,8 @@ class PlanParser:
 				d_node, d_build, d_compiled = parsed_plans[d_idx]
 				for d_build_idx in range(len(d_build)):
 					if d_build[d_build_idx][0] == u_node:
+						if found:
+							raise ValueError("Multiple matches found")
 						u_join_col_idxs = d_build[d_build_idx][1]
 						u_proj_col_idxs = [x for x in d_build[d_build_idx][2] if interm_cols[x] not in interm_join_cols]
 						d_build[d_build_idx] = (
@@ -149,7 +151,7 @@ class PlanParser:
 						)
 						indexed_interm_cols = [(x, interm_cols[x]) for x in sorted(u_join_col_idxs + u_proj_col_idxs)]
 						found = True
-						break
+						# break
 
 				if found:
 					for d_compiled_idx in range(len(d_compiled)):
@@ -161,7 +163,7 @@ class PlanParser:
 									for u_rel, u_col in bag:
 										if u_rel == interm_rel:
 											d_compiled[d_compiled_idx][eq_cols_idx] = (u_rel, u_col)
-					break
+					# break
 
 				parsed_plans[d_idx] = (d_node, d_build, d_compiled)
 
@@ -226,4 +228,5 @@ if __name__ == '__main__':
 
 	parser = PlanParser(VariableManager())
 	for query in queries:
+		parser.clear()
 		parser.parse(query)

@@ -1,449 +1,647 @@
 10a.cpp
-2.783 s
+2.702 s
 12 Rounds | Actor
 * * * * * * 
-528.2 + 86.4 = 614.6 ms
-259 + 0 = 259 ms
-873.6 ms
+515 + 81.8 = 596.8 ms
+247.4 + 0 = 247.4 ms
+844.2 ms
 --------------------
 10c.cpp
-3.772 s
+3.906 s
 Evil Eyes: Behind the Scenes | Himself
 * * * * * * 
-528 + 237.2 = 765.2 ms
-415.2 + 18.2 = 433.4 ms
-1198.6 ms
+542 + 230.6 = 772.6 ms
+404.2 + 18.6 = 422.8 ms
+1195.4 ms
 --------------------
 11a.cpp
-1.978 s
+1.933 s
 Batman Beyond | followed by | Churchill Films
 * * * * * * 
-50.4 + 10.8 = 61.2 ms
-367.2 + 4.8 = 372 ms
-433.2 ms
+48.4 + 10.6 = 59 ms
+336 + 4.8 = 340.8 ms
+399.8 ms
 --------------------
 11b.cpp
-1.523 s
+1.458 s
 The Money Man | follows | Filmlance International AB
 * * * * * * 
-0.6 + 0 = 0.6 ms
-354.4 + 3 = 357.4 ms
-358 ms
+0.8 + 0 = 0.8 ms
+332 + 3 = 335 ms
+335.8 ms
 --------------------
 11c.cpp
-2.843 s
+2.829 s
 24 | (1997-2002) (worldwide) (all media) | 20th Century Fox Home Entertainment
 * * * * * * 
-162.2 + 30.8 = 193 ms
-348.2 + 6 = 354.2 ms
-547.2 ms
+161.2 + 30.8 = 192 ms
+343.8 + 6 = 349.8 ms
+541.8 ms
 --------------------
 11d.cpp
-3.094 s
+2.86 s
 ...denn sie wissen nicht, was sie tun | (1954) (UK) (TV) | 13th Street
 * * * * * * 
-170.2 + 31 = 201.2 ms
-375.8 + 6 = 381.8 ms
-583 ms
+160.8 + 30 = 190.8 ms
+351 + 6.2 = 357.2 ms
+548 ms
 --------------------
 12a.cpp
-1.364 s
+1.227 s
 3:20 | 8.1 | 10th Grade Reunion Films
 * * * * * * 
-21 + 6.6 = 27.6 ms
-371.6 + 2.8 = 374.4 ms
-402 ms
+20.4 + 6.4 = 26.8 ms
+359 + 3 = 362 ms
+388.8 ms
 --------------------
 12b.cpp
-9.392 s
+9.24 s
 $10,000 | Birdemic: Shock and Terror
 * * * * * * 
-55.6 + 0.8 = 56.4 ms
-2735 + 36.4 = 2771.4 ms
-2827.8 ms
+51 + 0.6 = 51.6 ms
+2331.2 + 36 = 2367.2 ms
+2418.8 ms
 --------------------
 12c.cpp
-1.709 s
+1.558 s
 $1.11 | 7.1 | "Oh That Gus!"
 * * * * * * 
-72 + 30 = 102 ms
-392 + 7.8 = 399.8 ms
-501.8 ms
+69.4 + 28.2 = 97.6 ms
+366 + 7.4 = 373.4 ms
+471 ms
 --------------------
 13b.cpp
-7.165 s
+7.036 s
 5 Time Champion | 1.8 | 501audio
 * * * * * * 
-52 + 0 = 52 ms
-1816.4 + 17.8 = 1834.2 ms
-1886.2 ms
+51.2 + 0 = 51.2 ms
+1706 + 17.8 = 1723.8 ms
+1775 ms
 --------------------
 13c.cpp
-7.402 s
+7.045 s
 Champion | 1.8 | DL Sites
 * * * * * * 
-52.6 + 0.2 = 52.8 ms
-1774.6 + 14.2 = 1788.8 ms
-1841.6 ms
+51.2 + 0.2 = 51.4 ms
+1705 + 14.2 = 1719.2 ms
+1770.6 ms
 --------------------
 14a.cpp
-1.902 s
+1.815 s
 $lowdown | 1.0
 * * * * * * 
-145.8 + 21.8 = 167.6 ms
-104.6 + 8.2 = 112.8 ms
-280.4 ms
+144 + 22 = 166 ms
+104 + 8 = 112 ms
+278 ms
 --------------------
 14b.cpp
-1.378 s
+1.32 s
 Of Dolls and Murder | 6.4
 * * * * * * 
-94.8 + 4 = 98.8 ms
-61.4 + 4.8 = 66.2 ms
-165 ms
+94.4 + 4 = 98.4 ms
+61.4 + 4.4 = 65.8 ms
+164.2 ms
 --------------------
 14c.cpp
-2.19 s
+2.131 s
 $lowdown | 1.0
 * * * * * * 
-192.2 + 91 = 283.2 ms
-256.6 + 17.8 = 274.4 ms
-557.6 ms
+190 + 90.4 = 280.4 ms
+255.8 + 17.2 = 273 ms
+553.4 ms
 --------------------
 15a.cpp
-2.032 s
+1.943 s
 USA:1 June 2007 | Battlestar Galactica: The Resistance
 * * * * * * 
-169.2 + 77 = 246.2 ms
-118.8 + 0.4 = 119.2 ms
-365.4 ms
+162.2 + 73.8 = 236 ms
+115.4 + 0.8 = 116.2 ms
+352.2 ms
 --------------------
 15b.cpp
-1.656 s
+1.603 s
 USA:27 April 2007 | RoboCop vs Terminator
 * * * * * * 
-115.4 + 47.4 = 162.8 ms
-71 + 0.2 = 71.2 ms
-234 ms
+115.2 + 48.2 = 163.4 ms
+71.4 + 0 = 71.4 ms
+234.8 ms
 --------------------
 15c.cpp
-3.04 s
+2.994 s
 USA:1 April 2003 | 24: Day Six - Debrief
 * * * * * * 
-196.6 + 107.6 = 304.2 ms
-516.8 + 0.8 = 517.6 ms
-821.8 ms
+184 + 104.2 = 288.2 ms
+494.8 + 0.4 = 495.2 ms
+783.4 ms
 --------------------
 15d.cpp
-3.068 s
+3.011 s
 06/05 | (Not So) Instant Photo
 * * * * * * 
-191 + 108 = 299 ms
-530.4 + 2.6 = 533 ms
-832 ms
+184 + 104.4 = 288.4 ms
+507.4 + 2.8 = 510.2 ms
+798.6 ms
 --------------------
 16a.cpp
-16.06 s
+15.856 s
 Carol Burnett vs. Anthony Perkins | Adams, Stan
 * * * * * * 
-622.8 + 11.6 = 634.4 ms
-2164.8 + 439.4 = 2604.2 ms
-3238.6 ms
+546.6 + 4.8 = 551.4 ms
+1943.8 + 425.6 = 2369.4 ms
+2920.8 ms
 --------------------
 16b.cpp
-17.346 s
+17.074 s
 & Teller | !!!, Toy
 * * * * * * 
-749.2 + 79 = 828.2 ms
-1977.8 + 755.8 = 2733.6 ms
-3561.8 ms
+724.6 + 77.8 = 802.4 ms
+1943.6 + 749.6 = 2693.2 ms
+3495.6 ms
 --------------------
 16c.cpp
-16.357 s
+16.375 s
 (#1.5) | "Brooklyn" Tony Danza
 * * * * * * 
-606.6 + 16.2 = 622.8 ms
-1934 + 458.4 = 2392.4 ms
-3015.2 ms
+602.2 + 16 = 618.2 ms
+1930.4 + 461.4 = 2391.8 ms
+3010 ms
 --------------------
 16d.cpp
-16.221 s
+16.251 s
 (#1.5) | "Brooklyn" Tony Danza
 * * * * * * 
-579.8 + 13.4 = 593.2 ms
-1931.8 + 644 = 2575.8 ms
-3169 ms
+582.2 + 13.4 = 595.6 ms
+1931.8 + 646.2 = 2578 ms
+3173.6 ms
 --------------------
 17a.cpp
-15.134 s
+15.123 s
 B, Khaz
 * * * * * * 
-726 + 65.6 = 791.6 ms
-1718.2 + 112.4 = 1830.6 ms
-2622.2 ms
+723.2 + 66 = 789.2 ms
+1726.6 + 112.6 = 1839.2 ms
+2628.4 ms
 --------------------
 17b.cpp
-15.062 s
+15.109 s
 Z'Dar, Robert
 * * * * * * 
-737.4 + 67.6 = 805 ms
-1715.6 + 39 = 1754.6 ms
-2559.6 ms
+732.4 + 68 = 800.4 ms
+1713 + 37.6 = 1750.6 ms
+2551 ms
 --------------------
 17c.cpp
-15.017 s
+15.024 s
 X'Volaitis, John
 * * * * * * 
-734.8 + 67.8 = 802.6 ms
-1707.8 + 30.8 = 1738.6 ms
-2541.2 ms
+732 + 67.6 = 799.6 ms
+1705.8 + 31.2 = 1737 ms
+2536.6 ms
 --------------------
 17d.cpp
-15.227 s
+15.098 s
 Abrahamsson, Bertil
 * * * * * * 
-791.8 + 70.6 = 862.4 ms
-1820.2 + 33.2 = 1853.4 ms
-2715.8 ms
+734.2 + 67.6 = 801.8 ms
+1705.4 + 32.4 = 1737.8 ms
+2539.6 ms
 --------------------
 17e.cpp
-17.307 s
+16.747 s
 $hort, Too
 * * * * * * 
-797.4 + 71 = 868.4 ms
-2210.2 + 716.8 = 2927 ms
-3795.4 ms
+724.8 + 66.2 = 791 ms
+2045.6 + 683.8 = 2729.4 ms
+3520.4 ms
 --------------------
 17f.cpp
-15.674 s
+15.238 s
 'El Galgo PornoStar', Blanquito
 * * * * * * 
-791.2 + 70.6 = 861.8 ms
-1837.2 + 126.8 = 1964 ms
-2825.8 ms
+730.8 + 67.4 = 798.2 ms
+1737.6 + 122.6 = 1860.2 ms
+2658.4 ms
+--------------------
+18a.cpp
+10.444 s
+$1,000 | 40 Days and 40 Nights | 10
+* * * * * * 
+227.2 + 153.4 = 380.6 ms
+2060 + 120 = 2180 ms
+98.2 + 2.4 = 100.6 ms
+2661.2 ms
+--------------------
+18b.cpp
+1.26 s
+Horror | Agorable | 8.1
+* * * * * * 
+41.8 + 10.8 = 52.6 ms
+5.8 + 1 = 6.8 ms
+70 + 3.2 = 73.2 ms
+132.6 ms
+--------------------
+18c.cpp
+2.736 s
+Action | #PostModem | 10
+* * * * * * 
+228.4 + 153.4 = 381.8 ms
+84.2 + 22 = 106.2 ms
+87.4 + 15.4 = 102.8 ms
+590.8 ms
+--------------------
+19a.cpp
+2.622 s
+Angeline, Moriah | Blue Harvest
+* * * * * * 
+113.4 + 25 = 138.4 ms
+46.2 + 0.4 = 46.6 ms
+141.2 + 4.4 = 145.6 ms
+330.6 ms
+--------------------
+19b.cpp
+1.968 s
+Jolie, Angelina | Kung Fu Panda
+* * * * * * 
+22.2 + 0.6 = 22.8 ms
+45.2 + 0 = 45.2 ms
+126.4 + 2.6 = 129 ms
+197 ms
+--------------------
+19c.cpp
+3.591 s
+Alborg, Ana Esther | .hack//Akusei heni vol. 2
+* * * * * * 
+407.2 + 58.2 = 465.4 ms
+48 + 1.8 = 49.8 ms
+151.4 + 4 = 155.4 ms
+670.6 ms
+--------------------
+19d.cpp
+9.524 s
+Aaron, Caroline | $9.99
+* * * * * * 
+2368.8 + 252.6 = 2621.4 ms
+104.8 + 25 = 129.8 ms
+168.4 + 12.2 = 180.6 ms
+2931.8 ms
 --------------------
 1a.cpp
-1.805 s
+1.769 s
 (A Warner Bros.-First National Picture) (presents) | A Clockwork Orange | 1934
 * * * * * * 
-227.2 + 128.4 = 355.6 ms
-71.6 + 2 = 73.6 ms
-429.2 ms
+227.8 + 128.8 = 356.6 ms
+71.8 + 1.8 = 73.6 ms
+430.2 ms
 --------------------
 1b.cpp
-1.449 s
+1.438 s
 (Set Decoration Rentals) (uncredited) | Disaster Movie | 2008
 * * * * * * 
-86 + 30.8 = 116.8 ms
-118.2 + 8 = 126.2 ms
-243 ms
+86.6 + 30.2 = 116.8 ms
+118 + 8 = 126 ms
+242.8 ms
 --------------------
 1c.cpp
-0.651 s
+0.644 s
 (co-production) | Intouchables | 2011
 * * * * * * 
-70.8 + 13.6 = 84.4 ms
-7.2 + 0 = 7.2 ms
-91.6 ms
+65.8 + 13.2 = 79 ms
+7 + 0 = 7 ms
+86 ms
 --------------------
 1d.cpp
-1.8 s
+1.795 s
 (Set Decoration Rentals) (uncredited) | Disaster Movie | 2004
 * * * * * * 
-133.2 + 61.2 = 194.4 ms
-130 + 12 = 142 ms
-336.4 ms
+133.4 + 60.6 = 194 ms
+129.8 + 12 = 141.8 ms
+335.8 ms
+--------------------
+20a.cpp
+17.27 s
+Disaster Movie
+* * * * * * 
+1 + 0.2 = 1.2 ms
+544.4 + 64 = 608.4 ms
+3429.2 + 779.2 = 4208.4 ms
+4818 ms
+--------------------
+20b.cpp
+15.245 s
+Iron Man
+* * * * * * 
+1.2 + 0.2 = 1.4 ms
+410 + 36.8 = 446.8 ms
+3305.4 + 24 = 3329.4 ms
+3777.6 ms
+--------------------
+20c.cpp
+17.05 s
+Abell, Alistair | ...And Then I...
+* * * * * * 
+1.2 + 0 = 1.2 ms
+407.4 + 36.8 = 444.2 ms
+3611.6 + 548.6 = 4160.2 ms
+4605.6 ms
+--------------------
+21a.cpp
+2.003 s
+Der Serienkiller - Klinge des Todes | followed by | Det Danske Filminstitut
+* * * * * * 
+46 + 10.8 = 56.8 ms
+79 + 7 = 86 ms
+160.2 + 1 = 161.2 ms
+304 ms
+--------------------
+21b.cpp
+2.031 s
+Hämndens pris | followed by | Filmlance International AB
+* * * * * * 
+63.8 + 14.2 = 78 ms
+79 + 5.6 = 84.6 ms
+161.8 + 0.2 = 162 ms
+324.6 ms
+--------------------
+21c.cpp
+2.628 s
+Batman Beyond | followed by | Churchill Films
+* * * * * * 
+134.2 + 27.6 = 161.8 ms
+79.8 + 8.4 = 88.2 ms
+179.8 + 5 = 184.8 ms
+434.8 ms
+--------------------
+25a.cpp
+3.848 s
+Abdallah, Damon | Horror | -- And Now the Screaming Starts! | 10
+* * * * * * 
+305.4 + 333.6 = 639 ms
+609.8 + 10.4 = 620.2 ms
+153.6 + 13.4 = 167 ms
+1426.2 ms
+--------------------
+25b.cpp
+2.68 s
+Campbell, Jeremiah | Horror | Vampire Boys | 138
+* * * * * * 
+135.4 + 4.4 = 139.8 ms
+2 + 0.4 = 2.4 ms
+151 + 10.4 = 161.4 ms
+303.6 ms
+--------------------
+25c.cpp
+3.897 s
+Aakeson, Kim Fupz | Action | $ | 10
+* * * * * * 
+305.8 + 333.6 = 639.4 ms
+620.4 + 33.8 = 654.2 ms
+154.6 + 14 = 168.6 ms
+1462.2 ms
 --------------------
 2a.cpp
-3.071 s
+3.054 s
 'Doc'
 * * * * * * 
-584.8 + 60.4 = 645.2 ms
-645.2 ms
+595.2 + 60.2 = 655.4 ms
+655.4 ms
 --------------------
 2b.cpp
-3.07 s
+3.048 s
 'Doc'
 * * * * * * 
-581 + 58.8 = 639.8 ms
-639.8 ms
+578.2 + 58.2 = 636.4 ms
+636.4 ms
 --------------------
 2d.cpp
-3.086 s
+3.08 s
 & Teller
 * * * * * * 
-583.8 + 66 = 649.8 ms
-649.8 ms
+580.2 + 66 = 646.2 ms
+646.2 ms
+--------------------
+31a.cpp
+4.66 s
+Agnew, Jim | Horror | 2001 Maniacs | 1040
+* * * * * * 
+308 + 335.6 = 643.6 ms
+902.2 + 16 = 918.2 ms
+153.4 + 16 = 169.4 ms
+1731.2 ms
+--------------------
+31b.cpp
+2.708 s
+Bousman, Darren Lynn | Horror | Saw | 129755
+* * * * * * 
+130 + 4.2 = 134.2 ms
+5.6 + 0.8 = 6.4 ms
+151.2 + 10.2 = 161.4 ms
+302 ms
+--------------------
+31c.cpp
+5.74 s
+Abraham, Brad | Action | 11:14 | 1008
+* * * * * * 
+302.8 + 333.6 = 636.4 ms
+910 + 26.6 = 936.6 ms
+382.4 + 20.8 = 403.2 ms
+1976.2 ms
 --------------------
 32b.cpp
-3.435 s
+3.438 s
 12 oz. Mouse | 'Angel': Season 2 Overview | alternate language version of
 * * * * * * 
-355.6 + 31.8 = 387.4 ms
-181.4 + 6 = 187.4 ms
-574.8 ms
+354.6 + 31.8 = 386.4 ms
+180.8 + 6 = 186.8 ms
+573.2 ms
 --------------------
 3a.cpp
-1.586 s
+1.589 s
 2 Days in New York
 * * * * * * 
-139.8 + 50.8 = 190.6 ms
-65 + 2.4 = 67.4 ms
+140.2 + 50.8 = 191 ms
+64.8 + 2.2 = 67 ms
 258 ms
 --------------------
 3b.cpp
-1.259 s
+1.258 s
 300: Rise of an Empire
 * * * * * * 
-96.6 + 19 = 115.6 ms
+96.2 + 19 = 115.2 ms
 15 + 0 = 15 ms
-130.6 ms
+130.2 ms
 --------------------
 3c.cpp
-2.037 s
+2.041 s
 & Teller 2
 * * * * * * 
-185.2 + 99.6 = 284.8 ms
+188.6 + 100.2 = 288.8 ms
 161.2 + 20 = 181.2 ms
-466 ms
+470 ms
 --------------------
 4a.cpp
-1.715 s
+1.705 s
 & Teller 2 | 5.1
 * * * * * * 
-278.8 + 17.6 = 296.4 ms
-296.4 ms
+277.4 + 18 = 295.4 ms
+295.4 ms
 --------------------
 4b.cpp
-1.271 s
+1.275 s
 Batman: Arkham City | 9.1
 * * * * * * 
-193.2 + 7.2 = 200.4 ms
-200.4 ms
+193 + 7 = 200 ms
+200 ms
 --------------------
 4c.cpp
-2.12 s
+2.139 s
 & Teller 2 | 2.1
 * * * * * * 
-353 + 36.8 = 389.8 ms
-389.8 ms
+347.2 + 36.6 = 383.8 ms
+383.8 ms
 --------------------
 5c.cpp
-1.154 s
+1.172 s
 11,830,420
 * * * * * * 
-182.2 + 18.8 = 201 ms
-201 ms
+181.8 + 18.6 = 200.4 ms
+200.4 ms
 --------------------
 6a.cpp
-13.319 s
+13.318 s
 Downey Jr., Robert | Iron Man 3 | marvel-cinematic-universe
 * * * * * * 
-288.2 + 13.6 = 301.8 ms
-1823.6 + 25 = 1848.6 ms
-2150.4 ms
+270.4 + 12 = 282.4 ms
+1764.4 + 24.2 = 1788.6 ms
+2071 ms
 --------------------
 6b.cpp
-13.205 s
+13.116 s
 Downey Jr., Robert | The Avengers 2 | based-on-comic
 * * * * * * 
-265.8 + 6 = 271.8 ms
-1908.4 + 25.4 = 1933.8 ms
-2205.6 ms
+251.4 + 6 = 257.4 ms
+1765.8 + 24.4 = 1790.2 ms
+2047.6 ms
 --------------------
 6c.cpp
-13.413 s
+13.111 s
 Downey Jr., Robert | The Avengers 2 | marvel-cinematic-universe
 * * * * * * 
-252.8 + 6 = 258.8 ms
-1778 + 24.2 = 1802.2 ms
-2061 ms
+252.2 + 6 = 258.2 ms
+1762.2 + 24 = 1786.2 ms
+2044.4 ms
 --------------------
 6d.cpp
-13.865 s
+13.812 s
 Downey Jr., Robert | 2008 MTV Movie Awards | based-on-comic
 * * * * * * 
-337.2 + 42 = 379.2 ms
-1781.4 + 24.2 = 1805.6 ms
-2184.8 ms
+338.2 + 41 = 379.2 ms
+1767.4 + 24.4 = 1791.8 ms
+2171 ms
 --------------------
 6e.cpp
-13.758 s
+13.774 s
 Downey Jr., Robert | Iron Man 3 | marvel-cinematic-universe
 * * * * * * 
-350.8 + 38 = 388.8 ms
-1812.4 + 24.4 = 1836.8 ms
-2225.6 ms
+335.8 + 37 = 372.8 ms
+1761 + 24.2 = 1785.2 ms
+2158 ms
 --------------------
 6f.cpp
-15.678 s
+15.593 s
 "Steff", Stefanie Oxmann Mcgaha | & Teller 2 | based-on-comic
 * * * * * * 
-358.8 + 42.8 = 401.6 ms
-2258 + 760.2 = 3018.2 ms
-3419.8 ms
+334.6 + 41.2 = 375.8 ms
+2095 + 748 = 2843 ms
+3218.8 ms
+--------------------
+7a.cpp
+12.809 s
+Dressed to Kill | Antonioni, Michelangelo
+* * * * * * 
+28.8 + 3.4 = 32.2 ms
+17.2 + 2 = 19.2 ms
+4847.8 + 22.8 = 4870.6 ms
+4922 ms
+--------------------
+7b.cpp
+12.419 s
+Dressed to Kill | De Palma, Brian
+* * * * * * 
+3.8 + 0.2 = 4 ms
+5 + 0.4 = 5.4 ms
+4789.4 + 12.6 = 4802 ms
+4811.4 ms
+--------------------
+7c.cpp
+13.78 s
+50 Cent | """Boo"" Arnold was born Earl Arnold in Hattiesburg, Mississippi in 1966. His father gave him the nickname 'Boo' early in life and it stuck through grade school, high school, and college. He is still known as ""Boo"" to family and friends.  Raised in central Texas, Arnold played baseball at Texas Tech University where he graduated with a BA in Advertising and Marketing. While at Texas Tech he was also a member of the Texas Epsilon chapter of Phi Delta Theta fraternity. After college he worked with Young Life, an outreach to high school students, in San Antonio, Texas.  While with Young Life Arnold began taking extension courses through Fuller Theological Seminary and ultimately went full-time to Gordon-Conwell Theological Seminary in Boston, Massachusetts. At Gordon-Conwell he completed a Master's Degree in Divinity studying Theology, Philosophy, Church History, Biblical Languages (Hebrew & Greek), and Exegetical Methods. Following seminary he was involved with reconciliation efforts in the former Yugoslavia shortly after the war ended there in1995.  Arnold started acting in his early thirties in Texas. After an encouraging visit to Los Angeles where he spent time with childhood friend George Eads (of CSI Las Vegas) he decided to move to Los Angeles in 2001 to pursue acting full-time. While in Los Angeles he has studied acting with Judith Weston at Judith Weston Studio for Actors and Directors.  Arnold's acting career has been one of steady development, booking co-star and guest-star roles in nighttime television. He guest-starred opposite of Jane Seymour on the night time television drama Justice. He played the lead, Michael Hollister, in the film The Seer, written and directed by Patrick Masset (Friday Night Lights).  He was nominated Best Actor in the168 Film Festival for the role of Phil Stevens in the short-film Useless. In Useless he played a US Marshal who must choose between mercy and justice as he confronts the man who murdered his father. Arnold's performance in Useless confirmed his ability to carry lead roles, and he continues to work toward solidifying himself as a male lead in film and television.  Arnold married fellow Texan Stacy Rudd of San Antonio in 2003 and they are now raising their three children in the Los Angeles area."
+* * * * * * 
+32.6 + 11 = 43.6 ms
+98.2 + 10.8 = 109 ms
+5030.2 + 25.6 = 5055.8 ms
+5208.4 ms
 --------------------
 8a.cpp
-1.831 s
+1.773 s
 .hack//Quantum | Chambers, Linda
 * * * * * * 
 0.8 + 0 = 0.8 ms
-238.4 + 0 = 238.4 ms
-239.2 ms
+230.2 + 0.2 = 230.4 ms
+231.2 ms
 --------------------
 8b.cpp
-0.564 s
+0.562 s
 Dragon Ball Z: Shin Budokai | Chambers, Linda
 * * * * * * 
-0 + 0 = 0 ms
-54 + 0.2 = 54.2 ms
-54.2 ms
+0.4 + 0 = 0.4 ms
+52.2 + 0 = 52.2 ms
+52.6 ms
 --------------------
 8c.cpp
-19.956 s
+19.921 s
 #1 Cheerleader Camp | "A.J."
 * * * * * * 
-55.6 + 8.2 = 63.8 ms
-3819.8 + 1266.6 = 5086.4 ms
-5150.2 ms
+56.6 + 8.4 = 65 ms
+3767.6 + 1216 = 4983.6 ms
+5048.6 ms
 --------------------
 8d.cpp
-20.117 s
+19.874 s
 #1 Cheerleader Camp | "Jenny from the Block"
 * * * * * * 
-57.4 + 8.2 = 65.6 ms
-3783.4 + 1045.8 = 4829.2 ms
-4894.8 ms
+55.6 + 8.2 = 63.8 ms
+3762.2 + 1025.8 = 4788 ms
+4851.8 ms
 --------------------
 9a.cpp
-3.064 s
+3.008 s
 Blue Harvest | Airport Announcer | AJ
 * * * * * * 
-10.6 + 1.6 = 12.2 ms
-430 + 1.2 = 431.2 ms
-443.4 ms
+10.6 + 1.4 = 12 ms
+421.2 + 1.2 = 422.4 ms
+434.4 ms
 --------------------
 9b.cpp
-2.473 s
+2.455 s
 Bassett, Angela | Blue Harvest | Airport Announcer | AJ
 * * * * * * 
-6 + 0.2 = 6.2 ms
-358.8 + 0.8 = 359.6 ms
-365.8 ms
+6 + 0.6 = 6.6 ms
+358.6 + 0.4 = 359 ms
+365.6 ms
 --------------------
 9c.cpp
-4.264 s
+4.232 s
 Alborg, Ana Esther | (1975-01-20) | 2nd Balladeer | 'Annette'
 * * * * * * 
-55 + 8.8 = 63.8 ms
-541.8 + 2.2 = 544 ms
-607.8 ms
+54.6 + 9 = 63.6 ms
+544.6 + 2.4 = 547 ms
+610.6 ms
 --------------------
 9d.cpp
-4.651 s
+4.628 s
 Aaron, Caroline | $15,000.00 Error | "Cockamamie's" Salesgirl | !!!, Toy
 * * * * * * 
-55 + 9.2 = 64.2 ms
-605.8 + 30.2 = 636 ms
-700.2 ms
+53.8 + 9 = 62.8 ms
+600.6 + 30 = 630.6 ms
+693.4 ms
 --------------------

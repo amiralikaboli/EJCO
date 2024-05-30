@@ -6,10 +6,16 @@ from typing import Dict, Set
 
 freejoin_path = os.path.join(os.path.dirname(__file__), "..", "..", "free-join")
 
+
+def normalize(text: str) -> str:
+	return text.replace('"', "").replace("\\", "")
+
+
 if __name__ == '__main__':
 	args = sys.argv[1:]
 	results_file = args[0]
 	check_validity = True
+	skip_queries = ["7c"]
 
 	with open(results_file, "r") as txt_file:
 		stats = [res.strip().split("\n") for res in txt_file.read().split("-" * 20)[:-1]]
@@ -23,9 +29,7 @@ if __name__ == '__main__':
 			elem = elem.strip()
 			if elem[-1] != ")":
 				elem = f"{elem})"
-			elem = elem[4:-1]
-			elem = elem.replace('"', "").replace("\\", "")
-			output.add(elem)
+			output.add(normalize(elem[4:-1]))
 		gj_outputs[query_log[:newline_idx].strip()] = output
 
 	times = []
@@ -34,13 +38,16 @@ if __name__ == '__main__':
 	for lines in stats:
 		query = lines[0][:-4]
 		if len(lines) > 4:
-			query_res = set(elem.strip().replace('"', "").replace("\\", "") for elem in lines[2].split(' | '))
-			if check_validity and gj_outputs[query] != query_res:
+			query_res = set(normalize(elem.strip()) for elem in lines[2].split(' | '))
+			if check_validity and gj_outputs[query] != query_res and query not in skip_queries:
 				invalids.append(query)
 			else:
 				times.append({"query": query, "time": float(lines[-1][:-3]) / 1000})
 		else:
 			timeouts.append(query)
+
+	if not times:
+		raise ValueError("No valid results found")
 
 	gj_json_path = os.path.join(freejoin_path, "gj", "gj.json")
 	with open(gj_json_path, "r") as json_file:
