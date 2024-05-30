@@ -1,7 +1,7 @@
 import math
 import os
 import re
-from typing import List, Tuple, Dict
+from typing import List, Tuple, Dict, Set
 
 from consts import plans_path
 from var_mng import VariableManager
@@ -10,6 +10,10 @@ from var_mng import VariableManager
 class PlanParser:
 	def __init__(self, var_mng: VariableManager):
 		self.var_mng = var_mng
+		self.bags: List[Set[Tuple[str, str]]] = list()
+
+	def clear(self):
+		self.bags = list()
 
 	def parse(self, query: str, use_cache: bool = False) -> List[Tuple[Tuple[str, List], List, List]]:
 		if use_cache and os.path.exists(os.path.join(plans_path, "parsed", f"{query}.log")):
@@ -30,7 +34,7 @@ class PlanParser:
 			)
 			for i in range(0, len(lines), 4)
 		]
-		if len(parsed_plans) > 2:
+		if not len(parsed_plans) <= 2:
 			return None
 
 		parsed_plans = self._resolve_intermediate_stuff(parsed_plans)
@@ -128,22 +132,22 @@ class PlanParser:
 
 			interm_rel = self.var_mng.interm_rel(u_idx)
 			interm_cols = self.intermediate_columns_list(u_build, u_compiled)
-			u_bags = [set([relcol]) for relcol in interm_cols]
-			for eq_cols in u_compiled:
-				for bag_idx in range(len(u_bags)):
-					if u_bags[bag_idx].intersection(set(eq_cols)):
-						u_bags[bag_idx].update(eq_cols)
-						break
+			indexed_interm_cols = list()
+			interm_join_cols = {(rel, col) for rel, join_cols, _ in u_build for col in join_cols}
+			self.update_bags(u_compiled, interm_rel, interm_cols)
 
 			for d_idx in range(u_idx + 1, len(parsed_plans)):
 				d_node, d_build, d_compiled = parsed_plans[d_idx]
 				for d_build_idx in range(len(d_build)):
 					if d_build[d_build_idx][0] == u_node:
+						u_join_col_idxs = d_build[d_build_idx][1]
+						u_proj_col_idxs = [x for x in d_build[d_build_idx][2] if interm_cols[x] not in interm_join_cols]
 						d_build[d_build_idx] = (
 							interm_rel,
-							[self.var_mng.interm_col(u_col_idx) for u_col_idx in d_build[d_build_idx][1]],
-							[self.var_mng.interm_col(u_col_idx) for u_col_idx in d_build[d_build_idx][2]]
+							[self.var_mng.interm_col(u_col_idx) for u_col_idx in u_join_col_idxs],
+							[self.var_mng.interm_col(u_col_idx) for u_col_idx in u_proj_col_idxs]
 						)
+						indexed_interm_cols = [(x, interm_cols[x]) for x in sorted(u_join_col_idxs + u_proj_col_idxs)]
 						found = True
 						break
 
@@ -151,16 +155,17 @@ class PlanParser:
 					for d_compiled_idx in range(len(d_compiled)):
 						eq_cols = d_compiled[d_compiled_idx]
 						for eq_cols_idx in range(len(eq_cols)):
-							rel, col = eq_cols[eq_cols_idx]
-							for bag_idx, bag in enumerate(u_bags):
-								if (rel, col) in bag:
-									d_compiled[d_compiled_idx][eq_cols_idx] = (
-										interm_rel, self.var_mng.interm_col(bag_idx))
+							d_rel, d_col = eq_cols[eq_cols_idx]
+							for bag in self.bags:
+								if (d_rel, d_col) in bag:
+									for u_rel, u_col in bag:
+										if u_rel == interm_rel:
+											d_compiled[d_compiled_idx][eq_cols_idx] = (u_rel, u_col)
 					break
 
 				parsed_plans[d_idx] = (d_node, d_build, d_compiled)
 
-			parsed_plans[u_idx] = ((interm_rel, interm_cols), u_build, u_compiled)
+			parsed_plans[u_idx] = ((interm_rel, indexed_interm_cols), u_build, u_compiled)
 
 		parsed_plans[-1] = (('root', []), parsed_plans[-1][1], parsed_plans[-1][2])
 		return parsed_plans
@@ -179,6 +184,26 @@ class PlanParser:
 				columns.append((rel, col))
 		return columns
 
+	def update_bags(self, u_compiled, interm_rel, interm_cols):
+		for eq_cols in u_compiled:
+			new_bag = True
+			for bag_idx in range(len(self.bags)):
+				if self.bags[bag_idx].intersection(set(eq_cols)):
+					self.bags[bag_idx].update(eq_cols)
+					new_bag = False
+					break
+			if new_bag:
+				self.bags.append(set(eq_cols))
+		for idx, (rel, col) in enumerate(interm_cols):
+			new_bag = True
+			for bag_idx in range(len(self.bags)):
+				if (rel, col) in self.bags[bag_idx]:
+					self.bags[bag_idx].add((interm_rel, self.var_mng.interm_col(idx)))
+					new_bag = False
+					break
+			if new_bag:
+				self.bags.append({(rel, col), (interm_rel, self.var_mng.interm_col(idx))})
+
 	@staticmethod
 	def order_join_cols_based_on_compiled_plan(
 			build_plan: List[Tuple[str, List[str], List[str]]], compiled_plan: List[List[str]]
@@ -192,3 +217,13 @@ class PlanParser:
 			for rel, col in eq_cols:
 				join_attrs_order[rel][col] = min_idx
 		return join_attrs_order
+
+
+if __name__ == '__main__':
+	queries = []
+	for filename in os.listdir(os.path.join(os.path.dirname(__file__), "plans", "raw")):
+		queries.append(filename[:-4])
+
+	parser = PlanParser(VariableManager())
+	for query in queries:
+		parser.parse(query)

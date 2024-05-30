@@ -1,4 +1,4 @@
-('interm0', [('mk', 'movie_id'), ('mk', 'keyword_id'), ('t', 'title'), ('t', 'kind_id'), ('mi_idx', 'info_type_id'), ('mi_idx', 'info')])
+('interm0', [(0, ('mk', 'movie_id')), (1, ('mk', 'keyword_id')), (2, ('t', 'title')), (3, ('t', 'kind_id')), (4, ('mi_idx', 'info_type_id')), (5, ('mi_idx', 'info'))])
 [('mk', ['movie_id'], ['keyword_id']), ('t', ['id'], ['title', 'kind_id']), ('mi_idx', ['movie_id'], ['info_type_id', 'info'])]
 [[('mk', 'movie_id'), ('t', 'id'), ('mi_idx', 'movie_id')]]
 ########################################################################################################################################################################################################

@@ -21,6 +21,7 @@ class Plan2CPPTranslator:
 
 	def _clear_per_query(self):
 		self.var_mng.clear()
+		self.parser.clear()
 		self.resolved_attrs = set()
 		self.involved_cols = set()
 		self.loaded_rels = set()
@@ -61,7 +62,7 @@ class Plan2CPPTranslator:
 			cpp_file.write('\t' * self.indent + 'timer.Reset();\n\n')
 
 			for idx, (node, build_plan, compiled_plan) in enumerate(plans):
-				interm_rel, interm_cols = node
+				interm_rel, _ = node
 				for line in self._translate_build_plan(interm_rel, build_plan):
 					cpp_file.write('\t' * self.indent + line)
 				cpp_file.write('\t' * self.indent + f'timer.StoreElapsedTime({idx * 2});\n')
@@ -135,7 +136,7 @@ class Plan2CPPTranslator:
 			for (rel, col), col_type in zip(proj_relcols, proj_col_types):
 				yield f'{col_type} {self.var_mng.mn_var(rel, col)} = {inf_values[col_type]};\n'
 		else:
-			for idx, (rel, col) in enumerate(interm_cols):
+			for idx, (rel, col) in interm_cols:
 				yield f'vector<{rel2col2type[rel_wo_idx(rel)][col]}> {self.var_mng.rel_col_var(interm_rel, self.var_mng.interm_col(idx))};\n'
 
 		join_attrs_order = self.parser.order_join_cols_based_on_compiled_plan(build_plan, compiled_plan)
@@ -176,18 +177,17 @@ class Plan2CPPTranslator:
 				yield '}\n'
 		else:
 			interm_rel2cols = defaultdict(list)
-			for rel, col in interm_cols:
+			for _, (rel, col) in interm_cols:
 				interm_rel2cols[rel].append(col)
 			rel2col2type[interm_rel] = dict()
 			for rel, cols in interm_rel2cols.items():
 				yield f"for (const auto &{self.var_mng.offset_var(rel)}: {self.var_mng.trie_var(rel)}) {{\n"
 				self.indent += 1
-			for rel, cols in interm_rel2cols.items():
-				for col in cols:
-					interm_col = self.var_mng.interm_col(interm_cols.index((rel, col)))
-					interm_col_type = rel2col2type[rel_wo_idx(rel)][col]
-					rel2col2type[interm_rel][interm_col] = interm_col_type
-					yield f'{self.var_mng.rel_col_var(interm_rel, interm_col)}.push_back({self.var_mng.rel_col_var(rel, col)}[{self.var_mng.offset_var(rel)}]);\n'
+			for idx, (rel, col) in interm_cols:
+				interm_col = self.var_mng.interm_col(idx)
+				interm_col_type = rel2col2type[rel_wo_idx(rel)][col]
+				rel2col2type[interm_rel][interm_col] = interm_col_type
+				yield f'{self.var_mng.rel_col_var(interm_rel, interm_col)}.push_back({self.var_mng.rel_col_var(rel, col)}[{self.var_mng.offset_var(rel)}]);\n'
 			for _ in range(len(interm_rel2cols)):
 				self.indent -= 1
 				yield '}\n'

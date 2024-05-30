@@ -28,7 +28,6 @@ int main() {
 		timer.StoreElapsedTime(0);
 
 		vector<int> interm0_col0;
-		vector<int> interm0_col1;
 		vector<string> interm0_col2;
 		vector<string> interm0_col3;
 		for (const auto &[x0, mk_trie1]: mk_trie0) {
@@ -41,7 +40,6 @@ int main() {
 							for (const auto &t_off: t_trie1) {
 								for (const auto &k_off: k_trie1) {
 									interm0_col0.push_back(mk_movie_id[mk_off]);
-									interm0_col1.push_back(mk_keyword_id[mk_off]);
 									interm0_col2.push_back(t_title[t_off]);
 									interm0_col3.push_back(k_keyword[k_off]);
 								}
@@ -62,7 +60,6 @@ int main() {
 		timer.StoreElapsedTime(2);
 
 		string mn_n_name = "zzzzzzzz";
-		int mn_interm0_col1 = numeric_limits<int>::max();
 		string mn_interm0_col2 = "zzzzzzzz";
 		string mn_interm0_col3 = "zzzzzzzz";
 		for (const auto &[x0, ci_trie1]: ci_trie0) {
@@ -75,7 +72,6 @@ int main() {
 							mn_n_name = min(mn_n_name, n_name[n_off]);
 						}
 						for (const auto &interm0_off: interm0_trie1) {
-							mn_interm0_col1 = min(mn_interm0_col1, interm0_col1[interm0_off]);
 							mn_interm0_col2 = min(mn_interm0_col2, interm0_col2[interm0_off]);
 							mn_interm0_col3 = min(mn_interm0_col3, interm0_col3[interm0_off]);
 						}
@@ -86,7 +82,7 @@ int main() {
 		timer.StoreElapsedTime(3);
 
 		if (z == 0)
-			cout << mn_n_name << " | " << mn_interm0_col1 << " | " << mn_interm0_col2 << " | " << mn_interm0_col3 << endl;
+			cout << mn_n_name << " | " << mn_interm0_col2 << " | " << mn_interm0_col3 << endl;
 		cout << "*" << " " << flush;
 	}
 	cout << endl;
