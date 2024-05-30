@@ -30,8 +30,6 @@ class Plan2CPPTranslator:
 		for query in queries:
 			self._clear_per_query()
 			plans = self.parser.parse(query, use_cache)
-			if plans is None:
-				continue
 			self._translate(query, plans)
 			self._translate_load_file(query)
 

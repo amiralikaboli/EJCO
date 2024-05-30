@@ -34,8 +34,6 @@ class PlanParser:
 			)
 			for i in range(0, len(lines), 4)
 		]
-		if not len(parsed_plans) <= 3:
-			return None
 
 		parsed_plans = self._resolve_intermediate_stuff(parsed_plans)
 
@@ -123,16 +121,16 @@ class PlanParser:
 	# TODO: rename this function
 	def _resolve_intermediate_stuff(
 			self,
-			parsed_plans: List[Tuple[str, List, List]]
+			plans: List[Tuple[str, List, List]]
 	) -> List[Tuple[Tuple[str, List], List, List]]:
-		for idx_u, (node_u, build_u, compiled_u) in enumerate(parsed_plans[:-1]):
+		for idx_u, (node_u, build_u, compiled_u) in enumerate(plans[:-1]):
 			interm_rel = self.var_mng.interm_rel(idx_u)
 			interm_cols = self.intermediate_columns_list(build_u, compiled_u)
 			interm_cols_enumerated = list()
 			self.update_bags(compiled_u, interm_rel, interm_cols)
 
 			found = False
-			for idx_d, (node_d, build_d, compiled_d) in enumerate(parsed_plans[idx_u + 1:], start=idx_u + 1):
+			for idx_d, (node_d, build_d, compiled_d) in enumerate(plans[idx_u + 1:], start=idx_u + 1):
 				for build_d_idx, (can_node_u, can_join_cols, can_proj_cols) in enumerate(build_d):
 					if can_node_u == node_u:
 						build_d[build_d_idx] = (
@@ -154,10 +152,10 @@ class PlanParser:
 											compiled_d[compiled_d_idx][eq_cols_idx] = (rel_u, col_u)
 					break
 
-				parsed_plans[idx_d] = (node_d, build_d, compiled_d)
-			parsed_plans[idx_u] = ((interm_rel, interm_cols_enumerated), build_u, compiled_u)
-		parsed_plans[-1] = (('root', []), parsed_plans[-1][1], parsed_plans[-1][2])
-		return parsed_plans
+				plans[idx_d] = (node_d, build_d, compiled_d)
+			plans[idx_u] = ((interm_rel, interm_cols_enumerated), build_u, compiled_u)
+		plans[-1] = (('root', []), plans[-1][1], plans[-1][2])
+		return plans
 
 	@staticmethod
 	def intermediate_columns_list(build_plan: List, compiled_plan: List) -> List[Tuple[str, str]]:
