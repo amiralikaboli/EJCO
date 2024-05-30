@@ -2,19 +2,20 @@ import json
 import os
 import re
 import sys
+from typing import Dict, Set
 
 freejoin_path = os.path.join(os.path.dirname(__file__), "..", "..", "free-join")
 
 if __name__ == '__main__':
 	args = sys.argv[1:]
 	results_file = args[0]
-	check_validity = False
+	check_validity = True
 
 	with open(results_file, "r") as txt_file:
 		stats = [res.strip().split("\n") for res in txt_file.read().split("-" * 20)[:-1]]
 	with open("gj.log", "r") as txt_file:
 		gj_log = txt_file.read()
-	gj_outputs = dict()
+	gj_outputs: Dict[str, Set[str]] = dict()
 	for query_log in gj_log.strip().split("running query")[1:]:
 		newline_idx = query_log.find("\n")
 		output = set()
@@ -34,7 +35,7 @@ if __name__ == '__main__':
 		query = lines[0][:-4]
 		if len(lines) > 4:
 			query_res = set(elem.strip().replace('"', "").replace("\\", "") for elem in lines[2].split(' | '))
-			if check_validity and query_res != gj_outputs[query]:
+			if check_validity and not gj_outputs[query].issubset(query_res):
 				invalids.append(query)
 			else:
 				times.append({"query": query, "time": float(lines[-1][:-3]) / 1000})
