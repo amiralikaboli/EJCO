@@ -37,7 +37,9 @@ int main() {
 		timer.StoreElapsedTime(0);
 
 		vector<int> interm0_col0;
+		vector<int> interm0_col1;
 		vector<string> interm0_col2;
+		vector<int> interm0_col3;
 		for (const auto &[x0, mi_trie1]: mi_trie0) {
 			if (t_trie0.contains(x0) && mc_trie0.contains(x0)) {
 				auto &t_trie1 = t_trie0.at(x0);
@@ -50,8 +52,12 @@ int main() {
 								auto &cn_trie1 = cn_trie0.at(x2);
 								for (const auto &mi_off: mi_trie2) {
 									for (const auto &t_off: t_trie1) {
-										interm0_col0.push_back(mi_movie_id[mi_off]);
-										interm0_col2.push_back(t_title[t_off]);
+										for (const auto &mc_off: mc_trie2) {
+											interm0_col0.push_back(mi_movie_id[mi_off]);
+											interm0_col1.push_back(mi_info_type_id[mi_off]);
+											interm0_col2.push_back(t_title[t_off]);
+											interm0_col3.push_back(mc_company_id[mc_off]);
+										}
 									}
 								}
 							}
@@ -94,7 +100,9 @@ int main() {
 		timer.StoreElapsedTime(4);
 
 		string mn_interm1_col1 = "zzzzzzzz";
+		int mn_interm0_col1 = numeric_limits<int>::max();
 		string mn_interm0_col2 = "zzzzzzzz";
+		int mn_interm0_col3 = numeric_limits<int>::max();
 		for (const auto &[x0, ci_trie1]: ci_trie0) {
 			if (rt_trie0.contains(x0)) {
 				auto &rt_trie1 = rt_trie0.at(x0);
@@ -111,7 +119,9 @@ int main() {
 											mn_interm1_col1 = min(mn_interm1_col1, interm1_col1[interm1_off]);
 										}
 										for (const auto &interm0_off: interm0_trie1) {
+											mn_interm0_col1 = min(mn_interm0_col1, interm0_col1[interm0_off]);
 											mn_interm0_col2 = min(mn_interm0_col2, interm0_col2[interm0_off]);
+											mn_interm0_col3 = min(mn_interm0_col3, interm0_col3[interm0_off]);
 										}
 									}
 								}
@@ -124,7 +134,7 @@ int main() {
 		timer.StoreElapsedTime(5);
 
 		if (z == 0)
-			cout << mn_interm1_col1 << " | " << mn_interm0_col2 << endl;
+			cout << mn_interm1_col1 << " | " << mn_interm0_col1 << " | " << mn_interm0_col2 << " | " << mn_interm0_col3 << endl;
 		cout << "*" << " " << flush;
 	}
 	cout << endl;

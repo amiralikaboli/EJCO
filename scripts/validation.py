@@ -39,7 +39,7 @@ if __name__ == '__main__':
 		query = lines[0][:-4]
 		if len(lines) > 4:
 			query_res = set(normalize(elem.strip()) for elem in lines[2].split(' | '))
-			if check_validity and gj_outputs[query] != query_res and query not in skip_queries:
+			if check_validity and query not in skip_queries and gj_outputs[query].issubset(query_res):
 				invalids.append(query)
 			else:
 				times.append({"query": query, "time": float(lines[-1][:-3]) / 1000})

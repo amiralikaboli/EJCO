@@ -125,50 +125,37 @@ class PlanParser:
 			self,
 			parsed_plans: List[Tuple[str, List, List]]
 	) -> List[Tuple[Tuple[str, List], List, List]]:
-		for u_idx in range(len(parsed_plans) - 1):
+		for idx_u, (node_u, build_u, compiled_u) in enumerate(parsed_plans[:-1]):
+			interm_rel = self.var_mng.interm_rel(idx_u)
+			interm_cols = self.intermediate_columns_list(build_u, compiled_u)
+			interm_cols_enumerated = list()
+			self.update_bags(compiled_u, interm_rel, interm_cols)
+
 			found = False
-
-			u_node, u_build, u_compiled = parsed_plans[u_idx]
-
-			interm_rel = self.var_mng.interm_rel(u_idx)
-			interm_cols = self.intermediate_columns_list(u_build, u_compiled)
-			indexed_interm_cols = list()
-			interm_join_cols = {(rel, col) for rel, join_cols, _ in u_build for col in join_cols}
-			self.update_bags(u_compiled, interm_rel, interm_cols)
-
-			for d_idx in range(u_idx + 1, len(parsed_plans)):
-				d_node, d_build, d_compiled = parsed_plans[d_idx]
-				for d_build_idx in range(len(d_build)):
-					if d_build[d_build_idx][0] == u_node:
-						if found:
-							raise ValueError("Multiple matches found")
-						u_join_col_idxs = d_build[d_build_idx][1]
-						u_proj_col_idxs = [x for x in d_build[d_build_idx][2] if interm_cols[x] not in interm_join_cols]
-						d_build[d_build_idx] = (
+			for idx_d, (node_d, build_d, compiled_d) in enumerate(parsed_plans[idx_u + 1:], start=idx_u + 1):
+				for build_d_idx, (can_node_u, can_join_cols, can_proj_cols) in enumerate(build_d):
+					if can_node_u == node_u:
+						build_d[build_d_idx] = (
 							interm_rel,
-							[self.var_mng.interm_col(u_col_idx) for u_col_idx in u_join_col_idxs],
-							[self.var_mng.interm_col(u_col_idx) for u_col_idx in u_proj_col_idxs]
+							[self.var_mng.interm_col(i) for i in can_join_cols],
+							[self.var_mng.interm_col(i) for i in can_proj_cols]
 						)
-						indexed_interm_cols = [(x, interm_cols[x]) for x in sorted(u_join_col_idxs + u_proj_col_idxs)]
+						interm_cols_enumerated = [(i, interm_cols[i]) for i in sorted(can_join_cols + can_proj_cols)]
 						found = True
-						# break
+						break
 
 				if found:
-					for d_compiled_idx in range(len(d_compiled)):
-						eq_cols = d_compiled[d_compiled_idx]
-						for eq_cols_idx in range(len(eq_cols)):
-							d_rel, d_col = eq_cols[eq_cols_idx]
+					for compiled_d_idx, eq_cols in enumerate(compiled_d):
+						for eq_cols_idx, (rel_d, col_d) in enumerate(eq_cols):
 							for bag in self.bags:
-								if (d_rel, d_col) in bag:
-									for u_rel, u_col in bag:
-										if u_rel == interm_rel:
-											d_compiled[d_compiled_idx][eq_cols_idx] = (u_rel, u_col)
-					# break
+								if (rel_d, col_d) in bag:
+									for rel_u, col_u in bag:
+										if rel_u == interm_rel:
+											compiled_d[compiled_d_idx][eq_cols_idx] = (rel_u, col_u)
+					break
 
-				parsed_plans[d_idx] = (d_node, d_build, d_compiled)
-
-			parsed_plans[u_idx] = ((interm_rel, indexed_interm_cols), u_build, u_compiled)
-
+				parsed_plans[idx_d] = (node_d, build_d, compiled_d)
+			parsed_plans[idx_u] = ((interm_rel, interm_cols_enumerated), build_u, compiled_u)
 		parsed_plans[-1] = (('root', []), parsed_plans[-1][1], parsed_plans[-1][2])
 		return parsed_plans
 

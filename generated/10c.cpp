@@ -32,6 +32,8 @@ int main() {
 		timer.StoreElapsedTime(0);
 
 		vector<int> interm0_col0;
+		vector<int> interm0_col1;
+		vector<int> interm0_col2;
 		vector<string> interm0_col3;
 		for (const auto &[x0, mc_trie1]: mc_trie0) {
 			if (t_trie0.contains(x0)) {
@@ -45,6 +47,8 @@ int main() {
 								for (const auto &mc_off: mc_trie3) {
 									for (const auto &t_off: t_trie1) {
 										interm0_col0.push_back(mc_movie_id[mc_off]);
+										interm0_col1.push_back(mc_company_type_id[mc_off]);
+										interm0_col2.push_back(mc_company_id[mc_off]);
 										interm0_col3.push_back(t_title[t_off]);
 									}
 								}
@@ -66,6 +70,8 @@ int main() {
 		build_trie(chn_trie0, chn_id);
 		timer.StoreElapsedTime(2);
 
+		int mn_interm0_col1 = numeric_limits<int>::max();
+		int mn_interm0_col2 = numeric_limits<int>::max();
 		string mn_interm0_col3 = "zzzzzzzz";
 		string mn_chn_name = "zzzzzzzz";
 		for (const auto &[x0, ci_trie1]: ci_trie0) {
@@ -78,6 +84,8 @@ int main() {
 							if (chn_trie0.contains(x2)) {
 								auto &chn_trie1 = chn_trie0.at(x2);
 								for (const auto &interm0_off: interm0_trie1) {
+									mn_interm0_col1 = min(mn_interm0_col1, interm0_col1[interm0_off]);
+									mn_interm0_col2 = min(mn_interm0_col2, interm0_col2[interm0_off]);
 									mn_interm0_col3 = min(mn_interm0_col3, interm0_col3[interm0_off]);
 								}
 								for (const auto &chn_off: chn_trie1) {
@@ -92,7 +100,7 @@ int main() {
 		timer.StoreElapsedTime(3);
 
 		if (z == 0)
-			cout << mn_interm0_col3 << " | " << mn_chn_name << endl;
+			cout << mn_interm0_col1 << " | " << mn_interm0_col2 << " | " << mn_interm0_col3 << " | " << mn_chn_name << endl;
 		cout << "*" << " " << flush;
 	}
 	cout << endl;
