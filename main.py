@@ -1,7 +1,7 @@
 import os
 
+from cpp_generator import CPPGenerator
 from parser import PlanParser
-from translator import Plan2CPPTranslator
 from var_mng import VariableManager
 
 if __name__ == '__main__':
@@ -11,14 +11,14 @@ if __name__ == '__main__':
 
 	var_mng = VariableManager()
 	parser = PlanParser(var_mng)
-	translator = Plan2CPPTranslator(var_mng)
+	cpp_generator = CPPGenerator(var_mng)
 	for query in queries:
 		var_mng.clear()
 		parser.clear()
-		translator.clear()
+		cpp_generator.clear()
 
 		plans = parser.parse(query, use_cache=False)
-		translator.translate(query, plans)
-		translator.translate_load_file(query)
+		cpp_generator.generate(query, plans)
+		cpp_generator.generate_load_file(query)
 
-	translator.translate_build_file()
+	cpp_generator.generate_build_file()

@@ -8,7 +8,7 @@ from consts import preprocessed_data_path, raw_data_path, include_dir_path, gene
 from var_mng import VariableManager
 
 
-class Plan2CPPTranslator:
+class CPPGenerator:
 	def __init__(self, var_mng: VariableManager):
 		self.trie_types = set()
 		self.resolved_attrs = set()
@@ -23,7 +23,7 @@ class Plan2CPPTranslator:
 		self.involved_cols = set()
 		self.loaded_rels = set()
 
-	def translate(self, query: str, plans: List[Tuple[Tuple[str, List], List, List]]):
+	def generate(self, query: str, plans: List[Tuple[Tuple[str, List], List, List]]):
 		for idx, (node, build_plan, compiled_plan) in enumerate(plans):
 			plans[idx] = (node, self._make_join_cols_order_consistent(build_plan, compiled_plan), compiled_plan)
 
@@ -38,7 +38,7 @@ class Plan2CPPTranslator:
 			cpp_file.write('\tHighPrecisionTimer timer;\n\n')
 
 			for _, build_plan, _ in plans:
-				for line in self._translate_load_funcs(query, build_plan):
+				for line in self._generate_load_funcs(query, build_plan):
 					cpp_file.write('\t' * self.indent + line)
 			cpp_file.write('\tcout << timer.GetElapsedTime() / 1000.0 << " s" << endl;\n')
 			cpp_file.write('\n')
@@ -49,12 +49,12 @@ class Plan2CPPTranslator:
 
 			for idx, (node, build_plan, compiled_plan) in enumerate(plans):
 				interm_rel, _ = node
-				for line in self._translate_build_plan(interm_rel, build_plan):
+				for line in self._generate_build_plan(interm_rel, build_plan):
 					cpp_file.write('\t' * self.indent + line)
 				cpp_file.write('\t' * self.indent + f'timer.StoreElapsedTime({idx * 2});\n')
 				cpp_file.write('\n')
 
-				for line in self._translate_compiled_plan(node, build_plan, compiled_plan):
+				for line in self._generate_compiled_plan(node, build_plan, compiled_plan):
 					cpp_file.write('\t' * self.indent + line)
 				while self.indent > 2:
 					self.indent -= 1
@@ -87,7 +87,7 @@ class Plan2CPPTranslator:
 
 			cpp_file.write('}\n')
 
-	def _translate_load_funcs(self, query: str, build_plan: List[Tuple]):
+	def _generate_load_funcs(self, query: str, build_plan: List[Tuple]):
 		for rel, join_cols, proj_cols in build_plan:
 			if self.var_mng.is_interm_rel(rel):
 				continue
@@ -99,7 +99,7 @@ class Plan2CPPTranslator:
 			for col in join_cols + proj_cols:
 				self.involved_cols.add((rel, col))
 
-	def _translate_build_plan(self, interm_rel: str, build_plan: List[Tuple[str, List[str], List[str]]]):
+	def _generate_build_plan(self, interm_rel: str, build_plan: List[Tuple[str, List[str], List[str]]]):
 		for rel, join_cols, proj_cols in build_plan:
 			level_types = tuple([rel2col2type[rel_wo_idx(rel)][join_col] for join_col in join_cols])
 			self.trie_types.add(level_types)
@@ -110,7 +110,7 @@ class Plan2CPPTranslator:
 				yield f"auto {self.var_mng.trie_var(rel)} = {self.var_mng.trie_def(level_types, 'bool')}();\n"
 				yield f"{self.var_mng.build_bool_func()}({self.var_mng.trie_var(rel)}, {', '.join([self.var_mng.rel_col_var(rel, join_col) for join_col in join_cols])});\n"
 
-	def _translate_compiled_plan(
+	def _generate_compiled_plan(
 			self,
 			node: Tuple[str, List[Tuple[str, str]]],
 			build_plan: List[Tuple[str, List[str], List[str]]],
@@ -195,7 +195,7 @@ class Plan2CPPTranslator:
 					rel2join_cols[rel].append(col)
 		return [(rel, rel2join_cols[rel], proj_cols) for rel, _, proj_cols in build_plan]
 
-	def translate_build_file(self):
+	def generate_build_file(self):
 		with open(os.path.join(include_dir_path, "build.h"), "w") as cpp_file:
 			cpp_file.write('#include <iostream>\n')
 			cpp_file.write('#include <vector>\n')
@@ -223,7 +223,7 @@ class Plan2CPPTranslator:
 						cpp_file.write(f"\t\t{trie_var} = true;\n")
 					cpp_file.write(f"}}\n")
 
-	def _translate_build_file_using_sort(self):
+	def _generate_build_file_using_sort(self):
 		with open(os.path.join(include_dir_path, "build.h"), "w") as cpp_file:
 			cpp_file.write('#include <iostream>\n')
 			cpp_file.write('#include <vector>\n')
@@ -295,7 +295,7 @@ class Plan2CPPTranslator:
 					)
 					cpp_file.write(f"}}\n")
 
-	def translate_load_file(self, query: str):
+	def generate_load_file(self, query: str):
 		with open(os.path.join(generated_dir_path, "load", f"{query}.h"), "w") as cpp_file:
 			cpp_file.write('#include <iostream>\n')
 			cpp_file.write('#include <fstream>\n')
