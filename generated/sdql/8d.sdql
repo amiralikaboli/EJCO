@@ -1,0 +1,34 @@
+let interm0_trie0 = sum(<x0, mc_trie1> in mc_trie0) {
+	if (x0 in cn_trie0) {
+		let cn_trie1 = cn_trie0(x0)
+		sum(<mc_off, _> in mc_trie1) {
+			{ <mc_company_id[mc_off], mc_movie_id[mc_off]> -> true }
+		}
+	}
+}
+----------------------------------------------------------------------------------------------------
+sum(<x0, ci_trie1> in ci_trie0) {
+	if (x0 in n1_trie0) {
+		let n1_trie1 = n1_trie0(x0)
+		sum(<x1, ci_trie2> in ci_trie1) {
+			if (x1 in interm0_trie0) {
+				let interm0_trie1 = interm0_trie0(x1)
+				sum(<x2, ci_trie3> in ci_trie2) {
+					if (x2 in rt_trie0) {
+						let rt_trie1 = rt_trie0(x2)
+						if (x1 in t_trie0) {
+							let t_trie1 = t_trie0(x1)
+							if (x0 in an1_trie0) {
+								let an1_trie1 = an1_trie0(x0)
+								let mn_interm0_col0 = sum(<interm0_off, _> in interm0_trie1) { interm0_col0[interm0_off] }
+								let mn_t_title = sum(<t_off, _> in t_trie1) { t_title[t_off] }
+								let mn_an1_name = sum(<an1_off, _> in an1_trie1) { an1_name[an1_off] }
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}
+----------------------------------------------------------------------------------------------------

@@ -1,0 +1,115 @@
+let interm0_trie0 = sum(<x0, ml_trie1> in ml_trie0) {
+	if (x0 in lt_trie0) {
+		let lt_trie1 = lt_trie0(x0)
+		sum(<ml_off, _> in ml_trie1) {
+			{ <ml_link_type_id[ml_off], ml_movie_id[ml_off], ml_linked_movie_id[ml_off]> -> true }
+		}
+	}
+}
+----------------------------------------------------------------------------------------------------
+let interm1_trie0 = sum(<x0, mi_idx1_trie1> in mi_idx1_trie0) {
+	if (x0 in it1_trie0) {
+		let it1_trie1 = it1_trie0(x0)
+		sum(<x1, mi_idx1_trie2> in mi_idx1_trie1) {
+			if (x1 in interm0_trie0) {
+				let interm0_trie1 = interm0_trie0(x1)
+				sum(<mi_idx1_off, _> in mi_idx1_trie2) {
+					sum(<interm0_off, _> in interm0_trie1) {
+						{ <mi_idx1_info_type_id[mi_idx1_off], mi_idx1_movie_id[mi_idx1_off], mi_idx1_info[mi_idx1_off], interm0_col0[interm0_off], interm0_col2[interm0_off]> -> true }
+					}
+				}
+			}
+		}
+	}
+}
+----------------------------------------------------------------------------------------------------
+let interm2_trie0 = sum(<x0, mi_idx2_trie1> in mi_idx2_trie0) {
+	if (x0 in it2_trie0) {
+		let it2_trie1 = it2_trie0(x0)
+		sum(<x1, mi_idx2_trie2> in mi_idx2_trie1) {
+			if (x1 in interm1_trie0) {
+				let interm1_trie1 = interm1_trie0(x1)
+				sum(<mi_idx2_off, _> in mi_idx2_trie2) {
+					sum(<interm1_off, _> in interm1_trie1) {
+						{ <mi_idx2_info_type_id[mi_idx2_off], mi_idx2_movie_id[mi_idx2_off], mi_idx2_info[mi_idx2_off], interm1_col0[interm1_off], interm1_col1[interm1_off], interm1_col2[interm1_off], interm1_col3[interm1_off]> -> true }
+					}
+				}
+			}
+		}
+	}
+}
+----------------------------------------------------------------------------------------------------
+let interm3_trie0 = sum(<x0, t1_trie1> in t1_trie0) {
+	if (x0 in kt1_trie0) {
+		let kt1_trie1 = kt1_trie0(x0)
+		sum(<x1, t1_trie2> in t1_trie1) {
+			if (x1 in interm2_trie0) {
+				let interm2_trie1 = interm2_trie0(x1)
+				sum(<t1_off, _> in t1_trie2) {
+					sum(<interm2_off, _> in interm2_trie1) {
+						{ <t1_kind_id[t1_off], t1_id[t1_off], t1_title[t1_off], interm2_col0[interm2_off], interm2_col1[interm2_off], interm2_col2[interm2_off], interm2_col3[interm2_off], interm2_col5[interm2_off], interm2_col6[interm2_off]> -> true }
+					}
+				}
+			}
+		}
+	}
+}
+----------------------------------------------------------------------------------------------------
+let interm4_trie0 = sum(<x0, t2_trie1> in t2_trie0) {
+	if (x0 in kt2_trie0) {
+		let kt2_trie1 = kt2_trie0(x0)
+		sum(<x1, t2_trie2> in t2_trie1) {
+			if (x1 in interm3_trie0) {
+				let interm3_trie1 = interm3_trie0(x1)
+				sum(<t2_off, _> in t2_trie2) {
+					sum(<interm3_off, _> in interm3_trie1) {
+						{ <t2_kind_id[t2_off], t2_id[t2_off], t2_title[t2_off], interm3_col0[interm3_off], interm3_col1[interm3_off], interm3_col2[interm3_off], interm3_col3[interm3_off], interm3_col5[interm3_off], interm3_col6[interm3_off], interm3_col7[interm3_off], interm3_col8[interm3_off]> -> true }
+					}
+				}
+			}
+		}
+	}
+}
+----------------------------------------------------------------------------------------------------
+let interm5_trie0 = sum(<x0, mc1_trie1> in mc1_trie0) {
+	if (x0 in cn1_trie0) {
+		let cn1_trie1 = cn1_trie0(x0)
+		sum(<x1, mc1_trie2> in mc1_trie1) {
+			if (x1 in interm4_trie0) {
+				let interm4_trie1 = interm4_trie0(x1)
+				sum(<mc1_off, _> in mc1_trie2) {
+					sum(<cn1_off, _> in cn1_trie1) {
+						sum(<interm4_off, _> in interm4_trie1) {
+							{ <mc1_company_id[mc1_off], mc1_movie_id[mc1_off], cn1_name[cn1_off], interm4_col0[interm4_off], interm4_col1[interm4_off], interm4_col2[interm4_off], interm4_col3[interm4_off], interm4_col5[interm4_off], interm4_col6[interm4_off], interm4_col7[interm4_off], interm4_col8[interm4_off], interm4_col9[interm4_off], interm4_col10[interm4_off]> -> true }
+						}
+					}
+				}
+			}
+		}
+	}
+}
+----------------------------------------------------------------------------------------------------
+sum(<x0, mc2_trie1> in mc2_trie0) {
+	if (x0 in cn2_trie0) {
+		let cn2_trie1 = cn2_trie0(x0)
+		sum(<x1, mc2_trie2> in mc2_trie1) {
+			if (x1 in interm5_trie0) {
+				let interm5_trie1 = interm5_trie0(x1)
+				let mn_cn2_name = sum(<cn2_off, _> in cn2_trie1) { cn2_name[cn2_off] }
+				let mn_interm5_col0 = sum(<interm5_off, _> in interm5_trie1) { interm5_col0[interm5_off] }
+				let mn_interm5_col1 = sum(<interm5_off, _> in interm5_trie1) { interm5_col1[interm5_off] }
+				let mn_interm5_col2 = sum(<interm5_off, _> in interm5_trie1) { interm5_col2[interm5_off] }
+				let mn_interm5_col3 = sum(<interm5_off, _> in interm5_trie1) { interm5_col3[interm5_off] }
+				let mn_interm5_col5 = sum(<interm5_off, _> in interm5_trie1) { interm5_col5[interm5_off] }
+				let mn_interm5_col6 = sum(<interm5_off, _> in interm5_trie1) { interm5_col6[interm5_off] }
+				let mn_interm5_col7 = sum(<interm5_off, _> in interm5_trie1) { interm5_col7[interm5_off] }
+				let mn_interm5_col8 = sum(<interm5_off, _> in interm5_trie1) { interm5_col8[interm5_off] }
+				let mn_interm5_col9 = sum(<interm5_off, _> in interm5_trie1) { interm5_col9[interm5_off] }
+				let mn_interm5_col10 = sum(<interm5_off, _> in interm5_trie1) { interm5_col10[interm5_off] }
+				let mn_interm5_col11 = sum(<interm5_off, _> in interm5_trie1) { interm5_col11[interm5_off] }
+				let mn_interm5_col12 = sum(<interm5_off, _> in interm5_trie1) { interm5_col12[interm5_off] }
+			}
+		}
+	}
+}
+----------------------------------------------------------------------------------------------------

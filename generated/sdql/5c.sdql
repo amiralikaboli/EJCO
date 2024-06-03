@@ -1,0 +1,18 @@
+sum(<x0, mi_trie1> in mi_trie0) {
+	if (x0 in t_trie0 && x0 in mc_trie0) {
+		let t_trie1 = t_trie0(x0)
+		let mc_trie1 = mc_trie0(x0)
+		sum(<x1, mi_trie2> in mi_trie1) {
+			if (x1 in it_trie0) {
+				let it_trie1 = it_trie0(x1)
+				sum(<x2, mc_trie2> in mc_trie1) {
+					if (x2 in ct_trie0) {
+						let ct_trie1 = ct_trie0(x2)
+						let mn_t_title = sum(<t_off, _> in t_trie1) { t_title[t_off] }
+					}
+				}
+			}
+		}
+	}
+}
+----------------------------------------------------------------------------------------------------

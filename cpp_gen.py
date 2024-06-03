@@ -19,6 +19,7 @@ class CPPGenerator:
 		self.var_mng = var_mng
 
 	def clear(self):
+		self.indent = 1
 		self.resolved_attrs = set()
 		self.involved_cols = set()
 		self.loaded_rels = set()
@@ -114,7 +115,7 @@ class CPPGenerator:
 			self,
 			node: Tuple[str, List[Tuple[str, str]]],
 			build_plan: List[Tuple[str, List[str], List[str]]],
-			compiled_plan: List[List[str]]
+			compiled_plan: List[List[Tuple[str, str]]]
 	):
 		interm_rel, interm_cols = node
 

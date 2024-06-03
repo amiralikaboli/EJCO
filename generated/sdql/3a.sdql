@@ -1,0 +1,23 @@
+let interm0_trie0 = sum(<x0, mk_trie1> in mk_trie0) {
+	if (x0 in t_trie0) {
+		let t_trie1 = t_trie0(x0)
+		sum(<mk_off, _> in mk_trie1) {
+			sum(<t_off, _> in t_trie1) {
+				{ <mk_movie_id[mk_off], mk_keyword_id[mk_off], t_title[t_off]> -> true }
+			}
+		}
+	}
+}
+----------------------------------------------------------------------------------------------------
+sum(<x0, mi_trie1> in mi_trie0) {
+	if (x0 in interm0_trie0) {
+		let interm0_trie1 = interm0_trie0(x0)
+		sum(<x1, interm0_trie2> in interm0_trie1) {
+			if (x1 in k_trie0) {
+				let k_trie1 = k_trie0(x1)
+				let mn_interm0_col2 = sum(<interm0_off, _> in interm0_trie2) { interm0_col2[interm0_off] }
+			}
+		}
+	}
+}
+----------------------------------------------------------------------------------------------------
