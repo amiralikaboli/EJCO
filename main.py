@@ -1,6 +1,6 @@
 import os
 
-from cpp_generator import CPPGenerator
+from cpp_gen import CPPGenerator
 from parser import PlanParser
 from var_mng import VariableManager
 
@@ -11,14 +11,14 @@ if __name__ == '__main__':
 
 	var_mng = VariableManager()
 	parser = PlanParser(var_mng)
-	cpp_generator = CPPGenerator(var_mng)
+	cpp_gen = CPPGenerator(var_mng)
 	for query in queries:
 		var_mng.clear()
 		parser.clear()
-		cpp_generator.clear()
+		cpp_gen.clear()
 
 		plans = parser.parse(query, use_cache=False)
-		cpp_generator.generate(query, plans)
-		cpp_generator.generate_load_file(query)
+		cpp_gen.generate(query, plans)
+		cpp_gen.generate_load_file(query)
 
-	cpp_generator.generate_build_file()
+	cpp_gen.generate_build_file()
