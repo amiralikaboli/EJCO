@@ -10,6 +10,10 @@ from var_mng import VariableManager
 class PlanParser:
 	def __init__(self, var_mng: VariableManager):
 		self.var_mng = var_mng
+		self.bags: List[Set[Tuple[str, str]]] = list()
+
+	def clear(self):
+		self.bags = list()
 
 	def parse(self, query: str, use_cache: bool = False) -> List[Tuple[Tuple[str, List], List, List]]:
 		if use_cache and os.path.exists(os.path.join(plans_path, "parsed", f"{query}.log")):
@@ -119,13 +123,11 @@ class PlanParser:
 			self,
 			plans: List[Tuple[str, List, List]]
 	) -> List[Tuple[Tuple[str, List], List, List]]:
-		bags: List[Set[Tuple[str, str]]] = list()
-
 		for idx_u, (node_u, build_u, compiled_u) in enumerate(plans):
 			interm_rel = self.var_mng.interm_rel(idx_u)
 			interm_cols = self.intermediate_columns_list(build_u, compiled_u)
 			interm_cols_enumerated = [(idx, rel_col) for idx, rel_col in enumerate(interm_cols)]
-			bags = self.update_bags_for_intermediate_stuff(bags, compiled_u, interm_rel, interm_cols)
+			self.update_bags(compiled_u, interm_rel, interm_cols)
 
 			found = False
 			for idx_d, (node_d, build_d, compiled_d) in enumerate(plans[idx_u + 1:], start=idx_u + 1):
@@ -142,7 +144,7 @@ class PlanParser:
 				if found:
 					for compiled_d_idx, eq_cols in enumerate(compiled_d):
 						for eq_cols_idx, (rel_d, col_d) in enumerate(eq_cols):
-							for bag in bags:
+							for bag in self.bags:
 								if (rel_d, col_d) in bag:
 									for rel_u, col_u in bag:
 										if rel_u == interm_rel:
@@ -168,26 +170,25 @@ class PlanParser:
 				columns.append((rel, col))
 		return columns
 
-	def update_bags_for_intermediate_stuff(self, bags, compiled_plan, interm_rel, interm_cols):
-		for eq_cols in compiled_plan:
+	def update_bags(self, u_compiled, interm_rel, interm_cols):
+		for eq_cols in u_compiled:
 			new_bag = True
-			for bag_idx in range(len(bags)):
-				if bags[bag_idx].intersection(set(eq_cols)):
-					bags[bag_idx].update(eq_cols)
+			for bag_idx in range(len(self.bags)):
+				if self.bags[bag_idx].intersection(set(eq_cols)):
+					self.bags[bag_idx].update(eq_cols)
 					new_bag = False
 					break
 			if new_bag:
-				bags.append(set(eq_cols))
+				self.bags.append(set(eq_cols))
 		for idx, (rel, col) in enumerate(interm_cols):
 			new_bag = True
-			for bag_idx, bag in enumerate(bags):
+			for bag_idx, bag in enumerate(self.bags):
 				if (rel, col) in bag:
-					bags[bag_idx].add((interm_rel, self.var_mng.interm_col(idx)))
+					self.bags[bag_idx].add((interm_rel, self.var_mng.interm_col(idx)))
 					new_bag = False
 					break
 			if new_bag:
-				bags.append({(rel, col), (interm_rel, self.var_mng.interm_col(idx))})
-		return bags
+				self.bags.append({(rel, col), (interm_rel, self.var_mng.interm_col(idx))})
 
 	@staticmethod
 	def order_join_cols_based_on_compiled_plan(

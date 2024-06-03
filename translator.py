@@ -21,6 +21,7 @@ class Plan2CPPTranslator:
 
 	def _clear_per_query(self):
 		self.var_mng.clear()
+		self.parser.clear()
 		self.resolved_attrs = set()
 		self.involved_cols = set()
 		self.loaded_rels = set()
