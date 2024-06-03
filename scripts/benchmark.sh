@@ -6,7 +6,7 @@ rm -rf generated/*.cpp
 rm -rf generated/load/*.h
 rm -rf generated/stats/*.h
 
-python3 translator.py
+python3 main.py
 
 cd generated
 for cpp_file in *.cpp; do
@@ -16,4 +16,4 @@ for cpp_file in *.cpp; do
     echo "--------------------"
 done | tee ../$RESULTS_FILE
 
-#cd ../../free-join && rm -rf gj/gj.json && make gj/gj.json > ../WCOJ/gj.log
+#cd ../../free-join && rm -rf gj/gj.json && make gj/gj.json > gj.log

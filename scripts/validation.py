@@ -4,7 +4,7 @@ import re
 import sys
 from typing import Dict, Set
 
-freejoin_path = os.path.join(os.path.dirname(__file__), "..", "..", "free-join")
+from consts import freejoin_path
 
 
 def normalize(text: str) -> str:
@@ -19,7 +19,7 @@ if __name__ == '__main__':
 
 	with open(results_file, "r") as txt_file:
 		stats = [res.strip().split("\n") for res in txt_file.read().split("-" * 20)[:-1]]
-	with open("gj.log", "r") as txt_file:
+	with open(os.path.join(freejoin_path, "gj.log"), "r") as txt_file:
 		gj_log = txt_file.read()
 	gj_outputs: Dict[str, Set[str]] = dict()
 	for query_log in gj_log.strip().split("running query")[1:]:
