@@ -1,41 +1,29 @@
+import math
 import os
 from collections import defaultdict
-from typing import List, Tuple
+from typing import List, Tuple, Dict
 
 from consts import preprocessed_data_path, raw_data_path, include_dir_path, generated_dir_path, rel_wo_idx, abbr2rel, \
 	rel2col2type, inf_values
-from parser import PlanParser
 from var_mng import VariableManager
 
 
 class Plan2CPPTranslator:
-	def __init__(self):
+	def __init__(self, var_mng: VariableManager):
 		self.trie_types = set()
-		self.var_mng = VariableManager()
 		self.resolved_attrs = set()
 		self.involved_cols = set()
 		self.loaded_rels = set()
 		self.indent = 1
 
-		self.parser = PlanParser(self.var_mng)
+		self.var_mng = var_mng
 
-	def _clear_per_query(self):
-		self.var_mng.clear()
-		self.parser.clear()
+	def clear(self):
 		self.resolved_attrs = set()
 		self.involved_cols = set()
 		self.loaded_rels = set()
 
-	def translate(self, queries: List[str], use_cache: bool = False):
-		for query in queries:
-			self._clear_per_query()
-			plans = self.parser.parse(query, use_cache)
-			self._translate(query, plans)
-			self._translate_load_file(query)
-
-		self._translate_build_file()
-
-	def _translate(self, query: str, plans: List[Tuple[Tuple[str, List], List, List]]):
+	def translate(self, query: str, plans: List[Tuple[Tuple[str, List], List, List]]):
 		for idx, (node, build_plan, compiled_plan) in enumerate(plans):
 			plans[idx] = (node, self._make_join_cols_order_consistent(build_plan, compiled_plan), compiled_plan)
 
@@ -50,7 +38,7 @@ class Plan2CPPTranslator:
 			cpp_file.write('\tHighPrecisionTimer timer;\n\n')
 
 			for _, build_plan, _ in plans:
-				for line in self._translate_loads(query, build_plan):
+				for line in self._translate_load_funcs(query, build_plan):
 					cpp_file.write('\t' * self.indent + line)
 			cpp_file.write('\tcout << timer.GetElapsedTime() / 1000.0 << " s" << endl;\n')
 			cpp_file.write('\n')
@@ -93,12 +81,13 @@ class Plan2CPPTranslator:
 			cpp_file.write(f'\tfor (int i = 0; i < {len(plans)} * 2; ++i)\n')
 			cpp_file.write('\t\ttm.push_back(timer.GetMean(i));\n')
 			cpp_file.write(f'\tfor (int i = 0; i < 2 * {len(plans)}; i += 2)\n')
-			cpp_file.write(f'\t\tcout << tm[i + 1] - tm[i] << " + " << tm[i + 2] - tm[i + 1] << " = " << tm[i + 2] - tm[i] << " ms" << endl;\n')
+			cpp_file.write(
+				f'\t\tcout << tm[i + 1] - tm[i] << " + " << tm[i + 2] - tm[i + 1] << " = " << tm[i + 2] - tm[i] << " ms" << endl;\n')
 			cpp_file.write(f'\tcout << tm[{len(plans) * 2}] << " ms" << endl;\n')
 
 			cpp_file.write('}\n')
 
-	def _translate_loads(self, query: str, build_plan: List[Tuple]):
+	def _translate_load_funcs(self, query: str, build_plan: List[Tuple]):
 		for rel, join_cols, proj_cols in build_plan:
 			if self.var_mng.is_interm_rel(rel):
 				continue
@@ -137,7 +126,7 @@ class Plan2CPPTranslator:
 			for idx, (rel, col) in interm_cols:
 				yield f'vector<{rel2col2type[rel_wo_idx(rel)][col]}> {self.var_mng.rel_col_var(interm_rel, self.var_mng.interm_col(idx))};\n'
 
-		join_attrs_order = self.parser.order_join_cols_based_on_compiled_plan(build_plan, compiled_plan)
+		join_attrs_order = self._order_join_cols_based_on_compiled_plan(build_plan, compiled_plan)
 		for idx, eq_cols in enumerate(compiled_plan):
 			rel_0, col_0 = eq_cols[0]
 			if join_attrs_order[rel_0][col_0] == idx:
@@ -206,7 +195,7 @@ class Plan2CPPTranslator:
 					rel2join_cols[rel].append(col)
 		return [(rel, rel2join_cols[rel], proj_cols) for rel, _, proj_cols in build_plan]
 
-	def _translate_build_file(self):
+	def translate_build_file(self):
 		with open(os.path.join(include_dir_path, "build.h"), "w") as cpp_file:
 			cpp_file.write('#include <iostream>\n')
 			cpp_file.write('#include <vector>\n')
@@ -306,7 +295,7 @@ class Plan2CPPTranslator:
 					)
 					cpp_file.write(f"}}\n")
 
-	def _translate_load_file(self, query: str):
+	def translate_load_file(self, query: str):
 		with open(os.path.join(generated_dir_path, "load", f"{query}.h"), "w") as cpp_file:
 			cpp_file.write('#include <iostream>\n')
 			cpp_file.write('#include <fstream>\n')
@@ -352,11 +341,16 @@ class Plan2CPPTranslator:
 				cpp_file.write(f"\tin.close();\n")
 				cpp_file.write(f"}}\n")
 
-
-if __name__ == '__main__':
-	queries = []
-	for filename in os.listdir(os.path.join(os.path.dirname(__file__), "plans", "raw")):
-		queries.append(filename[:-4])
-
-	translator = Plan2CPPTranslator()
-	translator.translate(queries, use_cache=False)
+	@staticmethod
+	def _order_join_cols_based_on_compiled_plan(
+			build_plan: List[Tuple[str, List[str], List[str]]], compiled_plan: List[List[str]]
+	) -> Dict[str, Dict[str, int]]:  # rel -> col -> idx
+		join_attrs_order = {
+			rel: {col: math.inf for col in join_cols}
+			for rel, join_cols, _ in build_plan
+		}
+		for idx, eq_cols in enumerate(compiled_plan):
+			min_idx = min(idx, *[join_attrs_order[rel][col] for rel, col in eq_cols])
+			for rel, col in eq_cols:
+				join_attrs_order[rel][col] = min_idx
+		return join_attrs_order

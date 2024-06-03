@@ -46,7 +46,8 @@ class PlanParser:
 
 		return parsed_plans
 
-	def _parse_build_plan(self, build_plan: str) -> List[Tuple[str, List[str], List[str]]]:
+	@staticmethod
+	def _parse_build_plan(build_plan: str) -> List[Tuple[str, List[str], List[str]]]:
 		build_plan = build_plan[1:-1]
 		parsed_plan = []
 		for rel in build_plan.split("])")[:-1]:
@@ -80,7 +81,8 @@ class PlanParser:
 			parsed_plan.append((rel_name, join_cols, proj_cols))
 		return parsed_plan
 
-	def _parse_compiled_plan(self, compiled_plan: str):
+	@staticmethod
+	def _parse_compiled_plan(compiled_plan: str):
 		compiled_plan = compiled_plan[1:-1]
 		idxs = sorted(
 			[m.start() for m in re.finditer("Lookup", compiled_plan)] +
@@ -125,9 +127,9 @@ class PlanParser:
 	) -> List[Tuple[Tuple[str, List], List, List]]:
 		for idx_u, (node_u, build_u, compiled_u) in enumerate(plans):
 			interm_rel = self.var_mng.interm_rel(idx_u)
-			interm_cols = self.intermediate_columns_list(build_u, compiled_u)
+			interm_cols = self._intermediate_columns_list(build_u, compiled_u)
 			interm_cols_enumerated = [(idx, rel_col) for idx, rel_col in enumerate(interm_cols)]
-			self.update_bags(compiled_u, interm_rel, interm_cols)
+			self._update_bags(compiled_u, interm_rel, interm_cols)
 
 			found = False
 			for idx_d, (node_d, build_d, compiled_d) in enumerate(plans[idx_u + 1:], start=idx_u + 1):
@@ -157,7 +159,7 @@ class PlanParser:
 		return plans
 
 	@staticmethod
-	def intermediate_columns_list(build_plan: List, compiled_plan: List) -> List[Tuple[str, str]]:
+	def _intermediate_columns_list(build_plan: List, compiled_plan: List) -> List[Tuple[str, str]]:
 		columns = list()
 		rel2join_cols = dict()
 		for rel, join_cols, proj_cols in build_plan:
@@ -170,7 +172,7 @@ class PlanParser:
 				columns.append((rel, col))
 		return columns
 
-	def update_bags(self, u_compiled, interm_rel, interm_cols):
+	def _update_bags(self, u_compiled, interm_rel, interm_cols):
 		for eq_cols in u_compiled:
 			new_bag = True
 			for bag_idx in range(len(self.bags)):
@@ -189,20 +191,6 @@ class PlanParser:
 					break
 			if new_bag:
 				self.bags.append({(rel, col), (interm_rel, self.var_mng.interm_col(idx))})
-
-	@staticmethod
-	def order_join_cols_based_on_compiled_plan(
-			build_plan: List[Tuple[str, List[str], List[str]]], compiled_plan: List[List[str]]
-	) -> Dict[str, Dict[str, int]]:  # rel -> col -> idx
-		join_attrs_order = {
-			rel: {col: math.inf for col in join_cols}
-			for rel, join_cols, _ in build_plan
-		}
-		for idx, eq_cols in enumerate(compiled_plan):
-			min_idx = min(idx, *[join_attrs_order[rel][col] for rel, col in eq_cols])
-			for rel, col in eq_cols:
-				join_attrs_order[rel][col] = min_idx
-		return join_attrs_order
 
 
 if __name__ == '__main__':
