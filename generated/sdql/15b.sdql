@@ -1,43 +1,44 @@
-let interm0_trie0 = sum(<x0, mk_trie1> in mk_trie0) {
-	if (x0 in t_trie0) {
-		let t_trie1 = t_trie0(x0)
-		sum(<mk_off, _> in mk_trie1) {
-			sum(<t_off, _> in t_trie1) {
-				{ <mk_movie_id[mk_off], mk_keyword_id[mk_off], t_title[t_off]> -> true }
-			}
-		}
-	}
-}
-----------------------------------------------------------------------------------------------------
-sum(<x0, mi_trie1> in mi_trie0) {
-	if (x0 in interm0_trie0 && x0 in mc_trie0) {
-		let interm0_trie1 = interm0_trie0(x0)
-		let mc_trie1 = mc_trie0(x0)
-		sum(<x1, interm0_trie2> in interm0_trie1) {
-			if (x1 in k_trie0) {
-				let k_trie1 = k_trie0(x1)
-				sum(<x2, mi_trie2> in mi_trie1) {
-					if (x2 in it1_trie0) {
-						let it1_trie1 = it1_trie0(x2)
-						sum(<x3, mc_trie2> in mc_trie1) {
-							if (x3 in ct_trie0) {
-								let ct_trie1 = ct_trie0(x3)
-								sum(<x4, mc_trie3> in mc_trie2) {
-									if (x4 in cn_trie0) {
-										let cn_trie1 = cn_trie0(x4)
-										if (x0 in at_trie0) {
-											let at_trie1 = at_trie0(x0)
-											let mn_mi_info = sum(<mi_off, _> in mi_trie2) { mi_info[mi_off] }
-											let mn_interm0_col2 = sum(<interm0_off, _> in interm0_trie2) { interm0_col2[interm0_off] }
-										}
-									}
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-	}
-}
-----------------------------------------------------------------------------------------------------
+let interm0_trie0 = sum(<x0, mk_trie1> <- mk_trie0)
+	let t_trie1 = t_trie0(x0) in
+	if (t_trie1 != {}) then
+		sum(<mk_off, _> <- mk_trie1)
+			sum(<t_off, _> <- t_trie1)
+				{ <col0=mk_movie_id(mk_off), col1=mk_keyword_id(mk_off), col2=t_title(t_off)> -> true }
+	else
+		{}
+in
+
+sum(<x0, mi_trie1> <- mi_trie0)
+	let interm0_trie1 = interm0_trie0(x0) in
+	let mc_trie1 = mc_trie0(x0) in
+	if (interm0_trie1 != {} && mc_trie1 != {}) then
+		sum(<x1, interm0_trie2> <- interm0_trie1)
+			let k_trie1 = k_trie0(x1) in
+			if (k_trie1 != {}) then
+				sum(<x2, mi_trie2> <- mi_trie1)
+					let it1_trie1 = it1_trie0(x2) in
+					if (it1_trie1 != {}) then
+						sum(<x3, mc_trie2> <- mc_trie1)
+							let ct_trie1 = ct_trie0(x3) in
+							if (ct_trie1 != {}) then
+								sum(<x4, mc_trie3> <- mc_trie2)
+									let cn_trie1 = cn_trie0(x4) in
+									if (cn_trie1 != {}) then
+										let at_trie1 = at_trie0(x0) in
+										if (at_trie1 != {}) then
+											let mn_mi_info = sum(<mi_off, _> <- mi_trie2) { mi_info(mi_off) -> true } in
+											let mn_interm0_col2 = sum(<interm0_off, _> <- interm0_trie2) { interm0_col2(interm0_off) -> true } in
+											<col2=mn_mi_info, col4=mn_interm0_col2>
+										else
+											<col2={}, col4={}>
+									else
+										{}
+							else
+								{}
+					else
+						{}
+			else
+				{}
+	else
+		{}
+

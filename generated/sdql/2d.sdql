@@ -1,18 +1,19 @@
-sum(<x0, mk_trie1> in mk_trie0) {
-	if (x0 in t_trie0 && x0 in mc_trie0) {
-		let t_trie1 = t_trie0(x0)
-		let mc_trie1 = mc_trie0(x0)
-		sum(<x1, mk_trie2> in mk_trie1) {
-			if (x1 in k_trie0) {
-				let k_trie1 = k_trie0(x1)
-				sum(<x2, mc_trie2> in mc_trie1) {
-					if (x2 in cn_trie0) {
-						let cn_trie1 = cn_trie0(x2)
-						let mn_t_title = sum(<t_off, _> in t_trie1) { t_title[t_off] }
-					}
-				}
-			}
-		}
-	}
-}
-----------------------------------------------------------------------------------------------------
+sum(<x0, mk_trie1> <- mk_trie0)
+	let t_trie1 = t_trie0(x0) in
+	let mc_trie1 = mc_trie0(x0) in
+	if (t_trie1 != {} && mc_trie1 != {}) then
+		sum(<x1, mk_trie2> <- mk_trie1)
+			let k_trie1 = k_trie0(x1) in
+			if (k_trie1 != {}) then
+				sum(<x2, mc_trie2> <- mc_trie1)
+					let cn_trie1 = cn_trie0(x2) in
+					if (cn_trie1 != {}) then
+						let mn_t_title = sum(<t_off, _> <- t_trie1) { t_title(t_off) -> true } in
+						<col2=mn_t_title>
+					else
+						<col2={}>
+			else
+				{}
+	else
+		{}
+

@@ -1,46 +1,46 @@
-let interm0_trie0 = sum(<x0, t_trie1> in t_trie0) {
-	if (x0 in miidx_trie0) {
-		let miidx_trie1 = miidx_trie0(x0)
-		sum(<t_off, _> in t_trie1) {
-			sum(<miidx_off, _> in miidx_trie1) {
-				{ <t_id[t_off], t_title[t_off], t_kind_id[t_off], miidx_info[miidx_off], miidx_info_type_id[miidx_off]> -> true }
-			}
-		}
-	}
-}
-----------------------------------------------------------------------------------------------------
-sum(<x0, mi_trie1> in mi_trie0) {
-	if (x0 in interm0_trie0 && x0 in mc_trie0) {
-		let interm0_trie1 = interm0_trie0(x0)
-		let mc_trie1 = mc_trie0(x0)
-		sum(<x1, interm0_trie2> in interm0_trie1) {
-			if (x1 in kt_trie0) {
-				let kt_trie1 = kt_trie0(x1)
-				sum(<x2, mi_trie2> in mi_trie1) {
-					if (x2 in it2_trie0) {
-						let it2_trie1 = it2_trie0(x2)
-						sum(<x3, interm0_trie3> in interm0_trie2) {
-							if (x3 in it_trie0) {
-								let it_trie1 = it_trie0(x3)
-								sum(<x4, mc_trie2> in mc_trie1) {
-									if (x4 in ct_trie0) {
-										let ct_trie1 = ct_trie0(x4)
-										sum(<x5, mc_trie3> in mc_trie2) {
-											if (x5 in cn_trie0) {
-												let cn_trie1 = cn_trie0(x5)
-												let mn_interm0_col1 = sum(<interm0_off, _> in interm0_trie3) { interm0_col1[interm0_off] }
-												let mn_interm0_col3 = sum(<interm0_off, _> in interm0_trie3) { interm0_col3[interm0_off] }
-												let mn_cn_name = sum(<cn_off, _> in cn_trie1) { cn_name[cn_off] }
-											}
-										}
-									}
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-	}
-}
-----------------------------------------------------------------------------------------------------
+let interm0_trie0 = sum(<x0, t_trie1> <- t_trie0)
+	let miidx_trie1 = miidx_trie0(x0) in
+	if (miidx_trie1 != {}) then
+		sum(<t_off, _> <- t_trie1)
+			sum(<miidx_off, _> <- miidx_trie1)
+				{ <col0=t_id(t_off), col1=t_title(t_off), col2=t_kind_id(t_off), col3=miidx_info(miidx_off), col4=miidx_info_type_id(miidx_off)> -> true }
+	else
+		{}
+in
+
+sum(<x0, mi_trie1> <- mi_trie0)
+	let interm0_trie1 = interm0_trie0(x0) in
+	let mc_trie1 = mc_trie0(x0) in
+	if (interm0_trie1 != {} && mc_trie1 != {}) then
+		sum(<x1, interm0_trie2> <- interm0_trie1)
+			let kt_trie1 = kt_trie0(x1) in
+			if (kt_trie1 != {}) then
+				sum(<x2, mi_trie2> <- mi_trie1)
+					let it2_trie1 = it2_trie0(x2) in
+					if (it2_trie1 != {}) then
+						sum(<x3, interm0_trie3> <- interm0_trie2)
+							let it_trie1 = it_trie0(x3) in
+							if (it_trie1 != {}) then
+								sum(<x4, mc_trie2> <- mc_trie1)
+									let ct_trie1 = ct_trie0(x4) in
+									if (ct_trie1 != {}) then
+										sum(<x5, mc_trie3> <- mc_trie2)
+											let cn_trie1 = cn_trie0(x5) in
+											if (cn_trie1 != {}) then
+												let mn_interm0_col1 = sum(<interm0_off, _> <- interm0_trie3) { interm0_col1(interm0_off) -> true } in
+												let mn_interm0_col3 = sum(<interm0_off, _> <- interm0_trie3) { interm0_col3(interm0_off) -> true } in
+												let mn_cn_name = sum(<cn_off, _> <- cn_trie1) { cn_name(cn_off) -> true } in
+												<col4=mn_interm0_col1, col5=mn_interm0_col3, col8=mn_cn_name>
+											else
+												<col4={}, col5={}, col8={}>
+									else
+										{}
+							else
+								{}
+					else
+						{}
+			else
+				{}
+	else
+		{}
+

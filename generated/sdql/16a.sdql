@@ -1,42 +1,42 @@
-let interm0_trie0 = sum(<x0, mk_trie1> in mk_trie0) {
-	if (x0 in t_trie0 && x0 in mc_trie0) {
-		let t_trie1 = t_trie0(x0)
-		let mc_trie1 = mc_trie0(x0)
-		sum(<x1, mk_trie2> in mk_trie1) {
-			if (x1 in k_trie0) {
-				let k_trie1 = k_trie0(x1)
-				sum(<x2, mc_trie2> in mc_trie1) {
-					if (x2 in cn_trie0) {
-						let cn_trie1 = cn_trie0(x2)
-						sum(<mk_off, _> in mk_trie2) {
-							sum(<t_off, _> in t_trie1) {
-								sum(<mc_off, _> in mc_trie2) {
-									{ <mk_movie_id[mk_off], mk_keyword_id[mk_off], t_title[t_off], mc_company_id[mc_off]> -> true }
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-	}
-}
-----------------------------------------------------------------------------------------------------
-sum(<x0, ci_trie1> in ci_trie0) {
-	if (x0 in n_trie0) {
-		let n_trie1 = n_trie0(x0)
-		sum(<x1, ci_trie2> in ci_trie1) {
-			if (x1 in interm0_trie0) {
-				let interm0_trie1 = interm0_trie0(x1)
-				if (x0 in an_trie0) {
-					let an_trie1 = an_trie0(x0)
-					let mn_interm0_col1 = sum(<interm0_off, _> in interm0_trie1) { interm0_col1[interm0_off] }
-					let mn_interm0_col2 = sum(<interm0_off, _> in interm0_trie1) { interm0_col2[interm0_off] }
-					let mn_interm0_col3 = sum(<interm0_off, _> in interm0_trie1) { interm0_col3[interm0_off] }
-					let mn_an_name = sum(<an_off, _> in an_trie1) { an_name[an_off] }
-				}
-			}
-		}
-	}
-}
-----------------------------------------------------------------------------------------------------
+let interm0_trie0 = sum(<x0, mk_trie1> <- mk_trie0)
+	let t_trie1 = t_trie0(x0) in
+	let mc_trie1 = mc_trie0(x0) in
+	if (t_trie1 != {} && mc_trie1 != {}) then
+		sum(<x1, mk_trie2> <- mk_trie1)
+			let k_trie1 = k_trie0(x1) in
+			if (k_trie1 != {}) then
+				sum(<x2, mc_trie2> <- mc_trie1)
+					let cn_trie1 = cn_trie0(x2) in
+					if (cn_trie1 != {}) then
+						sum(<mk_off, _> <- mk_trie2)
+							sum(<t_off, _> <- t_trie1)
+								sum(<mc_off, _> <- mc_trie2)
+									{ <col0=mk_movie_id(mk_off), col1=mk_keyword_id(mk_off), col2=t_title(t_off), col3=mc_company_id(mc_off)> -> true }
+					else
+						{}
+			else
+				{}
+	else
+		{}
+in
+
+sum(<x0, ci_trie1> <- ci_trie0)
+	let n_trie1 = n_trie0(x0) in
+	if (n_trie1 != {}) then
+		sum(<x1, ci_trie2> <- ci_trie1)
+			let interm0_trie1 = interm0_trie0(x1) in
+			if (interm0_trie1 != {}) then
+				let an_trie1 = an_trie0(x0) in
+				if (an_trie1 != {}) then
+					let mn_interm0_col1 = sum(<interm0_off, _> <- interm0_trie1) { interm0_col1(interm0_off) -> true } in
+					let mn_interm0_col2 = sum(<interm0_off, _> <- interm0_trie1) { interm0_col2(interm0_off) -> true } in
+					let mn_interm0_col3 = sum(<interm0_off, _> <- interm0_trie1) { interm0_col3(interm0_off) -> true } in
+					let mn_an_name = sum(<an_off, _> <- an_trie1) { an_name(an_off) -> true } in
+					<col2=mn_interm0_col1, col3=mn_interm0_col2, col4=mn_interm0_col3, col5=mn_an_name>
+				else
+					<col2={}, col3={}, col4={}, col5={}>
+			else
+				{}
+	else
+		{}
+

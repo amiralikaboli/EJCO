@@ -1,30 +1,30 @@
-let interm0_trie0 = sum(<x0, t_trie1> in t_trie0) {
-	if (x0 in mi_idx_trie0) {
-		let mi_idx_trie1 = mi_idx_trie0(x0)
-		sum(<t_off, _> in t_trie1) {
-			sum(<mi_idx_off, _> in mi_idx_trie1) {
-				{ <t_id[t_off], t_title[t_off], t_production_year[t_off], mi_idx_info_type_id[mi_idx_off]> -> true }
-			}
-		}
-	}
-}
-----------------------------------------------------------------------------------------------------
-sum(<x0, mc_trie1> in mc_trie0) {
-	if (x0 in interm0_trie0) {
-		let interm0_trie1 = interm0_trie0(x0)
-		sum(<x1, interm0_trie2> in interm0_trie1) {
-			if (x1 in it_trie0) {
-				let it_trie1 = it_trie0(x1)
-				sum(<x2, mc_trie2> in mc_trie1) {
-					if (x2 in ct_trie0) {
-						let ct_trie1 = ct_trie0(x2)
-						let mn_mc_note = sum(<mc_off, _> in mc_trie2) { mc_note[mc_off] }
-						let mn_interm0_col1 = sum(<interm0_off, _> in interm0_trie2) { interm0_col1[interm0_off] }
-						let mn_interm0_col2 = sum(<interm0_off, _> in interm0_trie2) { interm0_col2[interm0_off] }
-					}
-				}
-			}
-		}
-	}
-}
-----------------------------------------------------------------------------------------------------
+let interm0_trie0 = sum(<x0, t_trie1> <- t_trie0)
+	let mi_idx_trie1 = mi_idx_trie0(x0) in
+	if (mi_idx_trie1 != {}) then
+		sum(<t_off, _> <- t_trie1)
+			sum(<mi_idx_off, _> <- mi_idx_trie1)
+				{ <col0=t_id(t_off), col1=t_title(t_off), col2=t_production_year(t_off), col3=mi_idx_info_type_id(mi_idx_off)> -> true }
+	else
+		{}
+in
+
+sum(<x0, mc_trie1> <- mc_trie0)
+	let interm0_trie1 = interm0_trie0(x0) in
+	if (interm0_trie1 != {}) then
+		sum(<x1, interm0_trie2> <- interm0_trie1)
+			let it_trie1 = it_trie0(x1) in
+			if (it_trie1 != {}) then
+				sum(<x2, mc_trie2> <- mc_trie1)
+					let ct_trie1 = ct_trie0(x2) in
+					if (ct_trie1 != {}) then
+						let mn_mc_note = sum(<mc_off, _> <- mc_trie2) { mc_note(mc_off) -> true } in
+						let mn_interm0_col1 = sum(<interm0_off, _> <- interm0_trie2) { interm0_col1(interm0_off) -> true } in
+						let mn_interm0_col2 = sum(<interm0_off, _> <- interm0_trie2) { interm0_col2(interm0_off) -> true } in
+						<col2=mn_mc_note, col4=mn_interm0_col1, col5=mn_interm0_col2>
+					else
+						<col2={}, col4={}, col5={}>
+			else
+				{}
+	else
+		{}
+
