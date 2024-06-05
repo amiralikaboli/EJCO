@@ -20,10 +20,10 @@ let interm0_trie0 = sum(<x0, mi_trie1> <- mi_trie0)
 				sum(<x2, mc_trie2> <- mc_trie1)
 					let cn_trie1 = cn_trie0(x2) in
 					if (cn_trie1 != {}) then
-						sum(<mi_off, _> <- mi_trie2)
-							sum(<t_off, _> <- t_trie1)
-								sum(<mc_off, _> <- mc_trie2)
-									{ <col0=mi_movie_id(mi_off), col1=mi_info_type_id(mi_off), col2=t_title(t_off), col3=mc_company_id(mc_off)> -> true }
+						sum(<mi_tuple, _> <- mi_trie2)
+							sum(<t_tuple, _> <- t_trie1)
+								sum(<mc_tuple, _> <- mc_trie2)
+									{ <col0=mi_tuple.movie_id, col1=mi_tuple.info_type_id, col2=t_tuple.title, col3=mc_tuple.company_id> -> true }
 					else
 						{}
 			else
@@ -36,8 +36,8 @@ in
 let interm1_trie0 = sum(<x0, n_trie1> <- n_trie0)
 	let an_trie1 = an_trie0(x0) in
 	if (an_trie1 != {}) then
-		sum(<n_off, _> <- n_trie1)
-			{ <col0=n_id(n_off), col1=n_name(n_off)> -> true }
+		sum(<n_tuple, _> <- n_trie1)
+			{ <col0=n_tuple.id, col1=n_tuple.name> -> true }
 	else
 		{}
 in
@@ -55,10 +55,10 @@ sum(<x0, ci_trie1> <- ci_trie0)
 						sum(<x3, ci_trie4> <- ci_trie3)
 							let interm0_trie1 = interm0_trie0(x3) in
 							if (interm0_trie1 != {}) then
-								let mn_interm1_col1 = sum(<interm1_off, _> <- interm1_trie1) { interm1_col1(interm1_off) -> true } in
-								let mn_interm0_col1 = sum(<interm0_off, _> <- interm0_trie1) { interm0_col1(interm0_off) -> true } in
-								let mn_interm0_col2 = sum(<interm0_off, _> <- interm0_trie1) { interm0_col2(interm0_off) -> true } in
-								let mn_interm0_col3 = sum(<interm0_off, _> <- interm0_trie1) { interm0_col3(interm0_off) -> true } in
+								let mn_interm1_col1 = sum(<interm1_tuple, _> <- interm1_trie1) interm1_tuple.col1 in
+								let mn_interm0_col1 = sum(<interm0_tuple, _> <- interm0_trie1) interm0_tuple.col1 in
+								let mn_interm0_col2 = sum(<interm0_tuple, _> <- interm0_trie1) interm0_tuple.col2 in
+								let mn_interm0_col3 = sum(<interm0_tuple, _> <- interm0_trie1) interm0_tuple.col3 in
 								<col4=mn_interm1_col1, col5=mn_interm0_col1, col6=mn_interm0_col2, col7=mn_interm0_col3>
 							else
 								<col4={}, col5={}, col6={}, col7={}>

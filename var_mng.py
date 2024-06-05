@@ -46,6 +46,10 @@ class VariableManager:
 		return f"{rel}_{Templates.OffsetVar.value}"
 
 	@staticmethod
+	def tuple_var(rel: str):
+		return f"{rel}_{Templates.TupleVar.value}"
+
+	@staticmethod
 	def attr_var(idx: int):
 		return f"{Templates.AttrVar.value}{idx}"
 

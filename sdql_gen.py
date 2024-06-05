@@ -86,7 +86,7 @@ class SDQLGenerator:
 			elems = list()
 			for rel, _, proj_cols in build_plan:
 				for col in proj_cols:
-					yield f"let {self.var_mng.mn_var(rel, col)} = sum(<{self.var_mng.offset_var(rel)}, _> <- {self.var_mng.trie_var(rel)}) {{ {self.var_mng.rel_col_var(rel, col)}({self.var_mng.offset_var(rel)}) -> true }} in\n"
+					yield f"let {self.var_mng.mn_var(rel, col)} = sum(<{self.var_mng.tuple_var(rel)}, _> <- {self.var_mng.trie_var(rel)}) {self.var_mng.tuple_var(rel)}.{col} in\n"
 					elems.append((self.var_mng.interm_col(interm_col2idx[(rel, col)]), self.var_mng.mn_var(rel, col)))
 			yield f"<{', '.join([f'{elem_key}={elem_val}' for elem_key, elem_val in elems])}>\n"
 			else_cases[-1] = (f"<{', '.join([f'{elem_key}={{}}' for elem_key, _ in elems])}>", self.indent)
@@ -95,14 +95,11 @@ class SDQLGenerator:
 			for _, (rel, col) in interm_cols:
 				interm_rel2cols[rel].append(col)
 			for rel, cols in interm_rel2cols.items():
-				yield f"sum(<{self.var_mng.offset_var(rel)}, _> <- {self.var_mng.trie_var(rel)})\n"
+				yield f"sum(<{self.var_mng.tuple_var(rel)}, _> <- {self.var_mng.trie_var(rel)})\n"
 				self.indent += 1
 			final_attrs = []
 			for idx, (rel, col) in interm_cols:
-				final_attrs.append(
-					f"{self.var_mng.interm_col(idx)}="
-					f"{self.var_mng.rel_col_var(rel, col)}({self.var_mng.offset_var(rel)})"
-				)
+				final_attrs.append(f"{self.var_mng.interm_col(idx)}={self.var_mng.tuple_var(rel)}.{col}")
 			yield f'{{ <{", ".join(final_attrs)}> -> true }}\n'
 
 		for else_case, indent in else_cases[::-1]:

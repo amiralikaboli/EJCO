@@ -10,8 +10,8 @@ let an1 = load[{<id: int, person_id: int, name: string, imdb_index: string, name
 let interm0_trie0 = sum(<x0, mc_trie1> <- mc_trie0)
 	let cn_trie1 = cn_trie0(x0) in
 	if (cn_trie1 != {}) then
-		sum(<mc_off, _> <- mc_trie1)
-			{ <col0=mc_company_id(mc_off), col1=mc_movie_id(mc_off)> -> true }
+		sum(<mc_tuple, _> <- mc_trie1)
+			{ <col0=mc_tuple.company_id, col1=mc_tuple.movie_id> -> true }
 	else
 		{}
 in
@@ -30,9 +30,9 @@ sum(<x0, ci_trie1> <- ci_trie0)
 						if (t_trie1 != {}) then
 							let an1_trie1 = an1_trie0(x0) in
 							if (an1_trie1 != {}) then
-								let mn_interm0_col0 = sum(<interm0_off, _> <- interm0_trie1) { interm0_col0(interm0_off) -> true } in
-								let mn_t_title = sum(<t_off, _> <- t_trie1) { t_title(t_off) -> true } in
-								let mn_an1_name = sum(<an1_off, _> <- an1_trie1) { an1_name(an1_off) -> true } in
+								let mn_interm0_col0 = sum(<interm0_tuple, _> <- interm0_trie1) interm0_tuple.col0 in
+								let mn_t_title = sum(<t_tuple, _> <- t_trie1) t_tuple.title in
+								let mn_an1_name = sum(<an1_tuple, _> <- an1_trie1) an1_tuple.name in
 								<col3=mn_interm0_col0, col4=mn_t_title, col5=mn_an1_name>
 							else
 								<col3={}, col4={}, col5={}>

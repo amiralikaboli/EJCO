@@ -15,6 +15,7 @@ class Templates(enum.Enum):
 	TrieVar = "trie"
 	XVar = "x"
 	OffsetVar = "off"
+	TupleVar = "tuple"
 	AttrVar = "attr"
 	MinVar = "mn"
 	LoadFunc = "load"

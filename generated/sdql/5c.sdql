@@ -15,7 +15,7 @@ sum(<x0, mi_trie1> <- mi_trie0)
 				sum(<x2, mc_trie2> <- mc_trie1)
 					let ct_trie1 = ct_trie0(x2) in
 					if (ct_trie1 != {}) then
-						let mn_t_title = sum(<t_off, _> <- t_trie1) { t_title(t_off) -> true } in
+						let mn_t_title = sum(<t_tuple, _> <- t_trie1) t_tuple.title in
 						<col2=mn_t_title>
 					else
 						<col2={}>
