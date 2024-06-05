@@ -12,7 +12,7 @@ let k = load[{<id: int, keyword: string, phonetic_code: string> -> int}]("/Users
 let mi = load[{<id: int, movie_id: int, info_type_id: int, info: string, note: string> -> int}]("/Users/s2522996/Documents/free-join/queries/preprocessed/join-order-benchmark/data/27b/mi.csv")
 
 
-let interm0_trie0 = sum(<x0, ml_trie1> <- ml_trie0)
+let interm0 = sum(<x0, ml_trie1> <- ml_trie0)
 	let lt_trie1 = lt_trie0(x0) in
 	if (lt_trie1 != {}) then
 		sum(<ml_tuple, _> <- ml_trie1)
@@ -23,7 +23,7 @@ let interm0_trie0 = sum(<x0, ml_trie1> <- ml_trie0)
 in
 
 
-let interm1_trie0 = sum(<x0, cc_trie1> <- cc_trie0)
+let interm1 = sum(<x0, cc_trie1> <- cc_trie0)
 	let cct1_trie1 = cct1_trie0(x0) in
 	if (cct1_trie1 != {}) then
 		sum(<x1, cc_trie2> <- cc_trie1)
@@ -44,7 +44,7 @@ let interm1_trie0 = sum(<x0, cc_trie1> <- cc_trie0)
 in
 
 
-let interm2_trie0 = sum(<x0, t_trie1> <- t_trie0)
+let interm2 = sum(<x0, t_trie1> <- t_trie0)
 	let interm1_trie1 = interm1_trie0(x0) in
 	if (interm1_trie1 != {}) then
 		sum(<t_tuple, _> <- t_trie1)
@@ -55,7 +55,7 @@ let interm2_trie0 = sum(<x0, t_trie1> <- t_trie0)
 in
 
 
-let interm3_trie0 = sum(<x0, mc_trie1> <- mc_trie0)
+let interm3 = sum(<x0, mc_trie1> <- mc_trie0)
 	let ct_trie1 = ct_trie0(x0) in
 	if (ct_trie1 != {}) then
 		sum(<x1, mc_trie2> <- mc_trie1)
@@ -77,7 +77,7 @@ let interm3_trie0 = sum(<x0, mc_trie1> <- mc_trie0)
 in
 
 
-let interm4_trie0 = sum(<x0, mk_trie1> <- mk_trie0)
+let interm4 = sum(<x0, mk_trie1> <- mk_trie0)
 	let k_trie1 = k_trie0(x0) in
 	if (k_trie1 != {}) then
 		sum(<x1, mk_trie2> <- mk_trie1)

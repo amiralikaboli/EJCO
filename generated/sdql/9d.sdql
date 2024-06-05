@@ -8,7 +8,7 @@ let chn = load[{<id: int, name: string, imdb_index: string, imdb_id: int, name_p
 let an = load[{<id: int, person_id: int, name: string, imdb_index: string, name_pcode_cf: string, name_pcode_nf: string, surname_pcode: string, md5sum: string> -> int}]("/Users/s2522996/Documents/free-join/data/imdb_csv/aka_name.csv")
 
 
-let interm0_trie0 = sum(<x0, mc_trie1> <- mc_trie0)
+let interm0 = sum(<x0, mc_trie1> <- mc_trie0)
 	let cn_trie1 = cn_trie0(x0) in
 	if (cn_trie1 != {}) then
 		sum(<mc_tuple, _> <- mc_trie1)

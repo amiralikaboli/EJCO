@@ -8,7 +8,7 @@ let it2 = load[{<id: int, info: string> -> int}]("/Users/s2522996/Documents/free
 let it1 = load[{<id: int, info: string> -> int}]("/Users/s2522996/Documents/free-join/queries/preprocessed/join-order-benchmark/data/14b/it1.csv")
 
 
-let interm0_trie0 = sum(<x0, mk_trie1> <- mk_trie0)
+let interm0 = sum(<x0, mk_trie1> <- mk_trie0)
 	let t_trie1 = t_trie0(x0) in
 	let mi_idx_trie1 = mi_idx_trie0(x0) in
 	if (t_trie1 != {} && mi_idx_trie1 != {}) then

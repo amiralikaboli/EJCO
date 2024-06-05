@@ -10,7 +10,7 @@ let rt = load[{<id: int, role: string> -> int}]("/Users/s2522996/Documents/free-
 let chn = load[{<id: int, name: string, imdb_index: string, imdb_id: int, name_pcode_cf: string, surname_pcode: string, md5sum: string> -> int}]("/Users/s2522996/Documents/free-join/data/imdb_csv/char_name.csv")
 
 
-let interm0_trie0 = sum(<x0, mi_trie1> <- mi_trie0)
+let interm0 = sum(<x0, mi_trie1> <- mi_trie0)
 	let t_trie1 = t_trie0(x0) in
 	let mc_trie1 = mc_trie0(x0) in
 	if (t_trie1 != {} && mc_trie1 != {}) then
@@ -33,7 +33,7 @@ let interm0_trie0 = sum(<x0, mi_trie1> <- mi_trie0)
 in
 
 
-let interm1_trie0 = sum(<x0, n_trie1> <- n_trie0)
+let interm1 = sum(<x0, n_trie1> <- n_trie0)
 	let an_trie1 = an_trie0(x0) in
 	if (an_trie1 != {}) then
 		sum(<n_tuple, _> <- n_trie1)

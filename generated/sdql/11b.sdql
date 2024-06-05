@@ -8,7 +8,7 @@ let ct = load[{<id: int, kind: string> -> int}]("/Users/s2522996/Documents/free-
 let cn = load[{<id: int, name: string, country_code: string, imdb_id: string, name_pcode_nf: string, name_pcode_sf: string, md5sum: string> -> int}]("/Users/s2522996/Documents/free-join/queries/preprocessed/join-order-benchmark/data/11b/cn.csv")
 
 
-let interm0_trie0 = sum(<x0, t_trie1> <- t_trie0)
+let interm0 = sum(<x0, t_trie1> <- t_trie0)
 	let ml_trie1 = ml_trie0(x0) in
 	if (ml_trie1 != {}) then
 		sum(<t_tuple, _> <- t_trie1)

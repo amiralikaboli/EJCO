@@ -7,7 +7,7 @@ let ci = load[{<id: int, person_id: int, movie_id: int, person_role_id: int, not
 let n = load[{<id: int, name: string, imdb_index: string, imdb_id: string, gender: string, name_pcode_cf: string, name_pcode_nf: string, surname_pcode: string, md5sum: string> -> int}]("/Users/s2522996/Documents/free-join/queries/preprocessed/join-order-benchmark/data/17d/n.csv")
 
 
-let interm0_trie0 = sum(<x0, mk_trie1> <- mk_trie0)
+let interm0 = sum(<x0, mk_trie1> <- mk_trie0)
 	let t_trie1 = t_trie0(x0) in
 	let mc_trie1 = mc_trie0(x0) in
 	if (t_trie1 != {} && mc_trie1 != {}) then

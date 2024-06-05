@@ -4,7 +4,7 @@ let mi = load[{<id: int, movie_id: int, info_type_id: int, info: string, note: s
 let k = load[{<id: int, keyword: string, phonetic_code: string> -> int}]("/Users/s2522996/Documents/free-join/queries/preprocessed/join-order-benchmark/data/3a/k.csv")
 
 
-let interm0_trie0 = sum(<x0, mk_trie1> <- mk_trie0)
+let interm0 = sum(<x0, mk_trie1> <- mk_trie0)
 	let t_trie1 = t_trie0(x0) in
 	if (t_trie1 != {}) then
 		sum(<mk_tuple, _> <- mk_trie1)
