@@ -24,7 +24,7 @@ class CPPGenerator:
 		self.involved_cols = set()
 		self.loaded_rels = set()
 
-	def generate(self, query: str, plans: List[Tuple[Tuple[str, List], List, List]]):
+	def generate(self, query: str, plans: List[Tuple[Tuple[str, List, List], List, List]]):
 		for idx, (node, build_plan, compiled_plan) in enumerate(plans):
 			plans[idx] = (node, self._make_join_cols_order_consistent(build_plan, compiled_plan), compiled_plan)
 
@@ -49,7 +49,7 @@ class CPPGenerator:
 			cpp_file.write('\t' * self.indent + 'timer.Reset();\n\n')
 
 			for idx, (node, build_plan, compiled_plan) in enumerate(plans):
-				interm_rel, _ = node
+				interm_rel, _, _ = node
 				for line in self._generate_build_plan(interm_rel, build_plan):
 					cpp_file.write('\t' * self.indent + line)
 				cpp_file.write('\t' * self.indent + f'timer.StoreElapsedTime({idx * 2});\n')
@@ -113,11 +113,11 @@ class CPPGenerator:
 
 	def _generate_compiled_plan(
 			self,
-			node: Tuple[str, List[Tuple[str, str]]],
+			node: Tuple[str, List[Tuple[str, str]], List[int]],
 			build_plan: List[Tuple[str, List[str], List[str]]],
 			compiled_plan: List[List[Tuple[str, str]]]
 	):
-		interm_rel, interm_cols = node
+		interm_rel, interm_cols, _ = node
 
 		if self.var_mng.is_root_rel(interm_rel):
 			proj_relcols, proj_col_types = self._find_all_proj_cols_and_types(build_plan)

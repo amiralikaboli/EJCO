@@ -15,7 +15,7 @@ class PlanParser:
 	def clear(self):
 		self.bags = list()
 
-	def parse(self, query: str, use_cache: bool = False) -> List[Tuple[Tuple[str, List], List, List]]:
+	def parse(self, query: str, use_cache: bool = False) -> List[Tuple[Tuple[str, List, List], List, List]]:
 		if use_cache and os.path.exists(os.path.join(plans_path, "parsed", f"{query}.log")):
 			with open(os.path.join(plans_path, "parsed", f"{query}.log"), 'r') as log_file:
 				lines = log_file.readlines()
@@ -124,17 +124,19 @@ class PlanParser:
 	def _resolve_intermediate_stuff(
 			self,
 			plans: List[Tuple[str, List, List]]
-	) -> List[Tuple[Tuple[str, List], List, List]]:
+	) -> List[Tuple[Tuple[str, List, List], List, List]]:
 		for idx_u, (node_u, build_u, compiled_u) in enumerate(plans):
 			interm_rel = self.var_mng.interm_rel(idx_u)
 			interm_cols = self._intermediate_columns_list(build_u, compiled_u)
 			interm_cols_enumerated = [(idx, rel_col) for idx, rel_col in enumerate(interm_cols)]
+			interm_trie_levels = list()
 			self._update_bags(compiled_u, interm_rel, interm_cols)
 
 			found = False
 			for idx_d, (node_d, build_d, compiled_d) in enumerate(plans[idx_u + 1:], start=idx_u + 1):
 				for build_d_idx, (can_node_u, can_join_cols, can_proj_cols) in enumerate(build_d):
 					if can_node_u == node_u:
+						interm_trie_levels = can_join_cols
 						build_d[build_d_idx] = (
 							interm_rel,
 							[self.var_mng.interm_col(i) for i in can_join_cols],
@@ -154,8 +156,8 @@ class PlanParser:
 					break
 
 				plans[idx_d] = (node_d, build_d, compiled_d)
-			plans[idx_u] = ((interm_rel, interm_cols_enumerated), build_u, compiled_u)
-		plans[-1] = (('root', plans[-1][0][1]), plans[-1][1], plans[-1][2])
+			plans[idx_u] = ((interm_rel, interm_cols_enumerated, interm_trie_levels), build_u, compiled_u)
+		plans[-1] = (('root', plans[-1][0][1], []), plans[-1][1], plans[-1][2])
 		return plans
 
 	@staticmethod

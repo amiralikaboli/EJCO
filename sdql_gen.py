@@ -17,7 +17,7 @@ class SDQLGenerator:
 		self.indent = 0
 		self.resolved_attrs = set()
 
-	def generate(self, query: str, plans: List[Tuple[Tuple[str, List], List, List]]):
+	def generate(self, query: str, plans: List[Tuple[Tuple[str, List, List], List, List]]):
 		with open(os.path.join(generated_dir_path, "sdql", f"{query}.sdql"), "w") as sdql_file:
 			build_plans = [build_plan for _, build_plan, _ in plans]
 			for line in self._generate_loads(query, build_plans):
@@ -58,11 +58,11 @@ class SDQLGenerator:
 
 	def _generate_compiled_plan(
 			self,
-			node: Tuple[str, List[Tuple[int, Tuple[str, str]]]],
+			node: Tuple[str, List[Tuple[int, Tuple[str, str]]], List[int]],
 			build_plan: List[Tuple[str, List[str], List[str]]],
 			compiled_plan: List[List[Tuple[str, str]]]
 	):
-		interm_rel, interm_cols = node
+		interm_rel, interm_cols, interm_trie_cols = node
 
 		if not self.var_mng.is_root_rel(interm_rel):
 			yield f"let {interm_rel} = "
@@ -112,10 +112,15 @@ class SDQLGenerator:
 			for rel, cols in interm_rel2cols.items():
 				yield f"sum(<{self.var_mng.tuple_var(rel)}, _> <- {self.var_mng.trie_var(rel)})\n"
 				self.indent += 1
-			final_attrs = []
-			for idx, (rel, col) in interm_cols:
-				final_attrs.append(f"{self.var_mng.interm_col(idx)}={self.var_mng.tuple_var(rel)}.{col}")
-			yield f'{{ <{", ".join(final_attrs)}> -> true }}\n'
+			new2old_map = {
+				self.var_mng.interm_col(idx): f"{self.var_mng.tuple_var(rel)}.{col}"
+				for idx, (rel, col) in interm_cols
+			}
+			tuple_value = f"<{', '.join([f'{new_col}={old_col}' for new_col, old_col in new2old_map.items()])}>"
+			trie_value = tuple_value
+			for idx in interm_trie_cols[::-1]:
+				trie_value = f"{{ {new2old_map[self.var_mng.interm_col(idx)]} -> {trie_value} }}"
+			yield f'{trie_value}\n'
 
 		for else_case, indent in else_cases[::-1]:
 			self.indent = indent - 1

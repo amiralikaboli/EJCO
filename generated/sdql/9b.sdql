@@ -20,7 +20,7 @@ let interm0 = sum(<x0, mc_trie1> <- mc_trie0)
 	let cn_trie1 = cn_trie0(x0) in
 	if (cn_trie1 != {}) then
 		sum(<mc_tuple, _> <- mc_trie1)
-			{ <col0=mc_tuple.company_id, col1=mc_tuple.movie_id> -> true }
+			{ mc_tuple.movie_id -> <col0=mc_tuple.company_id, col1=mc_tuple.movie_id> }
 	else
 		{}
 in
