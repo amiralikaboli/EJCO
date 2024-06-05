@@ -1,3 +1,12 @@
+let mc = load[{<id: int, movie_id: int, company_id: int, company_type_id: int, note: string> -> int}]("/Users/s2522996/Documents/free-join/data/imdb_csv/movie_companies.csv")
+let t = load[{<id: int, title: string, imdb_index: string, kind_id: int, production_year: int, imdb_id: string, phonetic_code: string, episode_of_id: int, season_nr: int, episode_nr: int, series_years: string, md5sum: string> -> int}]("/Users/s2522996/Documents/free-join/queries/preprocessed/join-order-benchmark/data/10a/t.csv")
+let ct = load[{<id: int, kind: string> -> int}]("/Users/s2522996/Documents/free-join/data/imdb_csv/company_type.csv")
+let cn = load[{<id: int, name: string, country_code: string, imdb_id: string, name_pcode_nf: string, name_pcode_sf: string, md5sum: string> -> int}]("/Users/s2522996/Documents/free-join/queries/preprocessed/join-order-benchmark/data/10a/cn.csv")
+let ci = load[{<id: int, person_id: int, movie_id: int, person_role_id: int, note: string, nr_order: int, role_id: int> -> int}]("/Users/s2522996/Documents/free-join/queries/preprocessed/join-order-benchmark/data/10a/ci.csv")
+let rt = load[{<id: int, role: string> -> int}]("/Users/s2522996/Documents/free-join/queries/preprocessed/join-order-benchmark/data/10a/rt.csv")
+let chn = load[{<id: int, name: string, imdb_index: string, imdb_id: int, name_pcode_cf: string, surname_pcode: string, md5sum: string> -> int}]("/Users/s2522996/Documents/free-join/data/imdb_csv/char_name.csv")
+
+
 let interm0_trie0 = sum(<x0, mc_trie1> <- mc_trie0)
 	let t_trie1 = t_trie0(x0) in
 	if (t_trie1 != {}) then
@@ -17,6 +26,7 @@ let interm0_trie0 = sum(<x0, mc_trie1> <- mc_trie0)
 	else
 		{}
 in
+
 
 sum(<x0, ci_trie1> <- ci_trie0)
 	let rt_trie1 = rt_trie0(x0) in
@@ -38,4 +48,5 @@ sum(<x0, ci_trie1> <- ci_trie0)
 				{}
 	else
 		{}
+
 

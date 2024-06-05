@@ -1,3 +1,13 @@
+let n = load[{<id: int, name: string, imdb_index: string, imdb_id: string, gender: string, name_pcode_cf: string, name_pcode_nf: string, surname_pcode: string, md5sum: string> -> int}]("/Users/s2522996/Documents/free-join/queries/preprocessed/join-order-benchmark/data/7a/n.csv")
+let pi = load[{<id: int, person_id: int, info_type_id: int, info: string, note: string> -> int}]("/Users/s2522996/Documents/free-join/queries/preprocessed/join-order-benchmark/data/7a/pi.csv")
+let it = load[{<id: int, info: string> -> int}]("/Users/s2522996/Documents/free-join/queries/preprocessed/join-order-benchmark/data/7a/it.csv")
+let t = load[{<id: int, title: string, imdb_index: string, kind_id: int, production_year: int, imdb_id: string, phonetic_code: string, episode_of_id: int, season_nr: int, episode_nr: int, series_years: string, md5sum: string> -> int}]("/Users/s2522996/Documents/free-join/queries/preprocessed/join-order-benchmark/data/7a/t.csv")
+let ml = load[{<id: int, movie_id: int, linked_movie_id: int, link_type_id: int> -> int}]("/Users/s2522996/Documents/free-join/data/imdb_csv/movie_link.csv")
+let lt = load[{<id: int, link: string> -> int}]("/Users/s2522996/Documents/free-join/queries/preprocessed/join-order-benchmark/data/7a/lt.csv")
+let ci = load[{<id: int, person_id: int, movie_id: int, person_role_id: int, note: string, nr_order: int, role_id: int> -> int}]("/Users/s2522996/Documents/free-join/data/imdb_csv/cast_info.csv")
+let an = load[{<id: int, person_id: int, name: string, imdb_index: string, name_pcode_cf: string, name_pcode_nf: string, surname_pcode: string, md5sum: string> -> int}]("/Users/s2522996/Documents/free-join/queries/preprocessed/join-order-benchmark/data/7a/an.csv")
+
+
 let interm0_trie0 = sum(<x0, n_trie1> <- n_trie0)
 	let pi_trie1 = pi_trie0(x0) in
 	if (pi_trie1 != {}) then
@@ -13,6 +23,7 @@ let interm0_trie0 = sum(<x0, n_trie1> <- n_trie0)
 		{}
 in
 
+
 let interm1_trie0 = sum(<x0, t_trie1> <- t_trie0)
 	let ml_trie1 = ml_trie0(x0) in
 	if (ml_trie1 != {}) then
@@ -27,6 +38,7 @@ let interm1_trie0 = sum(<x0, t_trie1> <- t_trie0)
 	else
 		{}
 in
+
 
 sum(<x0, ci_trie1> <- ci_trie0)
 	let interm1_trie1 = interm1_trie0(x0) in
@@ -44,4 +56,5 @@ sum(<x0, ci_trie1> <- ci_trie0)
 				<col2={}, col3={}, col4={}, col5={}>
 	else
 		{}
+
 

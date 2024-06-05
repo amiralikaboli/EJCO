@@ -1,3 +1,22 @@
+let cc = load[{<id: int, movie_id: int, subject_id: int, status_id: int> -> int}]("/Users/s2522996/Documents/free-join/data/imdb_csv/complete_cast.csv")
+let cct1 = load[{<id: int, kind: string> -> int}]("/Users/s2522996/Documents/free-join/queries/preprocessed/join-order-benchmark/data/29c/cct1.csv")
+let cct2 = load[{<id: int, kind: string> -> int}]("/Users/s2522996/Documents/free-join/queries/preprocessed/join-order-benchmark/data/29c/cct2.csv")
+let t = load[{<id: int, title: string, imdb_index: string, kind_id: int, production_year: int, imdb_id: string, phonetic_code: string, episode_of_id: int, season_nr: int, episode_nr: int, series_years: string, md5sum: string> -> int}]("/Users/s2522996/Documents/free-join/queries/preprocessed/join-order-benchmark/data/29c/t.csv")
+let mc = load[{<id: int, movie_id: int, company_id: int, company_type_id: int, note: string> -> int}]("/Users/s2522996/Documents/free-join/data/imdb_csv/movie_companies.csv")
+let cn = load[{<id: int, name: string, country_code: string, imdb_id: string, name_pcode_nf: string, name_pcode_sf: string, md5sum: string> -> int}]("/Users/s2522996/Documents/free-join/queries/preprocessed/join-order-benchmark/data/29c/cn.csv")
+let mk = load[{<id: int, movie_id: int, keyword_id: int> -> int}]("/Users/s2522996/Documents/free-join/data/imdb_csv/movie_keyword.csv")
+let k = load[{<id: int, keyword: string, phonetic_code: string> -> int}]("/Users/s2522996/Documents/free-join/queries/preprocessed/join-order-benchmark/data/29c/k.csv")
+let mi = load[{<id: int, movie_id: int, info_type_id: int, info: string, note: string> -> int}]("/Users/s2522996/Documents/free-join/queries/preprocessed/join-order-benchmark/data/29c/mi.csv")
+let it = load[{<id: int, info: string> -> int}]("/Users/s2522996/Documents/free-join/queries/preprocessed/join-order-benchmark/data/29c/it.csv")
+let pi = load[{<id: int, person_id: int, info_type_id: int, info: string, note: string> -> int}]("/Users/s2522996/Documents/free-join/data/imdb_csv/person_info.csv")
+let an = load[{<id: int, person_id: int, name: string, imdb_index: string, name_pcode_cf: string, name_pcode_nf: string, surname_pcode: string, md5sum: string> -> int}]("/Users/s2522996/Documents/free-join/data/imdb_csv/aka_name.csv")
+let it3 = load[{<id: int, info: string> -> int}]("/Users/s2522996/Documents/free-join/queries/preprocessed/join-order-benchmark/data/29c/it3.csv")
+let n = load[{<id: int, name: string, imdb_index: string, imdb_id: string, gender: string, name_pcode_cf: string, name_pcode_nf: string, surname_pcode: string, md5sum: string> -> int}]("/Users/s2522996/Documents/free-join/queries/preprocessed/join-order-benchmark/data/29c/n.csv")
+let ci = load[{<id: int, person_id: int, movie_id: int, person_role_id: int, note: string, nr_order: int, role_id: int> -> int}]("/Users/s2522996/Documents/free-join/queries/preprocessed/join-order-benchmark/data/29c/ci.csv")
+let chn = load[{<id: int, name: string, imdb_index: string, imdb_id: int, name_pcode_cf: string, surname_pcode: string, md5sum: string> -> int}]("/Users/s2522996/Documents/free-join/data/imdb_csv/char_name.csv")
+let rt = load[{<id: int, role: string> -> int}]("/Users/s2522996/Documents/free-join/queries/preprocessed/join-order-benchmark/data/29c/rt.csv")
+
+
 let interm0_trie0 = sum(<x0, cc_trie1> <- cc_trie0)
 	let cct1_trie1 = cct1_trie0(x0) in
 	if (cct1_trie1 != {}) then
@@ -12,6 +31,7 @@ let interm0_trie0 = sum(<x0, cc_trie1> <- cc_trie0)
 		{}
 in
 
+
 let interm1_trie0 = sum(<x0, t_trie1> <- t_trie0)
 	let interm0_trie1 = interm0_trie0(x0) in
 	if (interm0_trie1 != {}) then
@@ -21,6 +41,7 @@ let interm1_trie0 = sum(<x0, t_trie1> <- t_trie0)
 	else
 		{}
 in
+
 
 let interm2_trie0 = sum(<x0, mc_trie1> <- mc_trie0)
 	let cn_trie1 = cn_trie0(x0) in
@@ -37,6 +58,7 @@ let interm2_trie0 = sum(<x0, mc_trie1> <- mc_trie0)
 		{}
 in
 
+
 let interm3_trie0 = sum(<x0, mk_trie1> <- mk_trie0)
 	let k_trie1 = k_trie0(x0) in
 	if (k_trie1 != {}) then
@@ -51,6 +73,7 @@ let interm3_trie0 = sum(<x0, mk_trie1> <- mk_trie0)
 	else
 		{}
 in
+
 
 let interm4_trie0 = sum(<x0, mi_trie1> <- mi_trie0)
 	let it_trie1 = it_trie0(x0) in
@@ -67,6 +90,7 @@ let interm4_trie0 = sum(<x0, mi_trie1> <- mi_trie0)
 		{}
 in
 
+
 let interm5_trie0 = sum(<x0, pi_trie1> <- pi_trie0)
 	let an_trie1 = an_trie0(x0) in
 	if (an_trie1 != {}) then
@@ -81,6 +105,7 @@ let interm5_trie0 = sum(<x0, pi_trie1> <- pi_trie0)
 		{}
 in
 
+
 let interm6_trie0 = sum(<x0, n_trie1> <- n_trie0)
 	let interm5_trie1 = interm5_trie0(x0) in
 	if (interm5_trie1 != {}) then
@@ -90,6 +115,7 @@ let interm6_trie0 = sum(<x0, n_trie1> <- n_trie0)
 	else
 		{}
 in
+
 
 sum(<x0, ci_trie1> <- ci_trie0)
 	let chn_trie1 = chn_trie0(x0) in
@@ -121,4 +147,5 @@ sum(<x0, ci_trie1> <- ci_trie0)
 				{}
 	else
 		{}
+
 

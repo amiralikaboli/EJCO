@@ -1,3 +1,15 @@
+let mi = load[{<id: int, movie_id: int, info_type_id: int, info: string, note: string> -> int}]("/Users/s2522996/Documents/free-join/data/imdb_csv/movie_info.csv")
+let t = load[{<id: int, title: string, imdb_index: string, kind_id: int, production_year: int, imdb_id: string, phonetic_code: string, episode_of_id: int, season_nr: int, episode_nr: int, series_years: string, md5sum: string> -> int}]("/Users/s2522996/Documents/free-join/queries/preprocessed/join-order-benchmark/data/19d/t.csv")
+let mc = load[{<id: int, movie_id: int, company_id: int, company_type_id: int, note: string> -> int}]("/Users/s2522996/Documents/free-join/data/imdb_csv/movie_companies.csv")
+let it = load[{<id: int, info: string> -> int}]("/Users/s2522996/Documents/free-join/queries/preprocessed/join-order-benchmark/data/19d/it.csv")
+let cn = load[{<id: int, name: string, country_code: string, imdb_id: string, name_pcode_nf: string, name_pcode_sf: string, md5sum: string> -> int}]("/Users/s2522996/Documents/free-join/queries/preprocessed/join-order-benchmark/data/19d/cn.csv")
+let n = load[{<id: int, name: string, imdb_index: string, imdb_id: string, gender: string, name_pcode_cf: string, name_pcode_nf: string, surname_pcode: string, md5sum: string> -> int}]("/Users/s2522996/Documents/free-join/queries/preprocessed/join-order-benchmark/data/19d/n.csv")
+let an = load[{<id: int, person_id: int, name: string, imdb_index: string, name_pcode_cf: string, name_pcode_nf: string, surname_pcode: string, md5sum: string> -> int}]("/Users/s2522996/Documents/free-join/data/imdb_csv/aka_name.csv")
+let ci = load[{<id: int, person_id: int, movie_id: int, person_role_id: int, note: string, nr_order: int, role_id: int> -> int}]("/Users/s2522996/Documents/free-join/queries/preprocessed/join-order-benchmark/data/19d/ci.csv")
+let rt = load[{<id: int, role: string> -> int}]("/Users/s2522996/Documents/free-join/queries/preprocessed/join-order-benchmark/data/19d/rt.csv")
+let chn = load[{<id: int, name: string, imdb_index: string, imdb_id: int, name_pcode_cf: string, surname_pcode: string, md5sum: string> -> int}]("/Users/s2522996/Documents/free-join/data/imdb_csv/char_name.csv")
+
+
 let interm0_trie0 = sum(<x0, mi_trie1> <- mi_trie0)
 	let t_trie1 = t_trie0(x0) in
 	let mc_trie1 = mc_trie0(x0) in
@@ -20,6 +32,7 @@ let interm0_trie0 = sum(<x0, mi_trie1> <- mi_trie0)
 		{}
 in
 
+
 let interm1_trie0 = sum(<x0, n_trie1> <- n_trie0)
 	let an_trie1 = an_trie0(x0) in
 	if (an_trie1 != {}) then
@@ -28,6 +41,7 @@ let interm1_trie0 = sum(<x0, n_trie1> <- n_trie0)
 	else
 		{}
 in
+
 
 sum(<x0, ci_trie1> <- ci_trie0)
 	let rt_trie1 = rt_trie0(x0) in
@@ -54,4 +68,5 @@ sum(<x0, ci_trie1> <- ci_trie0)
 				{}
 	else
 		{}
+
 

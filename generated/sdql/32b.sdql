@@ -1,3 +1,11 @@
+let t1 = load[{<id: int, title: string, imdb_index: string, kind_id: int, production_year: int, imdb_id: string, phonetic_code: string, episode_of_id: int, season_nr: int, episode_nr: int, series_years: string, md5sum: string> -> int}]("/Users/s2522996/Documents/free-join/data/imdb_csv/title.csv")
+let ml = load[{<id: int, movie_id: int, linked_movie_id: int, link_type_id: int> -> int}]("/Users/s2522996/Documents/free-join/data/imdb_csv/movie_link.csv")
+let t2 = load[{<id: int, title: string, imdb_index: string, kind_id: int, production_year: int, imdb_id: string, phonetic_code: string, episode_of_id: int, season_nr: int, episode_nr: int, series_years: string, md5sum: string> -> int}]("/Users/s2522996/Documents/free-join/data/imdb_csv/title.csv")
+let mk = load[{<id: int, movie_id: int, keyword_id: int> -> int}]("/Users/s2522996/Documents/free-join/data/imdb_csv/movie_keyword.csv")
+let lt = load[{<id: int, link: string> -> int}]("/Users/s2522996/Documents/free-join/data/imdb_csv/link_type.csv")
+let k = load[{<id: int, keyword: string, phonetic_code: string> -> int}]("/Users/s2522996/Documents/free-join/queries/preprocessed/join-order-benchmark/data/32b/k.csv")
+
+
 let interm0_trie0 = sum(<x0, t1_trie1> <- t1_trie0)
 	let ml_trie1 = ml_trie0(x0) in
 	if (ml_trie1 != {}) then
@@ -13,6 +21,7 @@ let interm0_trie0 = sum(<x0, t1_trie1> <- t1_trie0)
 	else
 		{}
 in
+
 
 sum(<x0, mk_trie1> <- mk_trie0)
 	let interm0_trie1 = interm0_trie0(x0) in
@@ -34,4 +43,5 @@ sum(<x0, mk_trie1> <- mk_trie0)
 				{}
 	else
 		{}
+
 

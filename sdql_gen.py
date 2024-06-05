@@ -3,8 +3,7 @@ import os.path
 from collections import defaultdict
 from typing import List, Tuple, Dict
 
-from consts import generated_dir_path
-
+from consts import generated_dir_path, preprocessed_data_path, raw_data_path, abbr2rel, rel_wo_idx, rel2col2type
 from var_mng import VariableManager
 
 
@@ -20,13 +19,29 @@ class SDQLGenerator:
 
 	def generate(self, query: str, plans: List[Tuple[Tuple[str, List], List, List]]):
 		with open(os.path.join(generated_dir_path, "sdql", f"{query}.sdql"), "w") as sdql_file:
+			build_plans = [build_plan for _, build_plan, _ in plans]
+			for line in self._generate_loads(query, build_plans):
+				sdql_file.write('\t' * self.indent + line)
+			sdql_file.write("\n\n")
+
 			for node, build_plan, compiled_plan in plans:
-				for line in self._generate_node(node, build_plan, compiled_plan):
+				for line in self._generate_compiled_plan(node, build_plan, compiled_plan):
 					sdql_file.write('\t' * self.indent + line)
-				sdql_file.write("\n")
+				sdql_file.write("\n\n")
 				self.indent = 0
 
-	def _generate_node(
+	def _generate_loads(self, query: str, build_plans: List[List[Tuple[str, List[str], List[str]]]]):
+		for build_plan in build_plans:
+			for rel, _, _ in build_plan:
+				if self.var_mng.is_interm_rel(rel):
+					continue
+				path = os.path.join(preprocessed_data_path, query, f"{rel}.csv")
+				if not os.path.exists(path):
+					path = os.path.join(raw_data_path, f"{abbr2rel[rel_wo_idx(rel)]}.csv")
+				path = os.path.normpath(path)
+				yield f'let {rel} = load[{{<{", ".join([f"{col_n}: {col_t}" for col_n, col_t in rel2col2type[rel_wo_idx(rel)].items()])}> -> int}}]("{path}")\n'
+
+	def _generate_compiled_plan(
 			self,
 			node: Tuple[str, List[Tuple[int, Tuple[str, str]]]],
 			build_plan: List[Tuple[str, List[str], List[str]]],
@@ -99,7 +114,6 @@ class SDQLGenerator:
 		if not self.var_mng.is_root_rel(interm_rel):
 			self.indent = 0
 			yield f"in\n"
-
 
 	@staticmethod
 	def _order_join_cols_based_on_compiled_plan(

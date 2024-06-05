@@ -88,7 +88,7 @@ class CPPGenerator:
 
 			cpp_file.write('}\n')
 
-	def _generate_load_funcs(self, query: str, build_plan: List[Tuple]):
+	def _generate_load_funcs(self, query: str, build_plan: List[Tuple[str, List[str], List[str]]]):
 		for rel, join_cols, proj_cols in build_plan:
 			if self.var_mng.is_interm_rel(rel):
 				continue
