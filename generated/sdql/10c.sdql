@@ -6,6 +6,13 @@ let ci = load[{<id: int, person_id: int, movie_id: int, person_role_id: int, not
 let rt = load[{<id: int, role: string> -> int}]("/Users/s2522996/Documents/free-join/data/imdb_csv/role_type.csv")
 let chn = load[{<id: int, name: string, imdb_index: string, imdb_id: int, name_pcode_cf: string, surname_pcode: string, md5sum: string> -> int}]("/Users/s2522996/Documents/free-join/data/imdb_csv/char_name.csv")
 
+let mc_trie0 = sum(<mc_tuple, _> <- mc) { mc_tuple.movie_id -> { mc_tuple.company_type_id -> { mc_tuple.company_id -> mc_tuple } } } in
+let t_trie0 = sum(<t_tuple, _> <- t) { t_tuple.id -> t_tuple } in
+let ct_trie0 = sum(<ct_tuple, _> <- ct) { ct_tuple.id -> ct_tuple } in
+let cn_trie0 = sum(<cn_tuple, _> <- cn) { cn_tuple.id -> cn_tuple } in
+let ci_trie0 = sum(<ci_tuple, _> <- ci) { ci_tuple.role_id -> { ci_tuple.movie_id -> { ci_tuple.person_role_id -> ci_tuple } } } in
+let rt_trie0 = sum(<rt_tuple, _> <- rt) { rt_tuple.id -> rt_tuple } in
+let chn_trie0 = sum(<chn_tuple, _> <- chn) { chn_tuple.id -> chn_tuple } in
 
 let interm0 = sum(<x0, mc_trie1> <- mc_trie0)
 	let t_trie1 = t_trie0(x0) in
@@ -27,7 +34,6 @@ let interm0 = sum(<x0, mc_trie1> <- mc_trie0)
 		{}
 in
 
-
 sum(<x0, ci_trie1> <- ci_trie0)
 	let rt_trie1 = rt_trie0(x0) in
 	if (rt_trie1 != {}) then
@@ -48,5 +54,4 @@ sum(<x0, ci_trie1> <- ci_trie0)
 				{}
 	else
 		{}
-
 

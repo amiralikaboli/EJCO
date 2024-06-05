@@ -6,6 +6,13 @@ let cn = load[{<id: int, name: string, country_code: string, imdb_id: string, na
 let ci = load[{<id: int, person_id: int, movie_id: int, person_role_id: int, note: string, nr_order: int, role_id: int> -> int}]("/Users/s2522996/Documents/free-join/data/imdb_csv/cast_info.csv")
 let n = load[{<id: int, name: string, imdb_index: string, imdb_id: string, gender: string, name_pcode_cf: string, name_pcode_nf: string, surname_pcode: string, md5sum: string> -> int}]("/Users/s2522996/Documents/free-join/queries/preprocessed/join-order-benchmark/data/17c/n.csv")
 
+let mk_trie0 = sum(<mk_tuple, _> <- mk) { mk_tuple.movie_id -> { mk_tuple.keyword_id -> mk_tuple } } in
+let t_trie0 = sum(<t_tuple, _> <- t) { t_tuple.id -> t_tuple } in
+let mc_trie0 = sum(<mc_tuple, _> <- mc) { mc_tuple.movie_id -> { mc_tuple.company_id -> mc_tuple } } in
+let k_trie0 = sum(<k_tuple, _> <- k) { k_tuple.id -> k_tuple } in
+let cn_trie0 = sum(<cn_tuple, _> <- cn) { cn_tuple.id -> cn_tuple } in
+let ci_trie0 = sum(<ci_tuple, _> <- ci) { ci_tuple.person_id -> { ci_tuple.movie_id -> ci_tuple } } in
+let n_trie0 = sum(<n_tuple, _> <- n) { n_tuple.id -> n_tuple } in
 
 let interm0 = sum(<x0, mk_trie1> <- mk_trie0)
 	let t_trie1 = t_trie0(x0) in
@@ -28,7 +35,6 @@ let interm0 = sum(<x0, mk_trie1> <- mk_trie0)
 		{}
 in
 
-
 sum(<x0, ci_trie1> <- ci_trie0)
 	let n_trie1 = n_trie0(x0) in
 	if (n_trie1 != {}) then
@@ -43,5 +49,4 @@ sum(<x0, ci_trie1> <- ci_trie0)
 				<col2={}, col3={}, col4={}>
 	else
 		{}
-
 

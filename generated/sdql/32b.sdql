@@ -5,6 +5,12 @@ let mk = load[{<id: int, movie_id: int, keyword_id: int> -> int}]("/Users/s25229
 let lt = load[{<id: int, link: string> -> int}]("/Users/s2522996/Documents/free-join/data/imdb_csv/link_type.csv")
 let k = load[{<id: int, keyword: string, phonetic_code: string> -> int}]("/Users/s2522996/Documents/free-join/queries/preprocessed/join-order-benchmark/data/32b/k.csv")
 
+let t1_trie0 = sum(<t1_tuple, _> <- t1) { t1_tuple.id -> t1_tuple } in
+let ml_trie0 = sum(<ml_tuple, _> <- ml) { ml_tuple.movie_id -> { ml_tuple.linked_movie_id -> ml_tuple } } in
+let t2_trie0 = sum(<t2_tuple, _> <- t2) { t2_tuple.id -> t2_tuple } in
+let mk_trie0 = sum(<mk_tuple, _> <- mk) { mk_tuple.movie_id -> { mk_tuple.keyword_id -> mk_tuple } } in
+let lt_trie0 = sum(<lt_tuple, _> <- lt) { lt_tuple.id -> lt_tuple } in
+let k_trie0 = sum(<k_tuple, _> <- k) { k_tuple.id -> k_tuple } in
 
 let interm0 = sum(<x0, t1_trie1> <- t1_trie0)
 	let ml_trie1 = ml_trie0(x0) in
@@ -21,7 +27,6 @@ let interm0 = sum(<x0, t1_trie1> <- t1_trie0)
 	else
 		{}
 in
-
 
 sum(<x0, mk_trie1> <- mk_trie0)
 	let interm0_trie1 = interm0_trie0(x0) in
@@ -43,5 +48,4 @@ sum(<x0, mk_trie1> <- mk_trie0)
 				{}
 	else
 		{}
-
 

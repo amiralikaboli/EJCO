@@ -13,6 +13,20 @@ let cn1 = load[{<id: int, name: string, country_code: string, imdb_id: string, n
 let mc2 = load[{<id: int, movie_id: int, company_id: int, company_type_id: int, note: string> -> int}]("/Users/s2522996/Documents/free-join/data/imdb_csv/movie_companies.csv")
 let cn2 = load[{<id: int, name: string, country_code: string, imdb_id: string, name_pcode_nf: string, name_pcode_sf: string, md5sum: string> -> int}]("/Users/s2522996/Documents/free-join/data/imdb_csv/company_name.csv")
 
+let ml_trie0 = sum(<ml_tuple, _> <- ml) { ml_tuple.link_type_id -> ml_tuple } in
+let lt_trie0 = sum(<lt_tuple, _> <- lt) { lt_tuple.id -> lt_tuple } in
+let mi_idx1_trie0 = sum(<mi_idx1_tuple, _> <- mi_idx1) { mi_idx1_tuple.info_type_id -> { mi_idx1_tuple.movie_id -> mi_idx1_tuple } } in
+let it1_trie0 = sum(<it1_tuple, _> <- it1) { it1_tuple.id -> it1_tuple } in
+let mi_idx2_trie0 = sum(<mi_idx2_tuple, _> <- mi_idx2) { mi_idx2_tuple.info_type_id -> { mi_idx2_tuple.movie_id -> mi_idx2_tuple } } in
+let it2_trie0 = sum(<it2_tuple, _> <- it2) { it2_tuple.id -> it2_tuple } in
+let t1_trie0 = sum(<t1_tuple, _> <- t1) { t1_tuple.kind_id -> { t1_tuple.id -> t1_tuple } } in
+let kt1_trie0 = sum(<kt1_tuple, _> <- kt1) { kt1_tuple.id -> kt1_tuple } in
+let t2_trie0 = sum(<t2_tuple, _> <- t2) { t2_tuple.kind_id -> { t2_tuple.id -> t2_tuple } } in
+let kt2_trie0 = sum(<kt2_tuple, _> <- kt2) { kt2_tuple.id -> kt2_tuple } in
+let mc1_trie0 = sum(<mc1_tuple, _> <- mc1) { mc1_tuple.company_id -> { mc1_tuple.movie_id -> mc1_tuple } } in
+let cn1_trie0 = sum(<cn1_tuple, _> <- cn1) { cn1_tuple.id -> cn1_tuple } in
+let mc2_trie0 = sum(<mc2_tuple, _> <- mc2) { mc2_tuple.company_id -> { mc2_tuple.movie_id -> mc2_tuple } } in
+let cn2_trie0 = sum(<cn2_tuple, _> <- cn2) { cn2_tuple.id -> cn2_tuple } in
 
 let interm0 = sum(<x0, ml_trie1> <- ml_trie0)
 	let lt_trie1 = lt_trie0(x0) in
@@ -22,7 +36,6 @@ let interm0 = sum(<x0, ml_trie1> <- ml_trie0)
 	else
 		{}
 in
-
 
 let interm1 = sum(<x0, mi_idx1_trie1> <- mi_idx1_trie0)
 	let it1_trie1 = it1_trie0(x0) in
@@ -39,7 +52,6 @@ let interm1 = sum(<x0, mi_idx1_trie1> <- mi_idx1_trie0)
 		{}
 in
 
-
 let interm2 = sum(<x0, mi_idx2_trie1> <- mi_idx2_trie0)
 	let it2_trie1 = it2_trie0(x0) in
 	if (it2_trie1 != {}) then
@@ -54,7 +66,6 @@ let interm2 = sum(<x0, mi_idx2_trie1> <- mi_idx2_trie0)
 	else
 		{}
 in
-
 
 let interm3 = sum(<x0, t1_trie1> <- t1_trie0)
 	let kt1_trie1 = kt1_trie0(x0) in
@@ -71,7 +82,6 @@ let interm3 = sum(<x0, t1_trie1> <- t1_trie0)
 		{}
 in
 
-
 let interm4 = sum(<x0, t2_trie1> <- t2_trie0)
 	let kt2_trie1 = kt2_trie0(x0) in
 	if (kt2_trie1 != {}) then
@@ -86,7 +96,6 @@ let interm4 = sum(<x0, t2_trie1> <- t2_trie0)
 	else
 		{}
 in
-
 
 let interm5 = sum(<x0, mc1_trie1> <- mc1_trie0)
 	let cn1_trie1 = cn1_trie0(x0) in
@@ -103,7 +112,6 @@ let interm5 = sum(<x0, mc1_trie1> <- mc1_trie0)
 	else
 		{}
 in
-
 
 sum(<x0, mc2_trie1> <- mc2_trie0)
 	let cn2_trie1 = cn2_trie0(x0) in
@@ -129,5 +137,4 @@ sum(<x0, mc2_trie1> <- mc2_trie0)
 				<col2={}, col3={}, col4={}, col5={}, col6={}, col7={}, col8={}, col9={}, col10={}, col11={}, col12={}, col13={}, col14={}>
 	else
 		{}
-
 

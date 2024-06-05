@@ -9,6 +9,16 @@ let ci = load[{<id: int, person_id: int, movie_id: int, person_role_id: int, not
 let n = load[{<id: int, name: string, imdb_index: string, imdb_id: string, gender: string, name_pcode_cf: string, name_pcode_nf: string, surname_pcode: string, md5sum: string> -> int}]("/Users/s2522996/Documents/free-join/data/imdb_csv/name.csv")
 let chn = load[{<id: int, name: string, imdb_index: string, imdb_id: int, name_pcode_cf: string, surname_pcode: string, md5sum: string> -> int}]("/Users/s2522996/Documents/free-join/queries/preprocessed/join-order-benchmark/data/20a/chn.csv")
 
+let cc_trie0 = sum(<cc_tuple, _> <- cc) { cc_tuple.subject_id -> { cc_tuple.status_id -> cc_tuple } } in
+let cct1_trie0 = sum(<cct1_tuple, _> <- cct1) { cct1_tuple.id -> cct1_tuple } in
+let cct2_trie0 = sum(<cct2_tuple, _> <- cct2) { cct2_tuple.id -> cct2_tuple } in
+let mk_trie0 = sum(<mk_tuple, _> <- mk) { mk_tuple.movie_id -> { mk_tuple.keyword_id -> mk_tuple } } in
+let t_trie0 = sum(<t_tuple, _> <- t) { t_tuple.id -> { t_tuple.kind_id -> t_tuple } } in
+let kt_trie0 = sum(<kt_tuple, _> <- kt) { kt_tuple.id -> kt_tuple } in
+let k_trie0 = sum(<k_tuple, _> <- k) { k_tuple.id -> k_tuple } in
+let ci_trie0 = sum(<ci_tuple, _> <- ci) { ci_tuple.person_id -> { ci_tuple.movie_id -> { ci_tuple.person_role_id -> ci_tuple } } } in
+let n_trie0 = sum(<n_tuple, _> <- n) { n_tuple.id -> n_tuple } in
+let chn_trie0 = sum(<chn_tuple, _> <- chn) { chn_tuple.id -> chn_tuple } in
 
 let interm0 = sum(<x0, cc_trie1> <- cc_trie0)
 	let cct1_trie1 = cct1_trie0(x0) in
@@ -23,7 +33,6 @@ let interm0 = sum(<x0, cc_trie1> <- cc_trie0)
 	else
 		{}
 in
-
 
 let interm1 = sum(<x0, mk_trie1> <- mk_trie0)
 	let t_trie1 = t_trie0(x0) in
@@ -44,7 +53,6 @@ let interm1 = sum(<x0, mk_trie1> <- mk_trie0)
 	else
 		{}
 in
-
 
 sum(<x0, ci_trie1> <- ci_trie0)
 	let n_trie1 = n_trie0(x0) in
@@ -71,5 +79,4 @@ sum(<x0, ci_trie1> <- ci_trie0)
 				{}
 	else
 		{}
-
 

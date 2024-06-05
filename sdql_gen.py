@@ -22,12 +22,16 @@ class SDQLGenerator:
 			build_plans = [build_plan for _, build_plan, _ in plans]
 			for line in self._generate_loads(query, build_plans):
 				sdql_file.write('\t' * self.indent + line)
-			sdql_file.write("\n\n")
+			sdql_file.write("\n")
+
+			for line in self._generate_build_tries(build_plans):
+				sdql_file.write('\t' * self.indent + line)
+			sdql_file.write("\n")
 
 			for node, build_plan, compiled_plan in plans:
 				for line in self._generate_compiled_plan(node, build_plan, compiled_plan):
 					sdql_file.write('\t' * self.indent + line)
-				sdql_file.write("\n\n")
+				sdql_file.write("\n")
 				self.indent = 0
 
 	def _generate_loads(self, query: str, build_plans: List[List[Tuple[str, List[str], List[str]]]]):
@@ -40,6 +44,17 @@ class SDQLGenerator:
 					path = os.path.join(raw_data_path, f"{abbr2rel[rel_wo_idx(rel)]}.csv")
 				path = os.path.normpath(path)
 				yield f'let {rel} = load[{{<{", ".join([f"{col_n}: {col_t}" for col_n, col_t in rel2col2type[rel_wo_idx(rel)].items()])}> -> int}}]("{path}")\n'
+
+	def _generate_build_tries(self, build_plans: List[List[Tuple[str, List[str], List[str]]]]):
+		for build_plan in build_plans:
+			for rel, join_cols, _ in build_plan:
+				if self.var_mng.is_interm_rel(rel):
+					continue
+				tuple_var = self.var_mng.tuple_var(rel)
+				trie_value = tuple_var
+				for col in join_cols[::-1]:
+					trie_value = f"{{ {tuple_var}.{col} -> {trie_value} }}"
+				yield f"let {self.var_mng.trie_var(rel)} = sum(<{tuple_var}, _> <- {rel}) {trie_value} in\n"
 
 	def _generate_compiled_plan(
 			self,

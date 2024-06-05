@@ -4,6 +4,11 @@ let mc = load[{<id: int, movie_id: int, company_id: int, company_type_id: int, n
 let it = load[{<id: int, info: string> -> int}]("/Users/s2522996/Documents/free-join/queries/preprocessed/join-order-benchmark/data/1b/it.csv")
 let ct = load[{<id: int, kind: string> -> int}]("/Users/s2522996/Documents/free-join/queries/preprocessed/join-order-benchmark/data/1b/ct.csv")
 
+let t_trie0 = sum(<t_tuple, _> <- t) { t_tuple.id -> t_tuple } in
+let mi_idx_trie0 = sum(<mi_idx_tuple, _> <- mi_idx) { mi_idx_tuple.movie_id -> mi_idx_tuple } in
+let mc_trie0 = sum(<mc_tuple, _> <- mc) { mc_tuple.movie_id -> { mc_tuple.company_type_id -> mc_tuple } } in
+let it_trie0 = sum(<it_tuple, _> <- it) { it_tuple.id -> it_tuple } in
+let ct_trie0 = sum(<ct_tuple, _> <- ct) { ct_tuple.id -> ct_tuple } in
 
 let interm0 = sum(<x0, t_trie1> <- t_trie0)
 	let mi_idx_trie1 = mi_idx_trie0(x0) in
@@ -14,7 +19,6 @@ let interm0 = sum(<x0, t_trie1> <- t_trie0)
 	else
 		{}
 in
-
 
 sum(<x0, mc_trie1> <- mc_trie0)
 	let interm0_trie1 = interm0_trie0(x0) in
@@ -35,5 +39,4 @@ sum(<x0, mc_trie1> <- mc_trie0)
 				{}
 	else
 		{}
-
 

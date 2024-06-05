@@ -7,6 +7,14 @@ let lt = load[{<id: int, link: string> -> int}]("/Users/s2522996/Documents/free-
 let ci = load[{<id: int, person_id: int, movie_id: int, person_role_id: int, note: string, nr_order: int, role_id: int> -> int}]("/Users/s2522996/Documents/free-join/data/imdb_csv/cast_info.csv")
 let an = load[{<id: int, person_id: int, name: string, imdb_index: string, name_pcode_cf: string, name_pcode_nf: string, surname_pcode: string, md5sum: string> -> int}]("/Users/s2522996/Documents/free-join/queries/preprocessed/join-order-benchmark/data/7b/an.csv")
 
+let n_trie0 = sum(<n_tuple, _> <- n) { n_tuple.id -> n_tuple } in
+let pi_trie0 = sum(<pi_tuple, _> <- pi) { pi_tuple.person_id -> { pi_tuple.info_type_id -> pi_tuple } } in
+let it_trie0 = sum(<it_tuple, _> <- it) { it_tuple.id -> it_tuple } in
+let t_trie0 = sum(<t_tuple, _> <- t) { t_tuple.id -> t_tuple } in
+let ml_trie0 = sum(<ml_tuple, _> <- ml) { ml_tuple.linked_movie_id -> { ml_tuple.link_type_id -> ml_tuple } } in
+let lt_trie0 = sum(<lt_tuple, _> <- lt) { lt_tuple.id -> lt_tuple } in
+let ci_trie0 = sum(<ci_tuple, _> <- ci) { ci_tuple.movie_id -> { ci_tuple.person_id -> ci_tuple } } in
+let an_trie0 = sum(<an_tuple, _> <- an) { an_tuple.person_id -> an_tuple } in
 
 let interm0 = sum(<x0, n_trie1> <- n_trie0)
 	let pi_trie1 = pi_trie0(x0) in
@@ -23,7 +31,6 @@ let interm0 = sum(<x0, n_trie1> <- n_trie0)
 		{}
 in
 
-
 let interm1 = sum(<x0, t_trie1> <- t_trie0)
 	let ml_trie1 = ml_trie0(x0) in
 	if (ml_trie1 != {}) then
@@ -38,7 +45,6 @@ let interm1 = sum(<x0, t_trie1> <- t_trie0)
 	else
 		{}
 in
-
 
 sum(<x0, ci_trie1> <- ci_trie0)
 	let interm1_trie1 = interm1_trie0(x0) in
@@ -56,5 +62,4 @@ sum(<x0, ci_trie1> <- ci_trie0)
 				<col2={}, col3={}, col4={}, col5={}>
 	else
 		{}
-
 
