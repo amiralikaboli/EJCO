@@ -13,11 +13,9 @@ class SdqlGenerator(ABC):
 		self.save_path = os.path.join(generated_dir_path, "sdql")
 		self.var_mng = var_mng
 		self.indent = 0
-		self.resolved_attrs = set()
 
 	def clear(self):
 		self.indent = 0
-		self.resolved_attrs = set()
 
 	def generate(self, query: str, plans: List[Tuple[Tuple[str, List, List], List, List]]):
 		with open(os.path.join(self.save_path, f"{query}.sdql"), "w") as sdql_file:
@@ -27,20 +25,6 @@ class SdqlGenerator(ABC):
 	@abstractmethod
 	def _generate(self, query: str, plans: List[Tuple[Tuple[str, List, List], List, List]]):
 		raise NotImplementedError
-
-	@staticmethod
-	def _order_join_cols_based_on_compiled_plan(
-			build_plan: List[Tuple[str, List[str], List[str]]], compiled_plan: List[List[str]]
-	) -> Dict[str, Dict[str, int]]:  # rel -> col -> idx
-		join_attrs_order = {
-			rel: {col: math.inf for col in join_cols}
-			for rel, join_cols, _ in build_plan
-		}
-		for idx, eq_cols in enumerate(compiled_plan):
-			min_idx = min(idx, *[join_attrs_order[rel][col] for rel, col in eq_cols])
-			for rel, col in eq_cols:
-				join_attrs_order[rel][col] = min_idx
-		return join_attrs_order
 
 
 class SdqlGjGenerator(SdqlGenerator):
@@ -91,41 +75,32 @@ class SdqlGjGenerator(SdqlGenerator):
 			build_plan: List[Tuple[str, List[str], List[str]]],
 			compiled_plan: List[List[Tuple[str, str]]]
 	):
-		interm_rel, interm_cols, interm_trie_cols = node
+		interm, interm_cols, interm_trie_cols = node
 
-		if not self.var_mng.is_root_rel(interm_rel):
-			yield f"let {self.var_mng.trie_var(interm_rel)} = "
+		if not self.var_mng.is_root_rel(interm):
+			yield f"let {self.var_mng.trie_var(interm)} = "
 
 		else_cases = list()
-		join_attrs_order = self._order_join_cols_based_on_compiled_plan(build_plan, compiled_plan)
 		for idx, eq_cols in enumerate(compiled_plan):
 			rel_0, col_0 = eq_cols[0]
-			if join_attrs_order[rel_0][col_0] == idx:
-				self.var_mng.trie_var(rel_0)
-				yield f"sum(<{self.var_mng.x_var(idx)}, {self.var_mng.next_trie_var(rel_0)}> <- {self.var_mng.trie_var(rel_0)})\n"
-				self.var_mng.next_trie_var(rel_0, inplace=True)
-				self.indent += 1
-				self.resolved_attrs.add(eq_cols[0])
-				start_offset = 1
-			elif eq_cols[0] in self.resolved_attrs:
-				start_offset = 1
-			else:
-				start_offset = 0
+			self.var_mng.trie_var(rel_0)
+			yield f"sum(<{self.var_mng.x_var(idx)}, {self.var_mng.next_trie_var(rel_0)}> <- {self.var_mng.trie_var(rel_0)})\n"
+			self.var_mng.next_trie_var(rel_0, inplace=True)
+			self.indent += 1
 
-			for rel, col in eq_cols[start_offset:]:
+			for rel, col in eq_cols[1:]:
 				self.var_mng.trie_var(rel)
-				yield f"let {self.var_mng.next_trie_var(rel)} = {self.var_mng.trie_var(rel)}({self.var_mng.x_var(join_attrs_order[rel][col])}) in\n"
+				yield f"let {self.var_mng.next_trie_var(rel)} = {self.var_mng.trie_var(rel)}({self.var_mng.x_var(idx)}) in\n"
 				self.var_mng.next_trie_var(rel, inplace=True)
-				self.resolved_attrs.add((rel, col))
 
 			conditions = []
-			for rel, col in eq_cols[start_offset:]:
+			for rel, col in eq_cols[1:]:
 				conditions.append(f"{self.var_mng.trie_var(rel)} != {{}}")
 			yield f"if ({' && '.join(conditions)}) then\n"
 			self.indent += 1
 			else_cases.append(('{}', self.indent))
 
-		if self.var_mng.is_root_rel(interm_rel):
+		if self.var_mng.is_root_rel(interm):
 			interm_col2idx = {rel_col: interm_col_idx for interm_col_idx, rel_col in interm_cols}
 			elems = list()
 			for rel, _, proj_cols in build_plan:
@@ -157,6 +132,6 @@ class SdqlGjGenerator(SdqlGenerator):
 			self.indent += 1
 			yield f"{else_case}\n"
 
-		if not self.var_mng.is_root_rel(interm_rel):
+		if not self.var_mng.is_root_rel(interm):
 			self.indent = 0
 			yield f"in\n"

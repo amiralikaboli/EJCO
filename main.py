@@ -13,7 +13,7 @@ if __name__ == '__main__':
 	var_mng = VariableManager()
 	parser = PlanParser(var_mng)
 	sdql_gj_gen = SdqlGjGenerator(var_mng)
-	# cpp_gen = CPPGenerator(var_mng)
+	cpp_gen = CppGenerator(var_mng)
 	for query in queries:
 		var_mng.clear()
 		parser.clear()
