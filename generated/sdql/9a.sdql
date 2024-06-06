@@ -41,13 +41,12 @@ sum(<x0, ci_trie1> <- ci_trie0)
 								if (chn_trie1 != {}) then
 									let an_trie1 = an_trie0(x0) in
 									if (an_trie1 != {}) then
-										let mn_interm0_col0 = sum(<interm0_tuple, _> <- interm0_trie1) interm0_tuple.col0 in
 										let mn_t_title = sum(<t_tuple, _> <- t_trie1) t_tuple.title in
 										let mn_chn_name = sum(<chn_tuple, _> <- chn_trie1) chn_tuple.name in
 										let mn_an_name = sum(<an_tuple, _> <- an_trie1) an_tuple.name in
-										<col4=mn_interm0_col0, col5=mn_t_title, col6=mn_chn_name, col7=mn_an_name>
+										<col5=mn_t_title, col6=mn_chn_name, col7=mn_an_name>
 									else
-										<col4={}, col5={}, col6={}, col7={}>
+										<col5={}, col6={}, col7={}>
 								else
 									{}
 						else

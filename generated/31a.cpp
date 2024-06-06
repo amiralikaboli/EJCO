@@ -132,13 +132,9 @@ int main() {
 		timer.StoreElapsedTime(4);
 
 		string mn_n_name = "zzzzzzzz";
-		int mn_interm1_col1 = numeric_limits<int>::max();
 		string mn_interm1_col2 = "zzzzzzzz";
-		int mn_interm1_col3 = numeric_limits<int>::max();
-		int mn_interm1_col4 = numeric_limits<int>::max();
 		string mn_interm1_col5 = "zzzzzzzz";
 		string mn_interm1_col6 = "zzzzzzzz";
-		int mn_interm1_col7 = numeric_limits<int>::max();
 		for (const auto &[x0, ci_trie1]: ci_trie0) {
 			if (n_trie0.contains(x0)) {
 				auto &n_trie1 = n_trie0.at(x0);
@@ -149,13 +145,9 @@ int main() {
 							mn_n_name = min(mn_n_name, n_name[n_off]);
 						}
 						for (const auto &interm1_off: interm1_trie1) {
-							mn_interm1_col1 = min(mn_interm1_col1, interm1_col1[interm1_off]);
 							mn_interm1_col2 = min(mn_interm1_col2, interm1_col2[interm1_off]);
-							mn_interm1_col3 = min(mn_interm1_col3, interm1_col3[interm1_off]);
-							mn_interm1_col4 = min(mn_interm1_col4, interm1_col4[interm1_off]);
 							mn_interm1_col5 = min(mn_interm1_col5, interm1_col5[interm1_off]);
 							mn_interm1_col6 = min(mn_interm1_col6, interm1_col6[interm1_off]);
-							mn_interm1_col7 = min(mn_interm1_col7, interm1_col7[interm1_off]);
 						}
 					}
 				}
@@ -164,7 +156,7 @@ int main() {
 		timer.StoreElapsedTime(5);
 
 		if (z == 0)
-			cout << mn_n_name << " | " << mn_interm1_col1 << " | " << mn_interm1_col2 << " | " << mn_interm1_col3 << " | " << mn_interm1_col4 << " | " << mn_interm1_col5 << " | " << mn_interm1_col6 << " | " << mn_interm1_col7 << endl;
+			cout << mn_n_name << " | " << mn_interm1_col2 << " | " << mn_interm1_col5 << " | " << mn_interm1_col6 << endl;
 		cout << "*" << " " << flush;
 	}
 	cout << endl;

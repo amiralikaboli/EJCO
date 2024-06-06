@@ -60,7 +60,6 @@ int main() {
 		vector<int> interm1_col0;
 		vector<int> interm1_col1;
 		vector<string> interm1_col2;
-		vector<int> interm1_col3;
 		vector<int> interm1_col4;
 		for (const auto &[x0, mi_idx1_trie1]: mi_idx1_trie0) {
 			if (it1_trie0.contains(x0)) {
@@ -73,7 +72,6 @@ int main() {
 								interm1_col0.push_back(mi_idx1_info_type_id[mi_idx1_off]);
 								interm1_col1.push_back(mi_idx1_movie_id[mi_idx1_off]);
 								interm1_col2.push_back(mi_idx1_info[mi_idx1_off]);
-								interm1_col3.push_back(interm0_col0[interm0_off]);
 								interm1_col4.push_back(interm0_col2[interm0_off]);
 							}
 						}
@@ -94,10 +92,8 @@ int main() {
 		vector<int> interm2_col0;
 		vector<int> interm2_col1;
 		vector<string> interm2_col2;
-		vector<int> interm2_col3;
 		vector<int> interm2_col4;
 		vector<string> interm2_col5;
-		vector<int> interm2_col6;
 		for (const auto &[x0, mi_idx2_trie1]: mi_idx2_trie0) {
 			if (it2_trie0.contains(x0)) {
 				auto &it2_trie1 = it2_trie0.at(x0);
@@ -109,10 +105,8 @@ int main() {
 								interm2_col0.push_back(mi_idx2_info_type_id[mi_idx2_off]);
 								interm2_col1.push_back(mi_idx2_movie_id[mi_idx2_off]);
 								interm2_col2.push_back(mi_idx2_info[mi_idx2_off]);
-								interm2_col3.push_back(interm1_col0[interm1_off]);
 								interm2_col4.push_back(interm1_col1[interm1_off]);
 								interm2_col5.push_back(interm1_col2[interm1_off]);
-								interm2_col6.push_back(interm1_col3[interm1_off]);
 							}
 						}
 					}
@@ -132,12 +126,9 @@ int main() {
 		vector<int> interm3_col0;
 		vector<int> interm3_col1;
 		vector<string> interm3_col2;
-		vector<int> interm3_col3;
 		vector<int> interm3_col4;
 		vector<string> interm3_col5;
-		vector<int> interm3_col6;
 		vector<string> interm3_col7;
-		vector<int> interm3_col8;
 		for (const auto &[x0, t1_trie1]: t1_trie0) {
 			if (kt1_trie0.contains(x0)) {
 				auto &kt1_trie1 = kt1_trie0.at(x0);
@@ -149,12 +140,9 @@ int main() {
 								interm3_col0.push_back(t1_kind_id[t1_off]);
 								interm3_col1.push_back(t1_id[t1_off]);
 								interm3_col2.push_back(t1_title[t1_off]);
-								interm3_col3.push_back(interm2_col0[interm2_off]);
 								interm3_col4.push_back(interm2_col1[interm2_off]);
 								interm3_col5.push_back(interm2_col2[interm2_off]);
-								interm3_col6.push_back(interm2_col3[interm2_off]);
 								interm3_col7.push_back(interm2_col5[interm2_off]);
-								interm3_col8.push_back(interm2_col6[interm2_off]);
 							}
 						}
 					}
@@ -174,14 +162,10 @@ int main() {
 		vector<int> interm4_col0;
 		vector<int> interm4_col1;
 		vector<string> interm4_col2;
-		vector<int> interm4_col3;
 		vector<int> interm4_col4;
 		vector<string> interm4_col5;
-		vector<int> interm4_col6;
 		vector<string> interm4_col7;
-		vector<int> interm4_col8;
 		vector<string> interm4_col9;
-		vector<int> interm4_col10;
 		for (const auto &[x0, t2_trie1]: t2_trie0) {
 			if (kt2_trie0.contains(x0)) {
 				auto &kt2_trie1 = kt2_trie0.at(x0);
@@ -193,14 +177,10 @@ int main() {
 								interm4_col0.push_back(t2_kind_id[t2_off]);
 								interm4_col1.push_back(t2_id[t2_off]);
 								interm4_col2.push_back(t2_title[t2_off]);
-								interm4_col3.push_back(interm3_col0[interm3_off]);
 								interm4_col4.push_back(interm3_col1[interm3_off]);
 								interm4_col5.push_back(interm3_col2[interm3_off]);
-								interm4_col6.push_back(interm3_col3[interm3_off]);
 								interm4_col7.push_back(interm3_col5[interm3_off]);
-								interm4_col8.push_back(interm3_col6[interm3_off]);
 								interm4_col9.push_back(interm3_col7[interm3_off]);
-								interm4_col10.push_back(interm3_col8[interm3_off]);
 							}
 						}
 					}
@@ -220,16 +200,11 @@ int main() {
 		vector<int> interm5_col0;
 		vector<int> interm5_col1;
 		vector<string> interm5_col2;
-		vector<int> interm5_col3;
 		vector<int> interm5_col4;
 		vector<string> interm5_col5;
-		vector<int> interm5_col6;
 		vector<string> interm5_col7;
-		vector<int> interm5_col8;
 		vector<string> interm5_col9;
-		vector<int> interm5_col10;
 		vector<string> interm5_col11;
-		vector<int> interm5_col12;
 		for (const auto &[x0, mc1_trie1]: mc1_trie0) {
 			if (cn1_trie0.contains(x0)) {
 				auto &cn1_trie1 = cn1_trie0.at(x0);
@@ -242,16 +217,11 @@ int main() {
 									interm5_col0.push_back(mc1_company_id[mc1_off]);
 									interm5_col1.push_back(mc1_movie_id[mc1_off]);
 									interm5_col2.push_back(cn1_name[cn1_off]);
-									interm5_col3.push_back(interm4_col0[interm4_off]);
 									interm5_col4.push_back(interm4_col1[interm4_off]);
 									interm5_col5.push_back(interm4_col2[interm4_off]);
-									interm5_col6.push_back(interm4_col3[interm4_off]);
 									interm5_col7.push_back(interm4_col5[interm4_off]);
-									interm5_col8.push_back(interm4_col6[interm4_off]);
 									interm5_col9.push_back(interm4_col7[interm4_off]);
-									interm5_col10.push_back(interm4_col8[interm4_off]);
 									interm5_col11.push_back(interm4_col9[interm4_off]);
-									interm5_col12.push_back(interm4_col10[interm4_off]);
 								}
 							}
 						}
@@ -270,18 +240,11 @@ int main() {
 		timer.StoreElapsedTime(12);
 
 		string mn_cn2_name = "zzzzzzzz";
-		int mn_interm5_col0 = numeric_limits<int>::max();
-		int mn_interm5_col1 = numeric_limits<int>::max();
 		string mn_interm5_col2 = "zzzzzzzz";
-		int mn_interm5_col3 = numeric_limits<int>::max();
 		string mn_interm5_col5 = "zzzzzzzz";
-		int mn_interm5_col6 = numeric_limits<int>::max();
 		string mn_interm5_col7 = "zzzzzzzz";
-		int mn_interm5_col8 = numeric_limits<int>::max();
 		string mn_interm5_col9 = "zzzzzzzz";
-		int mn_interm5_col10 = numeric_limits<int>::max();
 		string mn_interm5_col11 = "zzzzzzzz";
-		int mn_interm5_col12 = numeric_limits<int>::max();
 		for (const auto &[x0, mc2_trie1]: mc2_trie0) {
 			if (cn2_trie0.contains(x0)) {
 				auto &cn2_trie1 = cn2_trie0.at(x0);
@@ -292,18 +255,11 @@ int main() {
 							mn_cn2_name = min(mn_cn2_name, cn2_name[cn2_off]);
 						}
 						for (const auto &interm5_off: interm5_trie1) {
-							mn_interm5_col0 = min(mn_interm5_col0, interm5_col0[interm5_off]);
-							mn_interm5_col1 = min(mn_interm5_col1, interm5_col1[interm5_off]);
 							mn_interm5_col2 = min(mn_interm5_col2, interm5_col2[interm5_off]);
-							mn_interm5_col3 = min(mn_interm5_col3, interm5_col3[interm5_off]);
 							mn_interm5_col5 = min(mn_interm5_col5, interm5_col5[interm5_off]);
-							mn_interm5_col6 = min(mn_interm5_col6, interm5_col6[interm5_off]);
 							mn_interm5_col7 = min(mn_interm5_col7, interm5_col7[interm5_off]);
-							mn_interm5_col8 = min(mn_interm5_col8, interm5_col8[interm5_off]);
 							mn_interm5_col9 = min(mn_interm5_col9, interm5_col9[interm5_off]);
-							mn_interm5_col10 = min(mn_interm5_col10, interm5_col10[interm5_off]);
 							mn_interm5_col11 = min(mn_interm5_col11, interm5_col11[interm5_off]);
-							mn_interm5_col12 = min(mn_interm5_col12, interm5_col12[interm5_off]);
 						}
 					}
 				}
@@ -312,7 +268,7 @@ int main() {
 		timer.StoreElapsedTime(13);
 
 		if (z == 0)
-			cout << mn_cn2_name << " | " << mn_interm5_col0 << " | " << mn_interm5_col1 << " | " << mn_interm5_col2 << " | " << mn_interm5_col3 << " | " << mn_interm5_col5 << " | " << mn_interm5_col6 << " | " << mn_interm5_col7 << " | " << mn_interm5_col8 << " | " << mn_interm5_col9 << " | " << mn_interm5_col10 << " | " << mn_interm5_col11 << " | " << mn_interm5_col12 << endl;
+			cout << mn_cn2_name << " | " << mn_interm5_col2 << " | " << mn_interm5_col5 << " | " << mn_interm5_col7 << " | " << mn_interm5_col9 << " | " << mn_interm5_col11 << endl;
 		cout << "*" << " " << flush;
 	}
 	cout << endl;

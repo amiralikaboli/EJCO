@@ -49,8 +49,7 @@ let interm1_trie0 = sum(<x0, mi_idx_trie1> <- mi_idx_trie0)
 			let interm0_trie1 = interm0_trie0(x1) in
 			if (interm0_trie1 != {}) then
 				sum(<mi_idx_tuple, _> <- mi_idx_trie2)
-					sum(<interm0_tuple, _> <- interm0_trie1)
-						{ mi_idx_tuple.movie_id -> <col0=mi_idx_tuple.info_type_id, col1=mi_idx_tuple.movie_id, col2=mi_idx_tuple.info, col3=interm0_tuple.col0, col4=interm0_tuple.col1> }
+					{ mi_idx_tuple.movie_id -> <col0=mi_idx_tuple.info_type_id, col1=mi_idx_tuple.movie_id, col2=mi_idx_tuple.info> }
 			else
 				{}
 	else
@@ -65,7 +64,7 @@ let interm2_trie0 = sum(<x0, t_trie1> <- t_trie0)
 			if (interm1_trie1 != {}) then
 				sum(<t_tuple, _> <- t_trie2)
 					sum(<interm1_tuple, _> <- interm1_trie1)
-						{ t_tuple.id -> <col0=t_tuple.kind_id, col1=t_tuple.id, col2=t_tuple.title, col3=interm1_tuple.col0, col4=interm1_tuple.col2, col5=interm1_tuple.col3, col6=interm1_tuple.col4> }
+						{ t_tuple.id -> <col0=t_tuple.kind_id, col1=t_tuple.id, col2=t_tuple.title, col4=interm1_tuple.col2> }
 			else
 				{}
 	else
@@ -84,7 +83,7 @@ let interm3_trie0 = sum(<x0, mc_trie1> <- mc_trie0)
 						sum(<mc_tuple, _> <- mc_trie3)
 							sum(<cn_tuple, _> <- cn_trie1)
 								sum(<interm2_tuple, _> <- interm2_trie1)
-									{ mc_tuple.movie_id -> <col0=mc_tuple.company_id, col1=mc_tuple.company_type_id, col2=mc_tuple.movie_id, col3=cn_tuple.name, col4=interm2_tuple.col0, col5=interm2_tuple.col2, col6=interm2_tuple.col3, col7=interm2_tuple.col4, col8=interm2_tuple.col5, col9=interm2_tuple.col6> }
+									{ mc_tuple.movie_id -> <col0=mc_tuple.company_id, col1=mc_tuple.company_type_id, col2=mc_tuple.movie_id, col3=cn_tuple.name, col5=interm2_tuple.col2, col7=interm2_tuple.col4> }
 					else
 						{}
 			else
@@ -101,7 +100,7 @@ let interm4_trie0 = sum(<x0, mk_trie1> <- mk_trie0)
 			if (interm3_trie1 != {}) then
 				sum(<mk_tuple, _> <- mk_trie2)
 					sum(<interm3_tuple, _> <- interm3_trie1)
-						{ mk_tuple.movie_id -> <col0=mk_tuple.keyword_id, col1=mk_tuple.movie_id, col2=interm3_tuple.col0, col3=interm3_tuple.col1, col4=interm3_tuple.col3, col5=interm3_tuple.col4, col6=interm3_tuple.col5, col7=interm3_tuple.col6, col8=interm3_tuple.col7, col9=interm3_tuple.col8, col10=interm3_tuple.col9> }
+						{ mk_tuple.movie_id -> <col0=mk_tuple.keyword_id, col1=mk_tuple.movie_id, col4=interm3_tuple.col3, col6=interm3_tuple.col5, col8=interm3_tuple.col7> }
 			else
 				{}
 	else
@@ -114,19 +113,12 @@ sum(<x0, mi_trie1> <- mi_trie0)
 		sum(<x1, mi_trie2> <- mi_trie1)
 			let interm4_trie1 = interm4_trie0(x1) in
 			if (interm4_trie1 != {}) then
-				let mn_interm4_col0 = sum(<interm4_tuple, _> <- interm4_trie1) interm4_tuple.col0 in
-				let mn_interm4_col2 = sum(<interm4_tuple, _> <- interm4_trie1) interm4_tuple.col2 in
-				let mn_interm4_col3 = sum(<interm4_tuple, _> <- interm4_trie1) interm4_tuple.col3 in
 				let mn_interm4_col4 = sum(<interm4_tuple, _> <- interm4_trie1) interm4_tuple.col4 in
-				let mn_interm4_col5 = sum(<interm4_tuple, _> <- interm4_trie1) interm4_tuple.col5 in
 				let mn_interm4_col6 = sum(<interm4_tuple, _> <- interm4_trie1) interm4_tuple.col6 in
-				let mn_interm4_col7 = sum(<interm4_tuple, _> <- interm4_trie1) interm4_tuple.col7 in
 				let mn_interm4_col8 = sum(<interm4_tuple, _> <- interm4_trie1) interm4_tuple.col8 in
-				let mn_interm4_col9 = sum(<interm4_tuple, _> <- interm4_trie1) interm4_tuple.col9 in
-				let mn_interm4_col10 = sum(<interm4_tuple, _> <- interm4_trie1) interm4_tuple.col10 in
-				<col2=mn_interm4_col0, col3=mn_interm4_col2, col4=mn_interm4_col3, col5=mn_interm4_col4, col6=mn_interm4_col5, col7=mn_interm4_col6, col8=mn_interm4_col7, col9=mn_interm4_col8, col10=mn_interm4_col9, col11=mn_interm4_col10>
+				<col5=mn_interm4_col4, col7=mn_interm4_col6, col9=mn_interm4_col8>
 			else
-				<col2={}, col3={}, col4={}, col5={}, col6={}, col7={}, col8={}, col9={}, col10={}, col11={}>
+				<col5={}, col7={}, col9={}>
 	else
 		{}
 

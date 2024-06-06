@@ -62,7 +62,6 @@ int main() {
 		timer.StoreElapsedTime(2);
 
 		string mn_n_name = "zzzzzzzz";
-		int mn_interm0_col1 = numeric_limits<int>::max();
 		string mn_interm0_col2 = "zzzzzzzz";
 		string mn_interm0_col3 = "zzzzzzzz";
 		for (const auto &[x0, ci_trie1]: ci_trie0) {
@@ -75,7 +74,6 @@ int main() {
 							mn_n_name = min(mn_n_name, n_name[n_off]);
 						}
 						for (const auto &interm0_off: interm0_trie1) {
-							mn_interm0_col1 = min(mn_interm0_col1, interm0_col1[interm0_off]);
 							mn_interm0_col2 = min(mn_interm0_col2, interm0_col2[interm0_off]);
 							mn_interm0_col3 = min(mn_interm0_col3, interm0_col3[interm0_off]);
 						}
@@ -86,7 +84,7 @@ int main() {
 		timer.StoreElapsedTime(3);
 
 		if (z == 0)
-			cout << mn_n_name << " | " << mn_interm0_col1 << " | " << mn_interm0_col2 << " | " << mn_interm0_col3 << endl;
+			cout << mn_n_name << " | " << mn_interm0_col2 << " | " << mn_interm0_col3 << endl;
 		cout << "*" << " " << flush;
 	}
 	cout << endl;

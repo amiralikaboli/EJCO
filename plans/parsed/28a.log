@@ -2,23 +2,23 @@
 [('cc', ['subject_id', 'status_id'], ['movie_id']), ('cct1', ['id'], []), ('cct2', ['id'], [])]
 [[('cc', 'subject_id'), ('cct1', 'id')], [('cc', 'status_id'), ('cct2', 'id')]]
 ########################################################################################################################################################################################################
-('interm1', [(0, ('mi_idx', 'info_type_id')), (1, ('mi_idx', 'movie_id')), (2, ('mi_idx', 'info')), (3, ('interm0', 'col0')), (4, ('interm0', 'col1'))], [1])
-[('mi_idx', ['info_type_id', 'movie_id'], ['info']), ('it2', ['id'], []), ('interm0', ['col2'], ['col0', 'col1'])]
+('interm1', [(0, ('mi_idx', 'info_type_id')), (1, ('mi_idx', 'movie_id')), (2, ('mi_idx', 'info'))], [1])
+[('mi_idx', ['info_type_id', 'movie_id'], ['info']), ('it2', ['id'], []), ('interm0', ['col2'], [])]
 [[('mi_idx', 'info_type_id'), ('it2', 'id')], [('mi_idx', 'movie_id'), ('interm0', 'col2')]]
 ########################################################################################################################################################################################################
-('interm2', [(0, ('t', 'kind_id')), (1, ('t', 'id')), (2, ('t', 'title')), (3, ('interm1', 'col0')), (4, ('interm1', 'col2')), (5, ('interm1', 'col3')), (6, ('interm1', 'col4'))], [1])
-[('t', ['kind_id', 'id'], ['title']), ('kt', ['id'], []), ('interm1', ['col1'], ['col0', 'col2', 'col3', 'col4'])]
+('interm2', [(0, ('t', 'kind_id')), (1, ('t', 'id')), (2, ('t', 'title')), (4, ('interm1', 'col2'))], [1])
+[('t', ['kind_id', 'id'], ['title']), ('kt', ['id'], []), ('interm1', ['col1'], ['col2'])]
 [[('t', 'kind_id'), ('kt', 'id')], [('t', 'id'), ('interm1', 'col1')]]
 ########################################################################################################################################################################################################
-('interm3', [(0, ('mc', 'company_id')), (1, ('mc', 'company_type_id')), (2, ('mc', 'movie_id')), (3, ('cn', 'name')), (4, ('interm2', 'col0')), (5, ('interm2', 'col2')), (6, ('interm2', 'col3')), (7, ('interm2', 'col4')), (8, ('interm2', 'col5')), (9, ('interm2', 'col6'))], [2])
-[('mc', ['company_id', 'company_type_id', 'movie_id'], []), ('cn', ['id'], ['name']), ('ct', ['id'], []), ('interm2', ['col1'], ['col0', 'col2', 'col3', 'col4', 'col5', 'col6'])]
+('interm3', [(0, ('mc', 'company_id')), (1, ('mc', 'company_type_id')), (2, ('mc', 'movie_id')), (3, ('cn', 'name')), (5, ('interm2', 'col2')), (7, ('interm2', 'col4'))], [2])
+[('mc', ['company_id', 'company_type_id', 'movie_id'], []), ('cn', ['id'], ['name']), ('ct', ['id'], []), ('interm2', ['col1'], ['col2', 'col4'])]
 [[('mc', 'company_id'), ('cn', 'id')], [('mc', 'company_type_id'), ('ct', 'id')], [('mc', 'movie_id'), ('interm2', 'col1')]]
 ########################################################################################################################################################################################################
-('interm4', [(0, ('mk', 'keyword_id')), (1, ('mk', 'movie_id')), (2, ('interm3', 'col0')), (3, ('interm3', 'col1')), (4, ('interm3', 'col3')), (5, ('interm3', 'col4')), (6, ('interm3', 'col5')), (7, ('interm3', 'col6')), (8, ('interm3', 'col7')), (9, ('interm3', 'col8')), (10, ('interm3', 'col9'))], [1])
-[('mk', ['keyword_id', 'movie_id'], []), ('k', ['id'], []), ('interm3', ['col2'], ['col0', 'col1', 'col3', 'col4', 'col5', 'col6', 'col7', 'col8', 'col9'])]
+('interm4', [(0, ('mk', 'keyword_id')), (1, ('mk', 'movie_id')), (4, ('interm3', 'col3')), (6, ('interm3', 'col5')), (8, ('interm3', 'col7'))], [1])
+[('mk', ['keyword_id', 'movie_id'], []), ('k', ['id'], []), ('interm3', ['col2'], ['col3', 'col5', 'col7'])]
 [[('mk', 'keyword_id'), ('k', 'id')], [('mk', 'movie_id'), ('interm3', 'col2')]]
 ########################################################################################################################################################################################################
-('root', [(0, ('mi', 'info_type_id')), (1, ('mi', 'movie_id')), (2, ('interm4', 'col0')), (3, ('interm4', 'col2')), (4, ('interm4', 'col3')), (5, ('interm4', 'col4')), (6, ('interm4', 'col5')), (7, ('interm4', 'col6')), (8, ('interm4', 'col7')), (9, ('interm4', 'col8')), (10, ('interm4', 'col9')), (11, ('interm4', 'col10'))], [])
-[('mi', ['info_type_id', 'movie_id'], []), ('it1', ['id'], []), ('interm4', ['col1'], ['col0', 'col2', 'col3', 'col4', 'col5', 'col6', 'col7', 'col8', 'col9', 'col10'])]
+('root', [(0, ('mi', 'info_type_id')), (1, ('mi', 'movie_id')), (5, ('interm4', 'col4')), (7, ('interm4', 'col6')), (9, ('interm4', 'col8'))], [])
+[('mi', ['info_type_id', 'movie_id'], []), ('it1', ['id'], []), ('interm4', ['col1'], ['col4', 'col6', 'col8'])]
 [[('mi', 'info_type_id'), ('it1', 'id')], [('mi', 'movie_id'), ('interm4', 'col1')]]
 ########################################################################################################################################################################################################

@@ -84,17 +84,15 @@ int main() {
 
 		auto ci_trie0 = phmap::flat_hash_map<int, phmap::flat_hash_map<int, bool>>();
 		build_trie_bool(ci_trie0, ci_movie_id, ci_person_id);
-		auto interm1_trie0 = phmap::flat_hash_map<int, vector<int>>();
-		build_trie(interm1_trie0, interm1_col0);
+		auto interm1_trie0 = phmap::flat_hash_map<int, bool>();
+		build_trie_bool(interm1_trie0, interm1_col0);
 		auto interm0_trie0 = phmap::flat_hash_map<int, vector<int>>();
 		build_trie(interm0_trie0, interm0_col0);
 		auto an_trie0 = phmap::flat_hash_map<int, bool>();
 		build_trie_bool(an_trie0, an_person_id);
 		timer.StoreElapsedTime(4);
 
-		int mn_interm1_col1 = numeric_limits<int>::max();
 		string mn_interm0_col1 = "zzzzzzzz";
-		int mn_interm0_col2 = numeric_limits<int>::max();
 		string mn_interm0_col3 = "zzzzzzzz";
 		for (const auto &[x0, ci_trie1]: ci_trie0) {
 			if (interm1_trie0.contains(x0)) {
@@ -103,12 +101,8 @@ int main() {
 					if (interm0_trie0.contains(x1) && an_trie0.contains(x1)) {
 						auto &interm0_trie1 = interm0_trie0.at(x1);
 						auto &an_trie1 = an_trie0.at(x1);
-						for (const auto &interm1_off: interm1_trie1) {
-							mn_interm1_col1 = min(mn_interm1_col1, interm1_col1[interm1_off]);
-						}
 						for (const auto &interm0_off: interm0_trie1) {
 							mn_interm0_col1 = min(mn_interm0_col1, interm0_col1[interm0_off]);
-							mn_interm0_col2 = min(mn_interm0_col2, interm0_col2[interm0_off]);
 							mn_interm0_col3 = min(mn_interm0_col3, interm0_col3[interm0_off]);
 						}
 					}
@@ -118,7 +112,7 @@ int main() {
 		timer.StoreElapsedTime(5);
 
 		if (z == 0)
-			cout << mn_interm1_col1 << " | " << mn_interm0_col1 << " | " << mn_interm0_col2 << " | " << mn_interm0_col3 << endl;
+			cout << mn_interm0_col1 << " | " << mn_interm0_col3 << endl;
 		cout << "*" << " " << flush;
 	}
 	cout << endl;

@@ -45,8 +45,8 @@ int main() {
 		build_trie_bool(ci_trie0, ci_person_id, ci_movie_id, ci_role_id, ci_person_role_id);
 		auto n_trie0 = phmap::flat_hash_map<int, bool>();
 		build_trie_bool(n_trie0, n_id);
-		auto interm0_trie0 = phmap::flat_hash_map<int, vector<int>>();
-		build_trie(interm0_trie0, interm0_col1);
+		auto interm0_trie0 = phmap::flat_hash_map<int, bool>();
+		build_trie_bool(interm0_trie0, interm0_col1);
 		auto rt_trie0 = phmap::flat_hash_map<int, bool>();
 		build_trie_bool(rt_trie0, rt_id);
 		auto t_trie0 = phmap::flat_hash_map<int, vector<int>>();
@@ -57,7 +57,6 @@ int main() {
 		build_trie(an_trie0, an_person_id);
 		timer.StoreElapsedTime(2);
 
-		int mn_interm0_col0 = numeric_limits<int>::max();
 		string mn_t_title = "zzzzzzzz";
 		string mn_chn_name = "zzzzzzzz";
 		string mn_an_name = "zzzzzzzz";
@@ -77,9 +76,6 @@ int main() {
 											auto &chn_trie1 = chn_trie0.at(x4);
 											if (an_trie0.contains(x0)) {
 												auto &an_trie1 = an_trie0.at(x0);
-												for (const auto &interm0_off: interm0_trie1) {
-													mn_interm0_col0 = min(mn_interm0_col0, interm0_col0[interm0_off]);
-												}
 												for (const auto &t_off: t_trie1) {
 													mn_t_title = min(mn_t_title, t_title[t_off]);
 												}
@@ -102,7 +98,7 @@ int main() {
 		timer.StoreElapsedTime(3);
 
 		if (z == 0)
-			cout << mn_interm0_col0 << " | " << mn_t_title << " | " << mn_chn_name << " | " << mn_an_name << endl;
+			cout << mn_t_title << " | " << mn_chn_name << " | " << mn_an_name << endl;
 		cout << "*" << " " << flush;
 	}
 	cout << endl;

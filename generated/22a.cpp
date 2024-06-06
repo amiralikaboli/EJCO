@@ -80,9 +80,7 @@ int main() {
 		vector<int> interm1_col1;
 		vector<int> interm1_col2;
 		vector<string> interm1_col3;
-		vector<int> interm1_col4;
 		vector<string> interm1_col5;
-		vector<int> interm1_col6;
 		vector<string> interm1_col7;
 		for (const auto &[x0, mc_trie1]: mc_trie0) {
 			if (cn_trie0.contains(x0)) {
@@ -100,9 +98,7 @@ int main() {
 											interm1_col1.push_back(mc_company_type_id[mc_off]);
 											interm1_col2.push_back(mc_movie_id[mc_off]);
 											interm1_col3.push_back(cn_name[cn_off]);
-											interm1_col4.push_back(interm0_col1[interm0_off]);
 											interm1_col5.push_back(interm0_col2[interm0_off]);
-											interm1_col6.push_back(interm0_col3[interm0_off]);
 											interm1_col7.push_back(interm0_col4[interm0_off]);
 										}
 									}
@@ -125,12 +121,8 @@ int main() {
 
 		vector<int> interm2_col0;
 		vector<int> interm2_col1;
-		vector<int> interm2_col2;
-		vector<int> interm2_col3;
 		vector<string> interm2_col4;
-		vector<int> interm2_col5;
 		vector<string> interm2_col6;
-		vector<int> interm2_col7;
 		vector<string> interm2_col8;
 		for (const auto &[x0, mk_trie1]: mk_trie0) {
 			if (k_trie0.contains(x0)) {
@@ -142,12 +134,8 @@ int main() {
 							for (const auto &interm1_off: interm1_trie1) {
 								interm2_col0.push_back(mk_keyword_id[mk_off]);
 								interm2_col1.push_back(mk_movie_id[mk_off]);
-								interm2_col2.push_back(interm1_col0[interm1_off]);
-								interm2_col3.push_back(interm1_col1[interm1_off]);
 								interm2_col4.push_back(interm1_col3[interm1_off]);
-								interm2_col5.push_back(interm1_col4[interm1_off]);
 								interm2_col6.push_back(interm1_col5[interm1_off]);
-								interm2_col7.push_back(interm1_col6[interm1_off]);
 								interm2_col8.push_back(interm1_col7[interm1_off]);
 							}
 						}
@@ -165,13 +153,8 @@ int main() {
 		build_trie(interm2_trie0, interm2_col1);
 		timer.StoreElapsedTime(6);
 
-		int mn_interm2_col0 = numeric_limits<int>::max();
-		int mn_interm2_col2 = numeric_limits<int>::max();
-		int mn_interm2_col3 = numeric_limits<int>::max();
 		string mn_interm2_col4 = "zzzzzzzz";
-		int mn_interm2_col5 = numeric_limits<int>::max();
 		string mn_interm2_col6 = "zzzzzzzz";
-		int mn_interm2_col7 = numeric_limits<int>::max();
 		string mn_interm2_col8 = "zzzzzzzz";
 		for (const auto &[x0, mi_trie1]: mi_trie0) {
 			if (it1_trie0.contains(x0)) {
@@ -180,13 +163,8 @@ int main() {
 					if (interm2_trie0.contains(x1)) {
 						auto &interm2_trie1 = interm2_trie0.at(x1);
 						for (const auto &interm2_off: interm2_trie1) {
-							mn_interm2_col0 = min(mn_interm2_col0, interm2_col0[interm2_off]);
-							mn_interm2_col2 = min(mn_interm2_col2, interm2_col2[interm2_off]);
-							mn_interm2_col3 = min(mn_interm2_col3, interm2_col3[interm2_off]);
 							mn_interm2_col4 = min(mn_interm2_col4, interm2_col4[interm2_off]);
-							mn_interm2_col5 = min(mn_interm2_col5, interm2_col5[interm2_off]);
 							mn_interm2_col6 = min(mn_interm2_col6, interm2_col6[interm2_off]);
-							mn_interm2_col7 = min(mn_interm2_col7, interm2_col7[interm2_off]);
 							mn_interm2_col8 = min(mn_interm2_col8, interm2_col8[interm2_off]);
 						}
 					}
@@ -196,7 +174,7 @@ int main() {
 		timer.StoreElapsedTime(7);
 
 		if (z == 0)
-			cout << mn_interm2_col0 << " | " << mn_interm2_col2 << " | " << mn_interm2_col3 << " | " << mn_interm2_col4 << " | " << mn_interm2_col5 << " | " << mn_interm2_col6 << " | " << mn_interm2_col7 << " | " << mn_interm2_col8 << endl;
+			cout << mn_interm2_col4 << " | " << mn_interm2_col6 << " | " << mn_interm2_col8 << endl;
 		cout << "*" << " " << flush;
 	}
 	cout << endl;

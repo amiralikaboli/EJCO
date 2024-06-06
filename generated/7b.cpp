@@ -93,9 +93,7 @@ int main() {
 		timer.StoreElapsedTime(4);
 
 		string mn_interm1_col1 = "zzzzzzzz";
-		int mn_interm1_col2 = numeric_limits<int>::max();
 		string mn_interm0_col1 = "zzzzzzzz";
-		int mn_interm0_col2 = numeric_limits<int>::max();
 		for (const auto &[x0, ci_trie1]: ci_trie0) {
 			if (interm1_trie0.contains(x0)) {
 				auto &interm1_trie1 = interm1_trie0.at(x0);
@@ -105,11 +103,9 @@ int main() {
 						auto &an_trie1 = an_trie0.at(x1);
 						for (const auto &interm1_off: interm1_trie1) {
 							mn_interm1_col1 = min(mn_interm1_col1, interm1_col1[interm1_off]);
-							mn_interm1_col2 = min(mn_interm1_col2, interm1_col2[interm1_off]);
 						}
 						for (const auto &interm0_off: interm0_trie1) {
 							mn_interm0_col1 = min(mn_interm0_col1, interm0_col1[interm0_off]);
-							mn_interm0_col2 = min(mn_interm0_col2, interm0_col2[interm0_off]);
 						}
 					}
 				}
@@ -118,7 +114,7 @@ int main() {
 		timer.StoreElapsedTime(5);
 
 		if (z == 0)
-			cout << mn_interm1_col1 << " | " << mn_interm1_col2 << " | " << mn_interm0_col1 << " | " << mn_interm0_col2 << endl;
+			cout << mn_interm1_col1 << " | " << mn_interm0_col1 << endl;
 		cout << "*" << " " << flush;
 	}
 	cout << endl;

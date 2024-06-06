@@ -76,9 +76,7 @@ int main() {
 		build_trie(an_trie0, an_person_id);
 		timer.StoreElapsedTime(2);
 
-		int mn_interm0_col1 = numeric_limits<int>::max();
 		string mn_interm0_col2 = "zzzzzzzz";
-		int mn_interm0_col3 = numeric_limits<int>::max();
 		string mn_an_name = "zzzzzzzz";
 		for (const auto &[x0, ci_trie1]: ci_trie0) {
 			if (n_trie0.contains(x0)) {
@@ -89,9 +87,7 @@ int main() {
 						if (an_trie0.contains(x0)) {
 							auto &an_trie1 = an_trie0.at(x0);
 							for (const auto &interm0_off: interm0_trie1) {
-								mn_interm0_col1 = min(mn_interm0_col1, interm0_col1[interm0_off]);
 								mn_interm0_col2 = min(mn_interm0_col2, interm0_col2[interm0_off]);
-								mn_interm0_col3 = min(mn_interm0_col3, interm0_col3[interm0_off]);
 							}
 							for (const auto &an_off: an_trie1) {
 								mn_an_name = min(mn_an_name, an_name[an_off]);
@@ -104,7 +100,7 @@ int main() {
 		timer.StoreElapsedTime(3);
 
 		if (z == 0)
-			cout << mn_interm0_col1 << " | " << mn_interm0_col2 << " | " << mn_interm0_col3 << " | " << mn_an_name << endl;
+			cout << mn_interm0_col2 << " | " << mn_an_name << endl;
 		cout << "*" << " " << flush;
 	}
 	cout << endl;

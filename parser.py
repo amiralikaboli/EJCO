@@ -1,7 +1,6 @@
-import math
 import os
 import re
-from typing import List, Tuple, Dict, Set
+from typing import List, Tuple, Set
 
 from consts import plans_path
 from var_mng import VariableManager
@@ -9,11 +8,11 @@ from var_mng import VariableManager
 
 class PlanParser:
 	def __init__(self, var_mng: VariableManager):
-		self.var_mng = var_mng
-		self.bags: List[Set[Tuple[str, str]]] = list()
+		self._var_mng = var_mng
+		self._bags: List[Set[Tuple[str, str]]] = list()
 
 	def clear(self):
-		self.bags = list()
+		self._bags = list()
 
 	def parse(self, query: str, use_cache: bool = False) -> List[Tuple[Tuple[str, List, List], List, List]]:
 		if use_cache and os.path.exists(os.path.join(plans_path, "parsed", f"{query}.log")):
@@ -36,6 +35,7 @@ class PlanParser:
 		]
 
 		parsed_plans = self._resolve_intermediate_stuff(parsed_plans)
+		parsed_plans = self._remove_extra_proj_columns(parsed_plans)
 
 		with open(os.path.join(plans_path, "parsed", f"{query}.log"), 'w') as log_file:
 			for node, build_plan, compiled_plan in parsed_plans:
@@ -126,7 +126,7 @@ class PlanParser:
 			plans: List[Tuple[str, List, List]]
 	) -> List[Tuple[Tuple[str, List, List], List, List]]:
 		for idx_u, (node_u, build_u, compiled_u) in enumerate(plans):
-			interm_rel = self.var_mng.interm_rel(idx_u)
+			interm_rel = self._var_mng.interm_rel(idx_u)
 			interm_cols = self._intermediate_columns_list(build_u, compiled_u)
 			interm_cols_enumerated = [(idx, rel_col) for idx, rel_col in enumerate(interm_cols)]
 			interm_trie_levels = list()
@@ -139,8 +139,8 @@ class PlanParser:
 						interm_trie_levels = can_join_cols
 						build_d[build_d_idx] = (
 							interm_rel,
-							[self.var_mng.interm_col(i) for i in can_join_cols],
-							[self.var_mng.interm_col(i) for i in can_proj_cols]
+							[self._var_mng.interm_col(i) for i in can_join_cols],
+							[self._var_mng.interm_col(i) for i in can_proj_cols]
 						)
 						found = True
 						break
@@ -148,7 +148,7 @@ class PlanParser:
 				if found:
 					for compiled_d_idx, eq_cols in enumerate(compiled_d):
 						for eq_cols_idx, (rel_d, col_d) in enumerate(eq_cols):
-							for bag in self.bags:
+							for bag in self._bags:
 								if (rel_d, col_d) in bag:
 									for rel_u, col_u in bag:
 										if rel_u == interm_rel:
@@ -177,22 +177,61 @@ class PlanParser:
 	def _update_bags(self, u_compiled, interm_rel, interm_cols):
 		for eq_cols in u_compiled:
 			new_bag = True
-			for bag_idx in range(len(self.bags)):
-				if self.bags[bag_idx].intersection(set(eq_cols)):
-					self.bags[bag_idx].update(eq_cols)
+			for bag_idx in range(len(self._bags)):
+				if self._bags[bag_idx].intersection(set(eq_cols)):
+					self._bags[bag_idx].update(eq_cols)
 					new_bag = False
 					break
 			if new_bag:
-				self.bags.append(set(eq_cols))
+				self._bags.append(set(eq_cols))
 		for idx, (rel, col) in enumerate(interm_cols):
 			new_bag = True
-			for bag_idx, bag in enumerate(self.bags):
+			for bag_idx, bag in enumerate(self._bags):
 				if (rel, col) in bag:
-					self.bags[bag_idx].add((interm_rel, self.var_mng.interm_col(idx)))
+					self._bags[bag_idx].add((interm_rel, self._var_mng.interm_col(idx)))
 					new_bag = False
 					break
 			if new_bag:
-				self.bags.append({(rel, col), (interm_rel, self.var_mng.interm_col(idx))})
+				self._bags.append({(rel, col), (interm_rel, self._var_mng.interm_col(idx))})
+
+	def _remove_extra_proj_columns(
+			self,
+			plans: List[Tuple[Tuple[str, List, List], List, List]]
+	) -> List[Tuple[Tuple[str, List, List], List, List]]:
+		interm_col_origins = dict()
+		first_indices = dict()
+		for i, ((interm, interm_cols, _), build_plan, compiled_plan) in enumerate(plans):
+			for j, rel_col in interm_cols:
+				if rel_col in interm_col_origins:
+					interm_col_origins[(interm, self._var_mng.interm_col(j))] = interm_col_origins[rel_col]
+				else:
+					interm_col_origins[(interm, self._var_mng.interm_col(j))] = rel_col
+
+			for rel, join_cols, _ in build_plan:
+				for col in join_cols:
+					rel_col = (rel, col)
+					origin = interm_col_origins.get(rel_col, rel_col)
+					if origin not in first_indices:
+						first_indices[origin] = i
+
+		for i, ((interm, interm_cols, interm_trie_levels), build_plan, compiled_plan) in enumerate(plans):
+			interm_col2idx = {rel_col: j for j, rel_col in interm_cols}
+			new_interm_cols = interm_cols.copy()
+			new_build_plan = list()
+			for rel, join_cols, proj_cols in build_plan:
+				new_proj_cols = list()
+				for col in proj_cols:
+					rel_col = (rel, col)
+					origin = interm_col_origins.get(rel_col, rel_col)
+					if origin in first_indices and first_indices[origin] < i:
+						if rel_col in interm_col2idx and interm_col2idx[rel_col] not in interm_trie_levels:
+							new_interm_cols.remove((interm_col2idx[rel_col], rel_col))
+					else:
+						new_proj_cols.append(col)
+				new_build_plan.append((rel, join_cols, new_proj_cols))
+			plans[i] = ((interm, new_interm_cols, interm_trie_levels), new_build_plan, compiled_plan)
+
+		return plans
 
 
 if __name__ == '__main__':

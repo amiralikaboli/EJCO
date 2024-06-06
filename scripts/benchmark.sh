@@ -4,7 +4,6 @@ RESULTS_FILE=${1:-results/results.txt}
 
 rm -rf generated/*.cpp
 rm -rf generated/load/*.h
-rm -rf generated/stats/*.h
 
 python3 main.py
 
