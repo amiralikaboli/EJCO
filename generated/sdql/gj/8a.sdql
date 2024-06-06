@@ -6,13 +6,13 @@ let rt = load[{<id: int, role: string> -> int}]("/Users/s2522996/Documents/free-
 let t = load[{<id: int, title: string, imdb_index: string, kind_id: int, production_year: int, imdb_id: string, phonetic_code: string, episode_of_id: int, season_nr: int, episode_nr: int, series_years: string, md5sum: string> -> int}]("/Users/s2522996/Documents/free-join/data/imdb_csv/title.csv")
 let an1 = load[{<id: int, person_id: int, name: string, imdb_index: string, name_pcode_cf: string, name_pcode_nf: string, surname_pcode: string, md5sum: string> -> int}]("/Users/s2522996/Documents/free-join/data/imdb_csv/aka_name.csv")
 
-let mc_trie0 = sum(<mc_tuple, _> <- mc) { mc_tuple.company_id -> mc_tuple } in
-let cn_trie0 = sum(<cn_tuple, _> <- cn) { cn_tuple.id -> cn_tuple } in
-let ci_trie0 = sum(<ci_tuple, _> <- ci) { ci_tuple.person_id -> { ci_tuple.movie_id -> { ci_tuple.role_id -> ci_tuple } } } in
-let n1_trie0 = sum(<n1_tuple, _> <- n1) { n1_tuple.id -> n1_tuple } in
-let rt_trie0 = sum(<rt_tuple, _> <- rt) { rt_tuple.id -> rt_tuple } in
-let t_trie0 = sum(<t_tuple, _> <- t) { t_tuple.id -> t_tuple } in
-let an1_trie0 = sum(<an1_tuple, _> <- an1) { an1_tuple.person_id -> an1_tuple } in
+let mc_trie0 = sum(<mc_tuple, _> <- mc) { mc_tuple.company_id -> { mc_tuple -> 1 } } in
+let cn_trie0 = sum(<cn_tuple, _> <- cn) { cn_tuple.id -> { cn_tuple -> 1 } } in
+let ci_trie0 = sum(<ci_tuple, _> <- ci) { ci_tuple.person_id -> { ci_tuple.movie_id -> { ci_tuple.role_id -> { ci_tuple -> 1 } } } } in
+let n1_trie0 = sum(<n1_tuple, _> <- n1) { n1_tuple.id -> { n1_tuple -> 1 } } in
+let rt_trie0 = sum(<rt_tuple, _> <- rt) { rt_tuple.id -> { rt_tuple -> 1 } } in
+let t_trie0 = sum(<t_tuple, _> <- t) { t_tuple.id -> { t_tuple -> 1 } } in
+let an1_trie0 = sum(<an1_tuple, _> <- an1) { an1_tuple.person_id -> { an1_tuple -> 1 } } in
 
 let interm0_trie0 = sum(<x0, mc_trie1> <- mc_trie0)
 	let cn_trie1 = cn_trie0(x0) in

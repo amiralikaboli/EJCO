@@ -80,7 +80,7 @@ class SdqlGjGenerator(SdqlGenerator):
 			if self.var_mng.is_interm_rel(rel):
 				continue
 			tuple_var = self.var_mng.tuple_var(rel)
-			trie_value = tuple_var
+			trie_value = f"{{ {tuple_var} -> 1 }}"
 			for col in join_cols[::-1]:
 				trie_value = f"{{ {tuple_var}.{col} -> {trie_value} }}"
 			yield f"let {self.var_mng.trie_var(rel)} = sum(<{tuple_var}, _> <- {rel}) {trie_value} in\n"
