@@ -27,7 +27,7 @@ let interm0_trie0 = sum(<x0, cc_trie1> <- cc_trie0)
 			let cct2_trie1 = cct2_trie0(x1) in
 			if (cct2_trie1 != {}) then
 				sum(<cc_tuple, _> <- cc_trie2)
-					{ cc_tuple.movie_id -> <col0=cc_tuple.subject_id, col1=cc_tuple.status_id, col2=cc_tuple.movie_id> }
+					{ cc_tuple.movie_id -> { <col0=cc_tuple.subject_id, col1=cc_tuple.status_id, col2=cc_tuple.movie_id> -> 1 } }
 			else
 				{}
 	else
@@ -45,7 +45,7 @@ let interm1_trie0 = sum(<x0, mk_trie1> <- mk_trie0)
 					if (k_trie1 != {}) then
 						sum(<mk_tuple, _> <- mk_trie2)
 							sum(<t_tuple, _> <- t_trie2)
-								{ mk_tuple.movie_id -> <col0=mk_tuple.movie_id, col1=mk_tuple.keyword_id, col2=t_tuple.kind_id, col3=t_tuple.title> }
+								{ mk_tuple.movie_id -> { <col0=mk_tuple.movie_id, col1=mk_tuple.keyword_id, col2=t_tuple.kind_id, col3=t_tuple.title> -> 1 } }
 					else
 						{}
 			else
