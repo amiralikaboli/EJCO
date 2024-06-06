@@ -1,5 +1,6 @@
 import math
-import os.path
+import os
+from abc import ABC, abstractmethod
 from collections import defaultdict
 from typing import List, Tuple, Dict
 
@@ -7,8 +8,9 @@ from consts import generated_dir_path, preprocessed_data_path, raw_data_path, ab
 from var_mng import VariableManager
 
 
-class SDQLGenerator:
+class SdqlGenerator(ABC):
 	def __init__(self, var_mng: VariableManager):
+		self.save_path = os.path.join(generated_dir_path, "sdql")
 		self.var_mng = var_mng
 		self.indent = 0
 		self.resolved_attrs = set()
@@ -18,43 +20,70 @@ class SDQLGenerator:
 		self.resolved_attrs = set()
 
 	def generate(self, query: str, plans: List[Tuple[Tuple[str, List, List], List, List]]):
-		with open(os.path.join(generated_dir_path, "sdql", f"{query}.sdql"), "w") as sdql_file:
-			build_plans = [build_plan for _, build_plan, _ in plans]
-			for line in self._generate_loads(query, build_plans):
+		with open(os.path.join(self.save_path, f"{query}.sdql"), "w") as sdql_file:
+			for line in self._generate(query, plans):
 				sdql_file.write('\t' * self.indent + line)
-			sdql_file.write("\n")
 
-			for line in self._generate_build_tries(build_plans):
-				sdql_file.write('\t' * self.indent + line)
-			sdql_file.write("\n")
+	@abstractmethod
+	def _generate(self, query: str, plans: List[Tuple[Tuple[str, List, List], List, List]]):
+		raise NotImplementedError
 
-			for node, build_plan, compiled_plan in plans:
-				for line in self._generate_compiled_plan(node, build_plan, compiled_plan):
-					sdql_file.write('\t' * self.indent + line)
-				sdql_file.write("\n")
-				self.indent = 0
+	@staticmethod
+	def _order_join_cols_based_on_compiled_plan(
+			build_plan: List[Tuple[str, List[str], List[str]]], compiled_plan: List[List[str]]
+	) -> Dict[str, Dict[str, int]]:  # rel -> col -> idx
+		join_attrs_order = {
+			rel: {col: math.inf for col in join_cols}
+			for rel, join_cols, _ in build_plan
+		}
+		for idx, eq_cols in enumerate(compiled_plan):
+			min_idx = min(idx, *[join_attrs_order[rel][col] for rel, col in eq_cols])
+			for rel, col in eq_cols:
+				join_attrs_order[rel][col] = min_idx
+		return join_attrs_order
 
-	def _generate_loads(self, query: str, build_plans: List[List[Tuple[str, List[str], List[str]]]]):
-		for build_plan in build_plans:
-			for rel, _, _ in build_plan:
-				if self.var_mng.is_interm_rel(rel):
-					continue
-				path = os.path.join(preprocessed_data_path, query, f"{rel}.csv")
-				if not os.path.exists(path):
-					path = os.path.join(raw_data_path, f"{abbr2rel[rel_wo_idx(rel)]}.csv")
-				path = os.path.normpath(path)
-				yield f'let {rel} = load[{{<{", ".join([f"{col_n}: {col_t}" for col_n, col_t in rel2col2type[rel_wo_idx(rel)].items()])}> -> int}}]("{path}")\n'
 
-	def _generate_build_tries(self, build_plans: List[List[Tuple[str, List[str], List[str]]]]):
-		for build_plan in build_plans:
-			for rel, join_cols, _ in build_plan:
-				if self.var_mng.is_interm_rel(rel):
-					continue
-				tuple_var = self.var_mng.tuple_var(rel)
-				trie_value = tuple_var
-				for col in join_cols[::-1]:
-					trie_value = f"{{ {tuple_var}.{col} -> {trie_value} }}"
-				yield f"let {self.var_mng.trie_var(rel)} = sum(<{tuple_var}, _> <- {rel}) {trie_value} in\n"
+class SdqlGjGenerator(SdqlGenerator):
+	def __init__(self, var_mng: VariableManager):
+		super().__init__(var_mng)
+		self.save_path = os.path.join(self.save_path, "gj")
+
+	def _generate(self, query: str, plans: List[Tuple[Tuple[str, List, List], List, List]]):
+		for _, build_plan, _ in plans:
+			for line in self._generate_loads(query, build_plan):
+				yield line
+		yield "\n"
+
+		for _, build_plan, _ in plans:
+			for line in self._generate_build_tries(build_plan):
+				yield line
+		yield "\n"
+
+		for node, build_plan, compiled_plan in plans:
+			for line in self._generate_compiled_plan(node, build_plan, compiled_plan):
+				yield line
+			self.indent = 0
+			yield "\n"
+
+	def _generate_loads(self, query: str, build_plan: List[Tuple[str, List[str], List[str]]]):
+		for rel, _, _ in build_plan:
+			if self.var_mng.is_interm_rel(rel):
+				continue
+			path = os.path.join(preprocessed_data_path, query, f"{rel}.csv")
+			if not os.path.exists(path):
+				path = os.path.join(raw_data_path, f"{abbr2rel[rel_wo_idx(rel)]}.csv")
+			path = os.path.normpath(path)
+			yield f'let {rel} = load[{{<{", ".join([f"{col_n}: {col_t}" for col_n, col_t in rel2col2type[rel_wo_idx(rel)].items()])}> -> int}}]("{path}")\n'
+
+	def _generate_build_tries(self, build_plan: List[Tuple[str, List[str], List[str]]]):
+		for rel, join_cols, _ in build_plan:
+			if self.var_mng.is_interm_rel(rel):
+				continue
+			tuple_var = self.var_mng.tuple_var(rel)
+			trie_value = tuple_var
+			for col in join_cols[::-1]:
+				trie_value = f"{{ {tuple_var}.{col} -> {trie_value} }}"
+			yield f"let {self.var_mng.trie_var(rel)} = sum(<{tuple_var}, _> <- {rel}) {trie_value} in\n"
 
 	def _generate_compiled_plan(
 			self,
@@ -131,17 +160,3 @@ class SDQLGenerator:
 		if not self.var_mng.is_root_rel(interm_rel):
 			self.indent = 0
 			yield f"in\n"
-
-	@staticmethod
-	def _order_join_cols_based_on_compiled_plan(
-			build_plan: List[Tuple[str, List[str], List[str]]], compiled_plan: List[List[str]]
-	) -> Dict[str, Dict[str, int]]:  # rel -> col -> idx
-		join_attrs_order = {
-			rel: {col: math.inf for col in join_cols}
-			for rel, join_cols, _ in build_plan
-		}
-		for idx, eq_cols in enumerate(compiled_plan):
-			min_idx = min(idx, *[join_attrs_order[rel][col] for rel, col in eq_cols])
-			for rel, col in eq_cols:
-				join_attrs_order[rel][col] = min_idx
-		return join_attrs_order

@@ -8,7 +8,7 @@ from consts import preprocessed_data_path, raw_data_path, include_dir_path, gene
 from var_mng import VariableManager
 
 
-class CPPGenerator:
+class CppGenerator:
 	def __init__(self, var_mng: VariableManager):
 		self.trie_types = set()
 		self.resolved_attrs = set()
