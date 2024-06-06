@@ -24,7 +24,7 @@ let ci_trie0 = sum(<ci_tuple, _> <- ci) { ci_tuple.person_role_id -> { ci_tuple.
 let chn_trie0 = sum(<chn_tuple, _> <- chn) { chn_tuple.id -> chn_tuple } in
 let rt_trie0 = sum(<rt_tuple, _> <- rt) { rt_tuple.id -> rt_tuple } in
 
-let interm0 = sum(<x0, mk_trie1> <- mk_trie0)
+let interm0_trie0 = sum(<x0, mk_trie1> <- mk_trie0)
 	let t_trie1 = t_trie0(x0) in
 	if (t_trie1 != {}) then
 		sum(<mk_tuple, _> <- mk_trie1)
@@ -34,7 +34,7 @@ let interm0 = sum(<x0, mk_trie1> <- mk_trie0)
 		{}
 in
 
-let interm1 = sum(<x0, mi_trie1> <- mi_trie0)
+let interm1_trie0 = sum(<x0, mi_trie1> <- mi_trie0)
 	let interm0_trie1 = interm0_trie0(x0) in
 	let mc_trie1 = mc_trie0(x0) in
 	if (interm0_trie1 != {} && mc_trie1 != {}) then
@@ -61,7 +61,7 @@ let interm1 = sum(<x0, mi_trie1> <- mi_trie0)
 		{}
 in
 
-let interm2 = sum(<x0, n_trie1> <- n_trie0)
+let interm2_trie0 = sum(<x0, n_trie1> <- n_trie0)
 	let an_trie1 = an_trie0(x0) in
 	if (an_trie1 != {}) then
 		sum(<n_tuple, _> <- n_trie1)

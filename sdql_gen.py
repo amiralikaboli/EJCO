@@ -65,7 +65,7 @@ class SDQLGenerator:
 		interm_rel, interm_cols, interm_trie_cols = node
 
 		if not self.var_mng.is_root_rel(interm_rel):
-			yield f"let {interm_rel} = "
+			yield f"let {self.var_mng.trie_var(interm_rel)} = "
 
 		else_cases = list()
 		join_attrs_order = self._order_join_cols_based_on_compiled_plan(build_plan, compiled_plan)

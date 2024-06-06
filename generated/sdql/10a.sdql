@@ -14,7 +14,7 @@ let ci_trie0 = sum(<ci_tuple, _> <- ci) { ci_tuple.role_id -> { ci_tuple.movie_i
 let rt_trie0 = sum(<rt_tuple, _> <- rt) { rt_tuple.id -> rt_tuple } in
 let chn_trie0 = sum(<chn_tuple, _> <- chn) { chn_tuple.id -> chn_tuple } in
 
-let interm0 = sum(<x0, mc_trie1> <- mc_trie0)
+let interm0_trie0 = sum(<x0, mc_trie1> <- mc_trie0)
 	let t_trie1 = t_trie0(x0) in
 	if (t_trie1 != {}) then
 		sum(<x1, mc_trie2> <- mc_trie1)

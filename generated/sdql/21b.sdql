@@ -18,7 +18,7 @@ let k_trie0 = sum(<k_tuple, _> <- k) { k_tuple.id -> k_tuple } in
 let ct_trie0 = sum(<ct_tuple, _> <- ct) { ct_tuple.id -> ct_tuple } in
 let cn_trie0 = sum(<cn_tuple, _> <- cn) { cn_tuple.id -> cn_tuple } in
 
-let interm0 = sum(<x0, t_trie1> <- t_trie0)
+let interm0_trie0 = sum(<x0, t_trie1> <- t_trie0)
 	let ml_trie1 = ml_trie0(x0) in
 	if (ml_trie1 != {}) then
 		sum(<t_tuple, _> <- t_trie1)
@@ -28,7 +28,7 @@ let interm0 = sum(<x0, t_trie1> <- t_trie0)
 		{}
 in
 
-let interm1 = sum(<x0, mk_trie1> <- mk_trie0)
+let interm1_trie0 = sum(<x0, mk_trie1> <- mk_trie0)
 	let interm0_trie1 = interm0_trie0(x0) in
 	if (interm0_trie1 != {}) then
 		sum(<mk_tuple, _> <- mk_trie1)

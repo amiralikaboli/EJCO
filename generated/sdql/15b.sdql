@@ -18,7 +18,7 @@ let ct_trie0 = sum(<ct_tuple, _> <- ct) { ct_tuple.id -> ct_tuple } in
 let cn_trie0 = sum(<cn_tuple, _> <- cn) { cn_tuple.id -> cn_tuple } in
 let at_trie0 = sum(<at_tuple, _> <- at) { at_tuple.movie_id -> at_tuple } in
 
-let interm0 = sum(<x0, mk_trie1> <- mk_trie0)
+let interm0_trie0 = sum(<x0, mk_trie1> <- mk_trie0)
 	let t_trie1 = t_trie0(x0) in
 	if (t_trie1 != {}) then
 		sum(<mk_tuple, _> <- mk_trie1)

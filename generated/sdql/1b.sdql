@@ -10,7 +10,7 @@ let mc_trie0 = sum(<mc_tuple, _> <- mc) { mc_tuple.movie_id -> { mc_tuple.compan
 let it_trie0 = sum(<it_tuple, _> <- it) { it_tuple.id -> it_tuple } in
 let ct_trie0 = sum(<ct_tuple, _> <- ct) { ct_tuple.id -> ct_tuple } in
 
-let interm0 = sum(<x0, t_trie1> <- t_trie0)
+let interm0_trie0 = sum(<x0, t_trie1> <- t_trie0)
 	let mi_idx_trie1 = mi_idx_trie0(x0) in
 	if (mi_idx_trie1 != {}) then
 		sum(<t_tuple, _> <- t_trie1)

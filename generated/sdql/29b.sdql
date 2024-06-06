@@ -34,7 +34,7 @@ let ci_trie0 = sum(<ci_tuple, _> <- ci) { ci_tuple.person_role_id -> { ci_tuple.
 let chn_trie0 = sum(<chn_tuple, _> <- chn) { chn_tuple.id -> chn_tuple } in
 let rt_trie0 = sum(<rt_tuple, _> <- rt) { rt_tuple.id -> rt_tuple } in
 
-let interm0 = sum(<x0, cc_trie1> <- cc_trie0)
+let interm0_trie0 = sum(<x0, cc_trie1> <- cc_trie0)
 	let cct1_trie1 = cct1_trie0(x0) in
 	if (cct1_trie1 != {}) then
 		sum(<x1, cc_trie2> <- cc_trie1)
@@ -48,7 +48,7 @@ let interm0 = sum(<x0, cc_trie1> <- cc_trie0)
 		{}
 in
 
-let interm1 = sum(<x0, t_trie1> <- t_trie0)
+let interm1_trie0 = sum(<x0, t_trie1> <- t_trie0)
 	let interm0_trie1 = interm0_trie0(x0) in
 	if (interm0_trie1 != {}) then
 		sum(<t_tuple, _> <- t_trie1)
@@ -58,7 +58,7 @@ let interm1 = sum(<x0, t_trie1> <- t_trie0)
 		{}
 in
 
-let interm2 = sum(<x0, mc_trie1> <- mc_trie0)
+let interm2_trie0 = sum(<x0, mc_trie1> <- mc_trie0)
 	let cn_trie1 = cn_trie0(x0) in
 	if (cn_trie1 != {}) then
 		sum(<x1, mc_trie2> <- mc_trie1)
@@ -73,7 +73,7 @@ let interm2 = sum(<x0, mc_trie1> <- mc_trie0)
 		{}
 in
 
-let interm3 = sum(<x0, mk_trie1> <- mk_trie0)
+let interm3_trie0 = sum(<x0, mk_trie1> <- mk_trie0)
 	let k_trie1 = k_trie0(x0) in
 	if (k_trie1 != {}) then
 		sum(<x1, mk_trie2> <- mk_trie1)
@@ -88,7 +88,7 @@ let interm3 = sum(<x0, mk_trie1> <- mk_trie0)
 		{}
 in
 
-let interm4 = sum(<x0, mi_trie1> <- mi_trie0)
+let interm4_trie0 = sum(<x0, mi_trie1> <- mi_trie0)
 	let it_trie1 = it_trie0(x0) in
 	if (it_trie1 != {}) then
 		sum(<x1, mi_trie2> <- mi_trie1)
@@ -103,7 +103,7 @@ let interm4 = sum(<x0, mi_trie1> <- mi_trie0)
 		{}
 in
 
-let interm5 = sum(<x0, pi_trie1> <- pi_trie0)
+let interm5_trie0 = sum(<x0, pi_trie1> <- pi_trie0)
 	let an_trie1 = an_trie0(x0) in
 	if (an_trie1 != {}) then
 		sum(<x1, pi_trie2> <- pi_trie1)
@@ -117,7 +117,7 @@ let interm5 = sum(<x0, pi_trie1> <- pi_trie0)
 		{}
 in
 
-let interm6 = sum(<x0, n_trie1> <- n_trie0)
+let interm6_trie0 = sum(<x0, n_trie1> <- n_trie0)
 	let interm5_trie1 = interm5_trie0(x0) in
 	if (interm5_trie1 != {}) then
 		sum(<n_tuple, _> <- n_trie1)

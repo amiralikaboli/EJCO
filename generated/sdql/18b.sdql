@@ -14,7 +14,7 @@ let it1_trie0 = sum(<it1_tuple, _> <- it1) { it1_tuple.id -> it1_tuple } in
 let ci_trie0 = sum(<ci_tuple, _> <- ci) { ci_tuple.person_id -> { ci_tuple.movie_id -> ci_tuple } } in
 let n_trie0 = sum(<n_tuple, _> <- n) { n_tuple.id -> n_tuple } in
 
-let interm0 = sum(<x0, t_trie1> <- t_trie0)
+let interm0_trie0 = sum(<x0, t_trie1> <- t_trie0)
 	let mi_idx_trie1 = mi_idx_trie0(x0) in
 	if (mi_idx_trie1 != {}) then
 		sum(<t_tuple, _> <- t_trie1)
@@ -24,7 +24,7 @@ let interm0 = sum(<x0, t_trie1> <- t_trie0)
 		{}
 in
 
-let interm1 = sum(<x0, mi_trie1> <- mi_trie0)
+let interm1_trie0 = sum(<x0, mi_trie1> <- mi_trie0)
 	let interm0_trie1 = interm0_trie0(x0) in
 	if (interm0_trie1 != {}) then
 		sum(<x1, interm0_trie2> <- interm0_trie1)

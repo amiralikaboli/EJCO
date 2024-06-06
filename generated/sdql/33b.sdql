@@ -28,7 +28,7 @@ let cn1_trie0 = sum(<cn1_tuple, _> <- cn1) { cn1_tuple.id -> cn1_tuple } in
 let mc2_trie0 = sum(<mc2_tuple, _> <- mc2) { mc2_tuple.company_id -> { mc2_tuple.movie_id -> mc2_tuple } } in
 let cn2_trie0 = sum(<cn2_tuple, _> <- cn2) { cn2_tuple.id -> cn2_tuple } in
 
-let interm0 = sum(<x0, ml_trie1> <- ml_trie0)
+let interm0_trie0 = sum(<x0, ml_trie1> <- ml_trie0)
 	let lt_trie1 = lt_trie0(x0) in
 	if (lt_trie1 != {}) then
 		sum(<ml_tuple, _> <- ml_trie1)
@@ -37,7 +37,7 @@ let interm0 = sum(<x0, ml_trie1> <- ml_trie0)
 		{}
 in
 
-let interm1 = sum(<x0, mi_idx1_trie1> <- mi_idx1_trie0)
+let interm1_trie0 = sum(<x0, mi_idx1_trie1> <- mi_idx1_trie0)
 	let it1_trie1 = it1_trie0(x0) in
 	if (it1_trie1 != {}) then
 		sum(<x1, mi_idx1_trie2> <- mi_idx1_trie1)
@@ -52,7 +52,7 @@ let interm1 = sum(<x0, mi_idx1_trie1> <- mi_idx1_trie0)
 		{}
 in
 
-let interm2 = sum(<x0, mi_idx2_trie1> <- mi_idx2_trie0)
+let interm2_trie0 = sum(<x0, mi_idx2_trie1> <- mi_idx2_trie0)
 	let it2_trie1 = it2_trie0(x0) in
 	if (it2_trie1 != {}) then
 		sum(<x1, mi_idx2_trie2> <- mi_idx2_trie1)
@@ -67,7 +67,7 @@ let interm2 = sum(<x0, mi_idx2_trie1> <- mi_idx2_trie0)
 		{}
 in
 
-let interm3 = sum(<x0, t1_trie1> <- t1_trie0)
+let interm3_trie0 = sum(<x0, t1_trie1> <- t1_trie0)
 	let kt1_trie1 = kt1_trie0(x0) in
 	if (kt1_trie1 != {}) then
 		sum(<x1, t1_trie2> <- t1_trie1)
@@ -82,7 +82,7 @@ let interm3 = sum(<x0, t1_trie1> <- t1_trie0)
 		{}
 in
 
-let interm4 = sum(<x0, t2_trie1> <- t2_trie0)
+let interm4_trie0 = sum(<x0, t2_trie1> <- t2_trie0)
 	let kt2_trie1 = kt2_trie0(x0) in
 	if (kt2_trie1 != {}) then
 		sum(<x1, t2_trie2> <- t2_trie1)
@@ -97,7 +97,7 @@ let interm4 = sum(<x0, t2_trie1> <- t2_trie0)
 		{}
 in
 
-let interm5 = sum(<x0, mc1_trie1> <- mc1_trie0)
+let interm5_trie0 = sum(<x0, mc1_trie1> <- mc1_trie0)
 	let cn1_trie1 = cn1_trie0(x0) in
 	if (cn1_trie1 != {}) then
 		sum(<x1, mc1_trie2> <- mc1_trie1)

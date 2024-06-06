@@ -12,7 +12,7 @@ let mk_trie0 = sum(<mk_tuple, _> <- mk) { mk_tuple.movie_id -> { mk_tuple.keywor
 let lt_trie0 = sum(<lt_tuple, _> <- lt) { lt_tuple.id -> lt_tuple } in
 let k_trie0 = sum(<k_tuple, _> <- k) { k_tuple.id -> k_tuple } in
 
-let interm0 = sum(<x0, t1_trie1> <- t1_trie0)
+let interm0_trie0 = sum(<x0, t1_trie1> <- t1_trie0)
 	let ml_trie1 = ml_trie0(x0) in
 	if (ml_trie1 != {}) then
 		sum(<x1, ml_trie2> <- ml_trie1)

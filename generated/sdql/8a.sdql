@@ -14,7 +14,7 @@ let rt_trie0 = sum(<rt_tuple, _> <- rt) { rt_tuple.id -> rt_tuple } in
 let t_trie0 = sum(<t_tuple, _> <- t) { t_tuple.id -> t_tuple } in
 let an1_trie0 = sum(<an1_tuple, _> <- an1) { an1_tuple.person_id -> an1_tuple } in
 
-let interm0 = sum(<x0, mc_trie1> <- mc_trie0)
+let interm0_trie0 = sum(<x0, mc_trie1> <- mc_trie0)
 	let cn_trie1 = cn_trie0(x0) in
 	if (cn_trie1 != {}) then
 		sum(<mc_tuple, _> <- mc_trie1)
