@@ -45,8 +45,7 @@ sum(<mi_tuple, _> <- mi)
 							let x4 = mc_tuple.company_id in
 							let cn_trie1 = cn_trie0(x4) in
 							if (cn_trie1 != {}) then
-								let x5 = mi_tuple.movie_id in
-								let at_trie1 = at_trie0(x5) in
+								let at_trie1 = at_trie0(x0) in
 								if (at_trie1 != {}) then
 									let mn_interm0_col2 = interm0_tuple.col2 in
 									let mn_at_title = sum(<at_tuple, _> <- at_trie1) at_tuple.title in

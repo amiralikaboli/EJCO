@@ -10,12 +10,6 @@ let an = load[{<id: int, person_id: int, name: string, imdb_index: string, name_
 let n_trie0 = sum(<n_tuple, _> <- n) { n_tuple.id -> { n_tuple -> 1 } } in
 let pi_trie0 = sum(<pi_tuple, _> <- pi) { pi_tuple.person_id -> { pi_tuple.info_type_id -> { pi_tuple -> 1 } } } in
 let it_trie0 = sum(<it_tuple, _> <- it) { it_tuple.id -> { it_tuple -> 1 } } in
-let t_trie0 = sum(<t_tuple, _> <- t) { t_tuple.id -> { t_tuple -> 1 } } in
-let ml_trie0 = sum(<ml_tuple, _> <- ml) { ml_tuple.linked_movie_id -> { ml_tuple.link_type_id -> { ml_tuple -> 1 } } } in
-let lt_trie0 = sum(<lt_tuple, _> <- lt) { lt_tuple.id -> { lt_tuple -> 1 } } in
-let ci_trie0 = sum(<ci_tuple, _> <- ci) { ci_tuple.movie_id -> { ci_tuple.person_id -> { ci_tuple -> 1 } } } in
-let an_trie0 = sum(<an_tuple, _> <- an) { an_tuple.person_id -> { an_tuple -> 1 } } in
-
 let interm0_trie0 = sum(<x0, n_trie1> <- n_trie0)
 	let pi_trie1 = pi_trie0(x0) in
 	if (pi_trie1 != {}) then
@@ -31,6 +25,9 @@ let interm0_trie0 = sum(<x0, n_trie1> <- n_trie0)
 		{}
 in
 
+let t_trie0 = sum(<t_tuple, _> <- t) { t_tuple.id -> { t_tuple -> 1 } } in
+let ml_trie0 = sum(<ml_tuple, _> <- ml) { ml_tuple.linked_movie_id -> { ml_tuple.link_type_id -> { ml_tuple -> 1 } } } in
+let lt_trie0 = sum(<lt_tuple, _> <- lt) { lt_tuple.id -> { lt_tuple -> 1 } } in
 let interm1_trie0 = sum(<x0, t_trie1> <- t_trie0)
 	let ml_trie1 = ml_trie0(x0) in
 	if (ml_trie1 != {}) then
@@ -46,6 +43,8 @@ let interm1_trie0 = sum(<x0, t_trie1> <- t_trie0)
 		{}
 in
 
+let ci_trie0 = sum(<ci_tuple, _> <- ci) { ci_tuple.movie_id -> { ci_tuple.person_id -> { ci_tuple -> 1 } } } in
+let an_trie0 = sum(<an_tuple, _> <- an) { an_tuple.person_id -> { an_tuple -> 1 } } in
 sum(<x0, ci_trie1> <- ci_trie0)
 	let interm1_trie1 = interm1_trie0(x0) in
 	if (interm1_trie1 != {}) then

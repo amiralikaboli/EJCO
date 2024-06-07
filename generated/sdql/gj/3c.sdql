@@ -5,9 +5,6 @@ let k = load[{<id: int, keyword: string, phonetic_code: string> -> int}]("/Users
 
 let mk_trie0 = sum(<mk_tuple, _> <- mk) { mk_tuple.movie_id -> { mk_tuple -> 1 } } in
 let t_trie0 = sum(<t_tuple, _> <- t) { t_tuple.id -> { t_tuple -> 1 } } in
-let mi_trie0 = sum(<mi_tuple, _> <- mi) { mi_tuple.movie_id -> { mi_tuple -> 1 } } in
-let k_trie0 = sum(<k_tuple, _> <- k) { k_tuple.id -> { k_tuple -> 1 } } in
-
 let interm0_trie0 = sum(<x0, mk_trie1> <- mk_trie0)
 	let t_trie1 = t_trie0(x0) in
 	if (t_trie1 != {}) then
@@ -18,6 +15,8 @@ let interm0_trie0 = sum(<x0, mk_trie1> <- mk_trie0)
 		{}
 in
 
+let mi_trie0 = sum(<mi_tuple, _> <- mi) { mi_tuple.movie_id -> { mi_tuple -> 1 } } in
+let k_trie0 = sum(<k_tuple, _> <- k) { k_tuple.id -> { k_tuple -> 1 } } in
 sum(<x0, mi_trie1> <- mi_trie0)
 	let interm0_trie1 = interm0_trie0(x0) in
 	if (interm0_trie1 != {}) then

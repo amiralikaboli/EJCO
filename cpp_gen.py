@@ -1,3 +1,4 @@
+import math
 import os
 from collections import defaultdict
 from typing import List, Tuple
@@ -10,6 +11,7 @@ from var_mng import VariableManager
 class CppGenerator:
 	def __init__(self, var_mng: VariableManager):
 		self.trie_types = set()
+		self.resolved_attrs = set()
 		self.involved_cols = set()
 		self.loaded_rels = set()
 		self.indent = 1
@@ -18,6 +20,7 @@ class CppGenerator:
 
 	def clear(self):
 		self.indent = 1
+		self.resolved_attrs = set()
 		self.involved_cols = set()
 		self.loaded_rels = set()
 
@@ -124,23 +127,36 @@ class CppGenerator:
 			for idx, (rel, col) in interm_cols:
 				yield f'vector<{rel2col2type[rel_wo_idx(rel)][col]}> {self.var_mng.rel_col_var(interm_rel, self.var_mng.interm_col(idx))};\n'
 
+		join_attrs_order = {rel: {col: math.inf for col in join_cols} for rel, join_cols, _ in build_plan}
 		for idx, eq_cols in enumerate(compiled_plan):
-			rel_it, _ = eq_cols[0]
-			yield f"for (const auto &[{self.var_mng.x_var(idx)}, {self.var_mng.next_trie_var(rel_it)}]: {self.var_mng.trie_var(rel_it)}) {{\n"
-			self.var_mng.next_trie_var(rel_it, inplace=True)
-			self.indent += 1
+			min_idx = min(idx, *[join_attrs_order[rel][col] for rel, col in eq_cols])
+			for rel, col in eq_cols:
+				join_attrs_order[rel][col] = min_idx
+		for idx, eq_cols in enumerate(compiled_plan):
+			rel_0, col_0 = eq_cols[0]
+			if join_attrs_order[rel_0][col_0] == idx:
+				yield f"for (const auto &[{self.var_mng.x_var(idx)}, {self.var_mng.next_trie_var(rel_0)}]: {self.var_mng.trie_var(rel_0)}) {{\n"
+				self.var_mng.next_trie_var(rel_0, inplace=True)
+				self.indent += 1
+				self.resolved_attrs.add(eq_cols[0])
+				start_offset = 1
+			elif eq_cols[0] in self.resolved_attrs:
+				start_offset = 1
+			else:
+				start_offset = 0
 
 			conditions = []
-			for rel, col in eq_cols[1:]:
+			for rel, col in eq_cols[start_offset:]:
 				conditions.append(
-					f"{self.var_mng.trie_var(rel)}.contains({self.var_mng.x_var(idx)})"
+					f"{self.var_mng.trie_var(rel)}.contains({self.var_mng.x_var(join_attrs_order[rel][col])})"
 				)
 			yield f"if ({' && '.join(conditions)}) {{\n"
 			self.indent += 1
 
-			for rel, col in eq_cols[1:]:
-				yield f"auto &{self.var_mng.next_trie_var(rel)} = {self.var_mng.trie_var(rel)}.at({self.var_mng.x_var(idx)});\n"
+			for rel, col in eq_cols[start_offset:]:
+				yield f"auto &{self.var_mng.next_trie_var(rel)} = {self.var_mng.trie_var(rel)}.at({self.var_mng.x_var(join_attrs_order[rel][col])});\n"
 				self.var_mng.next_trie_var(rel, inplace=True)
+				self.resolved_attrs.add((rel, col))
 
 		if self.var_mng.is_root_rel(interm_rel):
 			rel2proj_cols = {rel: proj_cols for rel, _, proj_cols in build_plan if proj_cols}

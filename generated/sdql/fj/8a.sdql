@@ -31,11 +31,9 @@ sum(<ci_tuple, _> <- ci)
 			let x2 = ci_tuple.role_id in
 			let rt_trie1 = rt_trie0(x2) in
 			if (rt_trie1 != {}) then
-				let x3 = ci_tuple.movie_id in
-				let t_trie1 = t_trie0(x3) in
+				let t_trie1 = t_trie0(x1) in
 				if (t_trie1 != {}) then
-					let x4 = ci_tuple.person_id in
-					let an1_trie1 = an1_trie0(x4) in
+					let an1_trie1 = an1_trie0(x0) in
 					if (an1_trie1 != {}) then
 						let mn_t_title = sum(<t_tuple, _> <- t_trie1) t_tuple.title in
 						let mn_an1_name = sum(<an1_tuple, _> <- an1_trie1) an1_tuple.name in

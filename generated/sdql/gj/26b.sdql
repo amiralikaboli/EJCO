@@ -14,16 +14,6 @@ let chn = load[{<id: int, name: string, imdb_index: string, imdb_id: int, name_p
 let cc_trie0 = sum(<cc_tuple, _> <- cc) { cc_tuple.subject_id -> { cc_tuple.status_id -> { cc_tuple -> 1 } } } in
 let cct1_trie0 = sum(<cct1_tuple, _> <- cct1) { cct1_tuple.id -> { cct1_tuple -> 1 } } in
 let cct2_trie0 = sum(<cct2_tuple, _> <- cct2) { cct2_tuple.id -> { cct2_tuple -> 1 } } in
-let mi_idx_trie0 = sum(<mi_idx_tuple, _> <- mi_idx) { mi_idx_tuple.info_type_id -> { mi_idx_tuple.movie_id -> { mi_idx_tuple -> 1 } } } in
-let it2_trie0 = sum(<it2_tuple, _> <- it2) { it2_tuple.id -> { it2_tuple -> 1 } } in
-let t_trie0 = sum(<t_tuple, _> <- t) { t_tuple.kind_id -> { t_tuple.id -> { t_tuple -> 1 } } } in
-let kt_trie0 = sum(<kt_tuple, _> <- kt) { kt_tuple.id -> { kt_tuple -> 1 } } in
-let mk_trie0 = sum(<mk_tuple, _> <- mk) { mk_tuple.keyword_id -> { mk_tuple.movie_id -> { mk_tuple -> 1 } } } in
-let k_trie0 = sum(<k_tuple, _> <- k) { k_tuple.id -> { k_tuple -> 1 } } in
-let ci_trie0 = sum(<ci_tuple, _> <- ci) { ci_tuple.person_id -> { ci_tuple.person_role_id -> { ci_tuple.movie_id -> { ci_tuple -> 1 } } } } in
-let n_trie0 = sum(<n_tuple, _> <- n) { n_tuple.id -> { n_tuple -> 1 } } in
-let chn_trie0 = sum(<chn_tuple, _> <- chn) { chn_tuple.id -> { chn_tuple -> 1 } } in
-
 let interm0_trie0 = sum(<x0, cc_trie1> <- cc_trie0)
 	let cct1_trie1 = cct1_trie0(x0) in
 	if (cct1_trie1 != {}) then
@@ -38,6 +28,8 @@ let interm0_trie0 = sum(<x0, cc_trie1> <- cc_trie0)
 		{}
 in
 
+let mi_idx_trie0 = sum(<mi_idx_tuple, _> <- mi_idx) { mi_idx_tuple.info_type_id -> { mi_idx_tuple.movie_id -> { mi_idx_tuple -> 1 } } } in
+let it2_trie0 = sum(<it2_tuple, _> <- it2) { it2_tuple.id -> { it2_tuple -> 1 } } in
 let interm1_trie0 = sum(<x0, mi_idx_trie1> <- mi_idx_trie0)
 	let it2_trie1 = it2_trie0(x0) in
 	if (it2_trie1 != {}) then
@@ -52,6 +44,8 @@ let interm1_trie0 = sum(<x0, mi_idx_trie1> <- mi_idx_trie0)
 		{}
 in
 
+let t_trie0 = sum(<t_tuple, _> <- t) { t_tuple.kind_id -> { t_tuple.id -> { t_tuple -> 1 } } } in
+let kt_trie0 = sum(<kt_tuple, _> <- kt) { kt_tuple.id -> { kt_tuple -> 1 } } in
 let interm2_trie0 = sum(<x0, t_trie1> <- t_trie0)
 	let kt_trie1 = kt_trie0(x0) in
 	if (kt_trie1 != {}) then
@@ -67,6 +61,8 @@ let interm2_trie0 = sum(<x0, t_trie1> <- t_trie0)
 		{}
 in
 
+let mk_trie0 = sum(<mk_tuple, _> <- mk) { mk_tuple.keyword_id -> { mk_tuple.movie_id -> { mk_tuple -> 1 } } } in
+let k_trie0 = sum(<k_tuple, _> <- k) { k_tuple.id -> { k_tuple -> 1 } } in
 let interm3_trie0 = sum(<x0, mk_trie1> <- mk_trie0)
 	let k_trie1 = k_trie0(x0) in
 	if (k_trie1 != {}) then
@@ -82,6 +78,9 @@ let interm3_trie0 = sum(<x0, mk_trie1> <- mk_trie0)
 		{}
 in
 
+let ci_trie0 = sum(<ci_tuple, _> <- ci) { ci_tuple.person_id -> { ci_tuple.person_role_id -> { ci_tuple.movie_id -> { ci_tuple -> 1 } } } } in
+let n_trie0 = sum(<n_tuple, _> <- n) { n_tuple.id -> { n_tuple -> 1 } } in
+let chn_trie0 = sum(<chn_tuple, _> <- chn) { chn_tuple.id -> { chn_tuple -> 1 } } in
 sum(<x0, ci_trie1> <- ci_trie0)
 	let n_trie1 = n_trie0(x0) in
 	if (n_trie1 != {}) then

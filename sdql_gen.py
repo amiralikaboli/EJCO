@@ -1,3 +1,4 @@
+import math
 import os
 from collections import defaultdict
 from typing import List, Tuple
@@ -13,10 +14,12 @@ class SDQLGenerator:
 		self.var_mng = var_mng
 		self.save_path = os.path.join(generated_dir_path, "sdql", self.mode.value)
 		self.indent = 0
+		self.resolved_attrs = set()
 		self.available_tuples = set()
 
 	def clear(self):
 		self.indent = 0
+		self.resolved_attrs.clear()
 		self.available_tuples.clear()
 
 	def call_func(self, func_name: str, *args):
@@ -65,17 +68,29 @@ class SDQLGenerator:
 			yield f"let {self.var_mng.trie_var(interm)} = "
 
 		else_cases = list()
+		join_attrs_order = {rel: {col: math.inf for col in join_cols} for rel, join_cols, _ in build_plan}
+		for idx, eq_cols in enumerate(compiled_plan):
+			min_idx = min(idx, *[join_attrs_order[rel][col] for rel, col in eq_cols])
+			for rel, col in eq_cols:
+				join_attrs_order[rel][col] = min_idx
 		for idx, eq_cols in enumerate(compiled_plan):
 			rel_it, col_it = eq_cols[0]
-			for s in self.call_func("attr_iteration", rel_it, col_it, idx):
-				yield s
+			if join_attrs_order[rel_it][col_it] == idx:
+				for s in self.call_func("attr_iteration", rel_it, col_it, idx):
+					yield s
+				self.resolved_attrs.add(eq_cols[0])
+				start_offset = 1
+			elif eq_cols[0] in self.resolved_attrs:
+				start_offset = 1
+			else:
+				start_offset = 0
 
-			for rel, col in eq_cols[1:]:
-				yield f"let {self.var_mng.next_trie_var(rel)} = {self.var_mng.trie_var(rel)}({self.var_mng.x_var(idx)}) in\n"
+			for rel, col in eq_cols[start_offset:]:
+				yield f"let {self.var_mng.next_trie_var(rel)} = {self.var_mng.trie_var(rel)}({self.var_mng.x_var(join_attrs_order[rel][col])}) in\n"
 				self.var_mng.next_trie_var(rel, inplace=True)
 
 			conditions = []
-			for rel, col in eq_cols[1:]:
+			for rel, col in eq_cols[start_offset:]:
 				conditions.append(f"{self.var_mng.trie_var(rel)} != {{}}")
 			yield f"if ({' && '.join(conditions)}) then\n"
 			self.indent += 1

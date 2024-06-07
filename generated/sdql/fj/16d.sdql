@@ -43,8 +43,7 @@ sum(<ci_tuple, _> <- ci)
 		let x1 = ci_tuple.movie_id in
 		let interm0_trie1 = interm0_trie0(x1) in
 		if (interm0_trie1 != {}) then
-			let x2 = ci_tuple.person_id in
-			let an_trie1 = an_trie0(x2) in
+			let an_trie1 = an_trie0(x0) in
 			if (an_trie1 != {}) then
 				let mn_interm0_col2 = sum(<interm0_tuple, _> <- interm0_trie1) interm0_tuple.col2 in
 				let mn_an_name = sum(<an_tuple, _> <- an_trie1) an_tuple.name in

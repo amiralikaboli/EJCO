@@ -10,10 +10,6 @@ let mc_trie0 = sum(<mc_tuple, _> <- mc) { mc_tuple.movie_id -> { mc_tuple.compan
 let t_trie0 = sum(<t_tuple, _> <- t) { t_tuple.id -> { t_tuple -> 1 } } in
 let ct_trie0 = sum(<ct_tuple, _> <- ct) { ct_tuple.id -> { ct_tuple -> 1 } } in
 let cn_trie0 = sum(<cn_tuple, _> <- cn) { cn_tuple.id -> { cn_tuple -> 1 } } in
-let ci_trie0 = sum(<ci_tuple, _> <- ci) { ci_tuple.role_id -> { ci_tuple.movie_id -> { ci_tuple.person_role_id -> { ci_tuple -> 1 } } } } in
-let rt_trie0 = sum(<rt_tuple, _> <- rt) { rt_tuple.id -> { rt_tuple -> 1 } } in
-let chn_trie0 = sum(<chn_tuple, _> <- chn) { chn_tuple.id -> { chn_tuple -> 1 } } in
-
 let interm0_trie0 = sum(<x0, mc_trie1> <- mc_trie0)
 	let t_trie1 = t_trie0(x0) in
 	if (t_trie1 != {}) then
@@ -34,6 +30,9 @@ let interm0_trie0 = sum(<x0, mc_trie1> <- mc_trie0)
 		{}
 in
 
+let ci_trie0 = sum(<ci_tuple, _> <- ci) { ci_tuple.role_id -> { ci_tuple.movie_id -> { ci_tuple.person_role_id -> { ci_tuple -> 1 } } } } in
+let rt_trie0 = sum(<rt_tuple, _> <- rt) { rt_tuple.id -> { rt_tuple -> 1 } } in
+let chn_trie0 = sum(<chn_tuple, _> <- chn) { chn_tuple.id -> { chn_tuple -> 1 } } in
 sum(<x0, ci_trie1> <- ci_trie0)
 	let rt_trie1 = rt_trie0(x0) in
 	if (rt_trie1 != {}) then
