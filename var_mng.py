@@ -46,8 +46,8 @@ class VariableManager:
 		return f"{rel}_{col}"
 
 	@staticmethod
-	def offset_var(rel: str):
-		return f"{rel}_{Templates.OffsetVar.value}"
+	def off_var(rel: str):
+		return f"{rel}_{Templates.OffVar.value}"
 
 	@staticmethod
 	def tuple_var(rel: str):
@@ -96,3 +96,13 @@ class VariableManager:
 	@staticmethod
 	def is_root_rel(rel: str):
 		return rel == Templates.RootRel.value
+
+	@staticmethod
+	def cnt_var():
+		return Templates.CntVar.value
+
+	def offsets_var(self, rel: str, it=False):
+		var = f"{rel}_{Templates.OffsetsVar.value}"
+		if it:
+			return self.trie_var(rel) if rel in self._trie_vars.keys() else var
+		return var

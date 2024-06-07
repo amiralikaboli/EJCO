@@ -7,14 +7,15 @@ freejoin_path = os.path.join(os.path.dirname(__file__), "..", "free-join")
 preprocessed_data_path = os.path.join(freejoin_path, "queries", "preprocessed", "join-order-benchmark", "data")
 raw_data_path = os.path.join(freejoin_path, "data", "imdb_csv")
 include_dir_path = os.path.join(os.path.dirname(__file__), "include")
-generated_dir_path = os.path.join(os.path.dirname(__file__), "generated")
+generated_cpp_path = os.path.join(os.path.dirname(__file__), "generated", "cpp")
+generated_sdql_path = os.path.join(os.path.dirname(__file__), "generated", "sdql")
 plans_path = os.path.join(os.path.dirname(__file__), "plans")
 
 
 class Templates(enum.Enum):
 	TrieVar = "trie"
 	XVar = "x"
-	OffsetVar = "off"
+	OffVar = "off"
 	TupleVar = "tuple"
 	AttrVar = "attr"
 	MinVar = "mn"
@@ -23,6 +24,8 @@ class Templates(enum.Enum):
 	IntermRel = "interm"
 	IntermCol = "col"
 	RootRel = "root"
+	CntVar = "cnt"
+	OffsetsVar = "offsets"
 
 
 class JoinMode(enum.Enum):

@@ -14,7 +14,7 @@ if __name__ == '__main__':
 	var_mng = VariableManager()
 	parser = PlanParser(var_mng)
 	sdql_gen = SDQLGenerator(JoinMode.FJ, var_mng)
-	cpp_gen = CppGenerator(var_mng)
+	cpp_gen = CppGenerator(JoinMode.FJ, var_mng)
 	for query in queries:
 		var_mng.clear()
 		parser.clear()
@@ -22,7 +22,7 @@ if __name__ == '__main__':
 		cpp_gen.clear()
 
 		plans = parser.parse(query, use_cache=False)
-		sdql_gen.generate(query, plans)
-	# 	cpp_gen.generate(query, plans)
-	# 	cpp_gen.generate_load_file(query)
-	# cpp_gen.generate_build_file()
+		# sdql_gen.generate(query, plans)
+		cpp_gen.generate(query, plans)
+		cpp_gen.generate_load_file(query)
+	cpp_gen.generate_build_file()

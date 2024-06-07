@@ -3,19 +3,20 @@ import os
 from collections import defaultdict
 from typing import List, Tuple
 
-from consts import generated_dir_path, preprocessed_data_path, raw_data_path, abbr2rel, rel_wo_idx, rel2col2type, \
+from consts import generated_cpp_path, preprocessed_data_path, raw_data_path, abbr2rel, rel_wo_idx, rel2col2type, \
 	JoinMode
 from var_mng import VariableManager
 
 
 class SDQLGenerator:
 	def __init__(self, mode: JoinMode, var_mng: VariableManager):
-		self.mode = mode
-		self.var_mng = var_mng
-		self.save_path = os.path.join(generated_dir_path, "sdql", self.mode.value)
-		self.indent = 0
 		self.resolved_attrs = set()
 		self.available_tuples = set()
+		self.indent = 0
+
+		self.mode = mode
+		self.var_mng = var_mng
+		self.save_path = os.path.join(generated_cpp_path, self.mode.value)
 
 	def clear(self):
 		self.indent = 0
