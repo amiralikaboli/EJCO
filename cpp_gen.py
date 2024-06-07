@@ -1,7 +1,6 @@
-import math
 import os
 from collections import defaultdict
-from typing import List, Tuple, Dict
+from typing import List, Tuple
 
 from consts import preprocessed_data_path, raw_data_path, include_dir_path, generated_dir_path, rel_wo_idx, abbr2rel, \
 	rel2col2type, inf_values
@@ -126,9 +125,9 @@ class CppGenerator:
 				yield f'vector<{rel2col2type[rel_wo_idx(rel)][col]}> {self.var_mng.rel_col_var(interm_rel, self.var_mng.interm_col(idx))};\n'
 
 		for idx, eq_cols in enumerate(compiled_plan):
-			rel_0, col_0 = eq_cols[0]
-			yield f"for (const auto &[{self.var_mng.x_var(idx)}, {self.var_mng.next_trie_var(rel_0)}]: {self.var_mng.trie_var(rel_0)}) {{\n"
-			self.var_mng.next_trie_var(rel_0, inplace=True)
+			rel_it, _ = eq_cols[0]
+			yield f"for (const auto &[{self.var_mng.x_var(idx)}, {self.var_mng.next_trie_var(rel_it)}]: {self.var_mng.trie_var(rel_it)}) {{\n"
+			self.var_mng.next_trie_var(rel_it, inplace=True)
 			self.indent += 1
 
 			conditions = []

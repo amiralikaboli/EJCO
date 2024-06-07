@@ -26,12 +26,16 @@ class VariableManager:
 		return self._trie_vars[rel]
 
 	def next_trie_var(self, rel: str, inplace: bool = False):
+		self.trie_var(rel)
 		trie_var = self._trie_vars[rel]
 		trie_level = int(trie_var[-1]) + 1
 		next_level_trie = self._trie_var(rel, trie_level)
 		if inplace:
 			self._trie_vars[rel] = next_level_trie
 		return next_level_trie
+
+	def tuples_var(self, rel: str):
+		return self.trie_var(rel) if rel in self._trie_vars.keys() else rel
 
 	@staticmethod
 	def x_var(idx: int):
