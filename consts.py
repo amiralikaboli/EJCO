@@ -25,6 +25,11 @@ class Templates(enum.Enum):
 	RootRel = "root"
 
 
+class JoinMode(enum.Enum):
+	GJ = "gj"
+	FJ = "fj"
+
+
 def rel_wo_idx(rel: str) -> str:
 	if Templates.IntermRel.value in rel:
 		return rel
