@@ -22,14 +22,14 @@ int main() {
 		int cnt;
 		timer.Reset();
 
-		auto t_trie0 = phmap::flat_hash_map<int, bool>();
-		build_trie_bool(t_trie0, t_id);
-		auto mc_trie0 = phmap::flat_hash_map<int, bool>();
-		build_trie_bool(mc_trie0, mc_movie_id);
-		auto k_trie0 = phmap::flat_hash_map<int, bool>();
-		build_trie_bool(k_trie0, k_id);
-		auto cn_trie0 = phmap::flat_hash_map<int, bool>();
-		build_trie_bool(cn_trie0, cn_id);
+		auto t_trie0 = phmap::flat_hash_map<int, vector<int>>();
+		build_trie(t_trie0, t_id);
+		auto mc_trie0 = phmap::flat_hash_map<int, vector<int>>();
+		build_trie(mc_trie0, mc_movie_id);
+		auto k_trie0 = phmap::flat_hash_map<int, vector<int>>();
+		build_trie(k_trie0, k_id);
+		auto cn_trie0 = phmap::flat_hash_map<int, vector<int>>();
+		build_trie(cn_trie0, cn_id);
 		vector<int> interm0_col0;
 		vector<int> interm0_col1;
 		vector<int> interm0_col2;

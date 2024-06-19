@@ -1,7 +1,7 @@
 #!/bin/bash
 
 MODE=${1:-gj}
-RESULTS_FILE=${2:-results/results.txt}
+RESULTS_FILE=${2:-results/results-$MODE.txt}
 
 rm -rf generated/cpp/$MODE/*.cpp
 rm -rf generated/cpp/$MODE/load/*.h

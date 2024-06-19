@@ -58,8 +58,8 @@ int main() {
 		build_trie(interm0_trie0, interm0_col0);
 		auto lt_trie0 = phmap::flat_hash_map<int, vector<int>>();
 		build_trie(lt_trie0, lt_id);
-		auto k_trie0 = phmap::flat_hash_map<int, bool>();
-		build_trie_bool(k_trie0, k_id);
+		auto k_trie0 = phmap::flat_hash_map<int, vector<int>>();
+		build_trie(k_trie0, k_id);
 		string mn_interm0_col1 = "zzzzzzzz";
 		string mn_interm0_col4 = "zzzzzzzz";
 		string mn_lt_link = "zzzzzzzz";

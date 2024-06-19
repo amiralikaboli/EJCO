@@ -2,7 +2,7 @@
 
 set -euo pipefail
 
-RESULTS_FILE=${1:-results/results.txt}
+RESULTS_FILE=${1:-results/results-gj.txt}
 
 python3 scripts/validation.py $RESULTS_FILE
 

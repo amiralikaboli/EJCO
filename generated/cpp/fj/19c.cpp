@@ -27,12 +27,12 @@ int main() {
 
 		auto t_trie0 = phmap::flat_hash_map<int, vector<int>>();
 		build_trie(t_trie0, t_id);
-		auto mc_trie0 = phmap::flat_hash_map<int, bool>();
-		build_trie_bool(mc_trie0, mc_movie_id);
-		auto it_trie0 = phmap::flat_hash_map<int, bool>();
-		build_trie_bool(it_trie0, it_id);
-		auto cn_trie0 = phmap::flat_hash_map<int, bool>();
-		build_trie_bool(cn_trie0, cn_id);
+		auto mc_trie0 = phmap::flat_hash_map<int, vector<int>>();
+		build_trie(mc_trie0, mc_movie_id);
+		auto it_trie0 = phmap::flat_hash_map<int, vector<int>>();
+		build_trie(it_trie0, it_id);
+		auto cn_trie0 = phmap::flat_hash_map<int, vector<int>>();
+		build_trie(cn_trie0, cn_id);
 		vector<int> interm0_col0;
 		vector<int> interm0_col1;
 		vector<string> interm0_col2;
@@ -65,8 +65,8 @@ int main() {
 		}
 		timer.StoreElapsedTime(0);
 
-		auto an_trie0 = phmap::flat_hash_map<int, bool>();
-		build_trie_bool(an_trie0, an_person_id);
+		auto an_trie0 = phmap::flat_hash_map<int, vector<int>>();
+		build_trie(an_trie0, an_person_id);
 		vector<int> interm1_col0;
 		vector<string> interm1_col1;
 		vector<int> interm1_offsets;
@@ -82,10 +82,10 @@ int main() {
 		}
 		timer.StoreElapsedTime(1);
 
-		auto rt_trie0 = phmap::flat_hash_map<int, bool>();
-		build_trie_bool(rt_trie0, rt_id);
-		auto chn_trie0 = phmap::flat_hash_map<int, bool>();
-		build_trie_bool(chn_trie0, chn_id);
+		auto rt_trie0 = phmap::flat_hash_map<int, vector<int>>();
+		build_trie(rt_trie0, rt_id);
+		auto chn_trie0 = phmap::flat_hash_map<int, vector<int>>();
+		build_trie(chn_trie0, chn_id);
 		auto interm1_trie0 = phmap::flat_hash_map<int, vector<int>>();
 		build_trie(interm1_trie0, interm1_col0);
 		auto interm0_trie0 = phmap::flat_hash_map<int, vector<int>>();

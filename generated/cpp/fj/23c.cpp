@@ -26,8 +26,8 @@ int main() {
 		int cnt;
 		timer.Reset();
 
-		auto cct1_trie0 = phmap::flat_hash_map<int, bool>();
-		build_trie_bool(cct1_trie0, cct1_id);
+		auto cct1_trie0 = phmap::flat_hash_map<int, vector<int>>();
+		build_trie(cct1_trie0, cct1_id);
 		vector<int> interm0_col0;
 		vector<int> interm0_col1;
 		vector<int> interm0_offsets;
@@ -72,10 +72,10 @@ int main() {
 		}
 		timer.StoreElapsedTime(1);
 
-		auto ct_trie0 = phmap::flat_hash_map<int, bool>();
-		build_trie_bool(ct_trie0, ct_id);
-		auto cn_trie0 = phmap::flat_hash_map<int, bool>();
-		build_trie_bool(cn_trie0, cn_id);
+		auto ct_trie0 = phmap::flat_hash_map<int, vector<int>>();
+		build_trie(ct_trie0, ct_id);
+		auto cn_trie0 = phmap::flat_hash_map<int, vector<int>>();
+		build_trie(cn_trie0, cn_id);
 		auto interm1_trie0 = phmap::flat_hash_map<int, vector<int>>();
 		build_trie(interm1_trie0, interm1_col1);
 		vector<int> interm2_col0;
@@ -109,8 +109,8 @@ int main() {
 		}
 		timer.StoreElapsedTime(2);
 
-		auto k_trie0 = phmap::flat_hash_map<int, bool>();
-		build_trie_bool(k_trie0, k_id);
+		auto k_trie0 = phmap::flat_hash_map<int, vector<int>>();
+		build_trie(k_trie0, k_id);
 		auto interm2_trie0 = phmap::flat_hash_map<int, vector<int>>();
 		build_trie(interm2_trie0, interm2_col2);
 		vector<int> interm3_col0;
@@ -138,8 +138,8 @@ int main() {
 		}
 		timer.StoreElapsedTime(3);
 
-		auto it1_trie0 = phmap::flat_hash_map<int, bool>();
-		build_trie_bool(it1_trie0, it1_id);
+		auto it1_trie0 = phmap::flat_hash_map<int, vector<int>>();
+		build_trie(it1_trie0, it1_id);
 		auto interm3_trie0 = phmap::flat_hash_map<int, vector<int>>();
 		build_trie(interm3_trie0, interm3_col1);
 		string mn_interm3_col5 = "zzzzzzzz";

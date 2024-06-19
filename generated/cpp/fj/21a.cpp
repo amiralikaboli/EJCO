@@ -70,14 +70,14 @@ int main() {
 
 		auto interm1_trie0 = phmap::flat_hash_map<int, vector<int>>();
 		build_trie(interm1_trie0, interm1_col0);
-		auto mc_trie0 = phmap::flat_hash_map<int, bool>();
-		build_trie_bool(mc_trie0, mc_movie_id);
+		auto mc_trie0 = phmap::flat_hash_map<int, vector<int>>();
+		build_trie(mc_trie0, mc_movie_id);
 		auto lt_trie0 = phmap::flat_hash_map<int, vector<int>>();
 		build_trie(lt_trie0, lt_id);
-		auto k_trie0 = phmap::flat_hash_map<int, bool>();
-		build_trie_bool(k_trie0, k_id);
-		auto ct_trie0 = phmap::flat_hash_map<int, bool>();
-		build_trie_bool(ct_trie0, ct_id);
+		auto k_trie0 = phmap::flat_hash_map<int, vector<int>>();
+		build_trie(k_trie0, k_id);
+		auto ct_trie0 = phmap::flat_hash_map<int, vector<int>>();
+		build_trie(ct_trie0, ct_id);
 		auto cn_trie0 = phmap::flat_hash_map<int, vector<int>>();
 		build_trie(cn_trie0, cn_id);
 		string mn_interm1_col2 = "zzzzzzzz";

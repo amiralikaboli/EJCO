@@ -291,7 +291,7 @@ class CppGenerator:
 
 		rel2proj_cols = {rel: proj_cols for rel, _, proj_cols in build_plan}
 		for rel, trie_levels in rel2trie_levels.items():
-			is_vector_needed = (self.var_mng.is_interm_rel(rel) or rel2proj_cols[rel])
+			is_vector_needed = True  # TODO: revise it to use bool for some tries
 			lines = self._build_trie(rel, trie_levels, is_vector_needed)
 			for line in lines:
 				yield line

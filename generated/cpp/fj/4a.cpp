@@ -24,10 +24,10 @@ int main() {
 		build_trie(t_trie0, t_id);
 		auto mi_idx_trie0 = phmap::flat_hash_map<int, vector<int>>();
 		build_trie(mi_idx_trie0, mi_idx_movie_id);
-		auto k_trie0 = phmap::flat_hash_map<int, bool>();
-		build_trie_bool(k_trie0, k_id);
-		auto it_trie0 = phmap::flat_hash_map<int, bool>();
-		build_trie_bool(it_trie0, it_id);
+		auto k_trie0 = phmap::flat_hash_map<int, vector<int>>();
+		build_trie(k_trie0, k_id);
+		auto it_trie0 = phmap::flat_hash_map<int, vector<int>>();
+		build_trie(it_trie0, it_id);
 		string mn_t_title = "zzzzzzzz";
 		string mn_mi_idx_info = "zzzzzzzz";
 		for (const auto &mk_off: mk_offsets) {

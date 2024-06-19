@@ -22,12 +22,12 @@ int main() {
 
 		auto t_trie0 = phmap::flat_hash_map<int, vector<int>>();
 		build_trie(t_trie0, t_id);
-		auto mc_trie0 = phmap::flat_hash_map<int, bool>();
-		build_trie_bool(mc_trie0, mc_movie_id);
-		auto it_trie0 = phmap::flat_hash_map<int, bool>();
-		build_trie_bool(it_trie0, it_id);
-		auto ct_trie0 = phmap::flat_hash_map<int, bool>();
-		build_trie_bool(ct_trie0, ct_id);
+		auto mc_trie0 = phmap::flat_hash_map<int, vector<int>>();
+		build_trie(mc_trie0, mc_movie_id);
+		auto it_trie0 = phmap::flat_hash_map<int, vector<int>>();
+		build_trie(it_trie0, it_id);
+		auto ct_trie0 = phmap::flat_hash_map<int, vector<int>>();
+		build_trie(ct_trie0, ct_id);
 		string mn_t_title = "zzzzzzzz";
 		for (const auto &mi_off: mi_offsets) {
 			auto x0 = mi_movie_id[mi_off];
