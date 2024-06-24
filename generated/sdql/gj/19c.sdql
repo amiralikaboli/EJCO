@@ -15,23 +15,26 @@ let mc_trie0 = sum(<mc_tuple, _> <- mc) { mc_tuple.movie_id -> { mc_tuple.compan
 let it_trie0 = sum(<it_tuple, _> <- it) { it_tuple.id -> { it_tuple -> 1 } } in
 let cn_trie0 = sum(<cn_tuple, _> <- cn) { cn_tuple.id -> { cn_tuple -> 1 } } in
 let interm0_trie0 = sum(<x0, mi_trie1> <- mi_trie0)
-	if (x0 ∈ t_trie0 && x0 ∈ mc_trie0) then
-		let t_trie1 = t_trie0(x0) in
-		let mc_trie1 = mc_trie0(x0) in
-		sum(<x1, mi_trie2> <- mi_trie1)
-			if (x1 ∈ it_trie0) then
-				let it_trie1 = it_trie0(x1) in
-				sum(<x2, mc_trie2> <- mc_trie1)
-					if (x2 ∈ cn_trie0) then
-						let cn_trie1 = cn_trie0(x2) in
-						sum(<mi_tuple, _> <- mi_trie2)
-							sum(<t_tuple, _> <- t_trie1)
-								sum(<mc_tuple, _> <- mc_trie2)
-									{ mi_tuple.movie_id -> { <col0=mi_tuple.movie_id, col1=mi_tuple.info_type_id, col2=t_tuple.title, col3=mc_tuple.company_id> -> 1 } }
-					else
-						{}
-			else
-				{}
+	if (x0 ∈ t_trie0) then
+		if (x0 ∈ mc_trie0) then
+			let t_trie1 = t_trie0(x0) in
+			let mc_trie1 = mc_trie0(x0) in
+			sum(<x1, mi_trie2> <- mi_trie1)
+				if (x1 ∈ it_trie0) then
+					let it_trie1 = it_trie0(x1) in
+					sum(<x2, mc_trie2> <- mc_trie1)
+						if (x2 ∈ cn_trie0) then
+							let cn_trie1 = cn_trie0(x2) in
+							sum(<mi_tuple, _> <- mi_trie2)
+								sum(<t_tuple, _> <- t_trie1)
+									sum(<mc_tuple, _> <- mc_trie2)
+										{ mi_tuple.movie_id -> { <col0=mi_tuple.movie_id, col1=mi_tuple.info_type_id, col2=t_tuple.title, col3=mc_tuple.company_id> -> 1 } }
+						else
+							{}
+				else
+					{}
+		else
+			{}
 	else
 		{}
 in

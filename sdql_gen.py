@@ -86,12 +86,10 @@ class SDQLGenerator:
 			else:
 				start_offset = 0
 
-			conditions = []
 			for rel, col in eq_cols[start_offset:]:
-				conditions.append(f"{self.var_mng.x_var(join_attrs_order[rel][col])} ∈ {self.var_mng.trie_var(rel)}")
-			yield f"if ({' && '.join(conditions)}) then\n"
-			self.indent += 1
-			else_cases.append(('{}', self.indent))
+				yield f"if ({self.var_mng.x_var(join_attrs_order[rel][col])} ∈ {self.var_mng.trie_var(rel)}) then\n"
+				self.indent += 1
+				else_cases.append(('{}', self.indent))
 
 			for rel, col in eq_cols[start_offset:]:
 				yield f"let {self.var_mng.next_trie_var(rel)} = {self.var_mng.trie_var(rel)}({self.var_mng.x_var(join_attrs_order[rel][col])}) in\n"

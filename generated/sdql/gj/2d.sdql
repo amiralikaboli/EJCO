@@ -10,21 +10,24 @@ let mc_trie0 = sum(<mc_tuple, _> <- mc) { mc_tuple.movie_id -> { mc_tuple.compan
 let k_trie0 = sum(<k_tuple, _> <- k) { k_tuple.id -> { k_tuple -> 1 } } in
 let cn_trie0 = sum(<cn_tuple, _> <- cn) { cn_tuple.id -> { cn_tuple -> 1 } } in
 sum(<x0, mk_trie1> <- mk_trie0)
-	if (x0 ∈ t_trie0 && x0 ∈ mc_trie0) then
-		let t_trie1 = t_trie0(x0) in
-		let mc_trie1 = mc_trie0(x0) in
-		sum(<x1, mk_trie2> <- mk_trie1)
-			if (x1 ∈ k_trie0) then
-				let k_trie1 = k_trie0(x1) in
-				sum(<x2, mc_trie2> <- mc_trie1)
-					if (x2 ∈ cn_trie0) then
-						let cn_trie1 = cn_trie0(x2) in
-						let mn_t_title = sum(<t_tuple, _> <- t_trie1) t_tuple.title in
-						<col2=mn_t_title>
-					else
-						<col2="">
-			else
-				{}
+	if (x0 ∈ t_trie0) then
+		if (x0 ∈ mc_trie0) then
+			let t_trie1 = t_trie0(x0) in
+			let mc_trie1 = mc_trie0(x0) in
+			sum(<x1, mk_trie2> <- mk_trie1)
+				if (x1 ∈ k_trie0) then
+					let k_trie1 = k_trie0(x1) in
+					sum(<x2, mc_trie2> <- mc_trie1)
+						if (x2 ∈ cn_trie0) then
+							let cn_trie1 = cn_trie0(x2) in
+							let mn_t_title = sum(<t_tuple, _> <- t_trie1) t_tuple.title in
+							<col2=mn_t_title>
+						else
+							<col2="">
+				else
+					{}
+		else
+			{}
 	else
 		{}
 
