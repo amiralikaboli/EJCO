@@ -3,7 +3,7 @@ import os
 from collections import defaultdict
 from typing import List, Tuple
 
-from consts import generated_cpp_path, preprocessed_data_path, raw_data_path, abbr2rel, rel_wo_idx, rel2col2type, \
+from consts import generated_sdql_path, preprocessed_data_path, raw_data_path, abbr2rel, rel_wo_idx, rel2col2type, \
 	JoinMode
 from var_mng import VariableManager
 
@@ -16,7 +16,7 @@ class SDQLGenerator:
 
 		self.mode = mode
 		self.var_mng = var_mng
-		self.save_path = os.path.join(generated_cpp_path, self.mode.value)
+		self.save_path = os.path.join(generated_sdql_path, self.mode.value)
 
 	def clear(self):
 		self.indent = 0
@@ -86,27 +86,35 @@ class SDQLGenerator:
 			else:
 				start_offset = 0
 
-			for rel, col in eq_cols[start_offset:]:
-				yield f"let {self.var_mng.next_trie_var(rel)} = {self.var_mng.trie_var(rel)}({self.var_mng.x_var(join_attrs_order[rel][col])}) in\n"
-				self.var_mng.next_trie_var(rel, inplace=True)
-
 			conditions = []
 			for rel, col in eq_cols[start_offset:]:
-				conditions.append(f"{self.var_mng.trie_var(rel)} != {{}}")
+				conditions.append(f"{self.var_mng.x_var(join_attrs_order[rel][col])} ∈ {self.var_mng.trie_var(rel)}")
 			yield f"if ({' && '.join(conditions)}) then\n"
 			self.indent += 1
 			else_cases.append(('{}', self.indent))
 
+			for rel, col in eq_cols[start_offset:]:
+				yield f"let {self.var_mng.next_trie_var(rel)} = {self.var_mng.trie_var(rel)}({self.var_mng.x_var(join_attrs_order[rel][col])}) in\n"
+				self.var_mng.next_trie_var(rel, inplace=True)
+
 		if self.var_mng.is_root_rel(interm):
 			interm_col2idx = {rel_col: interm_col_idx for interm_col_idx, rel_col in interm_cols}
 			elems = list()
+			else_elems = list()
 			for rel, _, proj_cols in build_plan:
 				for col in proj_cols:
 					for s in self.call_func("min", rel, col):
 						yield s
 					elems.append((self.var_mng.interm_col(interm_col2idx[(rel, col)]), self.var_mng.mn_var(rel, col)))
+					else_elems.append((
+						self.var_mng.interm_col(interm_col2idx[(rel, col)]),
+						0 if rel2col2type[rel_wo_idx(rel)][col] == "int" else '""'
+					))
 			yield f"<{', '.join([f'{elem_key}={elem_val}' for elem_key, elem_val in elems])}>\n"
-			else_cases[-1] = (f"<{', '.join([f'{elem_key}={{}}' for elem_key, _ in elems])}>", self.indent)
+			else_cases[-1] = (
+				f"<{', '.join([f'{elem_key}={elem_val}' for elem_key, elem_val in else_elems])}>",
+				self.indent
+			)
 		else:
 			interm_rel2cols = defaultdict(list)
 			for _, (rel, col) in interm_cols:
@@ -123,6 +131,10 @@ class SDQLGenerator:
 			for idx in interm_trie_cols[::-1]:
 				trie_value = f"{{ {new2old_map[self.var_mng.interm_col(idx)]} -> {trie_value} }}"
 			yield f'{trie_value}\n'
+
+		rel2col2type[interm] = dict()
+		for interm_col_idx, (rel, col) in interm_cols:
+			rel2col2type[interm][self.var_mng.interm_col(interm_col_idx)] = rel2col2type[rel_wo_idx(rel)][col]
 
 		for else_case, indent in else_cases[::-1]:
 			self.indent = indent - 1

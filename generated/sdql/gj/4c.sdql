@@ -10,20 +10,20 @@ let mi_idx_trie0 = sum(<mi_idx_tuple, _> <- mi_idx) { mi_idx_tuple.movie_id -> {
 let k_trie0 = sum(<k_tuple, _> <- k) { k_tuple.id -> { k_tuple -> 1 } } in
 let it_trie0 = sum(<it_tuple, _> <- it) { it_tuple.id -> { it_tuple -> 1 } } in
 sum(<x0, mk_trie1> <- mk_trie0)
-	let t_trie1 = t_trie0(x0) in
-	let mi_idx_trie1 = mi_idx_trie0(x0) in
-	if (t_trie1 != {} && mi_idx_trie1 != {}) then
+	if (x0 ∈ t_trie0 && x0 ∈ mi_idx_trie0) then
+		let t_trie1 = t_trie0(x0) in
+		let mi_idx_trie1 = mi_idx_trie0(x0) in
 		sum(<x1, mk_trie2> <- mk_trie1)
-			let k_trie1 = k_trie0(x1) in
-			if (k_trie1 != {}) then
+			if (x1 ∈ k_trie0) then
+				let k_trie1 = k_trie0(x1) in
 				sum(<x2, mi_idx_trie2> <- mi_idx_trie1)
-					let it_trie1 = it_trie0(x2) in
-					if (it_trie1 != {}) then
+					if (x2 ∈ it_trie0) then
+						let it_trie1 = it_trie0(x2) in
 						let mn_t_title = sum(<t_tuple, _> <- t_trie1) t_tuple.title in
 						let mn_mi_idx_info = sum(<mi_idx_tuple, _> <- mi_idx_trie2) mi_idx_tuple.info in
 						<col2=mn_t_title, col4=mn_mi_idx_info>
 					else
-						<col2={}, col4={}>
+						<col2="", col4="">
 			else
 				{}
 	else

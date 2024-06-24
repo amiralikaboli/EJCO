@@ -13,15 +13,15 @@ let mc_trie0 = sum(<mc_tuple, _> <- mc) { mc_tuple.movie_id -> { mc_tuple.compan
 let k_trie0 = sum(<k_tuple, _> <- k) { k_tuple.id -> { k_tuple -> 1 } } in
 let cn_trie0 = sum(<cn_tuple, _> <- cn) { cn_tuple.id -> { cn_tuple -> 1 } } in
 let interm0_trie0 = sum(<x0, mk_trie1> <- mk_trie0)
-	let t_trie1 = t_trie0(x0) in
-	let mc_trie1 = mc_trie0(x0) in
-	if (t_trie1 != {} && mc_trie1 != {}) then
+	if (x0 ∈ t_trie0 && x0 ∈ mc_trie0) then
+		let t_trie1 = t_trie0(x0) in
+		let mc_trie1 = mc_trie0(x0) in
 		sum(<x1, mk_trie2> <- mk_trie1)
-			let k_trie1 = k_trie0(x1) in
-			if (k_trie1 != {}) then
+			if (x1 ∈ k_trie0) then
+				let k_trie1 = k_trie0(x1) in
 				sum(<x2, mc_trie2> <- mc_trie1)
-					let cn_trie1 = cn_trie0(x2) in
-					if (cn_trie1 != {}) then
+					if (x2 ∈ cn_trie0) then
+						let cn_trie1 = cn_trie0(x2) in
 						sum(<mk_tuple, _> <- mk_trie2)
 							sum(<t_tuple, _> <- t_trie1)
 								sum(<mc_tuple, _> <- mc_trie2)
@@ -38,18 +38,18 @@ let ci_trie0 = sum(<ci_tuple, _> <- ci) { ci_tuple.person_id -> { ci_tuple.movie
 let n_trie0 = sum(<n_tuple, _> <- n) { n_tuple.id -> { n_tuple -> 1 } } in
 let an_trie0 = sum(<an_tuple, _> <- an) { an_tuple.person_id -> { an_tuple -> 1 } } in
 sum(<x0, ci_trie1> <- ci_trie0)
-	let n_trie1 = n_trie0(x0) in
-	if (n_trie1 != {}) then
+	if (x0 ∈ n_trie0) then
+		let n_trie1 = n_trie0(x0) in
 		sum(<x1, ci_trie2> <- ci_trie1)
-			let interm0_trie1 = interm0_trie0(x1) in
-			if (interm0_trie1 != {}) then
-				let an_trie1 = an_trie0(x0) in
-				if (an_trie1 != {}) then
+			if (x1 ∈ interm0_trie0) then
+				let interm0_trie1 = interm0_trie0(x1) in
+				if (x0 ∈ an_trie0) then
+					let an_trie1 = an_trie0(x0) in
 					let mn_interm0_col2 = sum(<interm0_tuple, _> <- interm0_trie1) interm0_tuple.col2 in
 					let mn_an_name = sum(<an_tuple, _> <- an_trie1) an_tuple.name in
 					<col3=mn_interm0_col2, col5=mn_an_name>
 				else
-					<col3={}, col5={}>
+					<col3="", col5="">
 			else
 				{}
 	else

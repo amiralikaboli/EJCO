@@ -9,11 +9,11 @@ let t1_trie0 = sum(<t1_tuple, _> <- t1) { t1_tuple.id -> { t1_tuple -> 1 } } in
 let ml_trie0 = sum(<ml_tuple, _> <- ml) { ml_tuple.movie_id -> { ml_tuple.linked_movie_id -> { ml_tuple -> 1 } } } in
 let t2_trie0 = sum(<t2_tuple, _> <- t2) { t2_tuple.id -> { t2_tuple -> 1 } } in
 let interm0_trie0 = sum(<x0, t1_trie1> <- t1_trie0)
-	let ml_trie1 = ml_trie0(x0) in
-	if (ml_trie1 != {}) then
+	if (x0 ∈ ml_trie0) then
+		let ml_trie1 = ml_trie0(x0) in
 		sum(<x1, ml_trie2> <- ml_trie1)
-			let t2_trie1 = t2_trie0(x1) in
-			if (t2_trie1 != {}) then
+			if (x1 ∈ t2_trie0) then
+				let t2_trie1 = t2_trie0(x1) in
 				sum(<t1_tuple, _> <- t1_trie1)
 					sum(<ml_tuple, _> <- ml_trie2)
 						sum(<t2_tuple, _> <- t2_trie1)
@@ -28,20 +28,20 @@ let mk_trie0 = sum(<mk_tuple, _> <- mk) { mk_tuple.movie_id -> { mk_tuple.keywor
 let lt_trie0 = sum(<lt_tuple, _> <- lt) { lt_tuple.id -> { lt_tuple -> 1 } } in
 let k_trie0 = sum(<k_tuple, _> <- k) { k_tuple.id -> { k_tuple -> 1 } } in
 sum(<x0, mk_trie1> <- mk_trie0)
-	let interm0_trie1 = interm0_trie0(x0) in
-	if (interm0_trie1 != {}) then
+	if (x0 ∈ interm0_trie0) then
+		let interm0_trie1 = interm0_trie0(x0) in
 		sum(<x1, interm0_trie2> <- interm0_trie1)
-			let lt_trie1 = lt_trie0(x1) in
-			if (lt_trie1 != {}) then
+			if (x1 ∈ lt_trie0) then
+				let lt_trie1 = lt_trie0(x1) in
 				sum(<x2, mk_trie2> <- mk_trie1)
-					let k_trie1 = k_trie0(x2) in
-					if (k_trie1 != {}) then
+					if (x2 ∈ k_trie0) then
+						let k_trie1 = k_trie0(x2) in
 						let mn_interm0_col1 = sum(<interm0_tuple, _> <- interm0_trie2) interm0_tuple.col1 in
 						let mn_interm0_col4 = sum(<interm0_tuple, _> <- interm0_trie2) interm0_tuple.col4 in
 						let mn_lt_link = sum(<lt_tuple, _> <- lt_trie1) lt_tuple.link in
 						<col3=mn_interm0_col1, col5=mn_interm0_col4, col6=mn_lt_link>
 					else
-						<col3={}, col5={}, col6={}>
+						<col3="", col5="", col6="">
 			else
 				{}
 	else

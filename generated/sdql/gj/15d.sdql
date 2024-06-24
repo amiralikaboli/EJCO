@@ -11,8 +11,8 @@ let at = load[{<id: int, movie_id: int, title: string, imdb_index: string, kind_
 let mk_trie0 = sum(<mk_tuple, _> <- mk) { mk_tuple.movie_id -> { mk_tuple -> 1 } } in
 let t_trie0 = sum(<t_tuple, _> <- t) { t_tuple.id -> { t_tuple -> 1 } } in
 let interm0_trie0 = sum(<x0, mk_trie1> <- mk_trie0)
-	let t_trie1 = t_trie0(x0) in
-	if (t_trie1 != {}) then
+	if (x0 ∈ t_trie0) then
+		let t_trie1 = t_trie0(x0) in
 		sum(<mk_tuple, _> <- mk_trie1)
 			sum(<t_tuple, _> <- t_trie1)
 				{ mk_tuple.movie_id -> { mk_tuple.keyword_id -> { <col0=mk_tuple.movie_id, col1=mk_tuple.keyword_id, col2=t_tuple.title> -> 1 } } }
@@ -28,28 +28,28 @@ let ct_trie0 = sum(<ct_tuple, _> <- ct) { ct_tuple.id -> { ct_tuple -> 1 } } in
 let cn_trie0 = sum(<cn_tuple, _> <- cn) { cn_tuple.id -> { cn_tuple -> 1 } } in
 let at_trie0 = sum(<at_tuple, _> <- at) { at_tuple.movie_id -> { at_tuple -> 1 } } in
 sum(<x0, mi_trie1> <- mi_trie0)
-	let interm0_trie1 = interm0_trie0(x0) in
-	let mc_trie1 = mc_trie0(x0) in
-	if (interm0_trie1 != {} && mc_trie1 != {}) then
+	if (x0 ∈ interm0_trie0 && x0 ∈ mc_trie0) then
+		let interm0_trie1 = interm0_trie0(x0) in
+		let mc_trie1 = mc_trie0(x0) in
 		sum(<x1, interm0_trie2> <- interm0_trie1)
-			let k_trie1 = k_trie0(x1) in
-			if (k_trie1 != {}) then
+			if (x1 ∈ k_trie0) then
+				let k_trie1 = k_trie0(x1) in
 				sum(<x2, mi_trie2> <- mi_trie1)
-					let it1_trie1 = it1_trie0(x2) in
-					if (it1_trie1 != {}) then
+					if (x2 ∈ it1_trie0) then
+						let it1_trie1 = it1_trie0(x2) in
 						sum(<x3, mc_trie2> <- mc_trie1)
-							let ct_trie1 = ct_trie0(x3) in
-							if (ct_trie1 != {}) then
+							if (x3 ∈ ct_trie0) then
+								let ct_trie1 = ct_trie0(x3) in
 								sum(<x4, mc_trie3> <- mc_trie2)
-									let cn_trie1 = cn_trie0(x4) in
-									if (cn_trie1 != {}) then
-										let at_trie1 = at_trie0(x0) in
-										if (at_trie1 != {}) then
+									if (x4 ∈ cn_trie0) then
+										let cn_trie1 = cn_trie0(x4) in
+										if (x0 ∈ at_trie0) then
+											let at_trie1 = at_trie0(x0) in
 											let mn_interm0_col2 = sum(<interm0_tuple, _> <- interm0_trie2) interm0_tuple.col2 in
 											let mn_at_title = sum(<at_tuple, _> <- at_trie1) at_tuple.title in
 											<col3=mn_interm0_col2, col6=mn_at_title>
 										else
-											<col3={}, col6={}>
+											<col3="", col6="">
 									else
 										{}
 							else
