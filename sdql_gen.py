@@ -100,10 +100,11 @@ class SDQLGenerator:
 			elems = list()
 			else_elems = list()
 			for rel, _, proj_cols in build_plan:
-				for col in proj_cols:
-					for s in self.call_func("min", rel, col):
+				if proj_cols:
+					for s in self.call_func("min", rel, proj_cols):
 						yield s
-					elems.append((self.var_mng.interm_col(interm_col2idx[(rel, col)]), self.var_mng.mn_var(rel, col)))
+				for col in proj_cols:
+					elems.append((self.var_mng.interm_col(interm_col2idx[(rel, col)]), f'{self.var_mng.mn_rel_var(rel)}.{col}'))
 					else_elems.append((
 						self.var_mng.interm_col(interm_col2idx[(rel, col)]),
 						0 if rel2col2type[rel_wo_idx(rel)][col] == "int" else '""'
@@ -183,15 +184,14 @@ class SDQLGenerator:
 		yield f"let {self.var_mng.x_var(idx)} = {self.var_mng.tuple_var(rel_it)}.{col_it} in\n"
 		self.available_tuples.add(rel_it)
 
-	def _gj_min(self, rel, col):
-		yield f"let {self.var_mng.mn_var(rel, col)} = {self._tuple_iteration(rel)} {self.var_mng.tuple_var(rel)}.{col} in\n"
+	def _gj_min(self, rel, cols):
+		yield f"let {self.var_mng.mn_rel_var(rel)} = {self._tuple_iteration(rel)} <{', '.join(f'{col}={self.var_mng.tuple_var(rel)}.{col}' for col in cols)}> in\n"
 
-	def _fj_min(self, rel, col):
+	def _fj_min(self, rel, cols):
+		let_value = f"<{', '.join(f'{col}={self.var_mng.tuple_var(rel)}.{col}' for col in cols)}>"
 		if rel not in self.available_tuples:
-			let_value = f"{self._tuple_iteration(rel)} {self.var_mng.tuple_var(rel)}.{col}"
-		else:
-			let_value = f"{self.var_mng.tuple_var(rel)}.{col}"
-		yield f"let {self.var_mng.mn_var(rel, col)} = {let_value} in\n"
+			let_value = f"{self._tuple_iteration(rel)} {let_value}"
+		yield f"let {self.var_mng.mn_rel_var(rel)} = {let_value} in\n"
 
 	def _gj_tuple_iteration(self, rel):
 		yield f"{self._tuple_iteration(rel)}\n"

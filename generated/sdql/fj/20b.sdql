@@ -13,11 +13,11 @@ let cct1_trie0 = sum(<cct1_tuple, _> <- cct1) { cct1_tuple.id -> { cct1_tuple ->
 let cct2_trie0 = sum(<cct2_tuple, _> <- cct2) { cct2_tuple.id -> { cct2_tuple -> 1 } } in
 let interm0_trie0 = sum(<cc_tuple, _> <- cc)
 	let x0 = cc_tuple.subject_id in
-	let cct1_trie1 = cct1_trie0(x0) in
-	if (cct1_trie1 != {}) then
+	if (x0 ∈ cct1_trie0) then
+		let cct1_trie1 = cct1_trie0(x0) in
 		let x1 = cc_tuple.status_id in
-		let cct2_trie1 = cct2_trie0(x1) in
-		if (cct2_trie1 != {}) then
+		if (x1 ∈ cct2_trie0) then
+			let cct2_trie1 = cct2_trie0(x1) in
 			{ cc_tuple.movie_id -> { <col0=cc_tuple.subject_id, col1=cc_tuple.status_id, col2=cc_tuple.movie_id> -> 1 } }
 		else
 			{}
@@ -30,15 +30,15 @@ let kt_trie0 = sum(<kt_tuple, _> <- kt) { kt_tuple.id -> { kt_tuple -> 1 } } in
 let k_trie0 = sum(<k_tuple, _> <- k) { k_tuple.id -> { k_tuple -> 1 } } in
 let interm1_trie0 = sum(<mk_tuple, _> <- mk)
 	let x0 = mk_tuple.movie_id in
-	let t_trie1 = t_trie0(x0) in
-	if (t_trie1 != {}) then
+	if (x0 ∈ t_trie0) then
+		let t_trie1 = t_trie0(x0) in
 		sum(<t_tuple, _> <- t_trie1)
 			let x1 = t_tuple.kind_id in
-			let kt_trie1 = kt_trie0(x1) in
-			if (kt_trie1 != {}) then
+			if (x1 ∈ kt_trie0) then
+				let kt_trie1 = kt_trie0(x1) in
 				let x2 = mk_tuple.keyword_id in
-				let k_trie1 = k_trie0(x2) in
-				if (k_trie1 != {}) then
+				if (x2 ∈ k_trie0) then
+					let k_trie1 = k_trie0(x2) in
 					{ mk_tuple.movie_id -> { <col0=mk_tuple.movie_id, col1=mk_tuple.keyword_id, col2=t_tuple.kind_id, col3=t_tuple.title> -> 1 } }
 				else
 					{}
@@ -54,20 +54,20 @@ let chn_trie0 = sum(<chn_tuple, _> <- chn) { chn_tuple.id -> { chn_tuple -> 1 } 
 let interm0_trie0 = sum(<interm0_tuple, _> <- interm0) { interm0_tuple.col2 -> { interm0_tuple -> 1 } } in
 sum(<ci_tuple, _> <- ci)
 	let x0 = ci_tuple.person_id in
-	let n_trie1 = n_trie0(x0) in
-	if (n_trie1 != {}) then
+	if (x0 ∈ n_trie0) then
+		let n_trie1 = n_trie0(x0) in
 		let x1 = ci_tuple.movie_id in
-		let interm1_trie1 = interm1_trie0(x1) in
-		if (interm1_trie1 != {}) then
+		if (x1 ∈ interm1_trie0) then
+			let interm1_trie1 = interm1_trie0(x1) in
 			let x2 = ci_tuple.person_role_id in
-			let chn_trie1 = chn_trie0(x2) in
-			if (chn_trie1 != {}) then
-				let interm0_trie1 = interm0_trie0(x1) in
-				if (interm0_trie1 != {}) then
-					let mn_interm1_col3 = sum(<interm1_tuple, _> <- interm1_trie1) interm1_tuple.col3 in
-					<col5=mn_interm1_col3>
+			if (x2 ∈ chn_trie0) then
+				let chn_trie1 = chn_trie0(x2) in
+				if (x1 ∈ interm0_trie0) then
+					let interm0_trie1 = interm0_trie0(x1) in
+					let mn_interm1 = sum(<interm1_tuple, _> <- interm1_trie1) <col3=interm1_tuple.col3> in
+					<col5=mn_interm1.col3>
 				else
-					<col5={}>
+					<col5="">
 			else
 				{}
 		else

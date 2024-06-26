@@ -20,8 +20,8 @@ sum(<x0, mk_trie1> <- mk_trie0)
 					sum(<x2, mc_trie2> <- mc_trie1)
 						if (x2 ∈ cn_trie0) then
 							let cn_trie1 = cn_trie0(x2) in
-							let mn_t_title = sum(<t_tuple, _> <- t_trie1) t_tuple.title in
-							<col2=mn_t_title>
+							let mn_t = sum(<t_tuple, _> <- t_trie1) <title=t_tuple.title> in
+							<col2=mn_t.title>
 						else
 							<col2="">
 				else

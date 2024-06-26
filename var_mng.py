@@ -58,8 +58,12 @@ class VariableManager:
 		return f"{Templates.AttrVar.value}{idx}"
 
 	@staticmethod
-	def mn_var(rel: str, col: str):
+	def mn_rel_col_var(rel: str, col: str):
 		return f"{Templates.MinVar.value}_{VariableManager.rel_col_var(rel, col)}"
+
+	@staticmethod
+	def mn_rel_var(rel: str):
+		return f"{Templates.MinVar.value}_{rel}"
 
 	@staticmethod
 	def load_func(rel: str):

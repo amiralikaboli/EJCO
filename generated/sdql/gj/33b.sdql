@@ -118,13 +118,9 @@ sum(<x0, mc2_trie1> <- mc2_trie0)
 		sum(<x1, mc2_trie2> <- mc2_trie1)
 			if (x1 ∈ interm5_trie0) then
 				let interm5_trie1 = interm5_trie0(x1) in
-				let mn_cn2_name = sum(<cn2_tuple, _> <- cn2_trie1) cn2_tuple.name in
-				let mn_interm5_col2 = sum(<interm5_tuple, _> <- interm5_trie1) interm5_tuple.col2 in
-				let mn_interm5_col5 = sum(<interm5_tuple, _> <- interm5_trie1) interm5_tuple.col5 in
-				let mn_interm5_col7 = sum(<interm5_tuple, _> <- interm5_trie1) interm5_tuple.col7 in
-				let mn_interm5_col9 = sum(<interm5_tuple, _> <- interm5_trie1) interm5_tuple.col9 in
-				let mn_interm5_col11 = sum(<interm5_tuple, _> <- interm5_trie1) interm5_tuple.col11 in
-				<col2=mn_cn2_name, col5=mn_interm5_col2, col7=mn_interm5_col5, col9=mn_interm5_col7, col11=mn_interm5_col9, col13=mn_interm5_col11>
+				let mn_cn2 = sum(<cn2_tuple, _> <- cn2_trie1) <name=cn2_tuple.name> in
+				let mn_interm5 = sum(<interm5_tuple, _> <- interm5_trie1) <col2=interm5_tuple.col2, col5=interm5_tuple.col5, col7=interm5_tuple.col7, col9=interm5_tuple.col9, col11=interm5_tuple.col11> in
+				<col2=mn_cn2.name, col5=mn_interm5.col2, col7=mn_interm5.col5, col9=mn_interm5.col7, col11=mn_interm5.col9, col13=mn_interm5.col11>
 			else
 				<col2="", col5="", col7="", col9="", col11="", col13="">
 	else

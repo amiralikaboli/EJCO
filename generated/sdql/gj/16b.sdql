@@ -48,9 +48,9 @@ sum(<x0, ci_trie1> <- ci_trie0)
 				let interm0_trie1 = interm0_trie0(x1) in
 				if (x0 ∈ an_trie0) then
 					let an_trie1 = an_trie0(x0) in
-					let mn_interm0_col2 = sum(<interm0_tuple, _> <- interm0_trie1) interm0_tuple.col2 in
-					let mn_an_name = sum(<an_tuple, _> <- an_trie1) an_tuple.name in
-					<col3=mn_interm0_col2, col5=mn_an_name>
+					let mn_interm0 = sum(<interm0_tuple, _> <- interm0_trie1) <col2=interm0_tuple.col2> in
+					let mn_an = sum(<an_tuple, _> <- an_trie1) <name=an_tuple.name> in
+					<col3=mn_interm0.col2, col5=mn_an.name>
 				else
 					<col3="", col5="">
 			else

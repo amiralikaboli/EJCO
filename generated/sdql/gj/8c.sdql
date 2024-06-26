@@ -35,9 +35,9 @@ sum(<x0, ci_trie1> <- ci_trie0)
 							let t_trie1 = t_trie0(x1) in
 							if (x0 ∈ a1_trie0) then
 								let a1_trie1 = a1_trie0(x0) in
-								let mn_t_title = sum(<t_tuple, _> <- t_trie1) t_tuple.title in
-								let mn_a1_name = sum(<a1_tuple, _> <- a1_trie1) a1_tuple.name in
-								<col4=mn_t_title, col5=mn_a1_name>
+								let mn_t = sum(<t_tuple, _> <- t_trie1) <title=t_tuple.title> in
+								let mn_a1 = sum(<a1_tuple, _> <- a1_trie1) <name=a1_tuple.name> in
+								<col4=mn_t.title, col5=mn_a1.name>
 							else
 								<col4="", col5="">
 						else

@@ -90,10 +90,9 @@ sum(<x0, ci_trie1> <- ci_trie0)
 				sum(<x2, ci_trie3> <- ci_trie2)
 					if (x2 ∈ interm3_trie0) then
 						let interm3_trie1 = interm3_trie0(x2) in
-						let mn_chn_name = sum(<chn_tuple, _> <- chn_trie1) chn_tuple.name in
-						let mn_interm3_col3 = sum(<interm3_tuple, _> <- interm3_trie1) interm3_tuple.col3 in
-						let mn_interm3_col5 = sum(<interm3_tuple, _> <- interm3_trie1) interm3_tuple.col5 in
-						<col3=mn_chn_name, col6=mn_interm3_col3, col8=mn_interm3_col5>
+						let mn_chn = sum(<chn_tuple, _> <- chn_trie1) <name=chn_tuple.name> in
+						let mn_interm3 = sum(<interm3_tuple, _> <- interm3_trie1) <col3=interm3_tuple.col3, col5=interm3_tuple.col5> in
+						<col3=mn_chn.name, col6=mn_interm3.col3, col8=mn_interm3.col5>
 					else
 						<col3="", col6="", col8="">
 			else

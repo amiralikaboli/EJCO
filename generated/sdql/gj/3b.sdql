@@ -23,8 +23,8 @@ sum(<x0, mi_trie1> <- mi_trie0)
 		sum(<x1, interm0_trie2> <- interm0_trie1)
 			if (x1 ∈ k_trie0) then
 				let k_trie1 = k_trie0(x1) in
-				let mn_interm0_col2 = sum(<interm0_tuple, _> <- interm0_trie2) interm0_tuple.col2 in
-				<col2=mn_interm0_col2>
+				let mn_interm0 = sum(<interm0_tuple, _> <- interm0_trie2) <col2=interm0_tuple.col2> in
+				<col2=mn_interm0.col2>
 			else
 				<col2="">
 	else

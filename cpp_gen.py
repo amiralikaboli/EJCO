@@ -73,7 +73,7 @@ class CppGenerator:
 			delimiter = ' << " | " << '
 			cpp_file.write(
 				'\t' * (self.indent + 1) +
-				f'cout << {delimiter.join([self.var_mng.mn_var(rel, col) for rel, col in proj_relcols])} << endl;\n'
+				f'cout << {delimiter.join([self.var_mng.mn_rel_col_var(rel, col) for rel, col in proj_relcols])} << endl;\n'
 			)
 			cpp_file.write('\t' * self.indent + 'cout << "*" << " " << flush;\n')
 			self.indent -= 1
@@ -117,7 +117,7 @@ class CppGenerator:
 		if self.var_mng.is_root_rel(interm):
 			proj_relcols, proj_col_types = self._find_all_proj_cols_and_types(build_plan)
 			for (rel, col), col_type in zip(proj_relcols, proj_col_types):
-				yield f'{col_type} {self.var_mng.mn_var(rel, col)} = {inf_values[col_type]};\n'
+				yield f'{col_type} {self.var_mng.mn_rel_col_var(rel, col)} = {inf_values[col_type]};\n'
 		else:
 			for idx, (rel, col) in interm_cols:
 				yield f'vector<{rel2col2type[rel_wo_idx(rel)][col]}> {self.var_mng.rel_col_var(interm, self.var_mng.interm_col(idx))};\n'
@@ -325,7 +325,7 @@ class CppGenerator:
 		yield f"{self._offset_iteration(rel)} {{\n"
 		self.indent += 1
 		for col in proj_cols:
-			yield f'{self.var_mng.mn_var(rel, col)} = min({self.var_mng.mn_var(rel, col)}, {self.var_mng.rel_col_var(rel, col)}[{self.var_mng.off_var(rel)}]);\n'
+			yield f'{self.var_mng.mn_rel_col_var(rel, col)} = min({self.var_mng.mn_rel_col_var(rel, col)}, {self.var_mng.rel_col_var(rel, col)}[{self.var_mng.off_var(rel)}]);\n'
 		self.indent -= 1
 		yield '}\n'
 
@@ -335,7 +335,7 @@ class CppGenerator:
 			yield f"{self._offset_iteration(rel)} {{\n"
 			self.indent += 1
 		for col in proj_cols:
-			yield f'{self.var_mng.mn_var(rel, col)} = min({self.var_mng.mn_var(rel, col)}, {self.var_mng.rel_col_var(rel, col)}[{self.var_mng.off_var(rel)}]);\n'
+			yield f'{self.var_mng.mn_rel_col_var(rel, col)} = min({self.var_mng.mn_rel_col_var(rel, col)}, {self.var_mng.rel_col_var(rel, col)}[{self.var_mng.off_var(rel)}]);\n'
 		if not is_available:
 			self.indent -= 1
 			yield '}\n'

@@ -86,9 +86,8 @@ sum(<x0, mi_trie1> <- mi_trie0)
 		sum(<x1, mi_trie2> <- mi_trie1)
 			if (x1 ∈ interm3_trie0) then
 				let interm3_trie1 = interm3_trie0(x1) in
-				let mn_interm3_col5 = sum(<interm3_tuple, _> <- interm3_trie1) interm3_tuple.col5 in
-				let mn_interm3_col6 = sum(<interm3_tuple, _> <- interm3_trie1) interm3_tuple.col6 in
-				<col6=mn_interm3_col5, col7=mn_interm3_col6>
+				let mn_interm3 = sum(<interm3_tuple, _> <- interm3_trie1) <col5=interm3_tuple.col5, col6=interm3_tuple.col6> in
+				<col6=mn_interm3.col5, col7=mn_interm3.col6>
 			else
 				<col6="", col7="">
 	else

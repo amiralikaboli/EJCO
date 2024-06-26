@@ -14,8 +14,8 @@ let rt = load[{<id: int, role: string> -> int}]("/Users/s2522996/Documents/free-
 let t_trie0 = sum(<t_tuple, _> <- t) { t_tuple.id -> { t_tuple -> 1 } } in
 let interm0_trie0 = sum(<mk_tuple, _> <- mk)
 	let x0 = mk_tuple.movie_id in
-	let t_trie1 = t_trie0(x0) in
-	if (t_trie1 != {}) then
+	if (x0 ∈ t_trie0) then
+		let t_trie1 = t_trie0(x0) in
 		sum(<t_tuple, _> <- t_trie1)
 			{ mk_tuple.movie_id -> { mk_tuple.keyword_id -> { <col0=mk_tuple.movie_id, col1=mk_tuple.keyword_id, col2=t_tuple.title> -> 1 } } }
 	else
@@ -29,27 +29,30 @@ let it_trie0 = sum(<it_tuple, _> <- it) { it_tuple.id -> { it_tuple -> 1 } } in
 let cn_trie0 = sum(<cn_tuple, _> <- cn) { cn_tuple.id -> { cn_tuple -> 1 } } in
 let interm1_trie0 = sum(<mi_tuple, _> <- mi)
 	let x0 = mi_tuple.movie_id in
-	let interm0_trie1 = interm0_trie0(x0) in
-	let mc_trie1 = mc_trie0(x0) in
-	if (interm0_trie1 != {} && mc_trie1 != {}) then
-		sum(<interm0_tuple, _> <- interm0_trie1)
-			let x1 = interm0_tuple.col1 in
-			let k_trie1 = k_trie0(x1) in
-			if (k_trie1 != {}) then
-				let x2 = mi_tuple.info_type_id in
-				let it_trie1 = it_trie0(x2) in
-				if (it_trie1 != {}) then
-					sum(<mc_tuple, _> <- mc_trie1)
-						let x3 = mc_tuple.company_id in
-						let cn_trie1 = cn_trie0(x3) in
-						if (cn_trie1 != {}) then
-							{ mi_tuple.movie_id -> { <col0=mi_tuple.movie_id, col1=mi_tuple.info_type_id, col2=interm0_tuple.col1, col3=interm0_tuple.col2, col4=mc_tuple.company_id> -> 1 } }
-						else
-							{}
+	if (x0 ∈ interm0_trie0) then
+		if (x0 ∈ mc_trie0) then
+			let interm0_trie1 = interm0_trie0(x0) in
+			let mc_trie1 = mc_trie0(x0) in
+			sum(<interm0_tuple, _> <- interm0_trie1)
+				let x1 = interm0_tuple.col1 in
+				if (x1 ∈ k_trie0) then
+					let k_trie1 = k_trie0(x1) in
+					let x2 = mi_tuple.info_type_id in
+					if (x2 ∈ it_trie0) then
+						let it_trie1 = it_trie0(x2) in
+						sum(<mc_tuple, _> <- mc_trie1)
+							let x3 = mc_tuple.company_id in
+							if (x3 ∈ cn_trie0) then
+								let cn_trie1 = cn_trie0(x3) in
+								{ mi_tuple.movie_id -> { <col0=mi_tuple.movie_id, col1=mi_tuple.info_type_id, col2=interm0_tuple.col1, col3=interm0_tuple.col2, col4=mc_tuple.company_id> -> 1 } }
+							else
+								{}
+					else
+						{}
 				else
 					{}
-			else
-				{}
+		else
+			{}
 	else
 		{}
 in
@@ -57,8 +60,8 @@ in
 let an_trie0 = sum(<an_tuple, _> <- an) { an_tuple.person_id -> { an_tuple -> 1 } } in
 let interm2_trie0 = sum(<n_tuple, _> <- n)
 	let x0 = n_tuple.id in
-	let an_trie1 = an_trie0(x0) in
-	if (an_trie1 != {}) then
+	if (x0 ∈ an_trie0) then
+		let an_trie1 = an_trie0(x0) in
 		{ n_tuple.id -> { <col0=n_tuple.id, col1=n_tuple.name> -> 1 } }
 	else
 		{}
@@ -70,23 +73,23 @@ let interm2_trie0 = sum(<interm2_tuple, _> <- interm2) { interm2_tuple.col0 -> {
 let interm1_trie0 = sum(<interm1_tuple, _> <- interm1) { interm1_tuple.col0 -> { interm1_tuple -> 1 } } in
 sum(<ci_tuple, _> <- ci)
 	let x0 = ci_tuple.person_role_id in
-	let chn_trie1 = chn_trie0(x0) in
-	if (chn_trie1 != {}) then
+	if (x0 ∈ chn_trie0) then
+		let chn_trie1 = chn_trie0(x0) in
 		let x1 = ci_tuple.role_id in
-		let rt_trie1 = rt_trie0(x1) in
-		if (rt_trie1 != {}) then
+		if (x1 ∈ rt_trie0) then
+			let rt_trie1 = rt_trie0(x1) in
 			let x2 = ci_tuple.person_id in
-			let interm2_trie1 = interm2_trie0(x2) in
-			if (interm2_trie1 != {}) then
+			if (x2 ∈ interm2_trie0) then
+				let interm2_trie1 = interm2_trie0(x2) in
 				let x3 = ci_tuple.movie_id in
-				let interm1_trie1 = interm1_trie0(x3) in
-				if (interm1_trie1 != {}) then
-					let mn_chn_name = sum(<chn_tuple, _> <- chn_trie1) chn_tuple.name in
-					let mn_interm2_col1 = sum(<interm2_tuple, _> <- interm2_trie1) interm2_tuple.col1 in
-					let mn_interm1_col3 = sum(<interm1_tuple, _> <- interm1_trie1) interm1_tuple.col3 in
-					<col4=mn_chn_name, col5=mn_interm2_col1, col8=mn_interm1_col3>
+				if (x3 ∈ interm1_trie0) then
+					let interm1_trie1 = interm1_trie0(x3) in
+					let mn_chn = sum(<chn_tuple, _> <- chn_trie1) <name=chn_tuple.name> in
+					let mn_interm2 = sum(<interm2_tuple, _> <- interm2_trie1) <col1=interm2_tuple.col1> in
+					let mn_interm1 = sum(<interm1_tuple, _> <- interm1_trie1) <col3=interm1_tuple.col3> in
+					<col4=mn_chn.name, col5=mn_interm2.col1, col8=mn_interm1.col3>
 				else
-					<col4={}, col5={}, col8={}>
+					<col4="", col5="", col8="">
 			else
 				{}
 		else

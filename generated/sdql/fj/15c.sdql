@@ -11,8 +11,8 @@ let at = load[{<id: int, movie_id: int, title: string, imdb_index: string, kind_
 let t_trie0 = sum(<t_tuple, _> <- t) { t_tuple.id -> { t_tuple -> 1 } } in
 let interm0_trie0 = sum(<mk_tuple, _> <- mk)
 	let x0 = mk_tuple.movie_id in
-	let t_trie1 = t_trie0(x0) in
-	if (t_trie1 != {}) then
+	if (x0 ∈ t_trie0) then
+		let t_trie1 = t_trie0(x0) in
 		sum(<t_tuple, _> <- t_trie1)
 			{ mk_tuple.movie_id -> { mk_tuple.keyword_id -> { <col0=mk_tuple.movie_id, col1=mk_tuple.keyword_id, col2=t_tuple.title> -> 1 } } }
 	else
@@ -28,38 +28,41 @@ let cn_trie0 = sum(<cn_tuple, _> <- cn) { cn_tuple.id -> { cn_tuple -> 1 } } in
 let at_trie0 = sum(<at_tuple, _> <- at) { at_tuple.movie_id -> { at_tuple -> 1 } } in
 sum(<mi_tuple, _> <- mi)
 	let x0 = mi_tuple.movie_id in
-	let interm0_trie1 = interm0_trie0(x0) in
-	let mc_trie1 = mc_trie0(x0) in
-	if (interm0_trie1 != {} && mc_trie1 != {}) then
-		sum(<interm0_tuple, _> <- interm0_trie1)
-			let x1 = interm0_tuple.col1 in
-			let k_trie1 = k_trie0(x1) in
-			if (k_trie1 != {}) then
-				let x2 = mi_tuple.info_type_id in
-				let it1_trie1 = it1_trie0(x2) in
-				if (it1_trie1 != {}) then
-					sum(<mc_tuple, _> <- mc_trie1)
-						let x3 = mc_tuple.company_type_id in
-						let ct_trie1 = ct_trie0(x3) in
-						if (ct_trie1 != {}) then
-							let x4 = mc_tuple.company_id in
-							let cn_trie1 = cn_trie0(x4) in
-							if (cn_trie1 != {}) then
-								let at_trie1 = at_trie0(x0) in
-								if (at_trie1 != {}) then
-									let mn_mi_info = mi_tuple.info in
-									let mn_interm0_col2 = interm0_tuple.col2 in
-									<col2=mn_mi_info, col4=mn_interm0_col2>
+	if (x0 ∈ interm0_trie0) then
+		if (x0 ∈ mc_trie0) then
+			let interm0_trie1 = interm0_trie0(x0) in
+			let mc_trie1 = mc_trie0(x0) in
+			sum(<interm0_tuple, _> <- interm0_trie1)
+				let x1 = interm0_tuple.col1 in
+				if (x1 ∈ k_trie0) then
+					let k_trie1 = k_trie0(x1) in
+					let x2 = mi_tuple.info_type_id in
+					if (x2 ∈ it1_trie0) then
+						let it1_trie1 = it1_trie0(x2) in
+						sum(<mc_tuple, _> <- mc_trie1)
+							let x3 = mc_tuple.company_type_id in
+							if (x3 ∈ ct_trie0) then
+								let ct_trie1 = ct_trie0(x3) in
+								let x4 = mc_tuple.company_id in
+								if (x4 ∈ cn_trie0) then
+									let cn_trie1 = cn_trie0(x4) in
+									if (x0 ∈ at_trie0) then
+										let at_trie1 = at_trie0(x0) in
+										let mn_mi = <info=mi_tuple.info> in
+										let mn_interm0 = <col2=interm0_tuple.col2> in
+										<col2=mn_mi.info, col4=mn_interm0.col2>
+									else
+										<col2="", col4="">
 								else
-									<col2={}, col4={}>
+									{}
 							else
 								{}
-						else
-							{}
+					else
+						{}
 				else
 					{}
-			else
-				{}
+		else
+			{}
 	else
 		{}
 
