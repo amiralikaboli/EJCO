@@ -79,7 +79,7 @@ class CppGenerator:
 			self.indent -= 1
 
 			cpp_file.write('\t}\n')
-			cpp_file.write('\tcout << endl;\n')
+			cpp_file.write('\tcerr << endl;\n')
 			cpp_file.write('\n')
 
 			cpp_file.write('\tvector<double> tm{0};\n')
@@ -207,13 +207,11 @@ class CppGenerator:
 				for level_types in sorted(self.trie_types):
 					cpp_file.write("\n")
 					if is_for_proj:
-						build_func = self.var_mng.build_func()
 						trie_type = self.var_mng.trie_def(level_types)
 					else:
-						build_func = self.var_mng.build_bool_func()
 						trie_type = self.var_mng.trie_def(level_types, "bool")
 					cpp_file.write(
-						f"void {build_func}({trie_type} &trie, "
+						f"void {self.var_mng.build_func()}({trie_type} &trie, "
 						f"{', '.join([f'vector<{ttt}> &{self.var_mng.attr_var(idx)}' for idx, ttt in enumerate(level_types)])}){{\n"
 					)
 					cpp_file.write(f"\tfor (int i = 0; i < {self.var_mng.attr_var(0)}.size(); ++i)\n")
@@ -301,10 +299,9 @@ class CppGenerator:
 		self.trie_types.add(level_types)
 		if is_vector_needed:
 			yield f"auto {self.var_mng.trie_var(rel)} = {self.var_mng.trie_def(level_types)}();\n"
-			yield f"{self.var_mng.build_func()}({self.var_mng.trie_var(rel)}, {', '.join([self.var_mng.rel_col_var(rel, join_col) for join_col in join_cols])});\n"
 		else:
 			yield f"auto {self.var_mng.trie_var(rel)} = {self.var_mng.trie_def(level_types, 'bool')}();\n"
-			yield f"{self.var_mng.build_bool_func()}({self.var_mng.trie_var(rel)}, {', '.join([self.var_mng.rel_col_var(rel, join_col) for join_col in join_cols])});\n"
+		yield f"{self.var_mng.build_func()}({self.var_mng.trie_var(rel)}, {', '.join([self.var_mng.rel_col_var(rel, join_col) for join_col in join_cols])});\n"
 
 	def _gj_attr_iteration(self, rel_it, col_it, idx):
 		yield f"for (const auto &[{self.var_mng.x_var(idx)}, {self.var_mng.next_trie_var(rel_it)}]: {self.var_mng.trie_var(rel_it)}) {{\n"

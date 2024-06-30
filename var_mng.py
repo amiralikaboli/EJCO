@@ -74,10 +74,6 @@ class VariableManager:
 		return Templates.BuildFunc.value
 
 	@staticmethod
-	def build_bool_func():
-		return f"{Templates.BuildFunc.value}_bool"
-
-	@staticmethod
 	def build_ordered_func():
 		return f"{Templates.BuildFunc.value}_ordered"
 

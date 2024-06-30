@@ -139,7 +139,7 @@ int main() {
 		timer.StoreElapsedTime(3);
 
 		auto ci_trie0 = phmap::flat_hash_map<int, phmap::flat_hash_map<int, phmap::flat_hash_map<int, bool>>>();
-		build_trie_bool(ci_trie0, ci_person_id, ci_person_role_id, ci_movie_id);
+		build_trie(ci_trie0, ci_person_id, ci_person_role_id, ci_movie_id);
 		auto n_trie0 = phmap::flat_hash_map<int, vector<int>>();
 		build_trie(n_trie0, n_id);
 		auto chn_trie0 = phmap::flat_hash_map<int, vector<int>>();
@@ -181,7 +181,7 @@ int main() {
 			cout << mn_n_name << " | " << mn_chn_name << " | " << mn_interm3_col3 << " | " << mn_interm3_col5 << endl;
 		cerr << "*" << " " << flush;
 	}
-	cout << endl;
+	cerr << endl;
 
 	vector<double> tm{0};
 	for (int i = 0; i < 5; ++i)

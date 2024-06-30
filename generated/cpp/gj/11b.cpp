@@ -44,17 +44,17 @@ int main() {
 		timer.StoreElapsedTime(0);
 
 		auto mk_trie0 = phmap::flat_hash_map<int, phmap::flat_hash_map<int, bool>>();
-		build_trie_bool(mk_trie0, mk_movie_id, mk_keyword_id);
+		build_trie(mk_trie0, mk_movie_id, mk_keyword_id);
 		auto interm0_trie0 = phmap::flat_hash_map<int, phmap::flat_hash_map<int, vector<int>>>();
 		build_trie(interm0_trie0, interm0_col0, interm0_col2);
 		auto mc_trie0 = phmap::flat_hash_map<int, phmap::flat_hash_map<int, phmap::flat_hash_map<int, bool>>>();
-		build_trie_bool(mc_trie0, mc_movie_id, mc_company_type_id, mc_company_id);
+		build_trie(mc_trie0, mc_movie_id, mc_company_type_id, mc_company_id);
 		auto lt_trie0 = phmap::flat_hash_map<int, vector<int>>();
 		build_trie(lt_trie0, lt_id);
 		auto k_trie0 = phmap::flat_hash_map<int, bool>();
-		build_trie_bool(k_trie0, k_id);
+		build_trie(k_trie0, k_id);
 		auto ct_trie0 = phmap::flat_hash_map<int, bool>();
-		build_trie_bool(ct_trie0, ct_id);
+		build_trie(ct_trie0, ct_id);
 		auto cn_trie0 = phmap::flat_hash_map<int, vector<int>>();
 		build_trie(cn_trie0, cn_id);
 		string mn_interm0_col1 = "zzzzzzzz";
@@ -101,7 +101,7 @@ int main() {
 			cout << mn_interm0_col1 << " | " << mn_lt_link << " | " << mn_cn_name << endl;
 		cerr << "*" << " " << flush;
 	}
-	cout << endl;
+	cerr << endl;
 
 	vector<double> tm{0};
 	for (int i = 0; i < 2; ++i)

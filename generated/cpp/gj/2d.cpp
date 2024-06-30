@@ -20,15 +20,15 @@ int main() {
 		timer.Reset();
 
 		auto mk_trie0 = phmap::flat_hash_map<int, phmap::flat_hash_map<int, bool>>();
-		build_trie_bool(mk_trie0, mk_movie_id, mk_keyword_id);
+		build_trie(mk_trie0, mk_movie_id, mk_keyword_id);
 		auto t_trie0 = phmap::flat_hash_map<int, vector<int>>();
 		build_trie(t_trie0, t_id);
 		auto mc_trie0 = phmap::flat_hash_map<int, phmap::flat_hash_map<int, bool>>();
-		build_trie_bool(mc_trie0, mc_movie_id, mc_company_id);
+		build_trie(mc_trie0, mc_movie_id, mc_company_id);
 		auto k_trie0 = phmap::flat_hash_map<int, bool>();
-		build_trie_bool(k_trie0, k_id);
+		build_trie(k_trie0, k_id);
 		auto cn_trie0 = phmap::flat_hash_map<int, bool>();
-		build_trie_bool(cn_trie0, cn_id);
+		build_trie(cn_trie0, cn_id);
 		string mn_t_title = "zzzzzzzz";
 		for (const auto &[x0, mk_trie1]: mk_trie0) {
 			if (t_trie0.contains(x0) && mc_trie0.contains(x0)) {
@@ -55,7 +55,7 @@ int main() {
 			cout << mn_t_title << endl;
 		cerr << "*" << " " << flush;
 	}
-	cout << endl;
+	cerr << endl;
 
 	vector<double> tm{0};
 	for (int i = 0; i < 1; ++i)

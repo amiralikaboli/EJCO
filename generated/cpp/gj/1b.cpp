@@ -47,9 +47,9 @@ int main() {
 		auto interm0_trie0 = phmap::flat_hash_map<int, phmap::flat_hash_map<int, vector<int>>>();
 		build_trie(interm0_trie0, interm0_col0, interm0_col3);
 		auto it_trie0 = phmap::flat_hash_map<int, bool>();
-		build_trie_bool(it_trie0, it_id);
+		build_trie(it_trie0, it_id);
 		auto ct_trie0 = phmap::flat_hash_map<int, bool>();
-		build_trie_bool(ct_trie0, ct_id);
+		build_trie(ct_trie0, ct_id);
 		string mn_mc_note = "zzzzzzzz";
 		string mn_interm0_col1 = "zzzzzzzz";
 		int mn_interm0_col2 = numeric_limits<int>::max();
@@ -81,7 +81,7 @@ int main() {
 			cout << mn_mc_note << " | " << mn_interm0_col1 << " | " << mn_interm0_col2 << endl;
 		cerr << "*" << " " << flush;
 	}
-	cout << endl;
+	cerr << endl;
 
 	vector<double> tm{0};
 	for (int i = 0; i < 2; ++i)

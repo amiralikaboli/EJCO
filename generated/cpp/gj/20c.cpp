@@ -88,15 +88,15 @@ int main() {
 		timer.StoreElapsedTime(1);
 
 		auto ci_trie0 = phmap::flat_hash_map<int, phmap::flat_hash_map<int, phmap::flat_hash_map<int, bool>>>();
-		build_trie_bool(ci_trie0, ci_person_id, ci_movie_id, ci_person_role_id);
+		build_trie(ci_trie0, ci_person_id, ci_movie_id, ci_person_role_id);
 		auto n_trie0 = phmap::flat_hash_map<int, vector<int>>();
 		build_trie(n_trie0, n_id);
 		auto interm1_trie0 = phmap::flat_hash_map<int, vector<int>>();
 		build_trie(interm1_trie0, interm1_col0);
 		auto chn_trie0 = phmap::flat_hash_map<int, bool>();
-		build_trie_bool(chn_trie0, chn_id);
+		build_trie(chn_trie0, chn_id);
 		auto interm0_trie0 = phmap::flat_hash_map<int, bool>();
-		build_trie_bool(interm0_trie0, interm0_col2);
+		build_trie(interm0_trie0, interm0_col2);
 		string mn_n_name = "zzzzzzzz";
 		string mn_interm1_col3 = "zzzzzzzz";
 		for (const auto &[x0, ci_trie1]: ci_trie0) {
@@ -129,7 +129,7 @@ int main() {
 			cout << mn_n_name << " | " << mn_interm1_col3 << endl;
 		cerr << "*" << " " << flush;
 	}
-	cout << endl;
+	cerr << endl;
 
 	vector<double> tm{0};
 	for (int i = 0; i < 3; ++i)
