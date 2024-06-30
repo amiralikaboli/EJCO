@@ -48,9 +48,10 @@ class SDQLGenerator:
 		for rel, _, _ in build_plan:
 			if self.var_mng.is_interm_rel(rel):
 				continue
-			path = os.path.join(preprocessed_data_path, query, f"{rel}.csv")
-			if not os.path.exists(path):
-				path = os.path.join(raw_data_path, f"{abbr2rel[rel_wo_idx(rel)]}.csv")
+			if os.path.exists(os.path.join(preprocessed_data_path, query, f"{rel}.csv")):
+				path = f"datasets/job/{query}/{rel}.csv"
+			else:
+				path = f"datasets/job/{abbr2rel[rel_wo_idx(rel)]}.csv"
 			path = os.path.normpath(path)
 			yield f'let {rel} = load[{{<{", ".join([f"{col_n}: {col_t}" for col_n, col_t in rel2col2type[rel_wo_idx(rel)].items()])}> -> int}}]("{path}")\n'
 
@@ -60,10 +61,10 @@ class SDQLGenerator:
 			build_plan: List[Tuple[str, List[str], List[str]]],
 			compiled_plan: List[List[Tuple[str, str]]]
 	):
-		for s in self.call_func("build_tries", build_plan, compiled_plan):
-			yield s
-
 		interm, interm_cols, interm_trie_cols = node
+
+		for s in self.call_func("build_tries", interm, build_plan, compiled_plan):
+			yield s
 
 		if not self.var_mng.is_root_rel(interm):
 			yield f"let {self.var_mng.trie_var(interm)} = "
@@ -145,17 +146,21 @@ class SDQLGenerator:
 			self.indent = 0
 			yield f"in\n"
 
-	def _gj_build_tries(self, build_plan, compiled_plan):
-		for rel, join_cols, _ in build_plan:
+	def _gj_build_tries(self, interm, build_plan, compiled_plan):
+		for rel, join_cols, proj_cols in build_plan:
 			if self.var_mng.is_interm_rel(rel):
 				continue
 			tuple_var = self.var_mng.tuple_var(rel)
-			trie_value = f"{{ {tuple_var} -> 1 }}"
+			if self.var_mng.is_interm_rel(interm) or proj_cols:
+				trie_value = f"{{ {tuple_var} -> 1 }}"
+			else:
+				trie_value = "1"
 			for col in join_cols[::-1]:
 				trie_value = f"{{ {tuple_var}.{col} -> {trie_value} }}"
 			yield f"let {self.var_mng.trie_var(rel)} = sum(<{tuple_var}, _> <- {rel}) {trie_value} in\n"
 
-	def _fj_build_tries(self, build_plan, compiled_plan):
+	def _fj_build_tries(self, interm, build_plan, compiled_plan):
+		# TODO: support using bool instead of vector<int>
 		rel2trie_levels = defaultdict(list)
 		iter_rels = set()
 		for eq_cols in compiled_plan:
