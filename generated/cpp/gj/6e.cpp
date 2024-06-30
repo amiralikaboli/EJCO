@@ -81,7 +81,7 @@ int main() {
 
 		if (z == 0)
 			cout << mn_n_name << " | " << mn_interm0_col2 << " | " << mn_interm0_col3 << endl;
-		cout << "*" << " " << flush;
+		cerr << "*" << " " << flush;
 	}
 	cout << endl;
 

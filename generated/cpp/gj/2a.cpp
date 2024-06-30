@@ -53,7 +53,7 @@ int main() {
 
 		if (z == 0)
 			cout << mn_t_title << endl;
-		cout << "*" << " " << flush;
+		cerr << "*" << " " << flush;
 	}
 	cout << endl;
 

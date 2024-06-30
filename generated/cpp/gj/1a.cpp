@@ -79,7 +79,7 @@ int main() {
 
 		if (z == 0)
 			cout << mn_mc_note << " | " << mn_interm0_col1 << " | " << mn_interm0_col2 << endl;
-		cout << "*" << " " << flush;
+		cerr << "*" << " " << flush;
 	}
 	cout << endl;
 

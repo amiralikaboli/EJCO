@@ -109,7 +109,7 @@ int main() {
 
 		if (z == 0)
 			cout << mn_interm1_col1 << " | " << mn_interm0_col1 << endl;
-		cout << "*" << " " << flush;
+		cerr << "*" << " " << flush;
 	}
 	cout << endl;
 

@@ -75,7 +75,7 @@ class CppGenerator:
 				'\t' * (self.indent + 1) +
 				f'cout << {delimiter.join([self.var_mng.mn_rel_col_var(rel, col) for rel, col in proj_relcols])} << endl;\n'
 			)
-			cpp_file.write('\t' * self.indent + 'cout << "*" << " " << flush;\n')
+			cpp_file.write('\t' * self.indent + 'cerr << "*" << " " << flush;\n')
 			self.indent -= 1
 
 			cpp_file.write('\t}\n')

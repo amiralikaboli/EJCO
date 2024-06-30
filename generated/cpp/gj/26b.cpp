@@ -175,7 +175,7 @@ int main() {
 
 		if (z == 0)
 			cout << mn_chn_name << " | " << mn_interm3_col3 << " | " << mn_interm3_col5 << endl;
-		cout << "*" << " " << flush;
+		cerr << "*" << " " << flush;
 	}
 	cout << endl;
 

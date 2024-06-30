@@ -33,18 +33,14 @@ if __name__ == '__main__':
 		gj_outputs[query_log[:newline_idx].strip()] = output
 
 	times = []
-	timeouts = []
 	invalids = []
 	for lines in stats:
-		query = lines[0][:-4]
-		if len(lines) > 4:
-			query_res = set(normalize(elem.strip()) for elem in lines[2].split(' | '))
-			if check_validity and query not in skip_queries and not query_res == gj_outputs[query]:
-				invalids.append(query)
-			else:
-				times.append({"query": query, "time": float(lines[-1][:-3]) / 1000})
+		query = lines[0].split("/")[-1][:-4]
+		query_res = set(normalize(elem.strip()) for elem in lines[2].split(' | '))
+		if check_validity and query not in skip_queries and not query_res == gj_outputs[query]:
+			invalids.append(query)
 		else:
-			timeouts.append(query)
+			times.append({"query": query, "time": float(lines[-1][:-3]) / 1000})
 
 	if not times:
 		raise ValueError("No valid results found")
@@ -58,4 +54,3 @@ if __name__ == '__main__':
 
 	print("# Valid:", len(times))
 	print("Invalid:", invalids)
-	print("Timeout:", timeouts)

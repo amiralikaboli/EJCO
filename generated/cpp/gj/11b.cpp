@@ -99,7 +99,7 @@ int main() {
 
 		if (z == 0)
 			cout << mn_interm0_col1 << " | " << mn_lt_link << " | " << mn_cn_name << endl;
-		cout << "*" << " " << flush;
+		cerr << "*" << " " << flush;
 	}
 	cout << endl;
 

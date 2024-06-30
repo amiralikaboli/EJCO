@@ -57,7 +57,7 @@ int main() {
 
 		if (z == 0)
 			cout << mn_t_title << " | " << mn_mi_idx_info << endl;
-		cout << "*" << " " << flush;
+		cerr << "*" << " " << flush;
 	}
 	cout << endl;
 

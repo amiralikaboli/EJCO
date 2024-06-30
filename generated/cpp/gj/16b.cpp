@@ -97,7 +97,7 @@ int main() {
 
 		if (z == 0)
 			cout << mn_interm0_col2 << " | " << mn_an_name << endl;
-		cout << "*" << " " << flush;
+		cerr << "*" << " " << flush;
 	}
 	cout << endl;
 

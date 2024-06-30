@@ -11,8 +11,8 @@ python3 main.py $MODE
 cd generated/cpp/$MODE
 for cpp_file in *.cpp; do
     echo $cpp_file
-    g++ $cpp_file -O3 -std=c++17
-    timeout -v 120 ./a.out
+    g++ $cpp_file -O3 -std=c++17 -march=native -mtune=native -Wno-narrowing -ftree-vectorize
+    ./a.out
     echo "--------------------"
 done | tee ../../../$RESULTS_FILE
 

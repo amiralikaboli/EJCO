@@ -83,7 +83,7 @@ int main() {
 
 		if (z == 0)
 			cout << mn_t_title << " | " << mn_an_name << endl;
-		cout << "*" << " " << flush;
+		cerr << "*" << " " << flush;
 	}
 	cout << endl;
 

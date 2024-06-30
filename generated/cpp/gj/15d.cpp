@@ -101,7 +101,7 @@ int main() {
 
 		if (z == 0)
 			cout << mn_interm0_col2 << " | " << mn_at_title << endl;
-		cout << "*" << " " << flush;
+		cerr << "*" << " " << flush;
 	}
 	cout << endl;
 
