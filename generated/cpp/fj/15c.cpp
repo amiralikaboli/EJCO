@@ -47,17 +47,17 @@ int main() {
 
 		auto interm0_trie0 = phmap::flat_hash_map<int, vector<int>>();
 		build_trie(interm0_trie0, interm0_col0);
-		auto mc_trie0 = phmap::flat_hash_map<int, vector<int>>();
+		auto mc_trie0 = phmap::flat_hash_map<int, bool>();
 		build_trie(mc_trie0, mc_movie_id);
-		auto k_trie0 = phmap::flat_hash_map<int, vector<int>>();
+		auto k_trie0 = phmap::flat_hash_map<int, bool>();
 		build_trie(k_trie0, k_id);
-		auto it1_trie0 = phmap::flat_hash_map<int, vector<int>>();
+		auto it1_trie0 = phmap::flat_hash_map<int, bool>();
 		build_trie(it1_trie0, it1_id);
-		auto ct_trie0 = phmap::flat_hash_map<int, vector<int>>();
+		auto ct_trie0 = phmap::flat_hash_map<int, bool>();
 		build_trie(ct_trie0, ct_id);
-		auto cn_trie0 = phmap::flat_hash_map<int, vector<int>>();
+		auto cn_trie0 = phmap::flat_hash_map<int, bool>();
 		build_trie(cn_trie0, cn_id);
-		auto at_trie0 = phmap::flat_hash_map<int, vector<int>>();
+		auto at_trie0 = phmap::flat_hash_map<int, bool>();
 		build_trie(at_trie0, at_movie_id);
 		string mn_mi_info = "zzzzzzzz";
 		string mn_interm0_col2 = "zzzzzzzz";
@@ -97,9 +97,9 @@ int main() {
 
 		if (z == 0)
 			cout << mn_mi_info << " | " << mn_interm0_col2 << endl;
-		cout << "*" << " " << flush;
+		cerr << "*" << " " << flush;
 	}
-	cout << endl;
+	cerr << endl;
 
 	vector<double> tm{0};
 	for (int i = 0; i < 2; ++i)

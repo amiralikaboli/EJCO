@@ -8,8 +8,8 @@ let chn = load[{<id: int, name: string, imdb_index: string, imdb_id: int, name_p
 
 let mc_trie0 = sum(<mc_tuple, _> <- mc) { mc_tuple.movie_id -> { mc_tuple.company_type_id -> { mc_tuple.company_id -> { mc_tuple -> 1 } } } } in
 let t_trie0 = sum(<t_tuple, _> <- t) { t_tuple.id -> { t_tuple -> 1 } } in
-let ct_trie0 = sum(<ct_tuple, _> <- ct) { ct_tuple.id -> { ct_tuple -> 1 } } in
-let cn_trie0 = sum(<cn_tuple, _> <- cn) { cn_tuple.id -> { cn_tuple -> 1 } } in
+let ct_trie0 = sum(<ct_tuple, _> <- ct) { ct_tuple.id -> 1 } in
+let cn_trie0 = sum(<cn_tuple, _> <- cn) { cn_tuple.id -> 1 } in
 let interm0_trie0 = sum(<x0, mc_trie1> <- mc_trie0)
 	if (x0 ∈ t_trie0) then
 		let t_trie1 = t_trie0(x0) in

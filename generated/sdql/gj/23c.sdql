@@ -11,7 +11,7 @@ let mi = load[{<id: int, movie_id: int, info_type_id: int, info: string, note: s
 let it1 = load[{<id: int, info: string> -> int}]("datasets/job/23c/it1.csv")
 
 let cc_trie0 = sum(<cc_tuple, _> <- cc) { cc_tuple.status_id -> { cc_tuple -> 1 } } in
-let cct1_trie0 = sum(<cct1_tuple, _> <- cct1) { cct1_tuple.id -> { cct1_tuple -> 1 } } in
+let cct1_trie0 = sum(<cct1_tuple, _> <- cct1) { cct1_tuple.id -> 1 } in
 let interm0_trie0 = sum(<x0, cc_trie1> <- cc_trie0)
 	if (x0 ∈ cct1_trie0) then
 		let cct1_trie1 = cct1_trie0(x0) in
@@ -39,8 +39,8 @@ let interm1_trie0 = sum(<x0, t_trie1> <- t_trie0)
 in
 
 let mc_trie0 = sum(<mc_tuple, _> <- mc) { mc_tuple.company_type_id -> { mc_tuple.company_id -> { mc_tuple.movie_id -> { mc_tuple -> 1 } } } } in
-let ct_trie0 = sum(<ct_tuple, _> <- ct) { ct_tuple.id -> { ct_tuple -> 1 } } in
-let cn_trie0 = sum(<cn_tuple, _> <- cn) { cn_tuple.id -> { cn_tuple -> 1 } } in
+let ct_trie0 = sum(<ct_tuple, _> <- ct) { ct_tuple.id -> 1 } in
+let cn_trie0 = sum(<cn_tuple, _> <- cn) { cn_tuple.id -> 1 } in
 let interm2_trie0 = sum(<x0, mc_trie1> <- mc_trie0)
 	if (x0 ∈ ct_trie0) then
 		let ct_trie1 = ct_trie0(x0) in
@@ -62,7 +62,7 @@ let interm2_trie0 = sum(<x0, mc_trie1> <- mc_trie0)
 in
 
 let mk_trie0 = sum(<mk_tuple, _> <- mk) { mk_tuple.keyword_id -> { mk_tuple.movie_id -> { mk_tuple -> 1 } } } in
-let k_trie0 = sum(<k_tuple, _> <- k) { k_tuple.id -> { k_tuple -> 1 } } in
+let k_trie0 = sum(<k_tuple, _> <- k) { k_tuple.id -> 1 } in
 let interm3_trie0 = sum(<x0, mk_trie1> <- mk_trie0)
 	if (x0 ∈ k_trie0) then
 		let k_trie1 = k_trie0(x0) in

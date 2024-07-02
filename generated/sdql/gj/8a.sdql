@@ -7,7 +7,7 @@ let t = load[{<id: int, title: string, imdb_index: string, kind_id: int, product
 let an1 = load[{<id: int, person_id: int, name: string, imdb_index: string, name_pcode_cf: string, name_pcode_nf: string, surname_pcode: string, md5sum: string> -> int}]("datasets/job/aka_name.csv")
 
 let mc_trie0 = sum(<mc_tuple, _> <- mc) { mc_tuple.company_id -> { mc_tuple -> 1 } } in
-let cn_trie0 = sum(<cn_tuple, _> <- cn) { cn_tuple.id -> { cn_tuple -> 1 } } in
+let cn_trie0 = sum(<cn_tuple, _> <- cn) { cn_tuple.id -> 1 } in
 let interm0_trie0 = sum(<x0, mc_trie1> <- mc_trie0)
 	if (x0 ∈ cn_trie0) then
 		let cn_trie1 = cn_trie0(x0) in

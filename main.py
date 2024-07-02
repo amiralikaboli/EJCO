@@ -30,4 +30,4 @@ if __name__ == '__main__':
 		# sdql_gen.generate(query, plans)
 		cpp_gen.generate(query, plans)
 		cpp_gen.generate_load_file(query)
-	cpp_gen.generate_build_file()
+	# cpp_gen.generate_build_file()

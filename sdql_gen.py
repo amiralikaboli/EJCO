@@ -63,7 +63,7 @@ class SDQLGenerator:
 	):
 		interm, interm_cols, interm_trie_cols = node
 
-		for s in self.call_func("build_tries", interm, build_plan, compiled_plan):
+		for s in self.call_func("build_tries", interm_cols, build_plan, compiled_plan):
 			yield s
 
 		if not self.var_mng.is_root_rel(interm):
@@ -146,12 +146,13 @@ class SDQLGenerator:
 			self.indent = 0
 			yield f"in\n"
 
-	def _gj_build_tries(self, interm, build_plan, compiled_plan):
+	def _gj_build_tries(self, interm_cols, build_plan, compiled_plan):
+		rels_in_interm_cols = set(rel for _, (rel, _) in interm_cols)
 		for rel, join_cols, proj_cols in build_plan:
 			if self.var_mng.is_interm_rel(rel):
 				continue
 			tuple_var = self.var_mng.tuple_var(rel)
-			if self.var_mng.is_interm_rel(interm) or proj_cols:
+			if rel in rels_in_interm_cols:
 				trie_value = f"{{ {tuple_var} -> 1 }}"
 			else:
 				trie_value = "1"
@@ -159,8 +160,7 @@ class SDQLGenerator:
 				trie_value = f"{{ {tuple_var}.{col} -> {trie_value} }}"
 			yield f"let {self.var_mng.trie_var(rel)} = sum(<{tuple_var}, _> <- {rel}) {trie_value} in\n"
 
-	def _fj_build_tries(self, interm, build_plan, compiled_plan):
-		# TODO: support using bool instead of vector<int>
+	def _fj_build_tries(self, interm_cols, build_plan, compiled_plan):
 		rel2trie_levels = defaultdict(list)
 		iter_rels = set()
 		for eq_cols in compiled_plan:
@@ -170,9 +170,13 @@ class SDQLGenerator:
 				if rel not in iter_rels:
 					rel2trie_levels[rel].append(col)
 
+		rels_in_interm_cols = set(rel for _, (rel, _) in interm_cols)
 		for rel, trie_levels in rel2trie_levels.items():
 			tuple_var = self.var_mng.tuple_var(rel)
-			trie_value = f"{{ {tuple_var} -> 1 }}"
+			if rel in rels_in_interm_cols:
+				trie_value = f"{{ {tuple_var} -> 1 }}"
+			else:
+				trie_value = "1"
 			for col in trie_levels[::-1]:
 				trie_value = f"{{ {tuple_var}.{col} -> {trie_value} }}"
 			yield f"let {self.var_mng.trie_var(rel)} = sum(<{tuple_var}, _> <- {rel}) {trie_value} in\n"

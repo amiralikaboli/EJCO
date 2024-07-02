@@ -14,7 +14,7 @@ let mc2 = load[{<id: int, movie_id: int, company_id: int, company_type_id: int, 
 let cn2 = load[{<id: int, name: string, country_code: string, imdb_id: string, name_pcode_nf: string, name_pcode_sf: string, md5sum: string> -> int}]("datasets/job/company_name.csv")
 
 let ml_trie0 = sum(<ml_tuple, _> <- ml) { ml_tuple.link_type_id -> { ml_tuple -> 1 } } in
-let lt_trie0 = sum(<lt_tuple, _> <- lt) { lt_tuple.id -> { lt_tuple -> 1 } } in
+let lt_trie0 = sum(<lt_tuple, _> <- lt) { lt_tuple.id -> 1 } in
 let interm0_trie0 = sum(<x0, ml_trie1> <- ml_trie0)
 	if (x0 ∈ lt_trie0) then
 		let lt_trie1 = lt_trie0(x0) in
@@ -25,7 +25,7 @@ let interm0_trie0 = sum(<x0, ml_trie1> <- ml_trie0)
 in
 
 let mi_idx1_trie0 = sum(<mi_idx1_tuple, _> <- mi_idx1) { mi_idx1_tuple.info_type_id -> { mi_idx1_tuple.movie_id -> { mi_idx1_tuple -> 1 } } } in
-let it1_trie0 = sum(<it1_tuple, _> <- it1) { it1_tuple.id -> { it1_tuple -> 1 } } in
+let it1_trie0 = sum(<it1_tuple, _> <- it1) { it1_tuple.id -> 1 } in
 let interm1_trie0 = sum(<x0, mi_idx1_trie1> <- mi_idx1_trie0)
 	if (x0 ∈ it1_trie0) then
 		let it1_trie1 = it1_trie0(x0) in
@@ -42,7 +42,7 @@ let interm1_trie0 = sum(<x0, mi_idx1_trie1> <- mi_idx1_trie0)
 in
 
 let mi_idx2_trie0 = sum(<mi_idx2_tuple, _> <- mi_idx2) { mi_idx2_tuple.info_type_id -> { mi_idx2_tuple.movie_id -> { mi_idx2_tuple -> 1 } } } in
-let it2_trie0 = sum(<it2_tuple, _> <- it2) { it2_tuple.id -> { it2_tuple -> 1 } } in
+let it2_trie0 = sum(<it2_tuple, _> <- it2) { it2_tuple.id -> 1 } in
 let interm2_trie0 = sum(<x0, mi_idx2_trie1> <- mi_idx2_trie0)
 	if (x0 ∈ it2_trie0) then
 		let it2_trie1 = it2_trie0(x0) in
@@ -59,7 +59,7 @@ let interm2_trie0 = sum(<x0, mi_idx2_trie1> <- mi_idx2_trie0)
 in
 
 let t1_trie0 = sum(<t1_tuple, _> <- t1) { t1_tuple.kind_id -> { t1_tuple.id -> { t1_tuple -> 1 } } } in
-let kt1_trie0 = sum(<kt1_tuple, _> <- kt1) { kt1_tuple.id -> { kt1_tuple -> 1 } } in
+let kt1_trie0 = sum(<kt1_tuple, _> <- kt1) { kt1_tuple.id -> 1 } in
 let interm3_trie0 = sum(<x0, t1_trie1> <- t1_trie0)
 	if (x0 ∈ kt1_trie0) then
 		let kt1_trie1 = kt1_trie0(x0) in
@@ -76,7 +76,7 @@ let interm3_trie0 = sum(<x0, t1_trie1> <- t1_trie0)
 in
 
 let t2_trie0 = sum(<t2_tuple, _> <- t2) { t2_tuple.kind_id -> { t2_tuple.id -> { t2_tuple -> 1 } } } in
-let kt2_trie0 = sum(<kt2_tuple, _> <- kt2) { kt2_tuple.id -> { kt2_tuple -> 1 } } in
+let kt2_trie0 = sum(<kt2_tuple, _> <- kt2) { kt2_tuple.id -> 1 } in
 let interm4_trie0 = sum(<x0, t2_trie1> <- t2_trie0)
 	if (x0 ∈ kt2_trie0) then
 		let kt2_trie1 = kt2_trie0(x0) in

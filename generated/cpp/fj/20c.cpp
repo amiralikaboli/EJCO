@@ -25,9 +25,9 @@ int main() {
 		int cnt;
 		timer.Reset();
 
-		auto cct1_trie0 = phmap::flat_hash_map<int, vector<int>>();
+		auto cct1_trie0 = phmap::flat_hash_map<int, bool>();
 		build_trie(cct1_trie0, cct1_id);
-		auto cct2_trie0 = phmap::flat_hash_map<int, vector<int>>();
+		auto cct2_trie0 = phmap::flat_hash_map<int, bool>();
 		build_trie(cct2_trie0, cct2_id);
 		vector<int> interm0_col0;
 		vector<int> interm0_col1;
@@ -52,9 +52,9 @@ int main() {
 
 		auto t_trie0 = phmap::flat_hash_map<int, vector<int>>();
 		build_trie(t_trie0, t_id);
-		auto kt_trie0 = phmap::flat_hash_map<int, vector<int>>();
+		auto kt_trie0 = phmap::flat_hash_map<int, bool>();
 		build_trie(kt_trie0, kt_id);
-		auto k_trie0 = phmap::flat_hash_map<int, vector<int>>();
+		auto k_trie0 = phmap::flat_hash_map<int, bool>();
 		build_trie(k_trie0, k_id);
 		vector<int> interm1_col0;
 		vector<int> interm1_col1;
@@ -89,9 +89,9 @@ int main() {
 		build_trie(n_trie0, n_id);
 		auto interm1_trie0 = phmap::flat_hash_map<int, vector<int>>();
 		build_trie(interm1_trie0, interm1_col0);
-		auto chn_trie0 = phmap::flat_hash_map<int, vector<int>>();
+		auto chn_trie0 = phmap::flat_hash_map<int, bool>();
 		build_trie(chn_trie0, chn_id);
-		auto interm0_trie0 = phmap::flat_hash_map<int, vector<int>>();
+		auto interm0_trie0 = phmap::flat_hash_map<int, bool>();
 		build_trie(interm0_trie0, interm0_col2);
 		string mn_n_name = "zzzzzzzz";
 		string mn_interm1_col3 = "zzzzzzzz";
@@ -122,9 +122,9 @@ int main() {
 
 		if (z == 0)
 			cout << mn_n_name << " | " << mn_interm1_col3 << endl;
-		cout << "*" << " " << flush;
+		cerr << "*" << " " << flush;
 	}
-	cout << endl;
+	cerr << endl;
 
 	vector<double> tm{0};
 	for (int i = 0; i < 3; ++i)

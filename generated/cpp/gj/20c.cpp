@@ -26,9 +26,9 @@ int main() {
 
 		auto cc_trie0 = phmap::flat_hash_map<int, phmap::flat_hash_map<int, vector<int>>>();
 		build_trie(cc_trie0, cc_subject_id, cc_status_id);
-		auto cct1_trie0 = phmap::flat_hash_map<int, vector<int>>();
+		auto cct1_trie0 = phmap::flat_hash_map<int, bool>();
 		build_trie(cct1_trie0, cct1_id);
-		auto cct2_trie0 = phmap::flat_hash_map<int, vector<int>>();
+		auto cct2_trie0 = phmap::flat_hash_map<int, bool>();
 		build_trie(cct2_trie0, cct2_id);
 		vector<int> interm0_col0;
 		vector<int> interm0_col1;
@@ -54,9 +54,9 @@ int main() {
 		build_trie(mk_trie0, mk_movie_id, mk_keyword_id);
 		auto t_trie0 = phmap::flat_hash_map<int, phmap::flat_hash_map<int, vector<int>>>();
 		build_trie(t_trie0, t_id, t_kind_id);
-		auto kt_trie0 = phmap::flat_hash_map<int, vector<int>>();
+		auto kt_trie0 = phmap::flat_hash_map<int, bool>();
 		build_trie(kt_trie0, kt_id);
-		auto k_trie0 = phmap::flat_hash_map<int, vector<int>>();
+		auto k_trie0 = phmap::flat_hash_map<int, bool>();
 		build_trie(k_trie0, k_id);
 		vector<int> interm1_col0;
 		vector<int> interm1_col1;

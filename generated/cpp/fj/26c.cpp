@@ -27,9 +27,9 @@ int main() {
 		int cnt;
 		timer.Reset();
 
-		auto cct1_trie0 = phmap::flat_hash_map<int, vector<int>>();
+		auto cct1_trie0 = phmap::flat_hash_map<int, bool>();
 		build_trie(cct1_trie0, cct1_id);
-		auto cct2_trie0 = phmap::flat_hash_map<int, vector<int>>();
+		auto cct2_trie0 = phmap::flat_hash_map<int, bool>();
 		build_trie(cct2_trie0, cct2_id);
 		vector<int> interm0_col0;
 		vector<int> interm0_col1;
@@ -52,9 +52,9 @@ int main() {
 		}
 		timer.StoreElapsedTime(0);
 
-		auto it2_trie0 = phmap::flat_hash_map<int, vector<int>>();
+		auto it2_trie0 = phmap::flat_hash_map<int, bool>();
 		build_trie(it2_trie0, it2_id);
-		auto interm0_trie0 = phmap::flat_hash_map<int, vector<int>>();
+		auto interm0_trie0 = phmap::flat_hash_map<int, bool>();
 		build_trie(interm0_trie0, interm0_col2);
 		vector<int> interm1_col0;
 		vector<int> interm1_col1;
@@ -77,7 +77,7 @@ int main() {
 		}
 		timer.StoreElapsedTime(1);
 
-		auto kt_trie0 = phmap::flat_hash_map<int, vector<int>>();
+		auto kt_trie0 = phmap::flat_hash_map<int, bool>();
 		build_trie(kt_trie0, kt_id);
 		auto interm1_trie0 = phmap::flat_hash_map<int, vector<int>>();
 		build_trie(interm1_trie0, interm1_col1);
@@ -106,7 +106,7 @@ int main() {
 		}
 		timer.StoreElapsedTime(2);
 
-		auto k_trie0 = phmap::flat_hash_map<int, vector<int>>();
+		auto k_trie0 = phmap::flat_hash_map<int, bool>();
 		build_trie(k_trie0, k_id);
 		auto interm2_trie0 = phmap::flat_hash_map<int, vector<int>>();
 		build_trie(interm2_trie0, interm2_col1);
@@ -135,7 +135,7 @@ int main() {
 		}
 		timer.StoreElapsedTime(3);
 
-		auto n_trie0 = phmap::flat_hash_map<int, vector<int>>();
+		auto n_trie0 = phmap::flat_hash_map<int, bool>();
 		build_trie(n_trie0, n_id);
 		auto chn_trie0 = phmap::flat_hash_map<int, vector<int>>();
 		build_trie(chn_trie0, chn_id);
@@ -169,9 +169,9 @@ int main() {
 
 		if (z == 0)
 			cout << mn_chn_name << " | " << mn_interm3_col3 << " | " << mn_interm3_col5 << endl;
-		cout << "*" << " " << flush;
+		cerr << "*" << " " << flush;
 	}
-	cout << endl;
+	cerr << endl;
 
 	vector<double> tm{0};
 	for (int i = 0; i < 5; ++i)

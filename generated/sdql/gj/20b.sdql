@@ -10,8 +10,8 @@ let n = load[{<id: int, name: string, imdb_index: string, imdb_id: string, gende
 let chn = load[{<id: int, name: string, imdb_index: string, imdb_id: int, name_pcode_cf: string, surname_pcode: string, md5sum: string> -> int}]("datasets/job/20b/chn.csv")
 
 let cc_trie0 = sum(<cc_tuple, _> <- cc) { cc_tuple.subject_id -> { cc_tuple.status_id -> { cc_tuple -> 1 } } } in
-let cct1_trie0 = sum(<cct1_tuple, _> <- cct1) { cct1_tuple.id -> { cct1_tuple -> 1 } } in
-let cct2_trie0 = sum(<cct2_tuple, _> <- cct2) { cct2_tuple.id -> { cct2_tuple -> 1 } } in
+let cct1_trie0 = sum(<cct1_tuple, _> <- cct1) { cct1_tuple.id -> 1 } in
+let cct2_trie0 = sum(<cct2_tuple, _> <- cct2) { cct2_tuple.id -> 1 } in
 let interm0_trie0 = sum(<x0, cc_trie1> <- cc_trie0)
 	if (x0 ∈ cct1_trie0) then
 		let cct1_trie1 = cct1_trie0(x0) in
@@ -28,8 +28,8 @@ in
 
 let mk_trie0 = sum(<mk_tuple, _> <- mk) { mk_tuple.movie_id -> { mk_tuple.keyword_id -> { mk_tuple -> 1 } } } in
 let t_trie0 = sum(<t_tuple, _> <- t) { t_tuple.id -> { t_tuple.kind_id -> { t_tuple -> 1 } } } in
-let kt_trie0 = sum(<kt_tuple, _> <- kt) { kt_tuple.id -> { kt_tuple -> 1 } } in
-let k_trie0 = sum(<k_tuple, _> <- k) { k_tuple.id -> { k_tuple -> 1 } } in
+let kt_trie0 = sum(<kt_tuple, _> <- kt) { kt_tuple.id -> 1 } in
+let k_trie0 = sum(<k_tuple, _> <- k) { k_tuple.id -> 1 } in
 let interm1_trie0 = sum(<x0, mk_trie1> <- mk_trie0)
 	if (x0 ∈ t_trie0) then
 		let t_trie1 = t_trie0(x0) in

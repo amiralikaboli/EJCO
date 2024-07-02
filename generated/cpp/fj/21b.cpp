@@ -70,13 +70,13 @@ int main() {
 
 		auto interm1_trie0 = phmap::flat_hash_map<int, vector<int>>();
 		build_trie(interm1_trie0, interm1_col0);
-		auto mc_trie0 = phmap::flat_hash_map<int, vector<int>>();
+		auto mc_trie0 = phmap::flat_hash_map<int, bool>();
 		build_trie(mc_trie0, mc_movie_id);
 		auto lt_trie0 = phmap::flat_hash_map<int, vector<int>>();
 		build_trie(lt_trie0, lt_id);
-		auto k_trie0 = phmap::flat_hash_map<int, vector<int>>();
+		auto k_trie0 = phmap::flat_hash_map<int, bool>();
 		build_trie(k_trie0, k_id);
-		auto ct_trie0 = phmap::flat_hash_map<int, vector<int>>();
+		auto ct_trie0 = phmap::flat_hash_map<int, bool>();
 		build_trie(ct_trie0, ct_id);
 		auto cn_trie0 = phmap::flat_hash_map<int, vector<int>>();
 		build_trie(cn_trie0, cn_id);
@@ -121,9 +121,9 @@ int main() {
 
 		if (z == 0)
 			cout << mn_interm1_col2 << " | " << mn_lt_link << " | " << mn_cn_name << endl;
-		cout << "*" << " " << flush;
+		cerr << "*" << " " << flush;
 	}
-	cout << endl;
+	cerr << endl;
 
 	vector<double> tm{0};
 	for (int i = 0; i < 3; ++i)

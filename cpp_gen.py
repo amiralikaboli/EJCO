@@ -111,7 +111,7 @@ class CppGenerator:
 	):
 		interm, interm_cols, _ = node
 
-		for s in self.call_func("build_tries", interm, build_plan, compiled_plan):
+		for s in self.call_func("build_tries", interm_cols, build_plan, compiled_plan):
 			yield s
 
 		if self.var_mng.is_root_rel(interm):
@@ -270,14 +270,14 @@ class CppGenerator:
 				cpp_file.write(f"\tin.close();\n")
 				cpp_file.write(f"}}\n")
 
-	def _gj_build_tries(self, interm, build_plan, compiled_plan):
+	def _gj_build_tries(self, interm_cols, build_plan, compiled_plan):
+		rels_in_interm_cols = set(rel for _, (rel, _) in interm_cols)
 		for rel, join_cols, proj_cols in build_plan:
-			is_vector_needed = (self.var_mng.is_interm_rel(interm) or proj_cols)
-			lines = self._build_trie(rel, join_cols, is_vector_needed)
+			lines = self._build_trie(rel, join_cols, rel in rels_in_interm_cols)
 			for line in lines:
 				yield line
 
-	def _fj_build_tries(self, interm, build_plan, compiled_plan):
+	def _fj_build_tries(self, interm_cols, build_plan, compiled_plan):
 		rel2trie_levels = defaultdict(list)
 		iter_rels = set()
 		for eq_cols in compiled_plan:
@@ -287,10 +287,9 @@ class CppGenerator:
 				if rel not in iter_rels:
 					rel2trie_levels[rel].append(col)
 
-		rel2proj_cols = {rel: proj_cols for rel, _, proj_cols in build_plan}
+		rels_in_interm_cols = set(rel for _, (rel, _) in interm_cols)
 		for rel, trie_levels in rel2trie_levels.items():
-			is_vector_needed = True  # TODO: revise it to use bool for some tries
-			lines = self._build_trie(rel, trie_levels, is_vector_needed)
+			lines = self._build_trie(rel, trie_levels, rel in rels_in_interm_cols)
 			for line in lines:
 				yield line
 

@@ -58,7 +58,7 @@ int main() {
 		build_trie(interm0_trie0, interm0_col0);
 		auto lt_trie0 = phmap::flat_hash_map<int, vector<int>>();
 		build_trie(lt_trie0, lt_id);
-		auto k_trie0 = phmap::flat_hash_map<int, vector<int>>();
+		auto k_trie0 = phmap::flat_hash_map<int, bool>();
 		build_trie(k_trie0, k_id);
 		string mn_interm0_col1 = "zzzzzzzz";
 		string mn_interm0_col4 = "zzzzzzzz";
@@ -88,9 +88,9 @@ int main() {
 
 		if (z == 0)
 			cout << mn_interm0_col1 << " | " << mn_interm0_col4 << " | " << mn_lt_link << endl;
-		cout << "*" << " " << flush;
+		cerr << "*" << " " << flush;
 	}
-	cout << endl;
+	cerr << endl;
 
 	vector<double> tm{0};
 	for (int i = 0; i < 2; ++i)

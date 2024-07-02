@@ -57,11 +57,11 @@ int main() {
 		build_trie(mi_trie0, mi_movie_id, mi_info_type_id);
 		auto interm0_trie0 = phmap::flat_hash_map<int, phmap::flat_hash_map<int, phmap::flat_hash_map<int, vector<int>>>>();
 		build_trie(interm0_trie0, interm0_col0, interm0_col1, interm0_col3);
-		auto k_trie0 = phmap::flat_hash_map<int, vector<int>>();
+		auto k_trie0 = phmap::flat_hash_map<int, bool>();
 		build_trie(k_trie0, k_id);
-		auto it2_trie0 = phmap::flat_hash_map<int, vector<int>>();
+		auto it2_trie0 = phmap::flat_hash_map<int, bool>();
 		build_trie(it2_trie0, it2_id);
-		auto it1_trie0 = phmap::flat_hash_map<int, vector<int>>();
+		auto it1_trie0 = phmap::flat_hash_map<int, bool>();
 		build_trie(it1_trie0, it1_id);
 		vector<int> interm1_col0;
 		vector<int> interm1_col1;

@@ -1,19 +1,19 @@
-let ml = load[{<id: int, movie_id: int, linked_movie_id: int, link_type_id: int> -> int}]("/Users/s2522996/Documents/free-join/data/imdb_csv/movie_link.csv")
-let lt = load[{<id: int, link: string> -> int}]("/Users/s2522996/Documents/free-join/queries/preprocessed/join-order-benchmark/data/33c/lt.csv")
-let mi_idx1 = load[{<id: int, movie_id: int, info_type_id: int, info: string, note: string> -> int}]("/Users/s2522996/Documents/free-join/data/imdb_csv/movie_info_idx.csv")
-let it1 = load[{<id: int, info: string> -> int}]("/Users/s2522996/Documents/free-join/queries/preprocessed/join-order-benchmark/data/33c/it1.csv")
-let mi_idx2 = load[{<id: int, movie_id: int, info_type_id: int, info: string, note: string> -> int}]("/Users/s2522996/Documents/free-join/queries/preprocessed/join-order-benchmark/data/33c/mi_idx2.csv")
-let it2 = load[{<id: int, info: string> -> int}]("/Users/s2522996/Documents/free-join/queries/preprocessed/join-order-benchmark/data/33c/it2.csv")
-let t1 = load[{<id: int, title: string, imdb_index: string, kind_id: int, production_year: int, imdb_id: string, phonetic_code: string, episode_of_id: int, season_nr: int, episode_nr: int, series_years: string, md5sum: string> -> int}]("/Users/s2522996/Documents/free-join/data/imdb_csv/title.csv")
-let kt1 = load[{<id: int, kind: string> -> int}]("/Users/s2522996/Documents/free-join/queries/preprocessed/join-order-benchmark/data/33c/kt1.csv")
-let t2 = load[{<id: int, title: string, imdb_index: string, kind_id: int, production_year: int, imdb_id: string, phonetic_code: string, episode_of_id: int, season_nr: int, episode_nr: int, series_years: string, md5sum: string> -> int}]("/Users/s2522996/Documents/free-join/queries/preprocessed/join-order-benchmark/data/33c/t2.csv")
-let kt2 = load[{<id: int, kind: string> -> int}]("/Users/s2522996/Documents/free-join/queries/preprocessed/join-order-benchmark/data/33c/kt2.csv")
-let mc1 = load[{<id: int, movie_id: int, company_id: int, company_type_id: int, note: string> -> int}]("/Users/s2522996/Documents/free-join/data/imdb_csv/movie_companies.csv")
-let cn1 = load[{<id: int, name: string, country_code: string, imdb_id: string, name_pcode_nf: string, name_pcode_sf: string, md5sum: string> -> int}]("/Users/s2522996/Documents/free-join/queries/preprocessed/join-order-benchmark/data/33c/cn1.csv")
-let mc2 = load[{<id: int, movie_id: int, company_id: int, company_type_id: int, note: string> -> int}]("/Users/s2522996/Documents/free-join/data/imdb_csv/movie_companies.csv")
-let cn2 = load[{<id: int, name: string, country_code: string, imdb_id: string, name_pcode_nf: string, name_pcode_sf: string, md5sum: string> -> int}]("/Users/s2522996/Documents/free-join/data/imdb_csv/company_name.csv")
+let ml = load[{<id: int, movie_id: int, linked_movie_id: int, link_type_id: int> -> int}]("datasets/job/movie_link.csv")
+let lt = load[{<id: int, link: string> -> int}]("datasets/job/33c/lt.csv")
+let mi_idx1 = load[{<id: int, movie_id: int, info_type_id: int, info: string, note: string> -> int}]("datasets/job/movie_info_idx.csv")
+let it1 = load[{<id: int, info: string> -> int}]("datasets/job/33c/it1.csv")
+let mi_idx2 = load[{<id: int, movie_id: int, info_type_id: int, info: string, note: string> -> int}]("datasets/job/33c/mi_idx2.csv")
+let it2 = load[{<id: int, info: string> -> int}]("datasets/job/33c/it2.csv")
+let t1 = load[{<id: int, title: string, imdb_index: string, kind_id: int, production_year: int, imdb_id: string, phonetic_code: string, episode_of_id: int, season_nr: int, episode_nr: int, series_years: string, md5sum: string> -> int}]("datasets/job/title.csv")
+let kt1 = load[{<id: int, kind: string> -> int}]("datasets/job/33c/kt1.csv")
+let t2 = load[{<id: int, title: string, imdb_index: string, kind_id: int, production_year: int, imdb_id: string, phonetic_code: string, episode_of_id: int, season_nr: int, episode_nr: int, series_years: string, md5sum: string> -> int}]("datasets/job/33c/t2.csv")
+let kt2 = load[{<id: int, kind: string> -> int}]("datasets/job/33c/kt2.csv")
+let mc1 = load[{<id: int, movie_id: int, company_id: int, company_type_id: int, note: string> -> int}]("datasets/job/movie_companies.csv")
+let cn1 = load[{<id: int, name: string, country_code: string, imdb_id: string, name_pcode_nf: string, name_pcode_sf: string, md5sum: string> -> int}]("datasets/job/33c/cn1.csv")
+let mc2 = load[{<id: int, movie_id: int, company_id: int, company_type_id: int, note: string> -> int}]("datasets/job/movie_companies.csv")
+let cn2 = load[{<id: int, name: string, country_code: string, imdb_id: string, name_pcode_nf: string, name_pcode_sf: string, md5sum: string> -> int}]("datasets/job/company_name.csv")
 
-let lt_trie0 = sum(<lt_tuple, _> <- lt) { lt_tuple.id -> { lt_tuple -> 1 } } in
+let lt_trie0 = sum(<lt_tuple, _> <- lt) { lt_tuple.id -> 1 } in
 let interm0_trie0 = sum(<ml_tuple, _> <- ml)
 	let x0 = ml_tuple.link_type_id in
 	if (x0 ∈ lt_trie0) then
@@ -23,7 +23,7 @@ let interm0_trie0 = sum(<ml_tuple, _> <- ml)
 		{}
 in
 
-let it1_trie0 = sum(<it1_tuple, _> <- it1) { it1_tuple.id -> { it1_tuple -> 1 } } in
+let it1_trie0 = sum(<it1_tuple, _> <- it1) { it1_tuple.id -> 1 } in
 let interm0_trie0 = sum(<interm0_tuple, _> <- interm0) { interm0_tuple.col1 -> { interm0_tuple -> 1 } } in
 let interm1_trie0 = sum(<mi_idx1_tuple, _> <- mi_idx1)
 	let x0 = mi_idx1_tuple.info_type_id in
@@ -40,7 +40,7 @@ let interm1_trie0 = sum(<mi_idx1_tuple, _> <- mi_idx1)
 		{}
 in
 
-let it2_trie0 = sum(<it2_tuple, _> <- it2) { it2_tuple.id -> { it2_tuple -> 1 } } in
+let it2_trie0 = sum(<it2_tuple, _> <- it2) { it2_tuple.id -> 1 } in
 let interm1_trie0 = sum(<interm1_tuple, _> <- interm1) { interm1_tuple.col4 -> { interm1_tuple -> 1 } } in
 let interm2_trie0 = sum(<mi_idx2_tuple, _> <- mi_idx2)
 	let x0 = mi_idx2_tuple.info_type_id in
@@ -57,7 +57,7 @@ let interm2_trie0 = sum(<mi_idx2_tuple, _> <- mi_idx2)
 		{}
 in
 
-let kt1_trie0 = sum(<kt1_tuple, _> <- kt1) { kt1_tuple.id -> { kt1_tuple -> 1 } } in
+let kt1_trie0 = sum(<kt1_tuple, _> <- kt1) { kt1_tuple.id -> 1 } in
 let interm2_trie0 = sum(<interm2_tuple, _> <- interm2) { interm2_tuple.col4 -> { interm2_tuple -> 1 } } in
 let interm3_trie0 = sum(<t1_tuple, _> <- t1)
 	let x0 = t1_tuple.kind_id in
@@ -74,7 +74,7 @@ let interm3_trie0 = sum(<t1_tuple, _> <- t1)
 		{}
 in
 
-let kt2_trie0 = sum(<kt2_tuple, _> <- kt2) { kt2_tuple.id -> { kt2_tuple -> 1 } } in
+let kt2_trie0 = sum(<kt2_tuple, _> <- kt2) { kt2_tuple.id -> 1 } in
 let interm3_trie0 = sum(<interm3_tuple, _> <- interm3) { interm3_tuple.col4 -> { interm3_tuple -> 1 } } in
 let interm4_trie0 = sum(<t2_tuple, _> <- t2)
 	let x0 = t2_tuple.kind_id in

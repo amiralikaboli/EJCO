@@ -22,11 +22,11 @@ int main() {
 
 		auto t_trie0 = phmap::flat_hash_map<int, vector<int>>();
 		build_trie(t_trie0, t_id);
-		auto mc_trie0 = phmap::flat_hash_map<int, vector<int>>();
+		auto mc_trie0 = phmap::flat_hash_map<int, bool>();
 		build_trie(mc_trie0, mc_movie_id);
-		auto it_trie0 = phmap::flat_hash_map<int, vector<int>>();
+		auto it_trie0 = phmap::flat_hash_map<int, bool>();
 		build_trie(it_trie0, it_id);
-		auto ct_trie0 = phmap::flat_hash_map<int, vector<int>>();
+		auto ct_trie0 = phmap::flat_hash_map<int, bool>();
 		build_trie(ct_trie0, ct_id);
 		string mn_t_title = "zzzzzzzz";
 		for (const auto &mi_off: mi_offsets) {
@@ -53,9 +53,9 @@ int main() {
 
 		if (z == 0)
 			cout << mn_t_title << endl;
-		cout << "*" << " " << flush;
+		cerr << "*" << " " << flush;
 	}
-	cout << endl;
+	cerr << endl;
 
 	vector<double> tm{0};
 	for (int i = 0; i < 1; ++i)

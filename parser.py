@@ -157,7 +157,15 @@ class PlanParser:
 
 				plans[idx_d] = (node_d, build_d, compiled_d)
 			plans[idx_u] = ((interm_rel, interm_cols_enumerated, interm_trie_levels), build_u, compiled_u)
-		plans[-1] = (('root', plans[-1][0][1], []), plans[-1][1], plans[-1][2])
+		proj_rel_cols = set()
+		for rel, _, proj_cols in plans[-1][1]:
+			for proj_col in proj_cols:
+				proj_rel_cols.add((rel, proj_col))
+		indexed_proj_rel_cols = list()
+		for idx, rel_col in plans[-1][0][1]:
+			if rel_col in proj_rel_cols:
+				indexed_proj_rel_cols.append((idx, rel_col))
+		plans[-1] = (('root', indexed_proj_rel_cols, []), plans[-1][1], plans[-1][2])
 		return plans
 
 	@staticmethod
