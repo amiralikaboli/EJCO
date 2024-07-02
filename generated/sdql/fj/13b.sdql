@@ -20,7 +20,7 @@ let interm0_trie0 = sum(<t_tuple, _> <- t)
 in
 
 let interm0_trie0 = sum(<interm0_tuple, _> <- interm0) { interm0_tuple.col0 -> { interm0_tuple -> 1 } } in
-let mc_trie0 = sum(<mc_tuple, _> <- mc) { mc_tuple.movie_id -> 1 } in
+let mc_trie0 = sum(<mc_tuple, _> <- mc) { mc_tuple.movie_id -> { mc_tuple -> 1 } } in
 let kt_trie0 = sum(<kt_tuple, _> <- kt) { kt_tuple.id -> 1 } in
 let it2_trie0 = sum(<it2_tuple, _> <- it2) { it2_tuple.id -> 1 } in
 let it_trie0 = sum(<it_tuple, _> <- it) { it_tuple.id -> 1 } in

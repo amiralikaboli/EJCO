@@ -51,7 +51,7 @@ int main() {
 
 		auto interm0_trie0 = phmap::flat_hash_map<int, vector<int>>();
 		build_trie(interm0_trie0, interm0_col0);
-		auto mc_trie0 = phmap::flat_hash_map<int, bool>();
+		auto mc_trie0 = phmap::flat_hash_map<int, vector<int>>();
 		build_trie(mc_trie0, mc_movie_id);
 		auto kt_trie0 = phmap::flat_hash_map<int, bool>();
 		build_trie(kt_trie0, kt_id);

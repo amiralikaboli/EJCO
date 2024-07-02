@@ -289,7 +289,8 @@ class CppGenerator:
 
 		rels_in_interm_cols = set(rel for _, (rel, _) in interm_cols)
 		for rel, trie_levels in rel2trie_levels.items():
-			lines = self._build_trie(rel, trie_levels, rel in rels_in_interm_cols)
+			is_vector_needed = rel in rels_in_interm_cols or rel in iter_rels
+			lines = self._build_trie(rel, trie_levels, is_vector_needed)
 			for line in lines:
 				yield line
 

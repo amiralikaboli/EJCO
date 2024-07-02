@@ -173,7 +173,7 @@ class SDQLGenerator:
 		rels_in_interm_cols = set(rel for _, (rel, _) in interm_cols)
 		for rel, trie_levels in rel2trie_levels.items():
 			tuple_var = self.var_mng.tuple_var(rel)
-			if rel in rels_in_interm_cols:
+			if rel in rels_in_interm_cols or rel in iter_rels:
 				trie_value = f"{{ {tuple_var} -> 1 }}"
 			else:
 				trie_value = "1"

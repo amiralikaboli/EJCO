@@ -22,7 +22,7 @@ int main() {
 
 		auto t_trie0 = phmap::flat_hash_map<int, vector<int>>();
 		build_trie(t_trie0, t_id);
-		auto mc_trie0 = phmap::flat_hash_map<int, bool>();
+		auto mc_trie0 = phmap::flat_hash_map<int, vector<int>>();
 		build_trie(mc_trie0, mc_movie_id);
 		auto it_trie0 = phmap::flat_hash_map<int, bool>();
 		build_trie(it_trie0, it_id);
