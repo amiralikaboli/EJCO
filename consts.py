@@ -49,8 +49,6 @@ with open("utils/abbr2rel.json", 'r') as json_file:
 	abbr2rel: Dict[str, str] = json.load(json_file)
 with open("utils/rel2col2type.json", 'r') as json_file:
 	rel2col2type: Dict[str, Dict[str, str]] = json.load(json_file)
-with open("results/stats.json", 'r') as json_file:
-	query2rel2perm2stats: Dict[str, Dict[str, Dict[str, str]]] = json.load(json_file)
 
 inf_values: Dict[str, str] = {
 	"int": "numeric_limits<int>::max()",

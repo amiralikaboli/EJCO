@@ -1,2 +1,0 @@
-[('mc', ['movie_id', 'company_type_id'], ['note']), ('t', ['id'], ['title', 'production_year']), ('mi_idx', ['movie_id', 'info_type_id'], []), ('it', ['id'], []), ('ct', ['id'], [])]
-[[('mi_idx', 'movie_id'), ('mc', 'movie_id'), ('t', 'id')], [('it', 'id'), ('mi_idx', 'info_type_id')], [('ct', 'id'), ('mc', 'company_type_id')]]

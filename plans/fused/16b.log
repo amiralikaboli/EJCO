@@ -1,2 +1,0 @@
-[('ci', ['person_id', 'movie_id'], []), ('n', ['id'], []), ('mk', ['movie_id', 'keyword_id'], []), ('t', ['id'], ['title']), ('mc', ['movie_id', 'company_id'], []), ('k', ['id'], []), ('cn', ['id'], []), ('an', ['person_id'], ['name'])]
-[[('mk', 'movie_id'), ('mc', 'movie_id'), ('t', 'id')], [('k', 'id'), ('mk', 'keyword_id')], [('mc', 'company_id'), ('cn', 'id')], [('ci', 'person_id'), ('n', 'id')], [('t', 'id'), ('ci', 'movie_id')], [('n', 'id'), ('an', 'person_id')]]
