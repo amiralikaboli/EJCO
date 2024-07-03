@@ -24,10 +24,10 @@ int main() {
 		int cnt;
 		timer.Reset();
 
-		auto t_trie0 = phmap::flat_hash_map<int, vector<int>>();
-		build_trie(t_trie0, t_id);
 		auto mi_idx_trie0 = phmap::flat_hash_map<int, vector<int>>();
 		build_trie(mi_idx_trie0, mi_idx_movie_id);
+		auto t_trie0 = phmap::flat_hash_map<int, vector<int>>();
+		build_trie(t_trie0, t_id);
 		vector<int> interm0_col0;
 		vector<int> interm0_col1;
 		vector<string> interm0_col2;
@@ -37,9 +37,9 @@ int main() {
 		cnt = 0;
 		for (const auto &mk_off: mk_offsets) {
 			auto x0 = mk_movie_id[mk_off];
-			if (t_trie0.contains(x0) && mi_idx_trie0.contains(x0)) {
-				auto &t_trie1 = t_trie0.at(x0);
+			if (mi_idx_trie0.contains(x0) && t_trie0.contains(x0)) {
 				auto &mi_idx_trie1 = mi_idx_trie0.at(x0);
+				auto &t_trie1 = t_trie0.at(x0);
 				for (const auto &t_off: t_trie1) {
 					for (const auto &mi_idx_off: mi_idx_trie1) {
 						interm0_col0.push_back(mk_movie_id[mk_off]);
@@ -101,21 +101,21 @@ int main() {
 		}
 		timer.StoreElapsedTime(1);
 
-		auto n_trie0 = phmap::flat_hash_map<int, vector<int>>();
-		build_trie(n_trie0, n_id);
 		auto interm1_trie0 = phmap::flat_hash_map<int, vector<int>>();
 		build_trie(interm1_trie0, interm1_col0);
+		auto n_trie0 = phmap::flat_hash_map<int, vector<int>>();
+		build_trie(n_trie0, n_id);
 		string mn_n_name = "zzzzzzzz";
 		string mn_interm1_col2 = "zzzzzzzz";
 		string mn_interm1_col5 = "zzzzzzzz";
 		string mn_interm1_col6 = "zzzzzzzz";
 		for (const auto &ci_off: ci_offsets) {
-			auto x0 = ci_person_id[ci_off];
-			if (n_trie0.contains(x0)) {
-				auto &n_trie1 = n_trie0.at(x0);
-				auto x1 = ci_movie_id[ci_off];
-				if (interm1_trie0.contains(x1)) {
-					auto &interm1_trie1 = interm1_trie0.at(x1);
+			auto x0 = ci_movie_id[ci_off];
+			if (interm1_trie0.contains(x0)) {
+				auto &interm1_trie1 = interm1_trie0.at(x0);
+				auto x1 = ci_person_id[ci_off];
+				if (n_trie0.contains(x1)) {
+					auto &n_trie1 = n_trie0.at(x1);
 					for (const auto &n_off: n_trie1) {
 						mn_n_name = min(mn_n_name, n_name[n_off]);
 					}

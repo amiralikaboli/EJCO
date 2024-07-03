@@ -48,10 +48,10 @@ int main() {
 		}
 		timer.StoreElapsedTime(0);
 
-		auto cct1_trie0 = phmap::flat_hash_map<int, bool>();
-		build_trie(cct1_trie0, cct1_id);
 		auto cct2_trie0 = phmap::flat_hash_map<int, bool>();
 		build_trie(cct2_trie0, cct2_id);
+		auto cct1_trie0 = phmap::flat_hash_map<int, bool>();
+		build_trie(cct1_trie0, cct1_id);
 		auto interm0_trie0 = phmap::flat_hash_map<int, vector<int>>();
 		build_trie(interm0_trie0, interm0_col1);
 		vector<int> interm1_col0;
@@ -61,12 +61,12 @@ int main() {
 		vector<int> interm1_offsets;
 		cnt = 0;
 		for (const auto &cc_off: cc_offsets) {
-			auto x0 = cc_subject_id[cc_off];
-			if (cct1_trie0.contains(x0)) {
-				auto &cct1_trie1 = cct1_trie0.at(x0);
-				auto x1 = cc_status_id[cc_off];
-				if (cct2_trie0.contains(x1)) {
-					auto &cct2_trie1 = cct2_trie0.at(x1);
+			auto x0 = cc_status_id[cc_off];
+			if (cct2_trie0.contains(x0)) {
+				auto &cct2_trie1 = cct2_trie0.at(x0);
+				auto x1 = cc_subject_id[cc_off];
+				if (cct1_trie0.contains(x1)) {
+					auto &cct1_trie1 = cct1_trie0.at(x1);
 					auto x2 = cc_movie_id[cc_off];
 					if (interm0_trie0.contains(x2)) {
 						auto &interm0_trie1 = interm0_trie0.at(x2);
@@ -106,10 +106,10 @@ int main() {
 
 		auto ct_trie0 = phmap::flat_hash_map<int, bool>();
 		build_trie(ct_trie0, ct_id);
-		auto cn_trie0 = phmap::flat_hash_map<int, vector<int>>();
-		build_trie(cn_trie0, cn_id);
 		auto interm2_trie0 = phmap::flat_hash_map<int, vector<int>>();
 		build_trie(interm2_trie0, interm2_col0);
+		auto cn_trie0 = phmap::flat_hash_map<int, vector<int>>();
+		build_trie(cn_trie0, cn_id);
 		vector<int> interm3_col0;
 		vector<int> interm3_col1;
 		vector<int> interm3_col2;
@@ -122,12 +122,12 @@ int main() {
 			auto x0 = mc_company_type_id[mc_off];
 			if (ct_trie0.contains(x0)) {
 				auto &ct_trie1 = ct_trie0.at(x0);
-				auto x1 = mc_company_id[mc_off];
-				if (cn_trie0.contains(x1)) {
-					auto &cn_trie1 = cn_trie0.at(x1);
-					auto x2 = mc_movie_id[mc_off];
-					if (interm2_trie0.contains(x2)) {
-						auto &interm2_trie1 = interm2_trie0.at(x2);
+				auto x1 = mc_movie_id[mc_off];
+				if (interm2_trie0.contains(x1)) {
+					auto &interm2_trie1 = interm2_trie0.at(x1);
+					auto x2 = mc_company_id[mc_off];
+					if (cn_trie0.contains(x2)) {
+						auto &cn_trie1 = cn_trie0.at(x2);
 						for (const auto &cn_off: cn_trie1) {
 							for (const auto &interm2_off: interm2_trie1) {
 								interm3_col0.push_back(mc_company_type_id[mc_off]);

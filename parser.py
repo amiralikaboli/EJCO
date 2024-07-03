@@ -2,28 +2,30 @@ import os
 import re
 from typing import List, Tuple, Set
 
-from consts import plans_path
+from consts import plans_path, JoinMode
 from var_mng import VariableManager
 
 
 class PlanParser:
-	def __init__(self, var_mng: VariableManager):
+	def __init__(self, mode: JoinMode, var_mng: VariableManager):
+		self._mode = mode
 		self._var_mng = var_mng
 		self._bags: List[Set[Tuple[str, str]]] = list()
+		self._plans_path = os.path.join(plans_path, self._mode.value)
 
 	def clear(self):
 		self._bags = list()
 
 	def parse(self, query: str, use_cache: bool = False) -> List[Tuple[Tuple[str, List, List], List, List]]:
-		if use_cache and os.path.exists(os.path.join(plans_path, "parsed", f"{query}.log")):
-			with open(os.path.join(plans_path, "parsed", f"{query}.log"), 'r') as log_file:
+		if use_cache and os.path.exists(os.path.join(self._plans_path, "parsed", f"{query}.log")):
+			with open(os.path.join(self._plans_path, "parsed", f"{query}.log"), 'r') as log_file:
 				lines = log_file.readlines()
 			return [
 				(eval(lines[i].strip()), eval(lines[i + 1].strip()), eval(lines[i + 2].strip()))
 				for i in range(0, len(lines), 4)
 			]
 
-		with open(os.path.join(plans_path, "raw", f"{query}.log"), 'r') as log_file:
+		with open(os.path.join(self._plans_path, "raw", f"{query}.log"), 'r') as log_file:
 			lines = log_file.readlines()
 		parsed_plans = [
 			(
@@ -37,7 +39,7 @@ class PlanParser:
 		parsed_plans = self._resolve_intermediate_stuff(parsed_plans)
 		parsed_plans = self._remove_extra_proj_columns(parsed_plans)
 
-		with open(os.path.join(plans_path, "parsed", f"{query}.log"), 'w') as log_file:
+		with open(os.path.join(self._plans_path, "parsed", f"{query}.log"), 'w') as log_file:
 			for node, build_plan, compiled_plan in parsed_plans:
 				log_file.write(f"{node}\n")
 				log_file.write(f"{build_plan}\n")

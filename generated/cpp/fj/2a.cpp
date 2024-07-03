@@ -20,23 +20,23 @@ int main() {
 		int cnt;
 		timer.Reset();
 
+		auto k_trie0 = phmap::flat_hash_map<int, bool>();
+		build_trie(k_trie0, k_id);
 		auto t_trie0 = phmap::flat_hash_map<int, vector<int>>();
 		build_trie(t_trie0, t_id);
 		auto mc_trie0 = phmap::flat_hash_map<int, vector<int>>();
 		build_trie(mc_trie0, mc_movie_id);
-		auto k_trie0 = phmap::flat_hash_map<int, bool>();
-		build_trie(k_trie0, k_id);
 		auto cn_trie0 = phmap::flat_hash_map<int, bool>();
 		build_trie(cn_trie0, cn_id);
 		string mn_t_title = "zzzzzzzz";
 		for (const auto &mk_off: mk_offsets) {
-			auto x0 = mk_movie_id[mk_off];
-			if (t_trie0.contains(x0) && mc_trie0.contains(x0)) {
-				auto &t_trie1 = t_trie0.at(x0);
-				auto &mc_trie1 = mc_trie0.at(x0);
-				auto x1 = mk_keyword_id[mk_off];
-				if (k_trie0.contains(x1)) {
-					auto &k_trie1 = k_trie0.at(x1);
+			auto x0 = mk_keyword_id[mk_off];
+			if (k_trie0.contains(x0)) {
+				auto &k_trie1 = k_trie0.at(x0);
+				auto x1 = mk_movie_id[mk_off];
+				if (t_trie0.contains(x1) && mc_trie0.contains(x1)) {
+					auto &t_trie1 = t_trie0.at(x1);
+					auto &mc_trie1 = mc_trie0.at(x1);
 					for (const auto &mc_off: mc_trie1) {
 						auto x2 = mc_company_id[mc_off];
 						if (cn_trie0.contains(x2)) {

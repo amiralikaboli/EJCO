@@ -77,27 +77,29 @@ int main() {
 		}
 		timer.StoreElapsedTime(1);
 
-		auto interm1_trie0 = phmap::flat_hash_map<int, vector<int>>();
-		build_trie(interm1_trie0, interm1_col0);
 		auto interm0_trie0 = phmap::flat_hash_map<int, vector<int>>();
 		build_trie(interm0_trie0, interm0_col0);
+		auto interm1_trie0 = phmap::flat_hash_map<int, vector<int>>();
+		build_trie(interm1_trie0, interm1_col0);
 		auto an_trie0 = phmap::flat_hash_map<int, bool>();
 		build_trie(an_trie0, an_person_id);
 		string mn_interm1_col1 = "zzzzzzzz";
 		string mn_interm0_col1 = "zzzzzzzz";
 		for (const auto &ci_off: ci_offsets) {
-			auto x0 = ci_movie_id[ci_off];
-			if (interm1_trie0.contains(x0)) {
-				auto &interm1_trie1 = interm1_trie0.at(x0);
-				auto x1 = ci_person_id[ci_off];
-				if (interm0_trie0.contains(x1) && an_trie0.contains(x1)) {
-					auto &interm0_trie1 = interm0_trie0.at(x1);
-					auto &an_trie1 = an_trie0.at(x1);
-					for (const auto &interm1_off: interm1_trie1) {
-						mn_interm1_col1 = min(mn_interm1_col1, interm1_col1[interm1_off]);
-					}
-					for (const auto &interm0_off: interm0_trie1) {
-						mn_interm0_col1 = min(mn_interm0_col1, interm0_col1[interm0_off]);
+			auto x0 = ci_person_id[ci_off];
+			if (interm0_trie0.contains(x0)) {
+				auto &interm0_trie1 = interm0_trie0.at(x0);
+				auto x1 = ci_movie_id[ci_off];
+				if (interm1_trie0.contains(x1)) {
+					auto &interm1_trie1 = interm1_trie0.at(x1);
+					if (an_trie0.contains(x0)) {
+						auto &an_trie1 = an_trie0.at(x0);
+						for (const auto &interm1_off: interm1_trie1) {
+							mn_interm1_col1 = min(mn_interm1_col1, interm1_col1[interm1_off]);
+						}
+						for (const auto &interm0_off: interm0_trie1) {
+							mn_interm0_col1 = min(mn_interm0_col1, interm0_col1[interm0_off]);
+						}
 					}
 				}
 			}

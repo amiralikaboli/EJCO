@@ -13,11 +13,11 @@ if __name__ == '__main__':
 	print(f"JoinMode: {mode}")
 
 	queries = []
-	for filename in os.listdir(os.path.join(plans_path, "raw")):
+	for filename in os.listdir(os.path.join(plans_path, mode.value, "raw")):
 		queries.append(filename[:-4])
 
 	var_mng = VariableManager()
-	parser = PlanParser(var_mng)
+	parser = PlanParser(mode, var_mng)
 	sdql_gen = SDQLGenerator(mode, var_mng)
 	cpp_gen = CppGenerator(mode, var_mng)
 	for query in queries:

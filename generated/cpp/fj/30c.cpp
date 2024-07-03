@@ -158,21 +158,21 @@ int main() {
 		}
 		timer.StoreElapsedTime(4);
 
-		auto n_trie0 = phmap::flat_hash_map<int, vector<int>>();
-		build_trie(n_trie0, n_id);
 		auto interm4_trie0 = phmap::flat_hash_map<int, vector<int>>();
 		build_trie(interm4_trie0, interm4_col1);
+		auto n_trie0 = phmap::flat_hash_map<int, vector<int>>();
+		build_trie(n_trie0, n_id);
 		string mn_n_name = "zzzzzzzz";
 		string mn_interm4_col2 = "zzzzzzzz";
 		string mn_interm4_col4 = "zzzzzzzz";
 		string mn_interm4_col6 = "zzzzzzzz";
 		for (const auto &ci_off: ci_offsets) {
-			auto x0 = ci_person_id[ci_off];
-			if (n_trie0.contains(x0)) {
-				auto &n_trie1 = n_trie0.at(x0);
-				auto x1 = ci_movie_id[ci_off];
-				if (interm4_trie0.contains(x1)) {
-					auto &interm4_trie1 = interm4_trie0.at(x1);
+			auto x0 = ci_movie_id[ci_off];
+			if (interm4_trie0.contains(x0)) {
+				auto &interm4_trie1 = interm4_trie0.at(x0);
+				auto x1 = ci_person_id[ci_off];
+				if (n_trie0.contains(x1)) {
+					auto &n_trie1 = n_trie0.at(x1);
 					for (const auto &n_off: n_trie1) {
 						mn_n_name = min(mn_n_name, n_name[n_off]);
 					}

@@ -20,10 +20,10 @@ int main() {
 		int cnt;
 		timer.Reset();
 
-		auto t_trie0 = phmap::flat_hash_map<int, vector<int>>();
-		build_trie(t_trie0, t_id);
 		auto k_trie0 = phmap::flat_hash_map<int, vector<int>>();
 		build_trie(k_trie0, k_id);
+		auto t_trie0 = phmap::flat_hash_map<int, vector<int>>();
+		build_trie(t_trie0, t_id);
 		vector<int> interm0_col0;
 		vector<int> interm0_col1;
 		vector<string> interm0_col2;
@@ -31,12 +31,12 @@ int main() {
 		vector<int> interm0_offsets;
 		cnt = 0;
 		for (const auto &mk_off: mk_offsets) {
-			auto x0 = mk_movie_id[mk_off];
-			if (t_trie0.contains(x0)) {
-				auto &t_trie1 = t_trie0.at(x0);
-				auto x1 = mk_keyword_id[mk_off];
-				if (k_trie0.contains(x1)) {
-					auto &k_trie1 = k_trie0.at(x1);
+			auto x0 = mk_keyword_id[mk_off];
+			if (k_trie0.contains(x0)) {
+				auto &k_trie1 = k_trie0.at(x0);
+				auto x1 = mk_movie_id[mk_off];
+				if (t_trie0.contains(x1)) {
+					auto &t_trie1 = t_trie0.at(x1);
 					for (const auto &t_off: t_trie1) {
 						for (const auto &k_off: k_trie1) {
 							interm0_col0.push_back(mk_movie_id[mk_off]);

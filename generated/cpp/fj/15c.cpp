@@ -45,10 +45,10 @@ int main() {
 		}
 		timer.StoreElapsedTime(0);
 
-		auto interm0_trie0 = phmap::flat_hash_map<int, vector<int>>();
-		build_trie(interm0_trie0, interm0_col0);
 		auto mc_trie0 = phmap::flat_hash_map<int, vector<int>>();
 		build_trie(mc_trie0, mc_movie_id);
+		auto interm0_trie0 = phmap::flat_hash_map<int, vector<int>>();
+		build_trie(interm0_trie0, interm0_col0);
 		auto k_trie0 = phmap::flat_hash_map<int, bool>();
 		build_trie(k_trie0, k_id);
 		auto it1_trie0 = phmap::flat_hash_map<int, bool>();
@@ -63,9 +63,9 @@ int main() {
 		string mn_interm0_col2 = "zzzzzzzz";
 		for (const auto &mi_off: mi_offsets) {
 			auto x0 = mi_movie_id[mi_off];
-			if (interm0_trie0.contains(x0) && mc_trie0.contains(x0)) {
-				auto &interm0_trie1 = interm0_trie0.at(x0);
+			if (mc_trie0.contains(x0) && interm0_trie0.contains(x0)) {
 				auto &mc_trie1 = mc_trie0.at(x0);
+				auto &interm0_trie1 = interm0_trie0.at(x0);
 				for (const auto &interm0_off: interm0_trie1) {
 					auto x1 = interm0_col1[interm0_off];
 					if (k_trie0.contains(x1)) {

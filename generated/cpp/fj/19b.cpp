@@ -25,12 +25,12 @@ int main() {
 		int cnt;
 		timer.Reset();
 
+		auto it_trie0 = phmap::flat_hash_map<int, bool>();
+		build_trie(it_trie0, it_id);
 		auto t_trie0 = phmap::flat_hash_map<int, vector<int>>();
 		build_trie(t_trie0, t_id);
 		auto mc_trie0 = phmap::flat_hash_map<int, vector<int>>();
 		build_trie(mc_trie0, mc_movie_id);
-		auto it_trie0 = phmap::flat_hash_map<int, bool>();
-		build_trie(it_trie0, it_id);
 		auto cn_trie0 = phmap::flat_hash_map<int, bool>();
 		build_trie(cn_trie0, cn_id);
 		vector<int> interm0_col0;
@@ -40,13 +40,13 @@ int main() {
 		vector<int> interm0_offsets;
 		cnt = 0;
 		for (const auto &mi_off: mi_offsets) {
-			auto x0 = mi_movie_id[mi_off];
-			if (t_trie0.contains(x0) && mc_trie0.contains(x0)) {
-				auto &t_trie1 = t_trie0.at(x0);
-				auto &mc_trie1 = mc_trie0.at(x0);
-				auto x1 = mi_info_type_id[mi_off];
-				if (it_trie0.contains(x1)) {
-					auto &it_trie1 = it_trie0.at(x1);
+			auto x0 = mi_info_type_id[mi_off];
+			if (it_trie0.contains(x0)) {
+				auto &it_trie1 = it_trie0.at(x0);
+				auto x1 = mi_movie_id[mi_off];
+				if (t_trie0.contains(x1) && mc_trie0.contains(x1)) {
+					auto &t_trie1 = t_trie0.at(x1);
+					auto &mc_trie1 = mc_trie0.at(x1);
 					for (const auto &mc_off: mc_trie1) {
 						auto x2 = mc_company_id[mc_off];
 						if (cn_trie0.contains(x2)) {
@@ -84,27 +84,27 @@ int main() {
 
 		auto rt_trie0 = phmap::flat_hash_map<int, bool>();
 		build_trie(rt_trie0, rt_id);
-		auto chn_trie0 = phmap::flat_hash_map<int, bool>();
-		build_trie(chn_trie0, chn_id);
-		auto interm1_trie0 = phmap::flat_hash_map<int, vector<int>>();
-		build_trie(interm1_trie0, interm1_col0);
 		auto interm0_trie0 = phmap::flat_hash_map<int, vector<int>>();
 		build_trie(interm0_trie0, interm0_col0);
+		auto interm1_trie0 = phmap::flat_hash_map<int, vector<int>>();
+		build_trie(interm1_trie0, interm1_col0);
+		auto chn_trie0 = phmap::flat_hash_map<int, bool>();
+		build_trie(chn_trie0, chn_id);
 		string mn_interm1_col1 = "zzzzzzzz";
 		string mn_interm0_col2 = "zzzzzzzz";
 		for (const auto &ci_off: ci_offsets) {
 			auto x0 = ci_role_id[ci_off];
 			if (rt_trie0.contains(x0)) {
 				auto &rt_trie1 = rt_trie0.at(x0);
-				auto x1 = ci_person_role_id[ci_off];
-				if (chn_trie0.contains(x1)) {
-					auto &chn_trie1 = chn_trie0.at(x1);
+				auto x1 = ci_movie_id[ci_off];
+				if (interm0_trie0.contains(x1)) {
+					auto &interm0_trie1 = interm0_trie0.at(x1);
 					auto x2 = ci_person_id[ci_off];
 					if (interm1_trie0.contains(x2)) {
 						auto &interm1_trie1 = interm1_trie0.at(x2);
-						auto x3 = ci_movie_id[ci_off];
-						if (interm0_trie0.contains(x3)) {
-							auto &interm0_trie1 = interm0_trie0.at(x3);
+						auto x3 = ci_person_role_id[ci_off];
+						if (chn_trie0.contains(x3)) {
+							auto &chn_trie1 = chn_trie0.at(x3);
 							for (const auto &interm1_off: interm1_trie1) {
 								mn_interm1_col1 = min(mn_interm1_col1, interm1_col1[interm1_off]);
 							}
