@@ -7,19 +7,19 @@ let ci = load[{<id: int, person_id: int, movie_id: int, person_role_id: int, not
 let n = load[{<id: int, name: string, imdb_index: string, imdb_id: string, gender: string, name_pcode_cf: string, name_pcode_nf: string, surname_pcode: string, md5sum: string> -> int}]("datasets/job/name.csv")
 let an = load[{<id: int, person_id: int, name: string, imdb_index: string, name_pcode_cf: string, name_pcode_nf: string, surname_pcode: string, md5sum: string> -> int}]("datasets/job/aka_name.csv")
 
+let k_trie0 = sum(<k_tuple, _> <- k) { k_tuple.id -> 1 } in
 let t_trie0 = sum(<t_tuple, _> <- t) { t_tuple.id -> { t_tuple -> 1 } } in
 let mc_trie0 = sum(<mc_tuple, _> <- mc) { mc_tuple.movie_id -> { mc_tuple -> 1 } } in
-let k_trie0 = sum(<k_tuple, _> <- k) { k_tuple.id -> 1 } in
 let cn_trie0 = sum(<cn_tuple, _> <- cn) { cn_tuple.id -> 1 } in
 let interm0_trie0 = sum(<mk_tuple, _> <- mk)
-	let x0 = mk_tuple.movie_id in
-	if (x0 ∈ t_trie0) then
-		if (x0 ∈ mc_trie0) then
-			let t_trie1 = t_trie0(x0) in
-			let mc_trie1 = mc_trie0(x0) in
-			let x1 = mk_tuple.keyword_id in
-			if (x1 ∈ k_trie0) then
-				let k_trie1 = k_trie0(x1) in
+	let x0 = mk_tuple.keyword_id in
+	if (x0 ∈ k_trie0) then
+		let k_trie1 = k_trie0(x0) in
+		let x1 = mk_tuple.movie_id in
+		if (x1 ∈ t_trie0) then
+			if (x1 ∈ mc_trie0) then
+				let t_trie1 = t_trie0(x1) in
+				let mc_trie1 = mc_trie0(x1) in
 				sum(<mc_tuple, _> <- mc_trie1)
 					let x2 = mc_tuple.company_id in
 					if (x2 ∈ cn_trie0) then
@@ -36,18 +36,18 @@ let interm0_trie0 = sum(<mk_tuple, _> <- mk)
 		{}
 in
 
-let n_trie0 = sum(<n_tuple, _> <- n) { n_tuple.id -> 1 } in
 let interm0_trie0 = sum(<interm0_tuple, _> <- interm0) { interm0_tuple.col0 -> { interm0_tuple -> 1 } } in
 let an_trie0 = sum(<an_tuple, _> <- an) { an_tuple.person_id -> { an_tuple -> 1 } } in
+let n_trie0 = sum(<n_tuple, _> <- n) { n_tuple.id -> 1 } in
 sum(<ci_tuple, _> <- ci)
-	let x0 = ci_tuple.person_id in
-	if (x0 ∈ n_trie0) then
-		let n_trie1 = n_trie0(x0) in
-		let x1 = ci_tuple.movie_id in
-		if (x1 ∈ interm0_trie0) then
-			let interm0_trie1 = interm0_trie0(x1) in
-			if (x0 ∈ an_trie0) then
-				let an_trie1 = an_trie0(x0) in
+	let x0 = ci_tuple.movie_id in
+	if (x0 ∈ interm0_trie0) then
+		let interm0_trie1 = interm0_trie0(x0) in
+		let x1 = ci_tuple.person_id in
+		if (x1 ∈ an_trie0) then
+			if (x1 ∈ n_trie0) then
+				let an_trie1 = an_trie0(x1) in
+				let n_trie1 = n_trie0(x1) in
 				let mn_interm0 = sum(<interm0_tuple, _> <- interm0_trie1) <col2=interm0_tuple.col2> in
 				let mn_an = sum(<an_tuple, _> <- an_trie1) <name=an_tuple.name> in
 				<col3=mn_interm0.col2, col5=mn_an.name>

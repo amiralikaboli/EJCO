@@ -4,15 +4,15 @@ let k = load[{<id: int, keyword: string, phonetic_code: string> -> int}]("datase
 let ci = load[{<id: int, person_id: int, movie_id: int, person_role_id: int, note: string, nr_order: int, role_id: int> -> int}]("datasets/job/cast_info.csv")
 let n = load[{<id: int, name: string, imdb_index: string, imdb_id: string, gender: string, name_pcode_cf: string, name_pcode_nf: string, surname_pcode: string, md5sum: string> -> int}]("datasets/job/6b/n.csv")
 
-let t_trie0 = sum(<t_tuple, _> <- t) { t_tuple.id -> { t_tuple -> 1 } } in
 let k_trie0 = sum(<k_tuple, _> <- k) { k_tuple.id -> { k_tuple -> 1 } } in
+let t_trie0 = sum(<t_tuple, _> <- t) { t_tuple.id -> { t_tuple -> 1 } } in
 let interm0_trie0 = sum(<mk_tuple, _> <- mk)
-	let x0 = mk_tuple.movie_id in
-	if (x0 ∈ t_trie0) then
-		let t_trie1 = t_trie0(x0) in
-		let x1 = mk_tuple.keyword_id in
-		if (x1 ∈ k_trie0) then
-			let k_trie1 = k_trie0(x1) in
+	let x0 = mk_tuple.keyword_id in
+	if (x0 ∈ k_trie0) then
+		let k_trie1 = k_trie0(x0) in
+		let x1 = mk_tuple.movie_id in
+		if (x1 ∈ t_trie0) then
+			let t_trie1 = t_trie0(x1) in
 			sum(<t_tuple, _> <- t_trie1)
 				sum(<k_tuple, _> <- k_trie1)
 					{ mk_tuple.movie_id -> { <col0=mk_tuple.movie_id, col1=mk_tuple.keyword_id, col2=t_tuple.title, col3=k_tuple.keyword> -> 1 } }

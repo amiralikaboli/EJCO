@@ -17,29 +17,29 @@ let interm0_trie0 = sum(<mc_tuple, _> <- mc)
 		{}
 in
 
-let n_trie0 = sum(<n_tuple, _> <- n) { n_tuple.id -> { n_tuple -> 1 } } in
-let interm0_trie0 = sum(<interm0_tuple, _> <- interm0) { interm0_tuple.col1 -> 1 } in
 let rt_trie0 = sum(<rt_tuple, _> <- rt) { rt_tuple.id -> 1 } in
+let n_trie0 = sum(<n_tuple, _> <- n) { n_tuple.id -> { n_tuple -> 1 } } in
+let an_trie0 = sum(<an_tuple, _> <- an) { an_tuple.person_id -> { an_tuple -> 1 } } in
+let interm0_trie0 = sum(<interm0_tuple, _> <- interm0) { interm0_tuple.col1 -> 1 } in
 let t_trie0 = sum(<t_tuple, _> <- t) { t_tuple.id -> { t_tuple -> 1 } } in
 let chn_trie0 = sum(<chn_tuple, _> <- chn) { chn_tuple.id -> { chn_tuple -> 1 } } in
-let an_trie0 = sum(<an_tuple, _> <- an) { an_tuple.person_id -> { an_tuple -> 1 } } in
 sum(<ci_tuple, _> <- ci)
-	let x0 = ci_tuple.person_id in
-	if (x0 ∈ n_trie0) then
-		let n_trie1 = n_trie0(x0) in
-		let x1 = ci_tuple.movie_id in
-		if (x1 ∈ interm0_trie0) then
-			let interm0_trie1 = interm0_trie0(x1) in
-			let x2 = ci_tuple.role_id in
-			if (x2 ∈ rt_trie0) then
-				let rt_trie1 = rt_trie0(x2) in
-				if (x1 ∈ t_trie0) then
-					let t_trie1 = t_trie0(x1) in
-					let x4 = ci_tuple.person_role_id in
-					if (x4 ∈ chn_trie0) then
-						let chn_trie1 = chn_trie0(x4) in
-						if (x0 ∈ an_trie0) then
-							let an_trie1 = an_trie0(x0) in
+	let x0 = ci_tuple.role_id in
+	if (x0 ∈ rt_trie0) then
+		let rt_trie1 = rt_trie0(x0) in
+		let x1 = ci_tuple.person_id in
+		if (x1 ∈ n_trie0) then
+			if (x1 ∈ an_trie0) then
+				let n_trie1 = n_trie0(x1) in
+				let an_trie1 = an_trie0(x1) in
+				let x2 = ci_tuple.movie_id in
+				if (x2 ∈ interm0_trie0) then
+					if (x2 ∈ t_trie0) then
+						let interm0_trie1 = interm0_trie0(x2) in
+						let t_trie1 = t_trie0(x2) in
+						let x3 = ci_tuple.person_role_id in
+						if (x3 ∈ chn_trie0) then
+							let chn_trie1 = chn_trie0(x3) in
 							let mn_n = sum(<n_tuple, _> <- n_trie1) <name=n_tuple.name> in
 							let mn_t = sum(<t_tuple, _> <- t_trie1) <title=t_tuple.title> in
 							let mn_chn = sum(<chn_tuple, _> <- chn_trie1) <name=chn_tuple.name> in

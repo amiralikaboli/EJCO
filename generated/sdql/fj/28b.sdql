@@ -62,19 +62,19 @@ let interm2_trie0 = sum(<t_tuple, _> <- t)
 		{}
 in
 
-let cn_trie0 = sum(<cn_tuple, _> <- cn) { cn_tuple.id -> { cn_tuple -> 1 } } in
 let ct_trie0 = sum(<ct_tuple, _> <- ct) { ct_tuple.id -> 1 } in
 let interm2_trie0 = sum(<interm2_tuple, _> <- interm2) { interm2_tuple.col1 -> { interm2_tuple -> 1 } } in
+let cn_trie0 = sum(<cn_tuple, _> <- cn) { cn_tuple.id -> { cn_tuple -> 1 } } in
 let interm3_trie0 = sum(<mc_tuple, _> <- mc)
-	let x0 = mc_tuple.company_id in
-	if (x0 ∈ cn_trie0) then
-		let cn_trie1 = cn_trie0(x0) in
-		let x1 = mc_tuple.company_type_id in
-		if (x1 ∈ ct_trie0) then
-			let ct_trie1 = ct_trie0(x1) in
-			let x2 = mc_tuple.movie_id in
-			if (x2 ∈ interm2_trie0) then
-				let interm2_trie1 = interm2_trie0(x2) in
+	let x0 = mc_tuple.company_type_id in
+	if (x0 ∈ ct_trie0) then
+		let ct_trie1 = ct_trie0(x0) in
+		let x1 = mc_tuple.movie_id in
+		if (x1 ∈ interm2_trie0) then
+			let interm2_trie1 = interm2_trie0(x1) in
+			let x2 = mc_tuple.company_id in
+			if (x2 ∈ cn_trie0) then
+				let cn_trie1 = cn_trie0(x2) in
 				sum(<cn_tuple, _> <- cn_trie1)
 					sum(<interm2_tuple, _> <- interm2_trie1)
 						{ mc_tuple.movie_id -> { <col0=mc_tuple.company_id, col1=mc_tuple.company_type_id, col2=mc_tuple.movie_id, col3=cn_tuple.name, col5=interm2_tuple.col2, col7=interm2_tuple.col4> -> 1 } }

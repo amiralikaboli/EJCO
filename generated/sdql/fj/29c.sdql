@@ -42,15 +42,15 @@ let interm1_trie0 = sum(<t_tuple, _> <- t)
 		{}
 in
 
-let cn_trie0 = sum(<cn_tuple, _> <- cn) { cn_tuple.id -> 1 } in
 let interm1_trie0 = sum(<interm1_tuple, _> <- interm1) { interm1_tuple.col0 -> { interm1_tuple -> 1 } } in
+let cn_trie0 = sum(<cn_tuple, _> <- cn) { cn_tuple.id -> 1 } in
 let interm2_trie0 = sum(<mc_tuple, _> <- mc)
-	let x0 = mc_tuple.company_id in
-	if (x0 ∈ cn_trie0) then
-		let cn_trie1 = cn_trie0(x0) in
-		let x1 = mc_tuple.movie_id in
-		if (x1 ∈ interm1_trie0) then
-			let interm1_trie1 = interm1_trie0(x1) in
+	let x0 = mc_tuple.movie_id in
+	if (x0 ∈ interm1_trie0) then
+		let interm1_trie1 = interm1_trie0(x0) in
+		let x1 = mc_tuple.company_id in
+		if (x1 ∈ cn_trie0) then
+			let cn_trie1 = cn_trie0(x1) in
 			sum(<interm1_tuple, _> <- interm1_trie1)
 				{ mc_tuple.movie_id -> { <col0=mc_tuple.company_id, col1=mc_tuple.movie_id, col2=interm1_tuple.col1> -> 1 } }
 		else
@@ -93,15 +93,15 @@ let interm4_trie0 = sum(<mi_tuple, _> <- mi)
 		{}
 in
 
-let an_trie0 = sum(<an_tuple, _> <- an) { an_tuple.person_id -> 1 } in
 let it3_trie0 = sum(<it3_tuple, _> <- it3) { it3_tuple.id -> 1 } in
+let an_trie0 = sum(<an_tuple, _> <- an) { an_tuple.person_id -> 1 } in
 let interm5_trie0 = sum(<pi_tuple, _> <- pi)
-	let x0 = pi_tuple.person_id in
-	if (x0 ∈ an_trie0) then
-		let an_trie1 = an_trie0(x0) in
-		let x1 = pi_tuple.info_type_id in
-		if (x1 ∈ it3_trie0) then
-			let it3_trie1 = it3_trie0(x1) in
+	let x0 = pi_tuple.info_type_id in
+	if (x0 ∈ it3_trie0) then
+		let it3_trie1 = it3_trie0(x0) in
+		let x1 = pi_tuple.person_id in
+		if (x1 ∈ an_trie0) then
+			let an_trie1 = an_trie0(x1) in
 			{ pi_tuple.person_id -> { <col0=pi_tuple.person_id, col1=pi_tuple.info_type_id> -> 1 } }
 		else
 			{}
@@ -119,23 +119,23 @@ let interm6_trie0 = sum(<n_tuple, _> <- n)
 		{}
 in
 
-let chn_trie0 = sum(<chn_tuple, _> <- chn) { chn_tuple.id -> { chn_tuple -> 1 } } in
 let rt_trie0 = sum(<rt_tuple, _> <- rt) { rt_tuple.id -> 1 } in
-let interm6_trie0 = sum(<interm6_tuple, _> <- interm6) { interm6_tuple.col0 -> { interm6_tuple -> 1 } } in
 let interm4_trie0 = sum(<interm4_tuple, _> <- interm4) { interm4_tuple.col1 -> { interm4_tuple -> 1 } } in
+let interm6_trie0 = sum(<interm6_tuple, _> <- interm6) { interm6_tuple.col0 -> { interm6_tuple -> 1 } } in
+let chn_trie0 = sum(<chn_tuple, _> <- chn) { chn_tuple.id -> { chn_tuple -> 1 } } in
 sum(<ci_tuple, _> <- ci)
-	let x0 = ci_tuple.person_role_id in
-	if (x0 ∈ chn_trie0) then
-		let chn_trie1 = chn_trie0(x0) in
-		let x1 = ci_tuple.role_id in
-		if (x1 ∈ rt_trie0) then
-			let rt_trie1 = rt_trie0(x1) in
+	let x0 = ci_tuple.role_id in
+	if (x0 ∈ rt_trie0) then
+		let rt_trie1 = rt_trie0(x0) in
+		let x1 = ci_tuple.movie_id in
+		if (x1 ∈ interm4_trie0) then
+			let interm4_trie1 = interm4_trie0(x1) in
 			let x2 = ci_tuple.person_id in
 			if (x2 ∈ interm6_trie0) then
 				let interm6_trie1 = interm6_trie0(x2) in
-				let x3 = ci_tuple.movie_id in
-				if (x3 ∈ interm4_trie0) then
-					let interm4_trie1 = interm4_trie0(x3) in
+				let x3 = ci_tuple.person_role_id in
+				if (x3 ∈ chn_trie0) then
+					let chn_trie1 = chn_trie0(x3) in
 					let mn_chn = sum(<chn_tuple, _> <- chn_trie1) <name=chn_tuple.name> in
 					let mn_interm6 = sum(<interm6_tuple, _> <- interm6_trie1) <col1=interm6_tuple.col1> in
 					let mn_interm4 = sum(<interm4_tuple, _> <- interm4_trie1) <col4=interm4_tuple.col4> in

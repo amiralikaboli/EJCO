@@ -11,15 +11,15 @@ let it1 = load[{<id: int, info: string> -> int}]("datasets/job/30a/it1.csv")
 let ci = load[{<id: int, person_id: int, movie_id: int, person_role_id: int, note: string, nr_order: int, role_id: int> -> int}]("datasets/job/30a/ci.csv")
 let n = load[{<id: int, name: string, imdb_index: string, imdb_id: string, gender: string, name_pcode_cf: string, name_pcode_nf: string, surname_pcode: string, md5sum: string> -> int}]("datasets/job/30a/n.csv")
 
-let cct1_trie0 = sum(<cct1_tuple, _> <- cct1) { cct1_tuple.id -> 1 } in
 let cct2_trie0 = sum(<cct2_tuple, _> <- cct2) { cct2_tuple.id -> 1 } in
+let cct1_trie0 = sum(<cct1_tuple, _> <- cct1) { cct1_tuple.id -> 1 } in
 let interm0_trie0 = sum(<cc_tuple, _> <- cc)
-	let x0 = cc_tuple.subject_id in
-	if (x0 ∈ cct1_trie0) then
-		let cct1_trie1 = cct1_trie0(x0) in
-		let x1 = cc_tuple.status_id in
-		if (x1 ∈ cct2_trie0) then
-			let cct2_trie1 = cct2_trie0(x1) in
+	let x0 = cc_tuple.status_id in
+	if (x0 ∈ cct2_trie0) then
+		let cct2_trie1 = cct2_trie0(x0) in
+		let x1 = cc_tuple.subject_id in
+		if (x1 ∈ cct1_trie0) then
+			let cct1_trie1 = cct1_trie0(x1) in
 			{ cc_tuple.movie_id -> { <col0=cc_tuple.subject_id, col1=cc_tuple.status_id, col2=cc_tuple.movie_id> -> 1 } }
 		else
 			{}
@@ -88,15 +88,15 @@ let interm4_trie0 = sum(<mi_tuple, _> <- mi)
 		{}
 in
 
-let n_trie0 = sum(<n_tuple, _> <- n) { n_tuple.id -> { n_tuple -> 1 } } in
 let interm4_trie0 = sum(<interm4_tuple, _> <- interm4) { interm4_tuple.col1 -> { interm4_tuple -> 1 } } in
+let n_trie0 = sum(<n_tuple, _> <- n) { n_tuple.id -> { n_tuple -> 1 } } in
 sum(<ci_tuple, _> <- ci)
-	let x0 = ci_tuple.person_id in
-	if (x0 ∈ n_trie0) then
-		let n_trie1 = n_trie0(x0) in
-		let x1 = ci_tuple.movie_id in
-		if (x1 ∈ interm4_trie0) then
-			let interm4_trie1 = interm4_trie0(x1) in
+	let x0 = ci_tuple.movie_id in
+	if (x0 ∈ interm4_trie0) then
+		let interm4_trie1 = interm4_trie0(x0) in
+		let x1 = ci_tuple.person_id in
+		if (x1 ∈ n_trie0) then
+			let n_trie1 = n_trie0(x1) in
 			let mn_n = sum(<n_tuple, _> <- n_trie1) <name=n_tuple.name> in
 			let mn_interm4 = sum(<interm4_tuple, _> <- interm4_trie1) <col2=interm4_tuple.col2, col4=interm4_tuple.col4, col6=interm4_tuple.col6> in
 			<col2=mn_n.name, col4=mn_interm4.col2, col6=mn_interm4.col4, col8=mn_interm4.col6>

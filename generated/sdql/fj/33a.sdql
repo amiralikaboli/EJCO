@@ -91,15 +91,15 @@ let interm4_trie0 = sum(<t2_tuple, _> <- t2)
 		{}
 in
 
-let cn1_trie0 = sum(<cn1_tuple, _> <- cn1) { cn1_tuple.id -> { cn1_tuple -> 1 } } in
 let interm4_trie0 = sum(<interm4_tuple, _> <- interm4) { interm4_tuple.col4 -> { interm4_tuple -> 1 } } in
+let cn1_trie0 = sum(<cn1_tuple, _> <- cn1) { cn1_tuple.id -> { cn1_tuple -> 1 } } in
 let interm5_trie0 = sum(<mc1_tuple, _> <- mc1)
-	let x0 = mc1_tuple.company_id in
-	if (x0 ∈ cn1_trie0) then
-		let cn1_trie1 = cn1_trie0(x0) in
-		let x1 = mc1_tuple.movie_id in
-		if (x1 ∈ interm4_trie0) then
-			let interm4_trie1 = interm4_trie0(x1) in
+	let x0 = mc1_tuple.movie_id in
+	if (x0 ∈ interm4_trie0) then
+		let interm4_trie1 = interm4_trie0(x0) in
+		let x1 = mc1_tuple.company_id in
+		if (x1 ∈ cn1_trie0) then
+			let cn1_trie1 = cn1_trie0(x1) in
 			sum(<cn1_tuple, _> <- cn1_trie1)
 				sum(<interm4_tuple, _> <- interm4_trie1)
 					{ interm4_tuple.col1 -> { <col0=mc1_tuple.company_id, col1=mc1_tuple.movie_id, col2=cn1_tuple.name, col4=interm4_tuple.col1, col5=interm4_tuple.col2, col7=interm4_tuple.col5, col9=interm4_tuple.col7, col11=interm4_tuple.col9> -> 1 } }
@@ -109,15 +109,15 @@ let interm5_trie0 = sum(<mc1_tuple, _> <- mc1)
 		{}
 in
 
-let cn2_trie0 = sum(<cn2_tuple, _> <- cn2) { cn2_tuple.id -> { cn2_tuple -> 1 } } in
 let interm5_trie0 = sum(<interm5_tuple, _> <- interm5) { interm5_tuple.col4 -> { interm5_tuple -> 1 } } in
+let cn2_trie0 = sum(<cn2_tuple, _> <- cn2) { cn2_tuple.id -> { cn2_tuple -> 1 } } in
 sum(<mc2_tuple, _> <- mc2)
-	let x0 = mc2_tuple.company_id in
-	if (x0 ∈ cn2_trie0) then
-		let cn2_trie1 = cn2_trie0(x0) in
-		let x1 = mc2_tuple.movie_id in
-		if (x1 ∈ interm5_trie0) then
-			let interm5_trie1 = interm5_trie0(x1) in
+	let x0 = mc2_tuple.movie_id in
+	if (x0 ∈ interm5_trie0) then
+		let interm5_trie1 = interm5_trie0(x0) in
+		let x1 = mc2_tuple.company_id in
+		if (x1 ∈ cn2_trie0) then
+			let cn2_trie1 = cn2_trie0(x1) in
 			let mn_cn2 = sum(<cn2_tuple, _> <- cn2_trie1) <name=cn2_tuple.name> in
 			let mn_interm5 = sum(<interm5_tuple, _> <- interm5_trie1) <col2=interm5_tuple.col2, col5=interm5_tuple.col5, col7=interm5_tuple.col7, col9=interm5_tuple.col9, col11=interm5_tuple.col11> in
 			<col2=mn_cn2.name, col5=mn_interm5.col2, col7=mn_interm5.col5, col9=mn_interm5.col7, col11=mn_interm5.col9, col13=mn_interm5.col11>

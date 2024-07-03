@@ -6,19 +6,19 @@ let ci = load[{<id: int, person_id: int, movie_id: int, person_role_id: int, not
 let rt = load[{<id: int, role: string> -> int}]("datasets/job/10a/rt.csv")
 let chn = load[{<id: int, name: string, imdb_index: string, imdb_id: int, name_pcode_cf: string, surname_pcode: string, md5sum: string> -> int}]("datasets/job/char_name.csv")
 
-let t_trie0 = sum(<t_tuple, _> <- t) { t_tuple.id -> { t_tuple -> 1 } } in
 let ct_trie0 = sum(<ct_tuple, _> <- ct) { ct_tuple.id -> 1 } in
 let cn_trie0 = sum(<cn_tuple, _> <- cn) { cn_tuple.id -> 1 } in
+let t_trie0 = sum(<t_tuple, _> <- t) { t_tuple.id -> { t_tuple -> 1 } } in
 let interm0_trie0 = sum(<mc_tuple, _> <- mc)
-	let x0 = mc_tuple.movie_id in
-	if (x0 ∈ t_trie0) then
-		let t_trie1 = t_trie0(x0) in
-		let x1 = mc_tuple.company_type_id in
-		if (x1 ∈ ct_trie0) then
-			let ct_trie1 = ct_trie0(x1) in
-			let x2 = mc_tuple.company_id in
-			if (x2 ∈ cn_trie0) then
-				let cn_trie1 = cn_trie0(x2) in
+	let x0 = mc_tuple.company_type_id in
+	if (x0 ∈ ct_trie0) then
+		let ct_trie1 = ct_trie0(x0) in
+		let x1 = mc_tuple.company_id in
+		if (x1 ∈ cn_trie0) then
+			let cn_trie1 = cn_trie0(x1) in
+			let x2 = mc_tuple.movie_id in
+			if (x2 ∈ t_trie0) then
+				let t_trie1 = t_trie0(x2) in
 				sum(<t_tuple, _> <- t_trie1)
 					{ mc_tuple.movie_id -> { <col0=mc_tuple.movie_id, col1=mc_tuple.company_type_id, col2=mc_tuple.company_id, col3=t_tuple.title> -> 1 } }
 			else

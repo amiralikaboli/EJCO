@@ -41,18 +41,18 @@ let interm1_trie0 = sum(<t_tuple, _> <- t)
 		{}
 in
 
-let interm1_trie0 = sum(<interm1_tuple, _> <- interm1) { interm1_tuple.col0 -> { interm1_tuple -> 1 } } in
 let interm0_trie0 = sum(<interm0_tuple, _> <- interm0) { interm0_tuple.col0 -> { interm0_tuple -> 1 } } in
+let interm1_trie0 = sum(<interm1_tuple, _> <- interm1) { interm1_tuple.col0 -> { interm1_tuple -> 1 } } in
 let an_trie0 = sum(<an_tuple, _> <- an) { an_tuple.person_id -> 1 } in
 sum(<ci_tuple, _> <- ci)
-	let x0 = ci_tuple.movie_id in
-	if (x0 ∈ interm1_trie0) then
-		let interm1_trie1 = interm1_trie0(x0) in
-		let x1 = ci_tuple.person_id in
-		if (x1 ∈ interm0_trie0) then
-			if (x1 ∈ an_trie0) then
-				let interm0_trie1 = interm0_trie0(x1) in
-				let an_trie1 = an_trie0(x1) in
+	let x0 = ci_tuple.person_id in
+	if (x0 ∈ interm0_trie0) then
+		let interm0_trie1 = interm0_trie0(x0) in
+		let x1 = ci_tuple.movie_id in
+		if (x1 ∈ interm1_trie0) then
+			let interm1_trie1 = interm1_trie0(x1) in
+			if (x0 ∈ an_trie0) then
+				let an_trie1 = an_trie0(x0) in
 				let mn_interm1 = sum(<interm1_tuple, _> <- interm1_trie1) <col1=interm1_tuple.col1> in
 				let mn_interm0 = sum(<interm0_tuple, _> <- interm0_trie1) <col1=interm0_tuple.col1> in
 				<col2=mn_interm1.col1, col4=mn_interm0.col1>
