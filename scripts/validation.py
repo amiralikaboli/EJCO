@@ -11,7 +11,8 @@ def normalize(text: str) -> str:
 
 if __name__ == '__main__':
 	args = sys.argv[1:]
-	results_file = args[0]
+	mode = args[0]
+	results_file = args[1]
 	check_validity = True
 	skip_queries = ["7c"]
 
@@ -48,7 +49,7 @@ if __name__ == '__main__':
 	gj_json_path = os.path.join(freejoin_path, "gj", "gj.json")
 	with open(gj_json_path, "r") as json_file:
 		gj_results = json.load(json_file)
-	gj_results["ours"] = times
+	gj_results[f"our_{mode}"] = times
 	with open(gj_json_path, "w") as json_file:
 		json.dump(gj_results, json_file, indent=2)
 
