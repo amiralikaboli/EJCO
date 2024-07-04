@@ -28,6 +28,8 @@ int main() {
 		build_trie(pi_trie0, pi_person_id, pi_info_type_id);
 		auto it_trie0 = phmap::flat_hash_map<int, bool>();
 		build_trie(it_trie0, it_id);
+		timer.StoreElapsedTime(0);
+
 		vector<int> interm0_col0;
 		vector<string> interm0_col1;
 		vector<int> interm0_col2;
@@ -50,7 +52,7 @@ int main() {
 				}
 			}
 		}
-		timer.StoreElapsedTime(0);
+		timer.StoreElapsedTime(1);
 
 		auto t_trie0 = phmap::flat_hash_map<int, vector<int>>();
 		build_trie(t_trie0, t_id);
@@ -58,6 +60,8 @@ int main() {
 		build_trie(ml_trie0, ml_linked_movie_id, ml_link_type_id);
 		auto lt_trie0 = phmap::flat_hash_map<int, bool>();
 		build_trie(lt_trie0, lt_id);
+		timer.StoreElapsedTime(2);
+
 		vector<int> interm1_col0;
 		vector<int> interm1_col1;
 		for (const auto &[x0, t_trie1]: t_trie0) {
@@ -76,7 +80,7 @@ int main() {
 				}
 			}
 		}
-		timer.StoreElapsedTime(1);
+		timer.StoreElapsedTime(3);
 
 		auto ci_trie0 = phmap::flat_hash_map<int, phmap::flat_hash_map<int, bool>>();
 		build_trie(ci_trie0, ci_movie_id, ci_person_id);
@@ -86,6 +90,8 @@ int main() {
 		build_trie(interm0_trie0, interm0_col0);
 		auto an_trie0 = phmap::flat_hash_map<int, bool>();
 		build_trie(an_trie0, an_person_id);
+		timer.StoreElapsedTime(4);
+
 		string mn_interm0_col1 = "zzzzzzzz";
 		string mn_interm0_col3 = "zzzzzzzz";
 		for (const auto &[x0, ci_trie1]: ci_trie0) {
@@ -103,7 +109,7 @@ int main() {
 				}
 			}
 		}
-		timer.StoreElapsedTime(2);
+		timer.StoreElapsedTime(5);
 
 		if (z == 0)
 			cout << mn_interm0_col1 << " | " << mn_interm0_col3 << endl;
@@ -112,9 +118,12 @@ int main() {
 	cerr << endl;
 
 	vector<double> tm{0};
-	for (int i = 0; i < 3; ++i)
+	for (int i = 0; i < 2 * 3; ++i)
 		tm.push_back(timer.GetMean(i));
-	for (int i = 0; i < 3; ++i)
-		cout << tm[i + 1] - tm[i] << " ms" << endl;
-	cout << tm[3] << " ms" << endl;
+	for (int i = 0; i < 2 * 3; i += 2) {
+		cout << tm[i + 1] - tm[i] << " + ";
+		cout << tm[i + 2] - tm[i + 1] << " = ";
+		cout << tm[i + 2] - tm[i] << " ms" << endl;
+	}
+	cout << tm[2 * 3] << " ms" << endl;
 }

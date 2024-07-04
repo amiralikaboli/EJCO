@@ -25,6 +25,8 @@ int main() {
 		build_trie(ml_trie0, ml_movie_id);
 		auto t2_trie0 = phmap::flat_hash_map<int, vector<int>>();
 		build_trie(t2_trie0, t2_id);
+		timer.StoreElapsedTime(0);
+
 		vector<int> interm0_col0;
 		vector<string> interm0_col1;
 		vector<int> interm0_col2;
@@ -52,7 +54,7 @@ int main() {
 				}
 			}
 		}
-		timer.StoreElapsedTime(0);
+		timer.StoreElapsedTime(1);
 
 		auto interm0_trie0 = phmap::flat_hash_map<int, vector<int>>();
 		build_trie(interm0_trie0, interm0_col0);
@@ -60,6 +62,8 @@ int main() {
 		build_trie(lt_trie0, lt_id);
 		auto k_trie0 = phmap::flat_hash_map<int, bool>();
 		build_trie(k_trie0, k_id);
+		timer.StoreElapsedTime(2);
+
 		string mn_interm0_col1 = "zzzzzzzz";
 		string mn_interm0_col4 = "zzzzzzzz";
 		string mn_lt_link = "zzzzzzzz";
@@ -84,7 +88,7 @@ int main() {
 				}
 			}
 		}
-		timer.StoreElapsedTime(1);
+		timer.StoreElapsedTime(3);
 
 		if (z == 0)
 			cout << mn_interm0_col1 << " | " << mn_interm0_col4 << " | " << mn_lt_link << endl;
@@ -93,9 +97,12 @@ int main() {
 	cerr << endl;
 
 	vector<double> tm{0};
-	for (int i = 0; i < 2; ++i)
+	for (int i = 0; i < 2 * 2; ++i)
 		tm.push_back(timer.GetMean(i));
-	for (int i = 0; i < 2; ++i)
-		cout << tm[i + 1] - tm[i] << " ms" << endl;
-	cout << tm[2] << " ms" << endl;
+	for (int i = 0; i < 2 * 2; i += 2) {
+		cout << tm[i + 1] - tm[i] << " + ";
+		cout << tm[i + 2] - tm[i + 1] << " = ";
+		cout << tm[i + 2] - tm[i] << " ms" << endl;
+	}
+	cout << tm[2 * 2] << " ms" << endl;
 }

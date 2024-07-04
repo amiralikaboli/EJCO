@@ -24,6 +24,8 @@ int main() {
 
 		auto cn_trie0 = phmap::flat_hash_map<int, bool>();
 		build_trie(cn_trie0, cn_id);
+		timer.StoreElapsedTime(0);
+
 		vector<int> interm0_col0;
 		vector<int> interm0_col1;
 		vector<int> interm0_offsets;
@@ -37,7 +39,7 @@ int main() {
 				interm0_offsets.push_back(cnt++);
 			}
 		}
-		timer.StoreElapsedTime(0);
+		timer.StoreElapsedTime(1);
 
 		auto rt_trie0 = phmap::flat_hash_map<int, bool>();
 		build_trie(rt_trie0, rt_id);
@@ -49,6 +51,8 @@ int main() {
 		build_trie(an1_trie0, an1_person_id);
 		auto t_trie0 = phmap::flat_hash_map<int, vector<int>>();
 		build_trie(t_trie0, t_id);
+		timer.StoreElapsedTime(2);
+
 		string mn_t_title = "zzzzzzzz";
 		string mn_an1_name = "zzzzzzzz";
 		for (const auto &ci_off: ci_offsets) {
@@ -77,7 +81,7 @@ int main() {
 				}
 			}
 		}
-		timer.StoreElapsedTime(1);
+		timer.StoreElapsedTime(3);
 
 		if (z == 0)
 			cout << mn_t_title << " | " << mn_an1_name << endl;
@@ -86,9 +90,12 @@ int main() {
 	cerr << endl;
 
 	vector<double> tm{0};
-	for (int i = 0; i < 2; ++i)
+	for (int i = 0; i < 2 * 2; ++i)
 		tm.push_back(timer.GetMean(i));
-	for (int i = 0; i < 2; ++i)
-		cout << tm[i + 1] - tm[i] << " ms" << endl;
-	cout << tm[2] << " ms" << endl;
+	for (int i = 0; i < 2 * 2; i += 2) {
+		cout << tm[i + 1] - tm[i] << " + ";
+		cout << tm[i + 2] - tm[i + 1] << " = ";
+		cout << tm[i + 2] - tm[i] << " ms" << endl;
+	}
+	cout << tm[2 * 2] << " ms" << endl;
 }

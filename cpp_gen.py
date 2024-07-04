@@ -59,12 +59,17 @@ class CppGenerator:
 			cpp_file.write('\t' * self.indent + 'timer.Reset();\n\n')
 
 			for idx, (node, build_plan, compiled_plan) in enumerate(plans):
+				for line in self._generate_build_tries(node, build_plan, compiled_plan):
+					cpp_file.write('\t' * self.indent + line)
+				cpp_file.write('\t' * self.indent + f'timer.StoreElapsedTime({2 * idx});\n')
+				cpp_file.write('\n')
+
 				for line in self._generate_subquery(node, build_plan, compiled_plan):
 					cpp_file.write('\t' * self.indent + line)
 				while self.indent > 2:
 					self.indent -= 1
 					cpp_file.write('\t' * self.indent + '}\n')
-				cpp_file.write('\t' * self.indent + f'timer.StoreElapsedTime({idx});\n')
+				cpp_file.write('\t' * self.indent + f'timer.StoreElapsedTime({2 * idx + 1});\n')
 				cpp_file.write('\n')
 
 			root_build_plan = plans[-1][1]
@@ -83,11 +88,14 @@ class CppGenerator:
 			cpp_file.write('\n')
 
 			cpp_file.write('\tvector<double> tm{0};\n')
-			cpp_file.write(f'\tfor (int i = 0; i < {len(plans)}; ++i)\n')
+			cpp_file.write(f'\tfor (int i = 0; i < 2 * {len(plans)}; ++i)\n')
 			cpp_file.write('\t\ttm.push_back(timer.GetMean(i));\n')
-			cpp_file.write(f'\tfor (int i = 0; i < {len(plans)}; ++i)\n')
-			cpp_file.write(f'\t\tcout << tm[i + 1] - tm[i] << " ms" << endl;\n')
-			cpp_file.write(f'\tcout << tm[{len(plans)}] << " ms" << endl;\n')
+			cpp_file.write(f'\tfor (int i = 0; i < 2 * {len(plans)}; i += 2) {{\n')
+			cpp_file.write(f'\t\tcout << tm[i + 1] - tm[i] << " + ";\n')
+			cpp_file.write(f'\t\tcout << tm[i + 2] - tm[i + 1] << " = ";\n')
+			cpp_file.write(f'\t\tcout << tm[i + 2] - tm[i] << " ms" << endl;\n')
+			cpp_file.write('\t}\n')
+			cpp_file.write(f'\tcout << tm[2 * {len(plans)}] << " ms" << endl;\n')
 
 			cpp_file.write('}\n')
 
@@ -103,7 +111,7 @@ class CppGenerator:
 			for col in join_cols + proj_cols:
 				self.involved_cols.add((rel, col))
 
-	def _generate_subquery(
+	def _generate_build_tries(
 			self,
 			node: Tuple[str, List[Tuple[str, str]], List[int]],
 			build_plan: List[Tuple[str, List[str], List[str]]],
@@ -113,6 +121,14 @@ class CppGenerator:
 
 		for s in self.call_func("build_tries", interm_cols, build_plan, compiled_plan):
 			yield s
+
+	def _generate_subquery(
+			self,
+			node: Tuple[str, List[Tuple[str, str]], List[int]],
+			build_plan: List[Tuple[str, List[str], List[str]]],
+			compiled_plan: List[List[Tuple[str, str]]]
+	):
+		interm, interm_cols, _ = node
 
 		if self.var_mng.is_root_rel(interm):
 			proj_relcols, proj_col_types = self._find_all_proj_cols_and_types(build_plan)

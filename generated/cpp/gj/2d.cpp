@@ -29,6 +29,8 @@ int main() {
 		build_trie(k_trie0, k_id);
 		auto cn_trie0 = phmap::flat_hash_map<int, bool>();
 		build_trie(cn_trie0, cn_id);
+		timer.StoreElapsedTime(0);
+
 		string mn_t_title = "zzzzzzzz";
 		for (const auto &[x0, mk_trie1]: mk_trie0) {
 			if (t_trie0.contains(x0) && mc_trie0.contains(x0)) {
@@ -49,7 +51,7 @@ int main() {
 				}
 			}
 		}
-		timer.StoreElapsedTime(0);
+		timer.StoreElapsedTime(1);
 
 		if (z == 0)
 			cout << mn_t_title << endl;
@@ -58,9 +60,12 @@ int main() {
 	cerr << endl;
 
 	vector<double> tm{0};
-	for (int i = 0; i < 1; ++i)
+	for (int i = 0; i < 2 * 1; ++i)
 		tm.push_back(timer.GetMean(i));
-	for (int i = 0; i < 1; ++i)
-		cout << tm[i + 1] - tm[i] << " ms" << endl;
-	cout << tm[1] << " ms" << endl;
+	for (int i = 0; i < 2 * 1; i += 2) {
+		cout << tm[i + 1] - tm[i] << " + ";
+		cout << tm[i + 2] - tm[i + 1] << " = ";
+		cout << tm[i + 2] - tm[i] << " ms" << endl;
+	}
+	cout << tm[2 * 1] << " ms" << endl;
 }

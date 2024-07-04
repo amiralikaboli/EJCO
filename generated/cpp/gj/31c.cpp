@@ -31,6 +31,8 @@ int main() {
 		build_trie(t_trie0, t_id);
 		auto mi_idx_trie0 = phmap::flat_hash_map<int, vector<int>>();
 		build_trie(mi_idx_trie0, mi_idx_movie_id);
+		timer.StoreElapsedTime(0);
+
 		vector<int> interm0_col0;
 		vector<int> interm0_col1;
 		vector<string> interm0_col2;
@@ -53,7 +55,7 @@ int main() {
 				}
 			}
 		}
-		timer.StoreElapsedTime(0);
+		timer.StoreElapsedTime(1);
 
 		auto mi_trie0 = phmap::flat_hash_map<int, phmap::flat_hash_map<int, vector<int>>>();
 		build_trie(mi_trie0, mi_movie_id, mi_info_type_id);
@@ -69,6 +71,8 @@ int main() {
 		build_trie(it1_trie0, it1_id);
 		auto cn_trie0 = phmap::flat_hash_map<int, bool>();
 		build_trie(cn_trie0, cn_id);
+		timer.StoreElapsedTime(2);
+
 		vector<int> interm1_col0;
 		vector<int> interm1_col1;
 		vector<string> interm1_col2;
@@ -117,7 +121,7 @@ int main() {
 				}
 			}
 		}
-		timer.StoreElapsedTime(1);
+		timer.StoreElapsedTime(3);
 
 		auto ci_trie0 = phmap::flat_hash_map<int, phmap::flat_hash_map<int, bool>>();
 		build_trie(ci_trie0, ci_person_id, ci_movie_id);
@@ -125,6 +129,8 @@ int main() {
 		build_trie(n_trie0, n_id);
 		auto interm1_trie0 = phmap::flat_hash_map<int, vector<int>>();
 		build_trie(interm1_trie0, interm1_col0);
+		timer.StoreElapsedTime(4);
+
 		string mn_n_name = "zzzzzzzz";
 		string mn_interm1_col2 = "zzzzzzzz";
 		string mn_interm1_col5 = "zzzzzzzz";
@@ -147,7 +153,7 @@ int main() {
 				}
 			}
 		}
-		timer.StoreElapsedTime(2);
+		timer.StoreElapsedTime(5);
 
 		if (z == 0)
 			cout << mn_n_name << " | " << mn_interm1_col2 << " | " << mn_interm1_col5 << " | " << mn_interm1_col6 << endl;
@@ -156,9 +162,12 @@ int main() {
 	cerr << endl;
 
 	vector<double> tm{0};
-	for (int i = 0; i < 3; ++i)
+	for (int i = 0; i < 2 * 3; ++i)
 		tm.push_back(timer.GetMean(i));
-	for (int i = 0; i < 3; ++i)
-		cout << tm[i + 1] - tm[i] << " ms" << endl;
-	cout << tm[3] << " ms" << endl;
+	for (int i = 0; i < 2 * 3; i += 2) {
+		cout << tm[i + 1] - tm[i] << " + ";
+		cout << tm[i + 2] - tm[i + 1] << " = ";
+		cout << tm[i + 2] - tm[i] << " ms" << endl;
+	}
+	cout << tm[2 * 3] << " ms" << endl;
 }

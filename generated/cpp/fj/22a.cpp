@@ -32,6 +32,8 @@ int main() {
 		build_trie(mi_idx_trie0, mi_idx_movie_id);
 		auto it2_trie0 = phmap::flat_hash_map<int, bool>();
 		build_trie(it2_trie0, it2_id);
+		timer.StoreElapsedTime(0);
+
 		vector<int> interm0_col0;
 		vector<int> interm0_col1;
 		vector<string> interm0_col2;
@@ -61,7 +63,7 @@ int main() {
 				}
 			}
 		}
-		timer.StoreElapsedTime(0);
+		timer.StoreElapsedTime(1);
 
 		auto ct_trie0 = phmap::flat_hash_map<int, bool>();
 		build_trie(ct_trie0, ct_id);
@@ -69,6 +71,8 @@ int main() {
 		build_trie(interm0_trie0, interm0_col0);
 		auto cn_trie0 = phmap::flat_hash_map<int, vector<int>>();
 		build_trie(cn_trie0, cn_id);
+		timer.StoreElapsedTime(2);
+
 		vector<int> interm1_col0;
 		vector<int> interm1_col1;
 		vector<int> interm1_col2;
@@ -102,12 +106,14 @@ int main() {
 				}
 			}
 		}
-		timer.StoreElapsedTime(1);
+		timer.StoreElapsedTime(3);
 
 		auto k_trie0 = phmap::flat_hash_map<int, bool>();
 		build_trie(k_trie0, k_id);
 		auto interm1_trie0 = phmap::flat_hash_map<int, vector<int>>();
 		build_trie(interm1_trie0, interm1_col2);
+		timer.StoreElapsedTime(4);
+
 		vector<int> interm2_col0;
 		vector<int> interm2_col1;
 		vector<string> interm2_col4;
@@ -133,12 +139,14 @@ int main() {
 				}
 			}
 		}
-		timer.StoreElapsedTime(2);
+		timer.StoreElapsedTime(5);
 
 		auto it1_trie0 = phmap::flat_hash_map<int, bool>();
 		build_trie(it1_trie0, it1_id);
 		auto interm2_trie0 = phmap::flat_hash_map<int, vector<int>>();
 		build_trie(interm2_trie0, interm2_col1);
+		timer.StoreElapsedTime(6);
+
 		string mn_interm2_col4 = "zzzzzzzz";
 		string mn_interm2_col6 = "zzzzzzzz";
 		string mn_interm2_col8 = "zzzzzzzz";
@@ -157,7 +165,7 @@ int main() {
 				}
 			}
 		}
-		timer.StoreElapsedTime(3);
+		timer.StoreElapsedTime(7);
 
 		if (z == 0)
 			cout << mn_interm2_col4 << " | " << mn_interm2_col6 << " | " << mn_interm2_col8 << endl;
@@ -166,9 +174,12 @@ int main() {
 	cerr << endl;
 
 	vector<double> tm{0};
-	for (int i = 0; i < 4; ++i)
+	for (int i = 0; i < 2 * 4; ++i)
 		tm.push_back(timer.GetMean(i));
-	for (int i = 0; i < 4; ++i)
-		cout << tm[i + 1] - tm[i] << " ms" << endl;
-	cout << tm[4] << " ms" << endl;
+	for (int i = 0; i < 2 * 4; i += 2) {
+		cout << tm[i + 1] - tm[i] << " + ";
+		cout << tm[i + 2] - tm[i + 1] << " = ";
+		cout << tm[i + 2] - tm[i] << " ms" << endl;
+	}
+	cout << tm[2 * 4] << " ms" << endl;
 }

@@ -31,6 +31,8 @@ int main() {
 		build_trie(cct1_trie0, cct1_id);
 		auto cct2_trie0 = phmap::flat_hash_map<int, bool>();
 		build_trie(cct2_trie0, cct2_id);
+		timer.StoreElapsedTime(0);
+
 		vector<int> interm0_col0;
 		vector<int> interm0_col1;
 		vector<int> interm0_col2;
@@ -50,12 +52,14 @@ int main() {
 				}
 			}
 		}
-		timer.StoreElapsedTime(0);
+		timer.StoreElapsedTime(1);
 
 		auto it2_trie0 = phmap::flat_hash_map<int, bool>();
 		build_trie(it2_trie0, it2_id);
 		auto interm0_trie0 = phmap::flat_hash_map<int, bool>();
 		build_trie(interm0_trie0, interm0_col2);
+		timer.StoreElapsedTime(2);
+
 		vector<int> interm1_col0;
 		vector<int> interm1_col1;
 		vector<string> interm1_col2;
@@ -75,12 +79,14 @@ int main() {
 				}
 			}
 		}
-		timer.StoreElapsedTime(1);
+		timer.StoreElapsedTime(3);
 
 		auto kt_trie0 = phmap::flat_hash_map<int, bool>();
 		build_trie(kt_trie0, kt_id);
 		auto interm1_trie0 = phmap::flat_hash_map<int, vector<int>>();
 		build_trie(interm1_trie0, interm1_col1);
+		timer.StoreElapsedTime(4);
+
 		vector<int> interm2_col0;
 		vector<int> interm2_col1;
 		vector<string> interm2_col2;
@@ -104,12 +110,14 @@ int main() {
 				}
 			}
 		}
-		timer.StoreElapsedTime(2);
+		timer.StoreElapsedTime(5);
 
 		auto k_trie0 = phmap::flat_hash_map<int, bool>();
 		build_trie(k_trie0, k_id);
 		auto interm2_trie0 = phmap::flat_hash_map<int, vector<int>>();
 		build_trie(interm2_trie0, interm2_col1);
+		timer.StoreElapsedTime(6);
+
 		vector<int> interm3_col0;
 		vector<int> interm3_col1;
 		vector<string> interm3_col3;
@@ -133,7 +141,7 @@ int main() {
 				}
 			}
 		}
-		timer.StoreElapsedTime(3);
+		timer.StoreElapsedTime(7);
 
 		auto interm3_trie0 = phmap::flat_hash_map<int, vector<int>>();
 		build_trie(interm3_trie0, interm3_col1);
@@ -141,6 +149,8 @@ int main() {
 		build_trie(chn_trie0, chn_id);
 		auto n_trie0 = phmap::flat_hash_map<int, vector<int>>();
 		build_trie(n_trie0, n_id);
+		timer.StoreElapsedTime(8);
+
 		string mn_n_name = "zzzzzzzz";
 		string mn_chn_name = "zzzzzzzz";
 		string mn_interm3_col3 = "zzzzzzzz";
@@ -169,7 +179,7 @@ int main() {
 				}
 			}
 		}
-		timer.StoreElapsedTime(4);
+		timer.StoreElapsedTime(9);
 
 		if (z == 0)
 			cout << mn_n_name << " | " << mn_chn_name << " | " << mn_interm3_col3 << " | " << mn_interm3_col5 << endl;
@@ -178,9 +188,12 @@ int main() {
 	cerr << endl;
 
 	vector<double> tm{0};
-	for (int i = 0; i < 5; ++i)
+	for (int i = 0; i < 2 * 5; ++i)
 		tm.push_back(timer.GetMean(i));
-	for (int i = 0; i < 5; ++i)
-		cout << tm[i + 1] - tm[i] << " ms" << endl;
-	cout << tm[5] << " ms" << endl;
+	for (int i = 0; i < 2 * 5; i += 2) {
+		cout << tm[i + 1] - tm[i] << " + ";
+		cout << tm[i + 2] - tm[i + 1] << " = ";
+		cout << tm[i + 2] - tm[i] << " ms" << endl;
+	}
+	cout << tm[2 * 5] << " ms" << endl;
 }
