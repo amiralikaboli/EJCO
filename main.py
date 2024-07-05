@@ -9,7 +9,7 @@ from var_mng import VariableManager
 
 if __name__ == '__main__':
 	args = sys.argv[1:]
-	mode = JoinMode(args[0] if args else JoinMode.GJ)
+	mode = JoinMode(args[0]) if args else JoinMode.GJ
 	print(f"JoinMode: {mode}")
 
 	queries = []

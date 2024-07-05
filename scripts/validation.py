@@ -37,11 +37,14 @@ if __name__ == '__main__':
 	invalids = []
 	for lines in stats:
 		query = lines[0].split("/")[-1][:-4]
-		query_res = set(normalize(elem.strip()) for elem in lines[2].split(' | '))
-		if check_validity and query not in skip_queries and not query_res == gj_outputs[query]:
+		try:
+			query_res = set(normalize(elem.strip()) for elem in lines[2].split(' | '))
+			if check_validity and query not in skip_queries and not query_res == gj_outputs[query]:
+				invalids.append(query)
+			else:
+				times.append({"query": query, "time": float(lines[-1][:-3]) / 1000})
+		except:
 			invalids.append(query)
-		else:
-			times.append({"query": query, "time": float(lines[-1][:-3]) / 1000})
 
 	if not times:
 		raise ValueError("No valid results found")

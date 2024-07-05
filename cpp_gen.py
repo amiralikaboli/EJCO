@@ -80,11 +80,11 @@ class CppGenerator:
 				'\t' * (self.indent + 1) +
 				f'cout << {delimiter.join([self.var_mng.mn_rel_col_var(rel, col) for rel, col in proj_relcols])} << endl;\n'
 			)
-			cpp_file.write('\t' * self.indent + 'cerr << "*" << " " << flush;\n')
+			cpp_file.write('\t' * self.indent + 'cout << "*" << " " << flush;\n')
 			self.indent -= 1
 
 			cpp_file.write('\t}\n')
-			cpp_file.write('\tcerr << endl;\n')
+			cpp_file.write('\tcout << endl;\n')
 			cpp_file.write('\n')
 
 			cpp_file.write('\tvector<double> tm{0};\n')
