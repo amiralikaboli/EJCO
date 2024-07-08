@@ -119,9 +119,9 @@ int main() {
 
 		if (z == 0)
 			cout << mn_interm1_col2 << " | " << mn_interm1_col4 << " | " << mn_interm1_col5 << endl;
-		cerr << "*" << " " << flush;
+		cout << "*" << " " << flush;
 	}
-	cerr << endl;
+	cout << endl;
 
 	vector<double> tm{0};
 	for (int i = 0; i < 2 * 3; ++i)

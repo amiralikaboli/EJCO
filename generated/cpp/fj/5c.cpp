@@ -20,30 +20,34 @@ int main() {
 		int cnt;
 		timer.Reset();
 
-		auto it_trie0 = phmap::flat_hash_map<int, bool>();
-		build_trie(it_trie0, it_id);
-		auto mc_trie0 = phmap::flat_hash_map<int, vector<int>>();
-		build_trie(mc_trie0, mc_movie_id);
-		auto t_trie0 = phmap::flat_hash_map<int, vector<int>>();
-		build_trie(t_trie0, t_id);
-		auto ct_trie0 = phmap::flat_hash_map<int, bool>();
-		build_trie(ct_trie0, ct_id);
+		pair<int, int> mi_trie0 = {0, mi_offsets.size() - 1};
+		pair<int, int> t_trie0 = {0, t_offsets.size() - 1};
+		pair<int, int> mc_trie0 = {0, mc_offsets.size() - 1};
+		pair<int, int> it_trie0 = {0, it_offsets.size() - 1};
+		pair<int, int> ct_trie0 = {0, ct_offsets.size() - 1};
+		build_trie(it_offsets, it_id);
+		build_trie(mc_offsets, mc_movie_id);
+		build_trie(t_offsets, t_id);
+		build_trie(ct_offsets, ct_id);
 		timer.StoreElapsedTime(0);
 
 		string mn_t_title = "zzzzzzzz";
-		for (const auto &mi_off: mi_offsets) {
+		for (int mi_i = mi_trie0.first; mi_i <= mi_trie0.second; ++mi_i) {
+			const auto &mi_off = mi_offsets[mi_i];
 			auto x0 = mi_info_type_id[mi_off];
-			if (it_trie0.contains(x0)) {
-				auto &it_trie1 = it_trie0.at(x0);
+			auto it_trie1 = find_range(it_offsets, it_id, x0, it_trie0);
+			if (it_trie1.first != -1) {
 				auto x1 = mi_movie_id[mi_off];
-				if (mc_trie0.contains(x1) && t_trie0.contains(x1)) {
-					auto &mc_trie1 = mc_trie0.at(x1);
-					auto &t_trie1 = t_trie0.at(x1);
-					for (const auto &mc_off: mc_trie1) {
+				auto mc_trie1 = find_range(mc_offsets, mc_movie_id, x1, mc_trie0);
+				auto t_trie1 = find_range(t_offsets, t_id, x1, t_trie0);
+				if (mc_trie1.first != -1 && t_trie1.first != -1) {
+					for (int mc_i = mc_trie1.first; mc_i <= mc_trie1.second; ++mc_i) {
+						const auto &mc_off = mc_offsets[mc_i];
 						auto x2 = mc_company_type_id[mc_off];
-						if (ct_trie0.contains(x2)) {
-							auto &ct_trie1 = ct_trie0.at(x2);
-							for (const auto &t_off: t_trie1) {
+						auto ct_trie1 = find_range(ct_offsets, ct_id, x2, ct_trie0);
+						if (ct_trie1.first != -1) {
+							for (int t_i = t_trie1.first; t_i <= t_trie1.second; ++t_i) {
+								const auto &t_off = t_offsets[t_i];
 								mn_t_title = min(mn_t_title, t_title[t_off]);
 							}
 						}
@@ -55,9 +59,9 @@ int main() {
 
 		if (z == 0)
 			cout << mn_t_title << endl;
-		cerr << "*" << " " << flush;
+		cout << "*" << " " << flush;
 	}
-	cerr << endl;
+	cout << endl;
 
 	vector<double> tm{0};
 	for (int i = 0; i < 2 * 1; ++i)

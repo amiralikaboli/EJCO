@@ -205,9 +205,9 @@ int main() {
 
 		if (z == 0)
 			cout << mn_n_name << " | " << mn_interm4_col2 << " | " << mn_interm4_col4 << " | " << mn_interm4_col6 << endl;
-		cerr << "*" << " " << flush;
+		cout << "*" << " " << flush;
 	}
-	cerr << endl;
+	cout << endl;
 
 	vector<double> tm{0};
 	for (int i = 0; i < 2 * 6; ++i)

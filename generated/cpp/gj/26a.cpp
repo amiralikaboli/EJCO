@@ -189,9 +189,9 @@ int main() {
 
 		if (z == 0)
 			cout << mn_n_name << " | " << mn_chn_name << " | " << mn_interm3_col3 << " | " << mn_interm3_col5 << endl;
-		cerr << "*" << " " << flush;
+		cout << "*" << " " << flush;
 	}
-	cerr << endl;
+	cout << endl;
 
 	vector<double> tm{0};
 	for (int i = 0; i < 2 * 5; ++i)

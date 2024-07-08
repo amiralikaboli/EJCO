@@ -59,9 +59,9 @@ int main() {
 
 		if (z == 0)
 			cout << mn_t_title << " | " << mn_mi_idx_info << endl;
-		cerr << "*" << " " << flush;
+		cout << "*" << " " << flush;
 	}
-	cerr << endl;
+	cout << endl;
 
 	vector<double> tm{0};
 	for (int i = 0; i < 2 * 1; ++i)

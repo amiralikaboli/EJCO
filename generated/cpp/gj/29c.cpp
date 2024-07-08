@@ -261,9 +261,9 @@ int main() {
 
 		if (z == 0)
 			cout << mn_chn_name << " | " << mn_interm6_col1 << " | " << mn_interm4_col4 << endl;
-		cerr << "*" << " " << flush;
+		cout << "*" << " " << flush;
 	}
-	cerr << endl;
+	cout << endl;
 
 	vector<double> tm{0};
 	for (int i = 0; i < 2 * 8; ++i)

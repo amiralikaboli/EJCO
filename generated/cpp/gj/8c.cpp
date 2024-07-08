@@ -87,9 +87,9 @@ int main() {
 
 		if (z == 0)
 			cout << mn_t_title << " | " << mn_a1_name << endl;
-		cerr << "*" << " " << flush;
+		cout << "*" << " " << flush;
 	}
-	cerr << endl;
+	cout << endl;
 
 	vector<double> tm{0};
 	for (int i = 0; i < 2 * 2; ++i)
