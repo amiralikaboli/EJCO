@@ -139,6 +139,7 @@ class CppGenerator:
 				yield f'vector<{rel2col2type[rel_wo_idx(rel)][col]}> {self.var_mng.rel_col_var(interm, self.var_mng.interm_col(idx))};\n'
 			if self.mode == JoinMode.FJ:
 				yield f'vector<int> {self.var_mng.offsets_var(interm)};\n'
+			if self.mode == JoinMode.FJ:
 				yield f'{self.var_mng.cnt_var()} = 0;\n'
 
 		join_attrs_order = {rel: {col: math.inf for col in join_cols} for rel, join_cols, _ in build_plan}
@@ -158,8 +159,18 @@ class CppGenerator:
 			else:
 				start_offset = 0
 
-			for s in self.call_func("lookups", eq_cols[start_offset:], join_attrs_order):
-				yield s
+			conditions = []
+			for rel, col in eq_cols[start_offset:]:
+				conditions.append(
+					f"{self.var_mng.trie_var(rel)}.contains({self.var_mng.x_var(join_attrs_order[rel][col])})"
+				)
+			yield f"if ({' && '.join(conditions)}) {{\n"
+			self.indent += 1
+
+			for rel, col in eq_cols[start_offset:]:
+				yield f"auto &{self.var_mng.next_trie_var(rel)} = {self.var_mng.trie_var(rel)}.at({self.var_mng.x_var(join_attrs_order[rel][col])});\n"
+				self.var_mng.next_trie_var(rel, inplace=True)
+				self.resolved_attrs.add((rel, col))
 
 		if self.var_mng.is_root_rel(interm):
 			rel2proj_cols = {rel: proj_cols for rel, _, proj_cols in build_plan if proj_cols}
@@ -292,13 +303,12 @@ class CppGenerator:
 				if rel not in iter_rels:
 					rel2trie_levels[rel].append(col)
 
-		for rel, _, _ in build_plan:
-			yield f"pair<int, int> {self.var_mng.trie_var(rel)} = {{0, {self.var_mng.offsets_var(rel)}.size() - 1}};\n"
+		rels_in_interm_cols = set(rel for _, (rel, _) in interm_cols)
 		for rel, trie_levels in rel2trie_levels.items():
-			level_types = tuple([rel2col2type[rel_wo_idx(rel)][join_col] for join_col in trie_levels])
-			self.trie_types.add(level_types)
-			yield f"{self.var_mng.build_func()}({self.var_mng.offsets_var(rel)}, {', '.join([self.var_mng.rel_col_var(rel, join_col) for join_col in trie_levels])});\n"
-
+			is_vector_needed = rel in rels_in_interm_cols or rel in iter_rels
+			lines = self._build_trie(rel, trie_levels, is_vector_needed)
+			for line in lines:
+				yield line
 
 	def _build_trie(self, rel, join_cols, is_vector_needed):
 		level_types = tuple([rel2col2type[rel_wo_idx(rel)][join_col] for join_col in join_cols])
@@ -316,8 +326,8 @@ class CppGenerator:
 
 	def _fj_attr_iteration(self, rel_it, col_it, idx):
 		if rel_it not in self.available_tuples:
-			for s in self._fj_offset_iteration(rel_it):
-				yield s
+			yield f"{self._offset_iteration(rel_it)} {{\n"
+			self.indent += 1
 		yield f"auto {self.var_mng.x_var(idx)} = {self.var_mng.rel_col_var(rel_it, col_it)}[{self.var_mng.off_var(rel_it)}];\n"
 		self.available_tuples.add(rel_it)
 
@@ -335,8 +345,8 @@ class CppGenerator:
 	def _fj_min(self, rel, proj_cols):
 		is_available = rel in self.available_tuples
 		if not is_available:
-			for s in self._fj_offset_iteration(rel):
-				yield s
+			yield f"{self._offset_iteration(rel)} {{\n"
+			self.indent += 1
 		for col in proj_cols:
 			yield f'{self.var_mng.mn_rel_col_var(rel, col)} = min({self.var_mng.mn_rel_col_var(rel, col)}, {self.var_mng.rel_col_var(rel, col)}[{self.var_mng.off_var(rel)}]);\n'
 		if not is_available:
@@ -349,32 +359,5 @@ class CppGenerator:
 
 	def _fj_offset_iteration(self, rel):
 		if rel not in self.available_tuples:
-			yield f"for (int {rel}_i = {self.var_mng.trie_var(rel)}.first; {rel}_i <= {self.var_mng.trie_var(rel)}.second; ++{rel}_i) {{\n"
+			yield f"{self._offset_iteration(rel)} {{\n"
 			self.indent += 1
-			yield f"const auto &{self.var_mng.off_var(rel)} = {self.var_mng.offsets_var(rel)}[{rel}_i];\n"
-
-	def _gj_lookups(self, eq_cols, join_attrs_order):
-		conditions = []
-		for rel, col in eq_cols:
-			conditions.append(
-				f"{self.var_mng.trie_var(rel)}.contains({self.var_mng.x_var(join_attrs_order[rel][col])})"
-			)
-		yield f"if ({' && '.join(conditions)}) {{\n"
-		self.indent += 1
-
-		for rel, col in eq_cols:
-			yield f"auto &{self.var_mng.next_trie_var(rel)} = {self.var_mng.trie_var(rel)}.at({self.var_mng.x_var(join_attrs_order[rel][col])});\n"
-			self.var_mng.next_trie_var(rel, inplace=True)
-			self.resolved_attrs.add((rel, col))
-
-	def _fj_lookups(self, eq_cols, join_attrs_order):
-		for rel, col in eq_cols:
-			yield f"auto {self.var_mng.next_trie_var(rel)} = find_range({self.var_mng.offsets_var(rel)}, {self.var_mng.rel_col_var(rel, col)}, {self.var_mng.x_var(join_attrs_order[rel][col])}, {self.var_mng.trie_var(rel)});\n"
-			self.var_mng.next_trie_var(rel, inplace=True)
-			self.resolved_attrs.add((rel, col))
-
-		conditions = []
-		for rel, col in eq_cols:
-			conditions.append(f"{self.var_mng.trie_var(rel)}.first != -1")
-		yield f"if ({' && '.join(conditions)}) {{\n"
-		self.indent += 1

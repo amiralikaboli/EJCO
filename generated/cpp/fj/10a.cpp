@@ -22,13 +22,12 @@ int main() {
 		int cnt;
 		timer.Reset();
 
-		pair<int, int> mc_trie0 = {0, mc_offsets.size() - 1};
-		pair<int, int> t_trie0 = {0, t_offsets.size() - 1};
-		pair<int, int> ct_trie0 = {0, ct_offsets.size() - 1};
-		pair<int, int> cn_trie0 = {0, cn_offsets.size() - 1};
-		build_trie(ct_offsets, ct_id);
-		build_trie(cn_offsets, cn_id);
-		build_trie(t_offsets, t_id);
+		auto ct_trie0 = phmap::flat_hash_map<int, bool>();
+		build_trie(ct_trie0, ct_id);
+		auto cn_trie0 = phmap::flat_hash_map<int, bool>();
+		build_trie(cn_trie0, cn_id);
+		auto t_trie0 = phmap::flat_hash_map<int, vector<int>>();
+		build_trie(t_trie0, t_id);
 		timer.StoreElapsedTime(0);
 
 		vector<int> interm0_col0;
@@ -37,19 +36,17 @@ int main() {
 		vector<string> interm0_col3;
 		vector<int> interm0_offsets;
 		cnt = 0;
-		for (int mc_i = mc_trie0.first; mc_i <= mc_trie0.second; ++mc_i) {
-			const auto &mc_off = mc_offsets[mc_i];
+		for (const auto &mc_off: mc_offsets) {
 			auto x0 = mc_company_type_id[mc_off];
-			auto ct_trie1 = find_range(ct_offsets, ct_id, x0, ct_trie0);
-			if (ct_trie1.first != -1) {
+			if (ct_trie0.contains(x0)) {
+				auto &ct_trie1 = ct_trie0.at(x0);
 				auto x1 = mc_company_id[mc_off];
-				auto cn_trie1 = find_range(cn_offsets, cn_id, x1, cn_trie0);
-				if (cn_trie1.first != -1) {
+				if (cn_trie0.contains(x1)) {
+					auto &cn_trie1 = cn_trie0.at(x1);
 					auto x2 = mc_movie_id[mc_off];
-					auto t_trie1 = find_range(t_offsets, t_id, x2, t_trie0);
-					if (t_trie1.first != -1) {
-						for (int t_i = t_trie1.first; t_i <= t_trie1.second; ++t_i) {
-							const auto &t_off = t_offsets[t_i];
+					if (t_trie0.contains(x2)) {
+						auto &t_trie1 = t_trie0.at(x2);
+						for (const auto &t_off: t_trie1) {
 							interm0_col0.push_back(mc_movie_id[mc_off]);
 							interm0_col1.push_back(mc_company_type_id[mc_off]);
 							interm0_col2.push_back(mc_company_id[mc_off]);
@@ -62,34 +59,30 @@ int main() {
 		}
 		timer.StoreElapsedTime(1);
 
-		pair<int, int> ci_trie0 = {0, ci_offsets.size() - 1};
-		pair<int, int> rt_trie0 = {0, rt_offsets.size() - 1};
-		pair<int, int> interm0_trie0 = {0, interm0_offsets.size() - 1};
-		pair<int, int> chn_trie0 = {0, chn_offsets.size() - 1};
-		build_trie(rt_offsets, rt_id);
-		build_trie(interm0_offsets, interm0_col0);
-		build_trie(chn_offsets, chn_id);
+		auto rt_trie0 = phmap::flat_hash_map<int, bool>();
+		build_trie(rt_trie0, rt_id);
+		auto interm0_trie0 = phmap::flat_hash_map<int, vector<int>>();
+		build_trie(interm0_trie0, interm0_col0);
+		auto chn_trie0 = phmap::flat_hash_map<int, vector<int>>();
+		build_trie(chn_trie0, chn_id);
 		timer.StoreElapsedTime(2);
 
 		string mn_interm0_col3 = "zzzzzzzz";
 		string mn_chn_name = "zzzzzzzz";
-		for (int ci_i = ci_trie0.first; ci_i <= ci_trie0.second; ++ci_i) {
-			const auto &ci_off = ci_offsets[ci_i];
+		for (const auto &ci_off: ci_offsets) {
 			auto x0 = ci_role_id[ci_off];
-			auto rt_trie1 = find_range(rt_offsets, rt_id, x0, rt_trie0);
-			if (rt_trie1.first != -1) {
+			if (rt_trie0.contains(x0)) {
+				auto &rt_trie1 = rt_trie0.at(x0);
 				auto x1 = ci_movie_id[ci_off];
-				auto interm0_trie1 = find_range(interm0_offsets, interm0_col0, x1, interm0_trie0);
-				if (interm0_trie1.first != -1) {
+				if (interm0_trie0.contains(x1)) {
+					auto &interm0_trie1 = interm0_trie0.at(x1);
 					auto x2 = ci_person_role_id[ci_off];
-					auto chn_trie1 = find_range(chn_offsets, chn_id, x2, chn_trie0);
-					if (chn_trie1.first != -1) {
-						for (int interm0_i = interm0_trie1.first; interm0_i <= interm0_trie1.second; ++interm0_i) {
-							const auto &interm0_off = interm0_offsets[interm0_i];
+					if (chn_trie0.contains(x2)) {
+						auto &chn_trie1 = chn_trie0.at(x2);
+						for (const auto &interm0_off: interm0_trie1) {
 							mn_interm0_col3 = min(mn_interm0_col3, interm0_col3[interm0_off]);
 						}
-						for (int chn_i = chn_trie1.first; chn_i <= chn_trie1.second; ++chn_i) {
-							const auto &chn_off = chn_offsets[chn_i];
+						for (const auto &chn_off: chn_trie1) {
 							mn_chn_name = min(mn_chn_name, chn_name[chn_off]);
 						}
 					}

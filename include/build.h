@@ -4,46 +4,42 @@
 
 using namespace std;
 
-void build_trie(vector<int> &off, vector<int> &attr0) {
-	sort(off.begin(), off.end(), [&attr0](const auto &i, const auto &j) {
-		if (attr0[i] < attr0[j]) return true;
-		else return false;
-	});
+void build_trie(phmap::flat_hash_map<int, vector<int>> &trie, vector<int> &attr0){
+	for (int i = 0; i < attr0.size(); ++i)
+		trie[attr0[i]].push_back(i);
 }
 
-inline pair<int, int> find_range(vector<int> &off, vector<int> &attr0, const int &target, pair<int, int> range) {
-	int first = -1;
-	int last = -1;
+void build_trie(phmap::flat_hash_map<int, phmap::flat_hash_map<int, vector<int>>> &trie, vector<int> &attr0, vector<int> &attr1){
+	for (int i = 0; i < attr0.size(); ++i)
+		trie[attr0[i]][attr1[i]].push_back(i);
+}
 
-	int left = range.first;
-	int right = range.second;
-	while (left <= right) {
-		int mid = (left + right) >> 1;
-		if (attr0[off[mid]] == target) {
-			first = mid;
-			right = mid - 1;
-		} else if (attr0[off[mid]] < target) {
-			left = mid + 1;
-		} else {
-			right = mid - 1;
-		}
-	}
+void build_trie(phmap::flat_hash_map<int, phmap::flat_hash_map<int, phmap::flat_hash_map<int, vector<int>>>> &trie, vector<int> &attr0, vector<int> &attr1, vector<int> &attr2){
+	for (int i = 0; i < attr0.size(); ++i)
+		trie[attr0[i]][attr1[i]][attr2[i]].push_back(i);
+}
 
-	if (first == -1)
-		return {-1, -1};
+void build_trie(phmap::flat_hash_map<int, phmap::flat_hash_map<int, phmap::flat_hash_map<int, phmap::flat_hash_map<int, vector<int>>>>> &trie, vector<int> &attr0, vector<int> &attr1, vector<int> &attr2, vector<int> &attr3){
+	for (int i = 0; i < attr0.size(); ++i)
+		trie[attr0[i]][attr1[i]][attr2[i]][attr3[i]].push_back(i);
+}
 
-//	last = first - 1;
-//	while (last + 1 <= range.second && attr0[off[last + 1]] == target) {
-//		int pw = 1;
-//		while (last + pw <= range.second && attr0[off[last + pw]] == target)
-//			pw <<= 1;
-//		last += pw >> 1;
-//	}
+void build_trie(phmap::flat_hash_map<int, bool> &trie, vector<int> &attr0){
+	for (int i = 0; i < attr0.size(); ++i)
+		trie[attr0[i]] = true;
+}
 
-	last = first;
-	while (last <= range.second && attr0[off[last]] == target)
-		++last;
-	--last;
+void build_trie(phmap::flat_hash_map<int, phmap::flat_hash_map<int, bool>> &trie, vector<int> &attr0, vector<int> &attr1){
+	for (int i = 0; i < attr0.size(); ++i)
+		trie[attr0[i]][attr1[i]] = true;
+}
 
-	return {first, last};
+void build_trie(phmap::flat_hash_map<int, phmap::flat_hash_map<int, phmap::flat_hash_map<int, bool>>> &trie, vector<int> &attr0, vector<int> &attr1, vector<int> &attr2){
+	for (int i = 0; i < attr0.size(); ++i)
+		trie[attr0[i]][attr1[i]][attr2[i]] = true;
+}
+
+void build_trie(phmap::flat_hash_map<int, phmap::flat_hash_map<int, phmap::flat_hash_map<int, phmap::flat_hash_map<int, bool>>>> &trie, vector<int> &attr0, vector<int> &attr1, vector<int> &attr2, vector<int> &attr3){
+	for (int i = 0; i < attr0.size(); ++i)
+		trie[attr0[i]][attr1[i]][attr2[i]][attr3[i]] = true;
 }
