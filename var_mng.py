@@ -20,7 +20,9 @@ class VariableManager:
 	def _trie_var(rel: str, idx: int):
 		return f"{rel}_{Templates.TrieVar.value}{idx}"
 
-	def trie_var(self, rel: str):
+	def trie_var(self, rel: str, idx: int = None):
+		if idx:
+			return self._trie_var(rel, idx)
 		if rel not in self._trie_vars.keys():
 			self._trie_vars[rel] = self._trie_var(rel, 0)
 		return self._trie_vars[rel]

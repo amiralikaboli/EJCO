@@ -2,7 +2,7 @@ import os
 import sys
 
 from consts import JoinMode, plans_path
-from cpp_gen import CppGenerator
+from cpp_gen import GJCppGenerator, FJCppGenerator
 from parser import PlanParser
 from sdql_gen import SDQLGenerator
 from var_mng import VariableManager
@@ -19,7 +19,7 @@ if __name__ == '__main__':
 	var_mng = VariableManager()
 	parser = PlanParser(mode, var_mng)
 	sdql_gen = SDQLGenerator(mode, var_mng)
-	cpp_gen = CppGenerator(mode, var_mng)
+	cpp_gen = GJCppGenerator(var_mng) if mode == JoinMode.GJ else FJCppGenerator(var_mng)
 	for query in queries:
 		var_mng.clear()
 		parser.clear()
