@@ -1,3 +1,4 @@
+import itertools
 import math
 import os
 from abc import abstractmethod
@@ -5,7 +6,7 @@ from collections import defaultdict
 from typing import List, Tuple
 
 from consts import preprocessed_data_path, raw_data_path, include_dir_path, generated_cpp_path, rel_wo_idx, abbr2rel, \
-	rel2col2type, inf_values, JoinMode
+	rel2col2type, inf_values, JoinMode, Templates
 from var_mng import VariableManager
 
 
@@ -21,9 +22,15 @@ class AbstractCppGenerator:
 		self.save_path = str()
 
 	def clear(self):
-		self.resolved_attrs = set()
-		self.involved_cols = set()
+		self.load_clear()
+		self.query_clear()
+
+	def load_clear(self):
 		self.loaded_rels = set()
+		self.involved_cols = set()
+
+	def query_clear(self):
+		self.resolved_attrs = set()
 		self.available_tuples = set()
 
 	def generate(self, query: str, plans: List[Tuple[Tuple[str, List, List], List, List]]):
@@ -206,17 +213,6 @@ class AbstractCppGenerator:
 
 		self._format(os.path.join(self.save_path, "load", f"{query}.h"))
 
-	def _build_trie(self, rel, join_cols, is_vector_needed):
-		content = str()
-		level_types = tuple([rel2col2type[rel_wo_idx(rel)][join_col] for join_col in join_cols])
-		self.trie_types.add(level_types)
-		if is_vector_needed:
-			content += f"auto {self.var_mng.trie_var(rel)} = {self.var_mng.trie_def(level_types)}();\n"
-		else:
-			content += f"auto {self.var_mng.trie_var(rel)} = {self.var_mng.trie_def(level_types, 'bool')}();\n"
-		content += f"{self.var_mng.build_func()}({self.var_mng.trie_var(rel)}, {', '.join([self.var_mng.rel_col_var(rel, join_col) for join_col in join_cols])});\n"
-		return content
-
 	def _offset_iteration(self, rel):
 		return f"for (const auto &{self.var_mng.off_var(rel)}: {self.var_mng.offsets_var(rel, it=True)})"
 
@@ -240,7 +236,13 @@ class GJCppGenerator(AbstractCppGenerator):
 		content = str()
 		rels_in_interm_cols = set(rel for _, (rel, _) in interm_cols)
 		for rel, join_cols, proj_cols in build_plan:
-			content += self._build_trie(rel, join_cols, rel in rels_in_interm_cols)
+			level_types = tuple([rel2col2type[rel_wo_idx(rel)][join_col] for join_col in join_cols])
+			self.trie_types.add(level_types)
+			if rel in rels_in_interm_cols:
+				content += f"auto {self.var_mng.trie_var(rel)} = {self.var_mng.trie_def(level_types)}();\n"
+			else:
+				content += f"auto {self.var_mng.trie_var(rel)} = {self.var_mng.trie_def(level_types, 'bool')}();\n"
+			content += f"{self.var_mng.build_func()}({self.var_mng.trie_var(rel)}, {', '.join([self.var_mng.rel_col_var(rel, join_col) for join_col in join_cols])});\n"
 		return content
 
 	def _generate_subquery(
@@ -319,6 +321,11 @@ class FJCppGenerator(AbstractCppGenerator):
 	def __init__(self, var_mng: VariableManager):
 		super().__init__(var_mng)
 		self.save_path = os.path.join(generated_cpp_path, JoinMode.FJ.value)
+		self.vector_tries = list()
+
+	def clear(self):
+		super().clear()
+		self.vector_tries = list()
 
 	def _generate_build_tries(
 			self,
@@ -338,9 +345,20 @@ class FJCppGenerator(AbstractCppGenerator):
 					rel2trie_levels[rel].append(col)
 
 		rels_in_interm_cols = set(rel for _, (rel, _) in interm_cols)
-		for rel, trie_levels in rel2trie_levels.items():
-			is_vector_needed = rel in rels_in_interm_cols or rel in iter_rels
-			content += self._build_trie(rel, trie_levels, is_vector_needed)
+		for rel, join_cols in rel2trie_levels.items():
+			level_types = tuple([rel2col2type[rel_wo_idx(rel)][join_col] for join_col in join_cols])
+			self.trie_types.add(level_types)
+			if rel in rels_in_interm_cols or rel in iter_rels:
+				trie_var = self.var_mng.trie_var(rel)
+				vtrie_var = trie_var.replace("trie", "vtrie")
+				itrie_var = trie_var.replace("trie", "itrie")
+				content += f"auto {vtrie_var} = {self.var_mng.trie_def(level_types)}();\n"
+				content += f"auto {itrie_var} = {self.var_mng.trie_def(level_types, 'int')}();\n"
+				content += f"auto {self.var_mng.isunq_var(rel)} = {self.var_mng.build_func()}({vtrie_var}, {itrie_var}, {self.var_mng.offsets_var(rel)}, {', '.join([self.var_mng.rel_col_var(rel, join_col) for join_col in join_cols])});\n"
+				self.vector_tries.append(rel)
+			else:
+				content += f"auto {self.var_mng.trie_var(rel)} = {self.var_mng.trie_def(level_types, 'bool')}();\n"
+				content += f"{self.var_mng.build_func()}({self.var_mng.trie_var(rel)}, {self.var_mng.offsets_var(rel)}, {', '.join([self.var_mng.rel_col_var(rel, join_col) for join_col in join_cols])});\n"
 		return content
 
 	def _generate_subquery(
@@ -350,7 +368,6 @@ class FJCppGenerator(AbstractCppGenerator):
 			compiled_plan: List[List[Tuple[str, str]]]
 	):
 		content = str()
-		brackets = 0
 
 		interm, interm_cols, _ = node
 
@@ -369,61 +386,97 @@ class FJCppGenerator(AbstractCppGenerator):
 			min_idx = min(idx, *[join_attrs_order[rel][col] for rel, col in eq_cols])
 			for rel, col in eq_cols:
 				join_attrs_order[rel][col] = min_idx
-		for idx, eq_cols in enumerate(compiled_plan):
-			rel_it, col_it = eq_cols[0]
-			if join_attrs_order[rel_it][col_it] == idx:
-				if rel_it not in self.available_tuples:
-					content += f"{self._offset_iteration(rel_it)} {{\n"
-					brackets += 1
-				content += f"auto {self.var_mng.x_var(idx)} = {self.var_mng.rel_col_var(rel_it, col_it)}[{self.var_mng.off_var(rel_it)}];\n"
-				self.available_tuples.add(rel_it)
-				self.resolved_attrs.add(eq_cols[0])
-				start_offset = 1
-			elif eq_cols[0] in self.resolved_attrs:
-				start_offset = 1
+
+		for mask in list(itertools.product([0, 1], repeat=len(self.vector_tries))):
+			self.query_clear()
+			self.var_mng.clear()
+			brackets = 0
+
+			rel2iv = defaultdict(str)
+			for rel, bitval in zip(self.vector_tries, mask):
+				rel2iv[rel] = "i" if bitval else "v"
+			if self.vector_tries:
+				if sum(mask) != 0:
+					content += "else "
+				if sum(mask) != len(self.vector_tries):
+					content += f"if ({' && '.join([f'{self.var_mng.isunq_var(rel)} == {bitval}' for rel, bitval in zip(self.vector_tries, mask)])}) "
+				content += "{\n"
+
+			for idx, eq_cols in enumerate(compiled_plan):
+				rel_it, col_it = eq_cols[0]
+				if join_attrs_order[rel_it][col_it] == idx:
+					if rel_it not in self.available_tuples:
+						offsets_var = self._mode_trie_var(self.var_mng.offsets_var(rel_it, it=True), rel2iv[rel_it])
+						if rel2iv[rel_it] == "v" or Templates.TrieVar.value not in offsets_var:
+							content += f"for (const auto &{self.var_mng.off_var(rel_it)}: {offsets_var}) {{\n"
+							brackets += 1
+						elif rel2iv[rel_it] == "i":
+							content += f"auto &{self.var_mng.off_var(rel_it)} = {offsets_var};\n"
+					content += f"auto {self.var_mng.x_var(idx)} = {self.var_mng.rel_col_var(rel_it, col_it)}[{self.var_mng.off_var(rel_it)}];\n"
+					self.available_tuples.add(rel_it)
+					self.resolved_attrs.add(eq_cols[0])
+					start_offset = 1
+				elif eq_cols[0] in self.resolved_attrs:
+					start_offset = 1
+				else:
+					start_offset = 0
+
+				conditions = []
+				for rel, col in eq_cols[start_offset:]:
+					trie_var = self._mode_trie_var(self.var_mng.trie_var(rel), rel2iv[rel])
+					conditions.append(f"{trie_var}.contains({self.var_mng.x_var(join_attrs_order[rel][col])})")
+				content += f"if ({' && '.join(conditions)}) {{\n"
+				brackets += 1
+
+				for rel, col in eq_cols[start_offset:]:
+					trie_var = self._mode_trie_var(self.var_mng.trie_var(rel), rel2iv[rel])
+					next_trie_var = self._mode_trie_var(self.var_mng.next_trie_var(rel), rel2iv[rel])
+					content += f"auto &{next_trie_var} = {trie_var}.at({self.var_mng.x_var(join_attrs_order[rel][col])});\n"
+					self.var_mng.next_trie_var(rel, inplace=True)
+					self.resolved_attrs.add((rel, col))
+
+			if self.var_mng.is_root_rel(interm):
+				rel2proj_cols = {rel: proj_cols for rel, _, proj_cols in build_plan if proj_cols}
+				for rel, proj_cols in rel2proj_cols.items():
+					is_available = rel in self.available_tuples
+					flag = False
+					if not is_available:
+						offsets_var = self._mode_trie_var(self.var_mng.offsets_var(rel, it=True), rel2iv[rel])
+						if rel2iv[rel] == "v":
+							content += f"for (const auto &{self.var_mng.off_var(rel)}: {offsets_var}) {{\n"
+							flag = True
+						elif rel2iv[rel] == "i":
+							content += f"auto &{self.var_mng.off_var(rel)} = {offsets_var};\n"
+					for col in proj_cols:
+						content += f'{self.var_mng.mn_rel_col_var(rel, col)} = min({self.var_mng.mn_rel_col_var(rel, col)}, {self.var_mng.rel_col_var(rel, col)}[{self.var_mng.off_var(rel)}]);\n'
+					if not is_available and flag:
+						content += '}\n'
 			else:
-				start_offset = 0
+				interm_rel2cols = defaultdict(list)
+				for _, (rel, col) in interm_cols:
+					interm_rel2cols[rel].append(col)
+				rel2col2type[interm] = dict()
+				for rel, cols in interm_rel2cols.items():
+					if rel not in self.available_tuples:
+						offsets_var = self._mode_trie_var(self.var_mng.offsets_var(rel, it=True), rel2iv[rel])
+						if rel2iv[rel] == "v":
+							content += f"for (const auto &{self.var_mng.off_var(rel)}: {offsets_var}) {{\n"
+							brackets += 1
+						elif rel2iv[rel] == "i":
+							content += f"auto &{self.var_mng.off_var(rel)} = {offsets_var};\n"
+				for idx, (rel, col) in interm_cols:
+					interm_col = self.var_mng.interm_col(idx)
+					interm_col_type = rel2col2type[rel_wo_idx(rel)][col]
+					rel2col2type[interm][interm_col] = interm_col_type
+					content += f'{self.var_mng.rel_col_var(interm, interm_col)}.push_back({self.var_mng.rel_col_var(rel, col)}[{self.var_mng.off_var(rel)}]);\n'
+				content += f'{self.var_mng.offsets_var(interm)}.push_back({self.var_mng.cnt_var()}++);\n'
+			content += '}\n' * brackets
 
-			conditions = []
-			for rel, col in eq_cols[start_offset:]:
-				conditions.append(
-					f"{self.var_mng.trie_var(rel)}.contains({self.var_mng.x_var(join_attrs_order[rel][col])})"
-				)
-			content += f"if ({' && '.join(conditions)}) {{\n"
-			brackets += 1
+			if self.vector_tries:
+				content += "}\n"
 
-			for rel, col in eq_cols[start_offset:]:
-				content += f"auto &{self.var_mng.next_trie_var(rel)} = {self.var_mng.trie_var(rel)}.at({self.var_mng.x_var(join_attrs_order[rel][col])});\n"
-				self.var_mng.next_trie_var(rel, inplace=True)
-				self.resolved_attrs.add((rel, col))
-
-		if self.var_mng.is_root_rel(interm):
-			rel2proj_cols = {rel: proj_cols for rel, _, proj_cols in build_plan if proj_cols}
-			for rel, proj_cols in rel2proj_cols.items():
-				is_available = rel in self.available_tuples
-				if not is_available:
-					content += f"{self._offset_iteration(rel)} {{\n"
-				for col in proj_cols:
-					content += f'{self.var_mng.mn_rel_col_var(rel, col)} = min({self.var_mng.mn_rel_col_var(rel, col)}, {self.var_mng.rel_col_var(rel, col)}[{self.var_mng.off_var(rel)}]);\n'
-				if not is_available:
-					content += '}\n'
-		else:
-			interm_rel2cols = defaultdict(list)
-			for _, (rel, col) in interm_cols:
-				interm_rel2cols[rel].append(col)
-			rel2col2type[interm] = dict()
-			for rel, cols in interm_rel2cols.items():
-				if rel not in self.available_tuples:
-					content += f"{self._offset_iteration(rel)} {{\n"
-
-			for idx, (rel, col) in interm_cols:
-				interm_col = self.var_mng.interm_col(idx)
-				interm_col_type = rel2col2type[rel_wo_idx(rel)][col]
-				rel2col2type[interm][interm_col] = interm_col_type
-				content += f'{self.var_mng.rel_col_var(interm, interm_col)}.push_back({self.var_mng.rel_col_var(rel, col)}[{self.var_mng.off_var(rel)}]);\n'
-			content += f'{self.var_mng.offsets_var(interm)}.push_back({self.var_mng.cnt_var()}++);\n'
-			for rel in interm_rel2cols.keys():
-				if rel not in self.available_tuples:
-					content += '}\n'
-		content += '}\n' * brackets
 		return content
+
+	@staticmethod
+	def _mode_trie_var(var_name: str, mode: str):
+		return var_name.replace(Templates.TrieVar.value, f"{mode}{Templates.TrieVar.value}")

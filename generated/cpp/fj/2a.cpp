@@ -21,31 +21,94 @@ int main() {
         timer.Reset();
 
         auto k_trie0 = phmap::flat_hash_map<int, bool>();
-        build_trie(k_trie0, k_id);
-        auto t_trie0 = phmap::flat_hash_map<int, vector<int>>();
-        build_trie(t_trie0, t_id);
-        auto mc_trie0 = phmap::flat_hash_map<int, vector<int>>();
-        build_trie(mc_trie0, mc_movie_id);
+        build_trie(k_trie0, k_offsets, k_id);
+        auto t_vtrie0 = phmap::flat_hash_map<int, vector<int>>();
+        auto t_itrie0 = phmap::flat_hash_map<int, int>();
+        auto t_isunq = build_trie(t_vtrie0, t_itrie0, t_offsets, t_id);
+        auto mc_vtrie0 = phmap::flat_hash_map<int, vector<int>>();
+        auto mc_itrie0 = phmap::flat_hash_map<int, int>();
+        auto mc_isunq = build_trie(mc_vtrie0, mc_itrie0, mc_offsets, mc_movie_id);
         auto cn_trie0 = phmap::flat_hash_map<int, bool>();
-        build_trie(cn_trie0, cn_id);
+        build_trie(cn_trie0, cn_offsets, cn_id);
         timer.StoreElapsedTime(0);
 
         string mn_t_title = "zzzzzzzz";
-        for (const auto &mk_off : mk_offsets) {
-            auto x0 = mk_keyword_id[mk_off];
-            if (k_trie0.contains(x0)) {
-                auto &k_trie1 = k_trie0.at(x0);
-                auto x1 = mk_movie_id[mk_off];
-                if (t_trie0.contains(x1) && mc_trie0.contains(x1)) {
-                    auto &t_trie1 = t_trie0.at(x1);
-                    auto &mc_trie1 = mc_trie0.at(x1);
-                    for (const auto &mc_off : mc_trie1) {
+        if (t_isunq == 0 && mc_isunq == 0) {
+            for (const auto &mk_off : mk_offsets) {
+                auto x0 = mk_keyword_id[mk_off];
+                if (k_trie0.contains(x0)) {
+                    auto &k_trie1 = k_trie0.at(x0);
+                    auto x1 = mk_movie_id[mk_off];
+                    if (t_vtrie0.contains(x1) && mc_vtrie0.contains(x1)) {
+                        auto &t_vtrie1 = t_vtrie0.at(x1);
+                        auto &mc_vtrie1 = mc_vtrie0.at(x1);
+                        for (const auto &mc_off : mc_vtrie1) {
+                            auto x2 = mc_company_id[mc_off];
+                            if (cn_trie0.contains(x2)) {
+                                auto &cn_trie1 = cn_trie0.at(x2);
+                                for (const auto &t_off : t_vtrie1) {
+                                    mn_t_title = min(mn_t_title, t_title[t_off]);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        } else if (t_isunq == 0 && mc_isunq == 1) {
+            for (const auto &mk_off : mk_offsets) {
+                auto x0 = mk_keyword_id[mk_off];
+                if (k_trie0.contains(x0)) {
+                    auto &k_trie1 = k_trie0.at(x0);
+                    auto x1 = mk_movie_id[mk_off];
+                    if (t_vtrie0.contains(x1) && mc_itrie0.contains(x1)) {
+                        auto &t_vtrie1 = t_vtrie0.at(x1);
+                        auto &mc_itrie1 = mc_itrie0.at(x1);
+                        auto &mc_off = mc_itrie1;
                         auto x2 = mc_company_id[mc_off];
                         if (cn_trie0.contains(x2)) {
                             auto &cn_trie1 = cn_trie0.at(x2);
-                            for (const auto &t_off : t_trie1) {
+                            for (const auto &t_off : t_vtrie1) {
                                 mn_t_title = min(mn_t_title, t_title[t_off]);
                             }
+                        }
+                    }
+                }
+            }
+        } else if (t_isunq == 1 && mc_isunq == 0) {
+            for (const auto &mk_off : mk_offsets) {
+                auto x0 = mk_keyword_id[mk_off];
+                if (k_trie0.contains(x0)) {
+                    auto &k_trie1 = k_trie0.at(x0);
+                    auto x1 = mk_movie_id[mk_off];
+                    if (t_itrie0.contains(x1) && mc_vtrie0.contains(x1)) {
+                        auto &t_itrie1 = t_itrie0.at(x1);
+                        auto &mc_vtrie1 = mc_vtrie0.at(x1);
+                        for (const auto &mc_off : mc_vtrie1) {
+                            auto x2 = mc_company_id[mc_off];
+                            if (cn_trie0.contains(x2)) {
+                                auto &cn_trie1 = cn_trie0.at(x2);
+                                auto &t_off = t_itrie1;
+                                mn_t_title = min(mn_t_title, t_title[t_off]);
+                            }
+                        }
+                    }
+                }
+            }
+        } else {
+            for (const auto &mk_off : mk_offsets) {
+                auto x0 = mk_keyword_id[mk_off];
+                if (k_trie0.contains(x0)) {
+                    auto &k_trie1 = k_trie0.at(x0);
+                    auto x1 = mk_movie_id[mk_off];
+                    if (t_itrie0.contains(x1) && mc_itrie0.contains(x1)) {
+                        auto &t_itrie1 = t_itrie0.at(x1);
+                        auto &mc_itrie1 = mc_itrie0.at(x1);
+                        auto &mc_off = mc_itrie1;
+                        auto x2 = mc_company_id[mc_off];
+                        if (cn_trie0.contains(x2)) {
+                            auto &cn_trie1 = cn_trie0.at(x2);
+                            auto &t_off = t_itrie1;
+                            mn_t_title = min(mn_t_title, t_title[t_off]);
                         }
                     }
                 }

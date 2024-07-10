@@ -26,6 +26,7 @@ class Templates(enum.Enum):
 	RootRel = "root"
 	CntVar = "cnt"
 	OffsetsVar = "offsets"
+	IsUnqVar = "isunq"
 
 
 class JoinMode(enum.Enum):

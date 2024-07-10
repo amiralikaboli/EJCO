@@ -19,8 +19,9 @@ int main() {
         int cnt;
         timer.Reset();
 
-        auto t_trie0 = phmap::flat_hash_map<int, vector<int>>();
-        build_trie(t_trie0, t_id);
+        auto t_vtrie0 = phmap::flat_hash_map<int, vector<int>>();
+        auto t_itrie0 = phmap::flat_hash_map<int, int>();
+        auto t_isunq = build_trie(t_vtrie0, t_itrie0, t_offsets, t_id);
         timer.StoreElapsedTime(0);
 
         vector<int> interm0_col0;
@@ -28,11 +29,25 @@ int main() {
         vector<string> interm0_col2;
         vector<int> interm0_offsets;
         cnt = 0;
-        for (const auto &mk_off : mk_offsets) {
-            auto x0 = mk_movie_id[mk_off];
-            if (t_trie0.contains(x0)) {
-                auto &t_trie1 = t_trie0.at(x0);
-                for (const auto &t_off : t_trie1) {
+        if (t_isunq == 0) {
+            for (const auto &mk_off : mk_offsets) {
+                auto x0 = mk_movie_id[mk_off];
+                if (t_vtrie0.contains(x0)) {
+                    auto &t_vtrie1 = t_vtrie0.at(x0);
+                    for (const auto &t_off : t_vtrie1) {
+                        interm0_col0.push_back(mk_movie_id[mk_off]);
+                        interm0_col1.push_back(mk_keyword_id[mk_off]);
+                        interm0_col2.push_back(t_title[t_off]);
+                        interm0_offsets.push_back(cnt++);
+                    }
+                }
+            }
+        } else {
+            for (const auto &mk_off : mk_offsets) {
+                auto x0 = mk_movie_id[mk_off];
+                if (t_itrie0.contains(x0)) {
+                    auto &t_itrie1 = t_itrie0.at(x0);
+                    auto &t_off = t_itrie1;
                     interm0_col0.push_back(mk_movie_id[mk_off]);
                     interm0_col1.push_back(mk_keyword_id[mk_off]);
                     interm0_col2.push_back(t_title[t_off]);
@@ -42,18 +57,61 @@ int main() {
         }
         timer.StoreElapsedTime(1);
 
-        auto interm0_trie0 = phmap::flat_hash_map<int, vector<int>>();
-        build_trie(interm0_trie0, interm0_col0);
+        auto interm0_vtrie0 = phmap::flat_hash_map<int, vector<int>>();
+        auto interm0_itrie0 = phmap::flat_hash_map<int, int>();
+        auto interm0_isunq = build_trie(interm0_vtrie0, interm0_itrie0, interm0_offsets, interm0_col0);
         auto k_trie0 = phmap::flat_hash_map<int, bool>();
-        build_trie(k_trie0, k_id);
+        build_trie(k_trie0, k_offsets, k_id);
         timer.StoreElapsedTime(2);
 
         string mn_interm0_col2 = "zzzzzzzz";
-        for (const auto &mi_off : mi_offsets) {
-            auto x0 = mi_movie_id[mi_off];
-            if (interm0_trie0.contains(x0)) {
-                auto &interm0_trie1 = interm0_trie0.at(x0);
-                for (const auto &interm0_off : interm0_trie1) {
+        if (t_isunq == 0 && interm0_isunq == 0) {
+            for (const auto &mi_off : mi_offsets) {
+                auto x0 = mi_movie_id[mi_off];
+                if (interm0_vtrie0.contains(x0)) {
+                    auto &interm0_vtrie1 = interm0_vtrie0.at(x0);
+                    for (const auto &interm0_off : interm0_vtrie1) {
+                        auto x1 = interm0_col1[interm0_off];
+                        if (k_trie0.contains(x1)) {
+                            auto &k_trie1 = k_trie0.at(x1);
+                            mn_interm0_col2 = min(mn_interm0_col2, interm0_col2[interm0_off]);
+                        }
+                    }
+                }
+            }
+        } else if (t_isunq == 0 && interm0_isunq == 1) {
+            for (const auto &mi_off : mi_offsets) {
+                auto x0 = mi_movie_id[mi_off];
+                if (interm0_itrie0.contains(x0)) {
+                    auto &interm0_itrie1 = interm0_itrie0.at(x0);
+                    auto &interm0_off = interm0_itrie1;
+                    auto x1 = interm0_col1[interm0_off];
+                    if (k_trie0.contains(x1)) {
+                        auto &k_trie1 = k_trie0.at(x1);
+                        mn_interm0_col2 = min(mn_interm0_col2, interm0_col2[interm0_off]);
+                    }
+                }
+            }
+        } else if (t_isunq == 1 && interm0_isunq == 0) {
+            for (const auto &mi_off : mi_offsets) {
+                auto x0 = mi_movie_id[mi_off];
+                if (interm0_vtrie0.contains(x0)) {
+                    auto &interm0_vtrie1 = interm0_vtrie0.at(x0);
+                    for (const auto &interm0_off : interm0_vtrie1) {
+                        auto x1 = interm0_col1[interm0_off];
+                        if (k_trie0.contains(x1)) {
+                            auto &k_trie1 = k_trie0.at(x1);
+                            mn_interm0_col2 = min(mn_interm0_col2, interm0_col2[interm0_off]);
+                        }
+                    }
+                }
+            }
+        } else {
+            for (const auto &mi_off : mi_offsets) {
+                auto x0 = mi_movie_id[mi_off];
+                if (interm0_itrie0.contains(x0)) {
+                    auto &interm0_itrie1 = interm0_itrie0.at(x0);
+                    auto &interm0_off = interm0_itrie1;
                     auto x1 = interm0_col1[interm0_off];
                     if (k_trie0.contains(x1)) {
                         auto &k_trie1 = k_trie0.at(x1);

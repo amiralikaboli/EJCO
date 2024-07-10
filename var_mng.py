@@ -21,8 +21,6 @@ class VariableManager:
 		return f"{rel}_{Templates.TrieVar.value}{idx}"
 
 	def trie_var(self, rel: str, idx: int = None):
-		if idx:
-			return self._trie_var(rel, idx)
 		if rel not in self._trie_vars.keys():
 			self._trie_vars[rel] = self._trie_var(rel, 0)
 		return self._trie_vars[rel]
@@ -108,3 +106,7 @@ class VariableManager:
 		if it:
 			return self.trie_var(rel) if rel in self._trie_vars.keys() else var
 		return var
+
+	@staticmethod
+	def isunq_var(rel: str):
+		return f"{rel}_{Templates.IsUnqVar.value}"

@@ -23,10 +23,11 @@ int main() {
         int cnt;
         timer.Reset();
 
-        auto pi_trie0 = phmap::flat_hash_map<int, vector<int>>();
-        build_trie(pi_trie0, pi_person_id);
+        auto pi_vtrie0 = phmap::flat_hash_map<int, vector<int>>();
+        auto pi_itrie0 = phmap::flat_hash_map<int, int>();
+        auto pi_isunq = build_trie(pi_vtrie0, pi_itrie0, pi_offsets, pi_person_id);
         auto it_trie0 = phmap::flat_hash_map<int, bool>();
-        build_trie(it_trie0, it_id);
+        build_trie(it_trie0, it_offsets, it_id);
         timer.StoreElapsedTime(0);
 
         vector<int> interm0_col0;
@@ -35,11 +36,30 @@ int main() {
         vector<string> interm0_col3;
         vector<int> interm0_offsets;
         cnt = 0;
-        for (const auto &n_off : n_offsets) {
-            auto x0 = n_id[n_off];
-            if (pi_trie0.contains(x0)) {
-                auto &pi_trie1 = pi_trie0.at(x0);
-                for (const auto &pi_off : pi_trie1) {
+        if (pi_isunq == 0) {
+            for (const auto &n_off : n_offsets) {
+                auto x0 = n_id[n_off];
+                if (pi_vtrie0.contains(x0)) {
+                    auto &pi_vtrie1 = pi_vtrie0.at(x0);
+                    for (const auto &pi_off : pi_vtrie1) {
+                        auto x1 = pi_info_type_id[pi_off];
+                        if (it_trie0.contains(x1)) {
+                            auto &it_trie1 = it_trie0.at(x1);
+                            interm0_col0.push_back(n_id[n_off]);
+                            interm0_col1.push_back(n_name[n_off]);
+                            interm0_col2.push_back(pi_info_type_id[pi_off]);
+                            interm0_col3.push_back(pi_info[pi_off]);
+                            interm0_offsets.push_back(cnt++);
+                        }
+                    }
+                }
+            }
+        } else {
+            for (const auto &n_off : n_offsets) {
+                auto x0 = n_id[n_off];
+                if (pi_itrie0.contains(x0)) {
+                    auto &pi_itrie1 = pi_itrie0.at(x0);
+                    auto &pi_off = pi_itrie1;
                     auto x1 = pi_info_type_id[pi_off];
                     if (it_trie0.contains(x1)) {
                         auto &it_trie1 = it_trie0.at(x1);
@@ -54,21 +74,70 @@ int main() {
         }
         timer.StoreElapsedTime(1);
 
-        auto ml_trie0 = phmap::flat_hash_map<int, vector<int>>();
-        build_trie(ml_trie0, ml_linked_movie_id);
+        auto ml_vtrie0 = phmap::flat_hash_map<int, vector<int>>();
+        auto ml_itrie0 = phmap::flat_hash_map<int, int>();
+        auto ml_isunq = build_trie(ml_vtrie0, ml_itrie0, ml_offsets, ml_linked_movie_id);
         auto lt_trie0 = phmap::flat_hash_map<int, bool>();
-        build_trie(lt_trie0, lt_id);
+        build_trie(lt_trie0, lt_offsets, lt_id);
         timer.StoreElapsedTime(2);
 
         vector<int> interm1_col0;
         vector<int> interm1_col1;
         vector<int> interm1_offsets;
         cnt = 0;
-        for (const auto &t_off : t_offsets) {
-            auto x0 = t_id[t_off];
-            if (ml_trie0.contains(x0)) {
-                auto &ml_trie1 = ml_trie0.at(x0);
-                for (const auto &ml_off : ml_trie1) {
+        if (pi_isunq == 0 && ml_isunq == 0) {
+            for (const auto &t_off : t_offsets) {
+                auto x0 = t_id[t_off];
+                if (ml_vtrie0.contains(x0)) {
+                    auto &ml_vtrie1 = ml_vtrie0.at(x0);
+                    for (const auto &ml_off : ml_vtrie1) {
+                        auto x1 = ml_link_type_id[ml_off];
+                        if (lt_trie0.contains(x1)) {
+                            auto &lt_trie1 = lt_trie0.at(x1);
+                            interm1_col0.push_back(t_id[t_off]);
+                            interm1_col1.push_back(ml_link_type_id[ml_off]);
+                            interm1_offsets.push_back(cnt++);
+                        }
+                    }
+                }
+            }
+        } else if (pi_isunq == 0 && ml_isunq == 1) {
+            for (const auto &t_off : t_offsets) {
+                auto x0 = t_id[t_off];
+                if (ml_itrie0.contains(x0)) {
+                    auto &ml_itrie1 = ml_itrie0.at(x0);
+                    auto &ml_off = ml_itrie1;
+                    auto x1 = ml_link_type_id[ml_off];
+                    if (lt_trie0.contains(x1)) {
+                        auto &lt_trie1 = lt_trie0.at(x1);
+                        interm1_col0.push_back(t_id[t_off]);
+                        interm1_col1.push_back(ml_link_type_id[ml_off]);
+                        interm1_offsets.push_back(cnt++);
+                    }
+                }
+            }
+        } else if (pi_isunq == 1 && ml_isunq == 0) {
+            for (const auto &t_off : t_offsets) {
+                auto x0 = t_id[t_off];
+                if (ml_vtrie0.contains(x0)) {
+                    auto &ml_vtrie1 = ml_vtrie0.at(x0);
+                    for (const auto &ml_off : ml_vtrie1) {
+                        auto x1 = ml_link_type_id[ml_off];
+                        if (lt_trie0.contains(x1)) {
+                            auto &lt_trie1 = lt_trie0.at(x1);
+                            interm1_col0.push_back(t_id[t_off]);
+                            interm1_col1.push_back(ml_link_type_id[ml_off]);
+                            interm1_offsets.push_back(cnt++);
+                        }
+                    }
+                }
+            }
+        } else {
+            for (const auto &t_off : t_offsets) {
+                auto x0 = t_id[t_off];
+                if (ml_itrie0.contains(x0)) {
+                    auto &ml_itrie1 = ml_itrie0.at(x0);
+                    auto &ml_off = ml_itrie1;
                     auto x1 = ml_link_type_id[ml_off];
                     if (lt_trie0.contains(x1)) {
                         auto &lt_trie1 = lt_trie0.at(x1);
@@ -82,24 +151,135 @@ int main() {
         timer.StoreElapsedTime(3);
 
         auto interm1_trie0 = phmap::flat_hash_map<int, bool>();
-        build_trie(interm1_trie0, interm1_col0);
-        auto interm0_trie0 = phmap::flat_hash_map<int, vector<int>>();
-        build_trie(interm0_trie0, interm0_col0);
+        build_trie(interm1_trie0, interm1_offsets, interm1_col0);
+        auto interm0_vtrie0 = phmap::flat_hash_map<int, vector<int>>();
+        auto interm0_itrie0 = phmap::flat_hash_map<int, int>();
+        auto interm0_isunq = build_trie(interm0_vtrie0, interm0_itrie0, interm0_offsets, interm0_col0);
         auto an_trie0 = phmap::flat_hash_map<int, bool>();
-        build_trie(an_trie0, an_person_id);
+        build_trie(an_trie0, an_offsets, an_person_id);
         timer.StoreElapsedTime(4);
 
         string mn_interm0_col1 = "zzzzzzzz";
         string mn_interm0_col3 = "zzzzzzzz";
-        for (const auto &ci_off : ci_offsets) {
-            auto x0 = ci_movie_id[ci_off];
-            if (interm1_trie0.contains(x0)) {
-                auto &interm1_trie1 = interm1_trie0.at(x0);
-                auto x1 = ci_person_id[ci_off];
-                if (interm0_trie0.contains(x1) && an_trie0.contains(x1)) {
-                    auto &interm0_trie1 = interm0_trie0.at(x1);
-                    auto &an_trie1 = an_trie0.at(x1);
-                    for (const auto &interm0_off : interm0_trie1) {
+        if (pi_isunq == 0 && ml_isunq == 0 && interm0_isunq == 0) {
+            for (const auto &ci_off : ci_offsets) {
+                auto x0 = ci_movie_id[ci_off];
+                if (interm1_trie0.contains(x0)) {
+                    auto &interm1_trie1 = interm1_trie0.at(x0);
+                    auto x1 = ci_person_id[ci_off];
+                    if (interm0_vtrie0.contains(x1) && an_trie0.contains(x1)) {
+                        auto &interm0_vtrie1 = interm0_vtrie0.at(x1);
+                        auto &an_trie1 = an_trie0.at(x1);
+                        for (const auto &interm0_off : interm0_vtrie1) {
+                            mn_interm0_col1 = min(mn_interm0_col1, interm0_col1[interm0_off]);
+                            mn_interm0_col3 = min(mn_interm0_col3, interm0_col3[interm0_off]);
+                        }
+                    }
+                }
+            }
+        } else if (pi_isunq == 0 && ml_isunq == 0 && interm0_isunq == 1) {
+            for (const auto &ci_off : ci_offsets) {
+                auto x0 = ci_movie_id[ci_off];
+                if (interm1_trie0.contains(x0)) {
+                    auto &interm1_trie1 = interm1_trie0.at(x0);
+                    auto x1 = ci_person_id[ci_off];
+                    if (interm0_itrie0.contains(x1) && an_trie0.contains(x1)) {
+                        auto &interm0_itrie1 = interm0_itrie0.at(x1);
+                        auto &an_trie1 = an_trie0.at(x1);
+                        auto &interm0_off = interm0_itrie1;
+                        mn_interm0_col1 = min(mn_interm0_col1, interm0_col1[interm0_off]);
+                        mn_interm0_col3 = min(mn_interm0_col3, interm0_col3[interm0_off]);
+                    }
+                }
+            }
+        } else if (pi_isunq == 0 && ml_isunq == 1 && interm0_isunq == 0) {
+            for (const auto &ci_off : ci_offsets) {
+                auto x0 = ci_movie_id[ci_off];
+                if (interm1_trie0.contains(x0)) {
+                    auto &interm1_trie1 = interm1_trie0.at(x0);
+                    auto x1 = ci_person_id[ci_off];
+                    if (interm0_vtrie0.contains(x1) && an_trie0.contains(x1)) {
+                        auto &interm0_vtrie1 = interm0_vtrie0.at(x1);
+                        auto &an_trie1 = an_trie0.at(x1);
+                        for (const auto &interm0_off : interm0_vtrie1) {
+                            mn_interm0_col1 = min(mn_interm0_col1, interm0_col1[interm0_off]);
+                            mn_interm0_col3 = min(mn_interm0_col3, interm0_col3[interm0_off]);
+                        }
+                    }
+                }
+            }
+        } else if (pi_isunq == 0 && ml_isunq == 1 && interm0_isunq == 1) {
+            for (const auto &ci_off : ci_offsets) {
+                auto x0 = ci_movie_id[ci_off];
+                if (interm1_trie0.contains(x0)) {
+                    auto &interm1_trie1 = interm1_trie0.at(x0);
+                    auto x1 = ci_person_id[ci_off];
+                    if (interm0_itrie0.contains(x1) && an_trie0.contains(x1)) {
+                        auto &interm0_itrie1 = interm0_itrie0.at(x1);
+                        auto &an_trie1 = an_trie0.at(x1);
+                        auto &interm0_off = interm0_itrie1;
+                        mn_interm0_col1 = min(mn_interm0_col1, interm0_col1[interm0_off]);
+                        mn_interm0_col3 = min(mn_interm0_col3, interm0_col3[interm0_off]);
+                    }
+                }
+            }
+        } else if (pi_isunq == 1 && ml_isunq == 0 && interm0_isunq == 0) {
+            for (const auto &ci_off : ci_offsets) {
+                auto x0 = ci_movie_id[ci_off];
+                if (interm1_trie0.contains(x0)) {
+                    auto &interm1_trie1 = interm1_trie0.at(x0);
+                    auto x1 = ci_person_id[ci_off];
+                    if (interm0_vtrie0.contains(x1) && an_trie0.contains(x1)) {
+                        auto &interm0_vtrie1 = interm0_vtrie0.at(x1);
+                        auto &an_trie1 = an_trie0.at(x1);
+                        for (const auto &interm0_off : interm0_vtrie1) {
+                            mn_interm0_col1 = min(mn_interm0_col1, interm0_col1[interm0_off]);
+                            mn_interm0_col3 = min(mn_interm0_col3, interm0_col3[interm0_off]);
+                        }
+                    }
+                }
+            }
+        } else if (pi_isunq == 1 && ml_isunq == 0 && interm0_isunq == 1) {
+            for (const auto &ci_off : ci_offsets) {
+                auto x0 = ci_movie_id[ci_off];
+                if (interm1_trie0.contains(x0)) {
+                    auto &interm1_trie1 = interm1_trie0.at(x0);
+                    auto x1 = ci_person_id[ci_off];
+                    if (interm0_itrie0.contains(x1) && an_trie0.contains(x1)) {
+                        auto &interm0_itrie1 = interm0_itrie0.at(x1);
+                        auto &an_trie1 = an_trie0.at(x1);
+                        auto &interm0_off = interm0_itrie1;
+                        mn_interm0_col1 = min(mn_interm0_col1, interm0_col1[interm0_off]);
+                        mn_interm0_col3 = min(mn_interm0_col3, interm0_col3[interm0_off]);
+                    }
+                }
+            }
+        } else if (pi_isunq == 1 && ml_isunq == 1 && interm0_isunq == 0) {
+            for (const auto &ci_off : ci_offsets) {
+                auto x0 = ci_movie_id[ci_off];
+                if (interm1_trie0.contains(x0)) {
+                    auto &interm1_trie1 = interm1_trie0.at(x0);
+                    auto x1 = ci_person_id[ci_off];
+                    if (interm0_vtrie0.contains(x1) && an_trie0.contains(x1)) {
+                        auto &interm0_vtrie1 = interm0_vtrie0.at(x1);
+                        auto &an_trie1 = an_trie0.at(x1);
+                        for (const auto &interm0_off : interm0_vtrie1) {
+                            mn_interm0_col1 = min(mn_interm0_col1, interm0_col1[interm0_off]);
+                            mn_interm0_col3 = min(mn_interm0_col3, interm0_col3[interm0_off]);
+                        }
+                    }
+                }
+            }
+        } else {
+            for (const auto &ci_off : ci_offsets) {
+                auto x0 = ci_movie_id[ci_off];
+                if (interm1_trie0.contains(x0)) {
+                    auto &interm1_trie1 = interm1_trie0.at(x0);
+                    auto x1 = ci_person_id[ci_off];
+                    if (interm0_itrie0.contains(x1) && an_trie0.contains(x1)) {
+                        auto &interm0_itrie1 = interm0_itrie0.at(x1);
+                        auto &an_trie1 = an_trie0.at(x1);
+                        auto &interm0_off = interm0_itrie1;
                         mn_interm0_col1 = min(mn_interm0_col1, interm0_col1[interm0_off]);
                         mn_interm0_col3 = min(mn_interm0_col3, interm0_col3[interm0_off]);
                     }
