@@ -1,4 +1,5 @@
 import itertools
+import json
 import math
 import os
 from abc import abstractmethod
@@ -52,7 +53,7 @@ class AbstractCppGenerator:
 			cpp_file.write('cout << timer.GetElapsedTime() / 1000.0 << " s" << endl;\n')
 			cpp_file.write('\n')
 
-			cpp_file.write('for (int z = 0; z < 1 + 5; ++z) {\n')
+			cpp_file.write('for (int iter = 0; iter < 1 + 5; ++iter) {\n')
 			cpp_file.write(f'int {self.var_mng.cnt_var()};\n')
 			cpp_file.write('timer.Reset();\n\n')
 
@@ -64,7 +65,7 @@ class AbstractCppGenerator:
 				cpp_file.write(f'timer.StoreElapsedTime({2 * idx + 1});\n\n')
 
 			root_build_plan = plans[-1][1]
-			cpp_file.write('if (z == 0)\n')
+			cpp_file.write('if (iter == 0)\n')
 			proj_relcols, _ = self._find_all_proj_cols_and_types(root_build_plan)
 			delimiter = ' << " | " << '
 			cpp_file.write(
@@ -333,6 +334,8 @@ class FJCppGenerator(AbstractCppGenerator):
 			build_plan: List[Tuple[str, List[str], List[str]]],
 			compiled_plan: List[List[Tuple[str, str]]]
 	):
+		self.vector_tries.clear()
+
 		interm, interm_cols, _ = node
 		content = str()
 		rel2trie_levels = defaultdict(list)
@@ -401,6 +404,11 @@ class FJCppGenerator(AbstractCppGenerator):
 				if sum(mask) != len(self.vector_tries):
 					content += f"if ({' && '.join([f'{self.var_mng.isunq_var(rel)} == {bitval}' for rel, bitval in zip(self.vector_tries, mask)])}) "
 				content += "{\n"
+
+			if self.vector_tries:
+				double_quote = '"'
+				content += f'if (iter == 0)'
+				content += f'cout << "{json.dumps(rel2iv).replace(double_quote, "")}" << endl;\n'
 
 			for idx, eq_cols in enumerate(compiled_plan):
 				rel_it, col_it = eq_cols[0]

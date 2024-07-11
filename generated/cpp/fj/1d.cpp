@@ -16,7 +16,7 @@ int main() {
     load_ct("/Users/s2522996/Documents/free-join/queries/preprocessed/join-order-benchmark/data/1d/ct.csv");
     cout << timer.GetElapsedTime() / 1000.0 << " s" << endl;
 
-    for (int z = 0; z < 1 + 5; ++z) {
+    for (int iter = 0; iter < 1 + 5; ++iter) {
         int cnt;
         timer.Reset();
 
@@ -32,6 +32,8 @@ int main() {
         vector<int> interm0_offsets;
         cnt = 0;
         if (mi_idx_isunq == 0) {
+            if (iter == 0)
+                cout << "{mi_idx: v}" << endl;
             for (const auto &t_off : t_offsets) {
                 auto x0 = t_id[t_off];
                 if (mi_idx_vtrie0.contains(x0)) {
@@ -46,6 +48,8 @@ int main() {
                 }
             }
         } else {
+            if (iter == 0)
+                cout << "{mi_idx: i}" << endl;
             for (const auto &t_off : t_offsets) {
                 auto x0 = t_id[t_off];
                 if (mi_idx_itrie0.contains(x0)) {
@@ -73,46 +77,9 @@ int main() {
         string mn_mc_note = "zzzzzzzz";
         string mn_interm0_col1 = "zzzzzzzz";
         int mn_interm0_col2 = numeric_limits<int>::max();
-        if (mi_idx_isunq == 0 && interm0_isunq == 0) {
-            for (const auto &mc_off : mc_offsets) {
-                auto x0 = mc_movie_id[mc_off];
-                if (interm0_vtrie0.contains(x0)) {
-                    auto &interm0_vtrie1 = interm0_vtrie0.at(x0);
-                    for (const auto &interm0_off : interm0_vtrie1) {
-                        auto x1 = interm0_col3[interm0_off];
-                        if (it_trie0.contains(x1)) {
-                            auto &it_trie1 = it_trie0.at(x1);
-                            auto x2 = mc_company_type_id[mc_off];
-                            if (ct_trie0.contains(x2)) {
-                                auto &ct_trie1 = ct_trie0.at(x2);
-                                mn_mc_note = min(mn_mc_note, mc_note[mc_off]);
-                                mn_interm0_col1 = min(mn_interm0_col1, interm0_col1[interm0_off]);
-                                mn_interm0_col2 = min(mn_interm0_col2, interm0_col2[interm0_off]);
-                            }
-                        }
-                    }
-                }
-            }
-        } else if (mi_idx_isunq == 0 && interm0_isunq == 1) {
-            for (const auto &mc_off : mc_offsets) {
-                auto x0 = mc_movie_id[mc_off];
-                if (interm0_itrie0.contains(x0)) {
-                    auto &interm0_itrie1 = interm0_itrie0.at(x0);
-                    auto &interm0_off = interm0_itrie1;
-                    auto x1 = interm0_col3[interm0_off];
-                    if (it_trie0.contains(x1)) {
-                        auto &it_trie1 = it_trie0.at(x1);
-                        auto x2 = mc_company_type_id[mc_off];
-                        if (ct_trie0.contains(x2)) {
-                            auto &ct_trie1 = ct_trie0.at(x2);
-                            mn_mc_note = min(mn_mc_note, mc_note[mc_off]);
-                            mn_interm0_col1 = min(mn_interm0_col1, interm0_col1[interm0_off]);
-                            mn_interm0_col2 = min(mn_interm0_col2, interm0_col2[interm0_off]);
-                        }
-                    }
-                }
-            }
-        } else if (mi_idx_isunq == 1 && interm0_isunq == 0) {
+        if (interm0_isunq == 0) {
+            if (iter == 0)
+                cout << "{interm0: v}" << endl;
             for (const auto &mc_off : mc_offsets) {
                 auto x0 = mc_movie_id[mc_off];
                 if (interm0_vtrie0.contains(x0)) {
@@ -133,6 +100,8 @@ int main() {
                 }
             }
         } else {
+            if (iter == 0)
+                cout << "{interm0: i}" << endl;
             for (const auto &mc_off : mc_offsets) {
                 auto x0 = mc_movie_id[mc_off];
                 if (interm0_itrie0.contains(x0)) {
@@ -154,7 +123,7 @@ int main() {
         }
         timer.StoreElapsedTime(3);
 
-        if (z == 0)
+        if (iter == 0)
             cout << mn_mc_note << " | " << mn_interm0_col1 << " | " << mn_interm0_col2 << endl;
         cout << "*" << " " << flush;
     }

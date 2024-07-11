@@ -20,7 +20,7 @@ int main() {
     load_at("/Users/s2522996/Documents/free-join/data/imdb_csv/aka_title.csv");
     cout << timer.GetElapsedTime() / 1000.0 << " s" << endl;
 
-    for (int z = 0; z < 1 + 5; ++z) {
+    for (int iter = 0; iter < 1 + 5; ++iter) {
         int cnt;
         timer.Reset();
 
@@ -35,6 +35,8 @@ int main() {
         vector<int> interm0_offsets;
         cnt = 0;
         if (t_isunq == 0) {
+            if (iter == 0)
+                cout << "{t: v}" << endl;
             for (const auto &mk_off : mk_offsets) {
                 auto x0 = mk_movie_id[mk_off];
                 if (t_vtrie0.contains(x0)) {
@@ -48,6 +50,8 @@ int main() {
                 }
             }
         } else {
+            if (iter == 0)
+                cout << "{t: i}" << endl;
             for (const auto &mk_off : mk_offsets) {
                 auto x0 = mk_movie_id[mk_off];
                 if (t_itrie0.contains(x0)) {
@@ -82,7 +86,9 @@ int main() {
 
         string mn_mi_info = "zzzzzzzz";
         string mn_interm0_col2 = "zzzzzzzz";
-        if (t_isunq == 0 && mc_isunq == 0 && interm0_isunq == 0) {
+        if (mc_isunq == 0 && interm0_isunq == 0) {
+            if (iter == 0)
+                cout << "{mc: v, interm0: v}" << endl;
             for (const auto &mi_off : mi_offsets) {
                 auto x0 = mi_movie_id[mi_off];
                 if (mc_vtrie0.contains(x0) && interm0_vtrie0.contains(x0)) {
@@ -115,7 +121,9 @@ int main() {
                     }
                 }
             }
-        } else if (t_isunq == 0 && mc_isunq == 0 && interm0_isunq == 1) {
+        } else if (mc_isunq == 0 && interm0_isunq == 1) {
+            if (iter == 0)
+                cout << "{mc: v, interm0: i}" << endl;
             for (const auto &mi_off : mi_offsets) {
                 auto x0 = mi_movie_id[mi_off];
                 if (mc_vtrie0.contains(x0) && interm0_itrie0.contains(x0)) {
@@ -147,135 +155,9 @@ int main() {
                     }
                 }
             }
-        } else if (t_isunq == 0 && mc_isunq == 1 && interm0_isunq == 0) {
-            for (const auto &mi_off : mi_offsets) {
-                auto x0 = mi_movie_id[mi_off];
-                if (mc_itrie0.contains(x0) && interm0_vtrie0.contains(x0)) {
-                    auto &mc_itrie1 = mc_itrie0.at(x0);
-                    auto &interm0_vtrie1 = interm0_vtrie0.at(x0);
-                    for (const auto &interm0_off : interm0_vtrie1) {
-                        auto x1 = interm0_col1[interm0_off];
-                        if (k_trie0.contains(x1)) {
-                            auto &k_trie1 = k_trie0.at(x1);
-                            auto x2 = mi_info_type_id[mi_off];
-                            if (it1_trie0.contains(x2)) {
-                                auto &it1_trie1 = it1_trie0.at(x2);
-                                auto &mc_off = mc_itrie1;
-                                auto x3 = mc_company_type_id[mc_off];
-                                if (ct_trie0.contains(x3)) {
-                                    auto &ct_trie1 = ct_trie0.at(x3);
-                                    auto x4 = mc_company_id[mc_off];
-                                    if (cn_trie0.contains(x4)) {
-                                        auto &cn_trie1 = cn_trie0.at(x4);
-                                        if (at_trie0.contains(x0)) {
-                                            auto &at_trie1 = at_trie0.at(x0);
-                                            mn_mi_info = min(mn_mi_info, mi_info[mi_off]);
-                                            mn_interm0_col2 = min(mn_interm0_col2, interm0_col2[interm0_off]);
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        } else if (t_isunq == 0 && mc_isunq == 1 && interm0_isunq == 1) {
-            for (const auto &mi_off : mi_offsets) {
-                auto x0 = mi_movie_id[mi_off];
-                if (mc_itrie0.contains(x0) && interm0_itrie0.contains(x0)) {
-                    auto &mc_itrie1 = mc_itrie0.at(x0);
-                    auto &interm0_itrie1 = interm0_itrie0.at(x0);
-                    auto &interm0_off = interm0_itrie1;
-                    auto x1 = interm0_col1[interm0_off];
-                    if (k_trie0.contains(x1)) {
-                        auto &k_trie1 = k_trie0.at(x1);
-                        auto x2 = mi_info_type_id[mi_off];
-                        if (it1_trie0.contains(x2)) {
-                            auto &it1_trie1 = it1_trie0.at(x2);
-                            auto &mc_off = mc_itrie1;
-                            auto x3 = mc_company_type_id[mc_off];
-                            if (ct_trie0.contains(x3)) {
-                                auto &ct_trie1 = ct_trie0.at(x3);
-                                auto x4 = mc_company_id[mc_off];
-                                if (cn_trie0.contains(x4)) {
-                                    auto &cn_trie1 = cn_trie0.at(x4);
-                                    if (at_trie0.contains(x0)) {
-                                        auto &at_trie1 = at_trie0.at(x0);
-                                        mn_mi_info = min(mn_mi_info, mi_info[mi_off]);
-                                        mn_interm0_col2 = min(mn_interm0_col2, interm0_col2[interm0_off]);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        } else if (t_isunq == 1 && mc_isunq == 0 && interm0_isunq == 0) {
-            for (const auto &mi_off : mi_offsets) {
-                auto x0 = mi_movie_id[mi_off];
-                if (mc_vtrie0.contains(x0) && interm0_vtrie0.contains(x0)) {
-                    auto &mc_vtrie1 = mc_vtrie0.at(x0);
-                    auto &interm0_vtrie1 = interm0_vtrie0.at(x0);
-                    for (const auto &interm0_off : interm0_vtrie1) {
-                        auto x1 = interm0_col1[interm0_off];
-                        if (k_trie0.contains(x1)) {
-                            auto &k_trie1 = k_trie0.at(x1);
-                            auto x2 = mi_info_type_id[mi_off];
-                            if (it1_trie0.contains(x2)) {
-                                auto &it1_trie1 = it1_trie0.at(x2);
-                                for (const auto &mc_off : mc_vtrie1) {
-                                    auto x3 = mc_company_type_id[mc_off];
-                                    if (ct_trie0.contains(x3)) {
-                                        auto &ct_trie1 = ct_trie0.at(x3);
-                                        auto x4 = mc_company_id[mc_off];
-                                        if (cn_trie0.contains(x4)) {
-                                            auto &cn_trie1 = cn_trie0.at(x4);
-                                            if (at_trie0.contains(x0)) {
-                                                auto &at_trie1 = at_trie0.at(x0);
-                                                mn_mi_info = min(mn_mi_info, mi_info[mi_off]);
-                                                mn_interm0_col2 = min(mn_interm0_col2, interm0_col2[interm0_off]);
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        } else if (t_isunq == 1 && mc_isunq == 0 && interm0_isunq == 1) {
-            for (const auto &mi_off : mi_offsets) {
-                auto x0 = mi_movie_id[mi_off];
-                if (mc_vtrie0.contains(x0) && interm0_itrie0.contains(x0)) {
-                    auto &mc_vtrie1 = mc_vtrie0.at(x0);
-                    auto &interm0_itrie1 = interm0_itrie0.at(x0);
-                    auto &interm0_off = interm0_itrie1;
-                    auto x1 = interm0_col1[interm0_off];
-                    if (k_trie0.contains(x1)) {
-                        auto &k_trie1 = k_trie0.at(x1);
-                        auto x2 = mi_info_type_id[mi_off];
-                        if (it1_trie0.contains(x2)) {
-                            auto &it1_trie1 = it1_trie0.at(x2);
-                            for (const auto &mc_off : mc_vtrie1) {
-                                auto x3 = mc_company_type_id[mc_off];
-                                if (ct_trie0.contains(x3)) {
-                                    auto &ct_trie1 = ct_trie0.at(x3);
-                                    auto x4 = mc_company_id[mc_off];
-                                    if (cn_trie0.contains(x4)) {
-                                        auto &cn_trie1 = cn_trie0.at(x4);
-                                        if (at_trie0.contains(x0)) {
-                                            auto &at_trie1 = at_trie0.at(x0);
-                                            mn_mi_info = min(mn_mi_info, mi_info[mi_off]);
-                                            mn_interm0_col2 = min(mn_interm0_col2, interm0_col2[interm0_off]);
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        } else if (t_isunq == 1 && mc_isunq == 1 && interm0_isunq == 0) {
+        } else if (mc_isunq == 1 && interm0_isunq == 0) {
+            if (iter == 0)
+                cout << "{mc: i, interm0: v}" << endl;
             for (const auto &mi_off : mi_offsets) {
                 auto x0 = mi_movie_id[mi_off];
                 if (mc_itrie0.contains(x0) && interm0_vtrie0.contains(x0)) {
@@ -308,6 +190,8 @@ int main() {
                 }
             }
         } else {
+            if (iter == 0)
+                cout << "{mc: i, interm0: i}" << endl;
             for (const auto &mi_off : mi_offsets) {
                 auto x0 = mi_movie_id[mi_off];
                 if (mc_itrie0.contains(x0) && interm0_itrie0.contains(x0)) {
@@ -341,7 +225,7 @@ int main() {
         }
         timer.StoreElapsedTime(3);
 
-        if (z == 0)
+        if (iter == 0)
             cout << mn_mi_info << " | " << mn_interm0_col2 << endl;
         cout << "*" << " " << flush;
     }

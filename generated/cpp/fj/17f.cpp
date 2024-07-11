@@ -18,7 +18,7 @@ int main() {
     load_n("/Users/s2522996/Documents/free-join/queries/preprocessed/join-order-benchmark/data/17f/n.csv");
     cout << timer.GetElapsedTime() / 1000.0 << " s" << endl;
 
-    for (int z = 0; z < 1 + 5; ++z) {
+    for (int iter = 0; iter < 1 + 5; ++iter) {
         int cnt;
         timer.Reset();
 
@@ -39,6 +39,8 @@ int main() {
         vector<int> interm0_offsets;
         cnt = 0;
         if (mc_isunq == 0) {
+            if (iter == 0)
+                cout << "{mc: v}" << endl;
             for (const auto &mk_off : mk_offsets) {
                 auto x0 = mk_keyword_id[mk_off];
                 if (k_trie0.contains(x0)) {
@@ -61,6 +63,8 @@ int main() {
                 }
             }
         } else {
+            if (iter == 0)
+                cout << "{mc: i}" << endl;
             for (const auto &mk_off : mk_offsets) {
                 auto x0 = mk_keyword_id[mk_off];
                 if (k_trie0.contains(x0)) {
@@ -92,34 +96,9 @@ int main() {
         timer.StoreElapsedTime(2);
 
         string mn_n_name = "zzzzzzzz";
-        if (mc_isunq == 0 && n_isunq == 0) {
-            for (const auto &ci_off : ci_offsets) {
-                auto x0 = ci_movie_id[ci_off];
-                if (interm0_trie0.contains(x0)) {
-                    auto &interm0_trie1 = interm0_trie0.at(x0);
-                    auto x1 = ci_person_id[ci_off];
-                    if (n_vtrie0.contains(x1)) {
-                        auto &n_vtrie1 = n_vtrie0.at(x1);
-                        for (const auto &n_off : n_vtrie1) {
-                            mn_n_name = min(mn_n_name, n_name[n_off]);
-                        }
-                    }
-                }
-            }
-        } else if (mc_isunq == 0 && n_isunq == 1) {
-            for (const auto &ci_off : ci_offsets) {
-                auto x0 = ci_movie_id[ci_off];
-                if (interm0_trie0.contains(x0)) {
-                    auto &interm0_trie1 = interm0_trie0.at(x0);
-                    auto x1 = ci_person_id[ci_off];
-                    if (n_itrie0.contains(x1)) {
-                        auto &n_itrie1 = n_itrie0.at(x1);
-                        auto &n_off = n_itrie1;
-                        mn_n_name = min(mn_n_name, n_name[n_off]);
-                    }
-                }
-            }
-        } else if (mc_isunq == 1 && n_isunq == 0) {
+        if (n_isunq == 0) {
+            if (iter == 0)
+                cout << "{n: v}" << endl;
             for (const auto &ci_off : ci_offsets) {
                 auto x0 = ci_movie_id[ci_off];
                 if (interm0_trie0.contains(x0)) {
@@ -134,6 +113,8 @@ int main() {
                 }
             }
         } else {
+            if (iter == 0)
+                cout << "{n: i}" << endl;
             for (const auto &ci_off : ci_offsets) {
                 auto x0 = ci_movie_id[ci_off];
                 if (interm0_trie0.contains(x0)) {
@@ -149,7 +130,7 @@ int main() {
         }
         timer.StoreElapsedTime(3);
 
-        if (z == 0)
+        if (iter == 0)
             cout << mn_n_name << endl;
         cout << "*" << " " << flush;
     }

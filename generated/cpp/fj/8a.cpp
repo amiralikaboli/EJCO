@@ -18,7 +18,7 @@ int main() {
     load_an1("/Users/s2522996/Documents/free-join/data/imdb_csv/aka_name.csv");
     cout << timer.GetElapsedTime() / 1000.0 << " s" << endl;
 
-    for (int z = 0; z < 1 + 5; ++z) {
+    for (int iter = 0; iter < 1 + 5; ++iter) {
         int cnt;
         timer.Reset();
 
@@ -58,6 +58,8 @@ int main() {
         string mn_t_title = "zzzzzzzz";
         string mn_an1_name = "zzzzzzzz";
         if (an1_isunq == 0 && t_isunq == 0) {
+            if (iter == 0)
+                cout << "{an1: v, t: v}" << endl;
             for (const auto &ci_off : ci_offsets) {
                 auto x0 = ci_role_id[ci_off];
                 if (rt_trie0.contains(x0)) {
@@ -85,6 +87,8 @@ int main() {
                 }
             }
         } else if (an1_isunq == 0 && t_isunq == 1) {
+            if (iter == 0)
+                cout << "{an1: v, t: i}" << endl;
             for (const auto &ci_off : ci_offsets) {
                 auto x0 = ci_role_id[ci_off];
                 if (rt_trie0.contains(x0)) {
@@ -111,6 +115,8 @@ int main() {
                 }
             }
         } else if (an1_isunq == 1 && t_isunq == 0) {
+            if (iter == 0)
+                cout << "{an1: i, t: v}" << endl;
             for (const auto &ci_off : ci_offsets) {
                 auto x0 = ci_role_id[ci_off];
                 if (rt_trie0.contains(x0)) {
@@ -137,6 +143,8 @@ int main() {
                 }
             }
         } else {
+            if (iter == 0)
+                cout << "{an1: i, t: i}" << endl;
             for (const auto &ci_off : ci_offsets) {
                 auto x0 = ci_role_id[ci_off];
                 if (rt_trie0.contains(x0)) {
@@ -164,7 +172,7 @@ int main() {
         }
         timer.StoreElapsedTime(3);
 
-        if (z == 0)
+        if (iter == 0)
             cout << mn_t_title << " | " << mn_an1_name << endl;
         cout << "*" << " " << flush;
     }

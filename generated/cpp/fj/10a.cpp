@@ -18,7 +18,7 @@ int main() {
     load_chn("/Users/s2522996/Documents/free-join/data/imdb_csv/char_name.csv");
     cout << timer.GetElapsedTime() / 1000.0 << " s" << endl;
 
-    for (int z = 0; z < 1 + 5; ++z) {
+    for (int iter = 0; iter < 1 + 5; ++iter) {
         int cnt;
         timer.Reset();
 
@@ -38,6 +38,8 @@ int main() {
         vector<int> interm0_offsets;
         cnt = 0;
         if (t_isunq == 0) {
+            if (iter == 0)
+                cout << "{t: v}" << endl;
             for (const auto &mc_off : mc_offsets) {
                 auto x0 = mc_company_type_id[mc_off];
                 if (ct_trie0.contains(x0)) {
@@ -60,6 +62,8 @@ int main() {
                 }
             }
         } else {
+            if (iter == 0)
+                cout << "{t: i}" << endl;
             for (const auto &mc_off : mc_offsets) {
                 auto x0 = mc_company_type_id[mc_off];
                 if (ct_trie0.contains(x0)) {
@@ -95,7 +99,9 @@ int main() {
 
         string mn_interm0_col3 = "zzzzzzzz";
         string mn_chn_name = "zzzzzzzz";
-        if (t_isunq == 0 && interm0_isunq == 0 && chn_isunq == 0) {
+        if (interm0_isunq == 0 && chn_isunq == 0) {
+            if (iter == 0)
+                cout << "{interm0: v, chn: v}" << endl;
             for (const auto &ci_off : ci_offsets) {
                 auto x0 = ci_role_id[ci_off];
                 if (rt_trie0.contains(x0)) {
@@ -116,7 +122,9 @@ int main() {
                     }
                 }
             }
-        } else if (t_isunq == 0 && interm0_isunq == 0 && chn_isunq == 1) {
+        } else if (interm0_isunq == 0 && chn_isunq == 1) {
+            if (iter == 0)
+                cout << "{interm0: v, chn: i}" << endl;
             for (const auto &ci_off : ci_offsets) {
                 auto x0 = ci_role_id[ci_off];
                 if (rt_trie0.contains(x0)) {
@@ -136,87 +144,9 @@ int main() {
                     }
                 }
             }
-        } else if (t_isunq == 0 && interm0_isunq == 1 && chn_isunq == 0) {
-            for (const auto &ci_off : ci_offsets) {
-                auto x0 = ci_role_id[ci_off];
-                if (rt_trie0.contains(x0)) {
-                    auto &rt_trie1 = rt_trie0.at(x0);
-                    auto x1 = ci_movie_id[ci_off];
-                    if (interm0_itrie0.contains(x1)) {
-                        auto &interm0_itrie1 = interm0_itrie0.at(x1);
-                        auto x2 = ci_person_role_id[ci_off];
-                        if (chn_vtrie0.contains(x2)) {
-                            auto &chn_vtrie1 = chn_vtrie0.at(x2);
-                            auto &interm0_off = interm0_itrie1;
-                            mn_interm0_col3 = min(mn_interm0_col3, interm0_col3[interm0_off]);
-                            for (const auto &chn_off : chn_vtrie1) {
-                                mn_chn_name = min(mn_chn_name, chn_name[chn_off]);
-                            }
-                        }
-                    }
-                }
-            }
-        } else if (t_isunq == 0 && interm0_isunq == 1 && chn_isunq == 1) {
-            for (const auto &ci_off : ci_offsets) {
-                auto x0 = ci_role_id[ci_off];
-                if (rt_trie0.contains(x0)) {
-                    auto &rt_trie1 = rt_trie0.at(x0);
-                    auto x1 = ci_movie_id[ci_off];
-                    if (interm0_itrie0.contains(x1)) {
-                        auto &interm0_itrie1 = interm0_itrie0.at(x1);
-                        auto x2 = ci_person_role_id[ci_off];
-                        if (chn_itrie0.contains(x2)) {
-                            auto &chn_itrie1 = chn_itrie0.at(x2);
-                            auto &interm0_off = interm0_itrie1;
-                            mn_interm0_col3 = min(mn_interm0_col3, interm0_col3[interm0_off]);
-                            auto &chn_off = chn_itrie1;
-                            mn_chn_name = min(mn_chn_name, chn_name[chn_off]);
-                        }
-                    }
-                }
-            }
-        } else if (t_isunq == 1 && interm0_isunq == 0 && chn_isunq == 0) {
-            for (const auto &ci_off : ci_offsets) {
-                auto x0 = ci_role_id[ci_off];
-                if (rt_trie0.contains(x0)) {
-                    auto &rt_trie1 = rt_trie0.at(x0);
-                    auto x1 = ci_movie_id[ci_off];
-                    if (interm0_vtrie0.contains(x1)) {
-                        auto &interm0_vtrie1 = interm0_vtrie0.at(x1);
-                        auto x2 = ci_person_role_id[ci_off];
-                        if (chn_vtrie0.contains(x2)) {
-                            auto &chn_vtrie1 = chn_vtrie0.at(x2);
-                            for (const auto &interm0_off : interm0_vtrie1) {
-                                mn_interm0_col3 = min(mn_interm0_col3, interm0_col3[interm0_off]);
-                            }
-                            for (const auto &chn_off : chn_vtrie1) {
-                                mn_chn_name = min(mn_chn_name, chn_name[chn_off]);
-                            }
-                        }
-                    }
-                }
-            }
-        } else if (t_isunq == 1 && interm0_isunq == 0 && chn_isunq == 1) {
-            for (const auto &ci_off : ci_offsets) {
-                auto x0 = ci_role_id[ci_off];
-                if (rt_trie0.contains(x0)) {
-                    auto &rt_trie1 = rt_trie0.at(x0);
-                    auto x1 = ci_movie_id[ci_off];
-                    if (interm0_vtrie0.contains(x1)) {
-                        auto &interm0_vtrie1 = interm0_vtrie0.at(x1);
-                        auto x2 = ci_person_role_id[ci_off];
-                        if (chn_itrie0.contains(x2)) {
-                            auto &chn_itrie1 = chn_itrie0.at(x2);
-                            for (const auto &interm0_off : interm0_vtrie1) {
-                                mn_interm0_col3 = min(mn_interm0_col3, interm0_col3[interm0_off]);
-                            }
-                            auto &chn_off = chn_itrie1;
-                            mn_chn_name = min(mn_chn_name, chn_name[chn_off]);
-                        }
-                    }
-                }
-            }
-        } else if (t_isunq == 1 && interm0_isunq == 1 && chn_isunq == 0) {
+        } else if (interm0_isunq == 1 && chn_isunq == 0) {
+            if (iter == 0)
+                cout << "{interm0: i, chn: v}" << endl;
             for (const auto &ci_off : ci_offsets) {
                 auto x0 = ci_role_id[ci_off];
                 if (rt_trie0.contains(x0)) {
@@ -237,6 +167,8 @@ int main() {
                 }
             }
         } else {
+            if (iter == 0)
+                cout << "{interm0: i, chn: i}" << endl;
             for (const auto &ci_off : ci_offsets) {
                 auto x0 = ci_role_id[ci_off];
                 if (rt_trie0.contains(x0)) {
@@ -258,7 +190,7 @@ int main() {
         }
         timer.StoreElapsedTime(3);
 
-        if (z == 0)
+        if (iter == 0)
             cout << mn_interm0_col3 << " | " << mn_chn_name << endl;
         cout << "*" << " " << flush;
     }
