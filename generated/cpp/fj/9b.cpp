@@ -21,6 +21,7 @@ int main() {
 
     for (int iter = 0; iter < 1 + 5; ++iter) {
         int cnt;
+        string IVs;
         timer.Reset();
 
         auto cn_trie0 = phmap::flat_hash_map<int, bool>();
@@ -66,7 +67,7 @@ int main() {
         string mn_an_name = "zzzzzzzz";
         if (n_isunq == 0 && t_isunq == 0 && an_isunq == 0 && chn_isunq == 0) {
             if (iter == 0)
-                cout << "{n: v, t: v, an: v, chn: v}" << endl;
+                IVs += "{n: v, t: v, an: v, chn: v}\n";
             for (const auto &ci_off : ci_offsets) {
                 auto x0 = ci_role_id[ci_off];
                 if (rt_trie0.contains(x0)) {
@@ -103,7 +104,7 @@ int main() {
             }
         } else if (n_isunq == 0 && t_isunq == 0 && an_isunq == 0 && chn_isunq == 1) {
             if (iter == 0)
-                cout << "{n: v, t: v, an: v, chn: i}" << endl;
+                IVs += "{n: v, t: v, an: v, chn: i}\n";
             for (const auto &ci_off : ci_offsets) {
                 auto x0 = ci_role_id[ci_off];
                 if (rt_trie0.contains(x0)) {
@@ -139,7 +140,7 @@ int main() {
             }
         } else if (n_isunq == 0 && t_isunq == 0 && an_isunq == 1 && chn_isunq == 0) {
             if (iter == 0)
-                cout << "{n: v, t: v, an: i, chn: v}" << endl;
+                IVs += "{n: v, t: v, an: i, chn: v}\n";
             for (const auto &ci_off : ci_offsets) {
                 auto x0 = ci_role_id[ci_off];
                 if (rt_trie0.contains(x0)) {
@@ -175,7 +176,7 @@ int main() {
             }
         } else if (n_isunq == 0 && t_isunq == 0 && an_isunq == 1 && chn_isunq == 1) {
             if (iter == 0)
-                cout << "{n: v, t: v, an: i, chn: i}" << endl;
+                IVs += "{n: v, t: v, an: i, chn: i}\n";
             for (const auto &ci_off : ci_offsets) {
                 auto x0 = ci_role_id[ci_off];
                 if (rt_trie0.contains(x0)) {
@@ -210,7 +211,7 @@ int main() {
             }
         } else if (n_isunq == 0 && t_isunq == 1 && an_isunq == 0 && chn_isunq == 0) {
             if (iter == 0)
-                cout << "{n: v, t: i, an: v, chn: v}" << endl;
+                IVs += "{n: v, t: i, an: v, chn: v}\n";
             for (const auto &ci_off : ci_offsets) {
                 auto x0 = ci_role_id[ci_off];
                 if (rt_trie0.contains(x0)) {
@@ -246,7 +247,7 @@ int main() {
             }
         } else if (n_isunq == 0 && t_isunq == 1 && an_isunq == 0 && chn_isunq == 1) {
             if (iter == 0)
-                cout << "{n: v, t: i, an: v, chn: i}" << endl;
+                IVs += "{n: v, t: i, an: v, chn: i}\n";
             for (const auto &ci_off : ci_offsets) {
                 auto x0 = ci_role_id[ci_off];
                 if (rt_trie0.contains(x0)) {
@@ -281,7 +282,7 @@ int main() {
             }
         } else if (n_isunq == 0 && t_isunq == 1 && an_isunq == 1 && chn_isunq == 0) {
             if (iter == 0)
-                cout << "{n: v, t: i, an: i, chn: v}" << endl;
+                IVs += "{n: v, t: i, an: i, chn: v}\n";
             for (const auto &ci_off : ci_offsets) {
                 auto x0 = ci_role_id[ci_off];
                 if (rt_trie0.contains(x0)) {
@@ -316,7 +317,7 @@ int main() {
             }
         } else if (n_isunq == 0 && t_isunq == 1 && an_isunq == 1 && chn_isunq == 1) {
             if (iter == 0)
-                cout << "{n: v, t: i, an: i, chn: i}" << endl;
+                IVs += "{n: v, t: i, an: i, chn: i}\n";
             for (const auto &ci_off : ci_offsets) {
                 auto x0 = ci_role_id[ci_off];
                 if (rt_trie0.contains(x0)) {
@@ -350,7 +351,7 @@ int main() {
             }
         } else if (n_isunq == 1 && t_isunq == 0 && an_isunq == 0 && chn_isunq == 0) {
             if (iter == 0)
-                cout << "{n: i, t: v, an: v, chn: v}" << endl;
+                IVs += "{n: i, t: v, an: v, chn: v}\n";
             for (const auto &ci_off : ci_offsets) {
                 auto x0 = ci_role_id[ci_off];
                 if (rt_trie0.contains(x0)) {
@@ -386,7 +387,7 @@ int main() {
             }
         } else if (n_isunq == 1 && t_isunq == 0 && an_isunq == 0 && chn_isunq == 1) {
             if (iter == 0)
-                cout << "{n: i, t: v, an: v, chn: i}" << endl;
+                IVs += "{n: i, t: v, an: v, chn: i}\n";
             for (const auto &ci_off : ci_offsets) {
                 auto x0 = ci_role_id[ci_off];
                 if (rt_trie0.contains(x0)) {
@@ -421,7 +422,7 @@ int main() {
             }
         } else if (n_isunq == 1 && t_isunq == 0 && an_isunq == 1 && chn_isunq == 0) {
             if (iter == 0)
-                cout << "{n: i, t: v, an: i, chn: v}" << endl;
+                IVs += "{n: i, t: v, an: i, chn: v}\n";
             for (const auto &ci_off : ci_offsets) {
                 auto x0 = ci_role_id[ci_off];
                 if (rt_trie0.contains(x0)) {
@@ -456,7 +457,7 @@ int main() {
             }
         } else if (n_isunq == 1 && t_isunq == 0 && an_isunq == 1 && chn_isunq == 1) {
             if (iter == 0)
-                cout << "{n: i, t: v, an: i, chn: i}" << endl;
+                IVs += "{n: i, t: v, an: i, chn: i}\n";
             for (const auto &ci_off : ci_offsets) {
                 auto x0 = ci_role_id[ci_off];
                 if (rt_trie0.contains(x0)) {
@@ -490,7 +491,7 @@ int main() {
             }
         } else if (n_isunq == 1 && t_isunq == 1 && an_isunq == 0 && chn_isunq == 0) {
             if (iter == 0)
-                cout << "{n: i, t: i, an: v, chn: v}" << endl;
+                IVs += "{n: i, t: i, an: v, chn: v}\n";
             for (const auto &ci_off : ci_offsets) {
                 auto x0 = ci_role_id[ci_off];
                 if (rt_trie0.contains(x0)) {
@@ -525,7 +526,7 @@ int main() {
             }
         } else if (n_isunq == 1 && t_isunq == 1 && an_isunq == 0 && chn_isunq == 1) {
             if (iter == 0)
-                cout << "{n: i, t: i, an: v, chn: i}" << endl;
+                IVs += "{n: i, t: i, an: v, chn: i}\n";
             for (const auto &ci_off : ci_offsets) {
                 auto x0 = ci_role_id[ci_off];
                 if (rt_trie0.contains(x0)) {
@@ -559,7 +560,7 @@ int main() {
             }
         } else if (n_isunq == 1 && t_isunq == 1 && an_isunq == 1 && chn_isunq == 0) {
             if (iter == 0)
-                cout << "{n: i, t: i, an: i, chn: v}" << endl;
+                IVs += "{n: i, t: i, an: i, chn: v}\n";
             for (const auto &ci_off : ci_offsets) {
                 auto x0 = ci_role_id[ci_off];
                 if (rt_trie0.contains(x0)) {
@@ -593,7 +594,7 @@ int main() {
             }
         } else {
             if (iter == 0)
-                cout << "{n: i, t: i, an: i, chn: i}" << endl;
+                IVs += "{n: i, t: i, an: i, chn: i}\n";
             for (const auto &ci_off : ci_offsets) {
                 auto x0 = ci_role_id[ci_off];
                 if (rt_trie0.contains(x0)) {
@@ -627,8 +628,10 @@ int main() {
         }
         timer.StoreElapsedTime(3);
 
-        if (iter == 0)
+        if (iter == 0) {
             cout << mn_n_name << " | " << mn_t_title << " | " << mn_chn_name << " | " << mn_an_name << endl;
+            cout << IVs;
+        }
         cout << "*" << " " << flush;
     }
     cout << endl;

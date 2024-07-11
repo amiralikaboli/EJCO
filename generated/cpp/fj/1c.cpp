@@ -18,6 +18,7 @@ int main() {
 
     for (int iter = 0; iter < 1 + 5; ++iter) {
         int cnt;
+        string IVs;
         timer.Reset();
 
         auto mi_idx_vtrie0 = phmap::flat_hash_map<int, vector<int>>();
@@ -33,7 +34,7 @@ int main() {
         cnt = 0;
         if (mi_idx_isunq == 0) {
             if (iter == 0)
-                cout << "{mi_idx: v}" << endl;
+                IVs += "{mi_idx: v}\n";
             for (const auto &t_off : t_offsets) {
                 auto x0 = t_id[t_off];
                 if (mi_idx_vtrie0.contains(x0)) {
@@ -49,7 +50,7 @@ int main() {
             }
         } else {
             if (iter == 0)
-                cout << "{mi_idx: i}" << endl;
+                IVs += "{mi_idx: i}\n";
             for (const auto &t_off : t_offsets) {
                 auto x0 = t_id[t_off];
                 if (mi_idx_itrie0.contains(x0)) {
@@ -79,7 +80,7 @@ int main() {
         int mn_interm0_col2 = numeric_limits<int>::max();
         if (interm0_isunq == 0) {
             if (iter == 0)
-                cout << "{interm0: v}" << endl;
+                IVs += "{interm0: v}\n";
             for (const auto &mc_off : mc_offsets) {
                 auto x0 = mc_movie_id[mc_off];
                 if (interm0_vtrie0.contains(x0)) {
@@ -101,7 +102,7 @@ int main() {
             }
         } else {
             if (iter == 0)
-                cout << "{interm0: i}" << endl;
+                IVs += "{interm0: i}\n";
             for (const auto &mc_off : mc_offsets) {
                 auto x0 = mc_movie_id[mc_off];
                 if (interm0_itrie0.contains(x0)) {
@@ -123,8 +124,10 @@ int main() {
         }
         timer.StoreElapsedTime(3);
 
-        if (iter == 0)
+        if (iter == 0) {
             cout << mn_mc_note << " | " << mn_interm0_col1 << " | " << mn_interm0_col2 << endl;
+            cout << IVs;
+        }
         cout << "*" << " " << flush;
     }
     cout << endl;

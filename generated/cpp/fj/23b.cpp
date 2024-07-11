@@ -24,6 +24,7 @@ int main() {
 
     for (int iter = 0; iter < 1 + 5; ++iter) {
         int cnt;
+        string IVs;
         timer.Reset();
 
         auto cct1_trie0 = phmap::flat_hash_map<int, bool>();
@@ -60,7 +61,7 @@ int main() {
         cnt = 0;
         if (kt_isunq == 0) {
             if (iter == 0)
-                cout << "{kt: v}" << endl;
+                IVs += "{kt: v}\n";
             for (const auto &t_off : t_offsets) {
                 auto x0 = t_kind_id[t_off];
                 if (kt_vtrie0.contains(x0)) {
@@ -80,7 +81,7 @@ int main() {
             }
         } else {
             if (iter == 0)
-                cout << "{kt: i}" << endl;
+                IVs += "{kt: i}\n";
             for (const auto &t_off : t_offsets) {
                 auto x0 = t_kind_id[t_off];
                 if (kt_itrie0.contains(x0)) {
@@ -118,7 +119,7 @@ int main() {
         cnt = 0;
         if (interm1_isunq == 0) {
             if (iter == 0)
-                cout << "{interm1: v}" << endl;
+                IVs += "{interm1: v}\n";
             for (const auto &mc_off : mc_offsets) {
                 auto x0 = mc_company_type_id[mc_off];
                 if (ct_trie0.contains(x0)) {
@@ -143,7 +144,7 @@ int main() {
             }
         } else {
             if (iter == 0)
-                cout << "{interm1: i}" << endl;
+                IVs += "{interm1: i}\n";
             for (const auto &mc_off : mc_offsets) {
                 auto x0 = mc_company_type_id[mc_off];
                 if (ct_trie0.contains(x0)) {
@@ -183,7 +184,7 @@ int main() {
         cnt = 0;
         if (interm2_isunq == 0) {
             if (iter == 0)
-                cout << "{interm2: v}" << endl;
+                IVs += "{interm2: v}\n";
             for (const auto &mk_off : mk_offsets) {
                 auto x0 = mk_keyword_id[mk_off];
                 if (k_trie0.contains(x0)) {
@@ -203,7 +204,7 @@ int main() {
             }
         } else {
             if (iter == 0)
-                cout << "{interm2: i}" << endl;
+                IVs += "{interm2: i}\n";
             for (const auto &mk_off : mk_offsets) {
                 auto x0 = mk_keyword_id[mk_off];
                 if (k_trie0.contains(x0)) {
@@ -234,7 +235,7 @@ int main() {
         string mn_interm3_col6 = "zzzzzzzz";
         if (interm3_isunq == 0) {
             if (iter == 0)
-                cout << "{interm3: v}" << endl;
+                IVs += "{interm3: v}\n";
             for (const auto &mi_off : mi_offsets) {
                 auto x0 = mi_info_type_id[mi_off];
                 if (it1_trie0.contains(x0)) {
@@ -251,7 +252,7 @@ int main() {
             }
         } else {
             if (iter == 0)
-                cout << "{interm3: i}" << endl;
+                IVs += "{interm3: i}\n";
             for (const auto &mi_off : mi_offsets) {
                 auto x0 = mi_info_type_id[mi_off];
                 if (it1_trie0.contains(x0)) {
@@ -268,8 +269,10 @@ int main() {
         }
         timer.StoreElapsedTime(9);
 
-        if (iter == 0)
+        if (iter == 0) {
             cout << mn_interm3_col5 << " | " << mn_interm3_col6 << endl;
+            cout << IVs;
+        }
         cout << "*" << " " << flush;
     }
     cout << endl;

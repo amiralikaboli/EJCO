@@ -25,6 +25,7 @@ int main() {
 
     for (int iter = 0; iter < 1 + 5; ++iter) {
         int cnt;
+        string IVs;
         timer.Reset();
 
         auto t_vtrie0 = phmap::flat_hash_map<int, vector<int>>();
@@ -39,7 +40,7 @@ int main() {
         cnt = 0;
         if (t_isunq == 0) {
             if (iter == 0)
-                cout << "{t: v}" << endl;
+                IVs += "{t: v}\n";
             for (const auto &mk_off : mk_offsets) {
                 auto x0 = mk_movie_id[mk_off];
                 if (t_vtrie0.contains(x0)) {
@@ -54,7 +55,7 @@ int main() {
             }
         } else {
             if (iter == 0)
-                cout << "{t: i}" << endl;
+                IVs += "{t: i}\n";
             for (const auto &mk_off : mk_offsets) {
                 auto x0 = mk_movie_id[mk_off];
                 if (t_itrie0.contains(x0)) {
@@ -92,7 +93,7 @@ int main() {
         cnt = 0;
         if (interm0_isunq == 0 && mc_isunq == 0) {
             if (iter == 0)
-                cout << "{interm0: v, mc: v}" << endl;
+                IVs += "{interm0: v, mc: v}\n";
             for (const auto &mi_off : mi_offsets) {
                 auto x0 = mi_movie_id[mi_off];
                 if (interm0_vtrie0.contains(x0) && mc_vtrie0.contains(x0)) {
@@ -124,7 +125,7 @@ int main() {
             }
         } else if (interm0_isunq == 0 && mc_isunq == 1) {
             if (iter == 0)
-                cout << "{interm0: v, mc: i}" << endl;
+                IVs += "{interm0: v, mc: i}\n";
             for (const auto &mi_off : mi_offsets) {
                 auto x0 = mi_movie_id[mi_off];
                 if (interm0_vtrie0.contains(x0) && mc_itrie0.contains(x0)) {
@@ -155,7 +156,7 @@ int main() {
             }
         } else if (interm0_isunq == 1 && mc_isunq == 0) {
             if (iter == 0)
-                cout << "{interm0: i, mc: v}" << endl;
+                IVs += "{interm0: i, mc: v}\n";
             for (const auto &mi_off : mi_offsets) {
                 auto x0 = mi_movie_id[mi_off];
                 if (interm0_itrie0.contains(x0) && mc_vtrie0.contains(x0)) {
@@ -186,7 +187,7 @@ int main() {
             }
         } else {
             if (iter == 0)
-                cout << "{interm0: i, mc: i}" << endl;
+                IVs += "{interm0: i, mc: i}\n";
             for (const auto &mi_off : mi_offsets) {
                 auto x0 = mi_movie_id[mi_off];
                 if (interm0_itrie0.contains(x0) && mc_itrie0.contains(x0)) {
@@ -254,7 +255,7 @@ int main() {
         string mn_interm1_col3 = "zzzzzzzz";
         if (interm1_isunq == 0 && interm2_isunq == 0 && chn_isunq == 0) {
             if (iter == 0)
-                cout << "{interm1: v, interm2: v, chn: v}" << endl;
+                IVs += "{interm1: v, interm2: v, chn: v}\n";
             for (const auto &ci_off : ci_offsets) {
                 auto x0 = ci_role_id[ci_off];
                 if (rt_trie0.contains(x0)) {
@@ -284,7 +285,7 @@ int main() {
             }
         } else if (interm1_isunq == 0 && interm2_isunq == 0 && chn_isunq == 1) {
             if (iter == 0)
-                cout << "{interm1: v, interm2: v, chn: i}" << endl;
+                IVs += "{interm1: v, interm2: v, chn: i}\n";
             for (const auto &ci_off : ci_offsets) {
                 auto x0 = ci_role_id[ci_off];
                 if (rt_trie0.contains(x0)) {
@@ -313,7 +314,7 @@ int main() {
             }
         } else if (interm1_isunq == 0 && interm2_isunq == 1 && chn_isunq == 0) {
             if (iter == 0)
-                cout << "{interm1: v, interm2: i, chn: v}" << endl;
+                IVs += "{interm1: v, interm2: i, chn: v}\n";
             for (const auto &ci_off : ci_offsets) {
                 auto x0 = ci_role_id[ci_off];
                 if (rt_trie0.contains(x0)) {
@@ -342,7 +343,7 @@ int main() {
             }
         } else if (interm1_isunq == 0 && interm2_isunq == 1 && chn_isunq == 1) {
             if (iter == 0)
-                cout << "{interm1: v, interm2: i, chn: i}" << endl;
+                IVs += "{interm1: v, interm2: i, chn: i}\n";
             for (const auto &ci_off : ci_offsets) {
                 auto x0 = ci_role_id[ci_off];
                 if (rt_trie0.contains(x0)) {
@@ -370,7 +371,7 @@ int main() {
             }
         } else if (interm1_isunq == 1 && interm2_isunq == 0 && chn_isunq == 0) {
             if (iter == 0)
-                cout << "{interm1: i, interm2: v, chn: v}" << endl;
+                IVs += "{interm1: i, interm2: v, chn: v}\n";
             for (const auto &ci_off : ci_offsets) {
                 auto x0 = ci_role_id[ci_off];
                 if (rt_trie0.contains(x0)) {
@@ -399,7 +400,7 @@ int main() {
             }
         } else if (interm1_isunq == 1 && interm2_isunq == 0 && chn_isunq == 1) {
             if (iter == 0)
-                cout << "{interm1: i, interm2: v, chn: i}" << endl;
+                IVs += "{interm1: i, interm2: v, chn: i}\n";
             for (const auto &ci_off : ci_offsets) {
                 auto x0 = ci_role_id[ci_off];
                 if (rt_trie0.contains(x0)) {
@@ -427,7 +428,7 @@ int main() {
             }
         } else if (interm1_isunq == 1 && interm2_isunq == 1 && chn_isunq == 0) {
             if (iter == 0)
-                cout << "{interm1: i, interm2: i, chn: v}" << endl;
+                IVs += "{interm1: i, interm2: i, chn: v}\n";
             for (const auto &ci_off : ci_offsets) {
                 auto x0 = ci_role_id[ci_off];
                 if (rt_trie0.contains(x0)) {
@@ -455,7 +456,7 @@ int main() {
             }
         } else {
             if (iter == 0)
-                cout << "{interm1: i, interm2: i, chn: i}" << endl;
+                IVs += "{interm1: i, interm2: i, chn: i}\n";
             for (const auto &ci_off : ci_offsets) {
                 auto x0 = ci_role_id[ci_off];
                 if (rt_trie0.contains(x0)) {
@@ -483,8 +484,10 @@ int main() {
         }
         timer.StoreElapsedTime(7);
 
-        if (iter == 0)
+        if (iter == 0) {
             cout << mn_chn_name << " | " << mn_interm2_col1 << " | " << mn_interm1_col3 << endl;
+            cout << IVs;
+        }
         cout << "*" << " " << flush;
     }
     cout << endl;

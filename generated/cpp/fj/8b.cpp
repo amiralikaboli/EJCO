@@ -20,6 +20,7 @@ int main() {
 
     for (int iter = 0; iter < 1 + 5; ++iter) {
         int cnt;
+        string IVs;
         timer.Reset();
 
         auto cn_trie0 = phmap::flat_hash_map<int, bool>();
@@ -59,7 +60,7 @@ int main() {
         string mn_an_name = "zzzzzzzz";
         if (t_isunq == 0 && an_isunq == 0) {
             if (iter == 0)
-                cout << "{t: v, an: v}" << endl;
+                IVs += "{t: v, an: v}\n";
             for (const auto &ci_off : ci_offsets) {
                 auto x0 = ci_role_id[ci_off];
                 if (rt_trie0.contains(x0)) {
@@ -84,7 +85,7 @@ int main() {
             }
         } else if (t_isunq == 0 && an_isunq == 1) {
             if (iter == 0)
-                cout << "{t: v, an: i}" << endl;
+                IVs += "{t: v, an: i}\n";
             for (const auto &ci_off : ci_offsets) {
                 auto x0 = ci_role_id[ci_off];
                 if (rt_trie0.contains(x0)) {
@@ -108,7 +109,7 @@ int main() {
             }
         } else if (t_isunq == 1 && an_isunq == 0) {
             if (iter == 0)
-                cout << "{t: i, an: v}" << endl;
+                IVs += "{t: i, an: v}\n";
             for (const auto &ci_off : ci_offsets) {
                 auto x0 = ci_role_id[ci_off];
                 if (rt_trie0.contains(x0)) {
@@ -132,7 +133,7 @@ int main() {
             }
         } else {
             if (iter == 0)
-                cout << "{t: i, an: i}" << endl;
+                IVs += "{t: i, an: i}\n";
             for (const auto &ci_off : ci_offsets) {
                 auto x0 = ci_role_id[ci_off];
                 if (rt_trie0.contains(x0)) {
@@ -156,8 +157,10 @@ int main() {
         }
         timer.StoreElapsedTime(3);
 
-        if (iter == 0)
+        if (iter == 0) {
             cout << mn_t_title << " | " << mn_an_name << endl;
+            cout << IVs;
+        }
         cout << "*" << " " << flush;
     }
     cout << endl;

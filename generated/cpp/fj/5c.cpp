@@ -18,6 +18,7 @@ int main() {
 
     for (int iter = 0; iter < 1 + 5; ++iter) {
         int cnt;
+        string IVs;
         timer.Reset();
 
         auto it_trie0 = phmap::flat_hash_map<int, bool>();
@@ -35,7 +36,7 @@ int main() {
         string mn_t_title = "zzzzzzzz";
         if (mc_isunq == 0 && t_isunq == 0) {
             if (iter == 0)
-                cout << "{mc: v, t: v}" << endl;
+                IVs += "{mc: v, t: v}\n";
             for (const auto &mi_off : mi_offsets) {
                 auto x0 = mi_info_type_id[mi_off];
                 if (it_trie0.contains(x0)) {
@@ -58,7 +59,7 @@ int main() {
             }
         } else if (mc_isunq == 0 && t_isunq == 1) {
             if (iter == 0)
-                cout << "{mc: v, t: i}" << endl;
+                IVs += "{mc: v, t: i}\n";
             for (const auto &mi_off : mi_offsets) {
                 auto x0 = mi_info_type_id[mi_off];
                 if (it_trie0.contains(x0)) {
@@ -80,7 +81,7 @@ int main() {
             }
         } else if (mc_isunq == 1 && t_isunq == 0) {
             if (iter == 0)
-                cout << "{mc: i, t: v}" << endl;
+                IVs += "{mc: i, t: v}\n";
             for (const auto &mi_off : mi_offsets) {
                 auto x0 = mi_info_type_id[mi_off];
                 if (it_trie0.contains(x0)) {
@@ -102,7 +103,7 @@ int main() {
             }
         } else {
             if (iter == 0)
-                cout << "{mc: i, t: i}" << endl;
+                IVs += "{mc: i, t: i}\n";
             for (const auto &mi_off : mi_offsets) {
                 auto x0 = mi_info_type_id[mi_off];
                 if (it_trie0.contains(x0)) {
@@ -124,8 +125,10 @@ int main() {
         }
         timer.StoreElapsedTime(1);
 
-        if (iter == 0)
+        if (iter == 0) {
             cout << mn_t_title << endl;
+            cout << IVs;
+        }
         cout << "*" << " " << flush;
     }
     cout << endl;

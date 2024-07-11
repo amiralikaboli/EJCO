@@ -55,6 +55,7 @@ class AbstractCppGenerator:
 
 			cpp_file.write('for (int iter = 0; iter < 1 + 5; ++iter) {\n')
 			cpp_file.write(f'int {self.var_mng.cnt_var()};\n')
+			cpp_file.write(f'string {self.var_mng.ivs_var()};\n')
 			cpp_file.write('timer.Reset();\n\n')
 
 			for idx, (node, build_plan, compiled_plan) in enumerate(plans):
@@ -65,11 +66,14 @@ class AbstractCppGenerator:
 				cpp_file.write(f'timer.StoreElapsedTime({2 * idx + 1});\n\n')
 
 			root_build_plan = plans[-1][1]
-			cpp_file.write('if (iter == 0)\n')
+			cpp_file.write('if (iter == 0) {\n')
 			proj_relcols, _ = self._find_all_proj_cols_and_types(root_build_plan)
 			delimiter = ' << " | " << '
 			cpp_file.write(
-				f'cout << {delimiter.join([self.var_mng.mn_rel_col_var(rel, col) for rel, col in proj_relcols])} << endl;\n')
+				f'cout << {delimiter.join([self.var_mng.mn_rel_col_var(rel, col) for rel, col in proj_relcols])} << endl;\n'
+			)
+			cpp_file.write(f'cout << {self.var_mng.ivs_var()};\n')
+			cpp_file.write('}\n')
 			cpp_file.write('cout << "*" << " " << flush;\n')
 
 			cpp_file.write('}\n')
@@ -408,7 +412,7 @@ class FJCppGenerator(AbstractCppGenerator):
 			if self.vector_tries:
 				double_quote = '"'
 				content += f'if (iter == 0)'
-				content += f'cout << "{json.dumps(rel2iv).replace(double_quote, "")}" << endl;\n'
+				content += f'{self.var_mng.ivs_var()} += "{json.dumps(rel2iv).replace(double_quote, "")}\\n";\n'
 
 			for idx, eq_cols in enumerate(compiled_plan):
 				rel_it, col_it = eq_cols[0]

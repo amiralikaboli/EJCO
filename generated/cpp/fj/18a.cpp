@@ -20,6 +20,7 @@ int main() {
 
     for (int iter = 0; iter < 1 + 5; ++iter) {
         int cnt;
+        string IVs;
         timer.Reset();
 
         auto mi_idx_vtrie0 = phmap::flat_hash_map<int, vector<int>>();
@@ -35,7 +36,7 @@ int main() {
         cnt = 0;
         if (mi_idx_isunq == 0) {
             if (iter == 0)
-                cout << "{mi_idx: v}" << endl;
+                IVs += "{mi_idx: v}\n";
             for (const auto &t_off : t_offsets) {
                 auto x0 = t_id[t_off];
                 if (mi_idx_vtrie0.contains(x0)) {
@@ -51,7 +52,7 @@ int main() {
             }
         } else {
             if (iter == 0)
-                cout << "{mi_idx: i}" << endl;
+                IVs += "{mi_idx: i}\n";
             for (const auto &t_off : t_offsets) {
                 auto x0 = t_id[t_off];
                 if (mi_idx_itrie0.contains(x0)) {
@@ -86,7 +87,7 @@ int main() {
         cnt = 0;
         if (interm0_isunq == 0) {
             if (iter == 0)
-                cout << "{interm0: v}" << endl;
+                IVs += "{interm0: v}\n";
             for (const auto &mi_off : mi_offsets) {
                 auto x0 = mi_movie_id[mi_off];
                 if (interm0_vtrie0.contains(x0)) {
@@ -112,7 +113,7 @@ int main() {
             }
         } else {
             if (iter == 0)
-                cout << "{interm0: i}" << endl;
+                IVs += "{interm0: i}\n";
             for (const auto &mi_off : mi_offsets) {
                 auto x0 = mi_movie_id[mi_off];
                 if (interm0_itrie0.contains(x0)) {
@@ -150,7 +151,7 @@ int main() {
         string mn_interm1_col5 = "zzzzzzzz";
         if (interm1_isunq == 0) {
             if (iter == 0)
-                cout << "{interm1: v}" << endl;
+                IVs += "{interm1: v}\n";
             for (const auto &ci_off : ci_offsets) {
                 auto x0 = ci_person_id[ci_off];
                 if (n_trie0.contains(x0)) {
@@ -168,7 +169,7 @@ int main() {
             }
         } else {
             if (iter == 0)
-                cout << "{interm1: i}" << endl;
+                IVs += "{interm1: i}\n";
             for (const auto &ci_off : ci_offsets) {
                 auto x0 = ci_person_id[ci_off];
                 if (n_trie0.contains(x0)) {
@@ -186,8 +187,10 @@ int main() {
         }
         timer.StoreElapsedTime(5);
 
-        if (iter == 0)
+        if (iter == 0) {
             cout << mn_interm1_col2 << " | " << mn_interm1_col4 << " | " << mn_interm1_col5 << endl;
+            cout << IVs;
+        }
         cout << "*" << " " << flush;
     }
     cout << endl;

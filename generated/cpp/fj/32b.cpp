@@ -19,6 +19,7 @@ int main() {
 
     for (int iter = 0; iter < 1 + 5; ++iter) {
         int cnt;
+        string IVs;
         timer.Reset();
 
         auto ml_vtrie0 = phmap::flat_hash_map<int, vector<int>>();
@@ -38,7 +39,7 @@ int main() {
         cnt = 0;
         if (ml_isunq == 0 && t2_isunq == 0) {
             if (iter == 0)
-                cout << "{ml: v, t2: v}" << endl;
+                IVs += "{ml: v, t2: v}\n";
             for (const auto &t1_off : t1_offsets) {
                 auto x0 = t1_id[t1_off];
                 if (ml_vtrie0.contains(x0)) {
@@ -61,7 +62,7 @@ int main() {
             }
         } else if (ml_isunq == 0 && t2_isunq == 1) {
             if (iter == 0)
-                cout << "{ml: v, t2: i}" << endl;
+                IVs += "{ml: v, t2: i}\n";
             for (const auto &t1_off : t1_offsets) {
                 auto x0 = t1_id[t1_off];
                 if (ml_vtrie0.contains(x0)) {
@@ -83,7 +84,7 @@ int main() {
             }
         } else if (ml_isunq == 1 && t2_isunq == 0) {
             if (iter == 0)
-                cout << "{ml: i, t2: v}" << endl;
+                IVs += "{ml: i, t2: v}\n";
             for (const auto &t1_off : t1_offsets) {
                 auto x0 = t1_id[t1_off];
                 if (ml_itrie0.contains(x0)) {
@@ -105,7 +106,7 @@ int main() {
             }
         } else {
             if (iter == 0)
-                cout << "{ml: i, t2: i}" << endl;
+                IVs += "{ml: i, t2: i}\n";
             for (const auto &t1_off : t1_offsets) {
                 auto x0 = t1_id[t1_off];
                 if (ml_itrie0.contains(x0)) {
@@ -142,7 +143,7 @@ int main() {
         string mn_lt_link = "zzzzzzzz";
         if (interm0_isunq == 0 && lt_isunq == 0) {
             if (iter == 0)
-                cout << "{interm0: v, lt: v}" << endl;
+                IVs += "{interm0: v, lt: v}\n";
             for (const auto &mk_off : mk_offsets) {
                 auto x0 = mk_movie_id[mk_off];
                 if (interm0_vtrie0.contains(x0)) {
@@ -166,7 +167,7 @@ int main() {
             }
         } else if (interm0_isunq == 0 && lt_isunq == 1) {
             if (iter == 0)
-                cout << "{interm0: v, lt: i}" << endl;
+                IVs += "{interm0: v, lt: i}\n";
             for (const auto &mk_off : mk_offsets) {
                 auto x0 = mk_movie_id[mk_off];
                 if (interm0_vtrie0.contains(x0)) {
@@ -189,7 +190,7 @@ int main() {
             }
         } else if (interm0_isunq == 1 && lt_isunq == 0) {
             if (iter == 0)
-                cout << "{interm0: i, lt: v}" << endl;
+                IVs += "{interm0: i, lt: v}\n";
             for (const auto &mk_off : mk_offsets) {
                 auto x0 = mk_movie_id[mk_off];
                 if (interm0_itrie0.contains(x0)) {
@@ -212,7 +213,7 @@ int main() {
             }
         } else {
             if (iter == 0)
-                cout << "{interm0: i, lt: i}" << endl;
+                IVs += "{interm0: i, lt: i}\n";
             for (const auto &mk_off : mk_offsets) {
                 auto x0 = mk_movie_id[mk_off];
                 if (interm0_itrie0.contains(x0)) {
@@ -235,8 +236,10 @@ int main() {
         }
         timer.StoreElapsedTime(3);
 
-        if (iter == 0)
+        if (iter == 0) {
             cout << mn_interm0_col1 << " | " << mn_interm0_col4 << " | " << mn_lt_link << endl;
+            cout << IVs;
+        }
         cout << "*" << " " << flush;
     }
     cout << endl;

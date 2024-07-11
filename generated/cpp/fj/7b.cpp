@@ -21,6 +21,7 @@ int main() {
 
     for (int iter = 0; iter < 1 + 5; ++iter) {
         int cnt;
+        string IVs;
         timer.Reset();
 
         auto pi_vtrie0 = phmap::flat_hash_map<int, vector<int>>();
@@ -37,7 +38,7 @@ int main() {
         cnt = 0;
         if (pi_isunq == 0) {
             if (iter == 0)
-                cout << "{pi: v}" << endl;
+                IVs += "{pi: v}\n";
             for (const auto &n_off : n_offsets) {
                 auto x0 = n_id[n_off];
                 if (pi_vtrie0.contains(x0)) {
@@ -56,7 +57,7 @@ int main() {
             }
         } else {
             if (iter == 0)
-                cout << "{pi: i}" << endl;
+                IVs += "{pi: i}\n";
             for (const auto &n_off : n_offsets) {
                 auto x0 = n_id[n_off];
                 if (pi_itrie0.contains(x0)) {
@@ -89,7 +90,7 @@ int main() {
         cnt = 0;
         if (ml_isunq == 0) {
             if (iter == 0)
-                cout << "{ml: v}" << endl;
+                IVs += "{ml: v}\n";
             for (const auto &t_off : t_offsets) {
                 auto x0 = t_id[t_off];
                 if (ml_vtrie0.contains(x0)) {
@@ -108,7 +109,7 @@ int main() {
             }
         } else {
             if (iter == 0)
-                cout << "{ml: i}" << endl;
+                IVs += "{ml: i}\n";
             for (const auto &t_off : t_offsets) {
                 auto x0 = t_id[t_off];
                 if (ml_itrie0.contains(x0)) {
@@ -141,7 +142,7 @@ int main() {
         string mn_interm0_col1 = "zzzzzzzz";
         if (interm0_isunq == 0 && interm1_isunq == 0) {
             if (iter == 0)
-                cout << "{interm0: v, interm1: v}" << endl;
+                IVs += "{interm0: v, interm1: v}\n";
             for (const auto &ci_off : ci_offsets) {
                 auto x0 = ci_person_id[ci_off];
                 if (interm0_vtrie0.contains(x0)) {
@@ -163,7 +164,7 @@ int main() {
             }
         } else if (interm0_isunq == 0 && interm1_isunq == 1) {
             if (iter == 0)
-                cout << "{interm0: v, interm1: i}" << endl;
+                IVs += "{interm0: v, interm1: i}\n";
             for (const auto &ci_off : ci_offsets) {
                 auto x0 = ci_person_id[ci_off];
                 if (interm0_vtrie0.contains(x0)) {
@@ -184,7 +185,7 @@ int main() {
             }
         } else if (interm0_isunq == 1 && interm1_isunq == 0) {
             if (iter == 0)
-                cout << "{interm0: i, interm1: v}" << endl;
+                IVs += "{interm0: i, interm1: v}\n";
             for (const auto &ci_off : ci_offsets) {
                 auto x0 = ci_person_id[ci_off];
                 if (interm0_itrie0.contains(x0)) {
@@ -205,7 +206,7 @@ int main() {
             }
         } else {
             if (iter == 0)
-                cout << "{interm0: i, interm1: i}" << endl;
+                IVs += "{interm0: i, interm1: i}\n";
             for (const auto &ci_off : ci_offsets) {
                 auto x0 = ci_person_id[ci_off];
                 if (interm0_itrie0.contains(x0)) {
@@ -226,8 +227,10 @@ int main() {
         }
         timer.StoreElapsedTime(5);
 
-        if (iter == 0)
+        if (iter == 0) {
             cout << mn_interm1_col1 << " | " << mn_interm0_col1 << endl;
+            cout << IVs;
+        }
         cout << "*" << " " << flush;
     }
     cout << endl;

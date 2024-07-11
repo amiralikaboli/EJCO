@@ -25,6 +25,7 @@ class Templates(enum.Enum):
 	IntermCol = "col"
 	RootRel = "root"
 	CntVar = "cnt"
+	IvsVar = "IVs"
 	OffsetsVar = "offsets"
 	IsUnqVar = "isunq"
 

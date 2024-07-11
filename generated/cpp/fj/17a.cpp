@@ -20,6 +20,7 @@ int main() {
 
     for (int iter = 0; iter < 1 + 5; ++iter) {
         int cnt;
+        string IVs;
         timer.Reset();
 
         auto k_trie0 = phmap::flat_hash_map<int, bool>();
@@ -40,7 +41,7 @@ int main() {
         cnt = 0;
         if (mc_isunq == 0) {
             if (iter == 0)
-                cout << "{mc: v}" << endl;
+                IVs += "{mc: v}\n";
             for (const auto &mk_off : mk_offsets) {
                 auto x0 = mk_keyword_id[mk_off];
                 if (k_trie0.contains(x0)) {
@@ -64,7 +65,7 @@ int main() {
             }
         } else {
             if (iter == 0)
-                cout << "{mc: i}" << endl;
+                IVs += "{mc: i}\n";
             for (const auto &mk_off : mk_offsets) {
                 auto x0 = mk_keyword_id[mk_off];
                 if (k_trie0.contains(x0)) {
@@ -98,7 +99,7 @@ int main() {
         string mn_n_name = "zzzzzzzz";
         if (n_isunq == 0) {
             if (iter == 0)
-                cout << "{n: v}" << endl;
+                IVs += "{n: v}\n";
             for (const auto &ci_off : ci_offsets) {
                 auto x0 = ci_movie_id[ci_off];
                 if (interm0_trie0.contains(x0)) {
@@ -114,7 +115,7 @@ int main() {
             }
         } else {
             if (iter == 0)
-                cout << "{n: i}" << endl;
+                IVs += "{n: i}\n";
             for (const auto &ci_off : ci_offsets) {
                 auto x0 = ci_movie_id[ci_off];
                 if (interm0_trie0.contains(x0)) {
@@ -130,8 +131,10 @@ int main() {
         }
         timer.StoreElapsedTime(3);
 
-        if (iter == 0)
+        if (iter == 0) {
             cout << mn_n_name << endl;
+            cout << IVs;
+        }
         cout << "*" << " " << flush;
     }
     cout << endl;

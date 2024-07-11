@@ -18,6 +18,7 @@ int main() {
 
     for (int iter = 0; iter < 1 + 5; ++iter) {
         int cnt;
+        string IVs;
         timer.Reset();
 
         auto k_trie0 = phmap::flat_hash_map<int, bool>();
@@ -36,7 +37,7 @@ int main() {
         string mn_mi_idx_info = "zzzzzzzz";
         if (mi_idx_isunq == 0 && t_isunq == 0) {
             if (iter == 0)
-                cout << "{mi_idx: v, t: v}" << endl;
+                IVs += "{mi_idx: v, t: v}\n";
             for (const auto &mk_off : mk_offsets) {
                 auto x0 = mk_keyword_id[mk_off];
                 if (k_trie0.contains(x0)) {
@@ -60,7 +61,7 @@ int main() {
             }
         } else if (mi_idx_isunq == 0 && t_isunq == 1) {
             if (iter == 0)
-                cout << "{mi_idx: v, t: i}" << endl;
+                IVs += "{mi_idx: v, t: i}\n";
             for (const auto &mk_off : mk_offsets) {
                 auto x0 = mk_keyword_id[mk_off];
                 if (k_trie0.contains(x0)) {
@@ -83,7 +84,7 @@ int main() {
             }
         } else if (mi_idx_isunq == 1 && t_isunq == 0) {
             if (iter == 0)
-                cout << "{mi_idx: i, t: v}" << endl;
+                IVs += "{mi_idx: i, t: v}\n";
             for (const auto &mk_off : mk_offsets) {
                 auto x0 = mk_keyword_id[mk_off];
                 if (k_trie0.contains(x0)) {
@@ -106,7 +107,7 @@ int main() {
             }
         } else {
             if (iter == 0)
-                cout << "{mi_idx: i, t: i}" << endl;
+                IVs += "{mi_idx: i, t: i}\n";
             for (const auto &mk_off : mk_offsets) {
                 auto x0 = mk_keyword_id[mk_off];
                 if (k_trie0.contains(x0)) {
@@ -129,8 +130,10 @@ int main() {
         }
         timer.StoreElapsedTime(1);
 
-        if (iter == 0)
+        if (iter == 0) {
             cout << mn_t_title << " | " << mn_mi_idx_info << endl;
+            cout << IVs;
+        }
         cout << "*" << " " << flush;
     }
     cout << endl;
