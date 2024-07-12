@@ -53,6 +53,18 @@ namespace sv {
 			size_ = input_size;
 		}
 
+		template <class InputIt>
+		small_vector(InputIt begin, InputIt end, const Allocator &alloc = Allocator()) {
+			auto count = std::distance(begin, end);
+			if (count <= N) {
+				std::copy(begin, end, stack_.begin());
+			} else {
+				heap_.reserve(count);
+				std::move(begin, end, std::back_inserter(heap_));
+			}
+			size_ = count;
+		}
+
 		small_vector &operator=(const small_vector &rhs) {
 			stack_ = rhs.stack_;
 			heap_ = rhs.heap_;
