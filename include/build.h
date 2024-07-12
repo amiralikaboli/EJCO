@@ -26,6 +26,23 @@ void build_trie(phmap::flat_hash_map<int, vector<int>> &trie, vector<int> &off, 
 	trie.emplace(last_val, vector<int>(off.begin() + last_idx, off.end()));
 }
 
+void build_trie(phmap::flat_hash_map<int, pair<int, int>> &trie, vector<int> &off, vector<int> &attr0) {
+	sort(off.begin(), off.end(), [&attr0](const auto &i, const auto &j) {
+		if (attr0[i] < attr0[j]) return true;
+		else return false;
+	});
+	auto last_val = attr0[off[0]];
+	int last_idx = 0;
+	for (int i = 1; i < off.size(); ++i)
+		if (attr0[off[i]] != last_val) {
+			trie.emplace(last_val, make_pair(last_idx, i));
+			last_val = attr0[off[i]];
+			last_idx = i;
+		}
+	trie.emplace(last_val, make_pair(last_idx, off.size()));
+}
+
+
 bool build_trie(phmap::flat_hash_map<int, vector<int>> &vtrie, phmap::flat_hash_map<int, int> &itrie, vector<int> &off, vector<int> &attr0) {
 	sort(off.begin(), off.end(), [&attr0](const auto &i, const auto &j) {
 		if (attr0[i] < attr0[j]) return true;
@@ -50,6 +67,34 @@ bool build_trie(phmap::flat_hash_map<int, vector<int>> &vtrie, phmap::flat_hash_
 				last_idx = i;
 			}
 		vtrie.emplace(last_val, vector<int>(off.begin() + last_idx, off.end()));
+	}
+	return isUnique;
+}
+
+bool build_trie(phmap::flat_hash_map<int, pair<int, int>> &vtrie, phmap::flat_hash_map<int, int> &itrie, vector<int> &off, vector<int> &attr0) {
+	sort(off.begin(), off.end(), [&attr0](const auto &i, const auto &j) {
+		if (attr0[i] < attr0[j]) return true;
+		else return false;
+	});
+	bool isUnique = true;
+	for (int i = 1; i < off.size(); ++i)
+		if (attr0[off[i]] == attr0[off[i - 1]]) {
+			isUnique = false;
+			break;
+		}
+	if (isUnique) {
+		for (int i = 0; i < attr0.size(); ++i)
+			itrie[attr0[i]] = i;
+	} else {
+		auto last_val = attr0[off[0]];
+		int last_idx = 0;
+		for (int i = 1; i < off.size(); ++i)
+			if (attr0[off[i]] != last_val) {
+				vtrie.emplace(last_val, make_pair(last_idx, i));
+				last_val = attr0[off[i]];
+				last_idx = i;
+			}
+		vtrie.emplace(last_val, make_pair(last_idx, off.size()));
 	}
 	return isUnique;
 }
