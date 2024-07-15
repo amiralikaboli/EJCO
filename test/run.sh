@@ -1,7 +1,10 @@
-g++ 8a_vec.cpp -O3 -std=c++17 && ./a.out
-g++ 8a_vec_sort.cpp -O3 -std=c++17 && ./a.out
-g++ 8a_pii_sort.cpp -O3 -std=c++17 && ./a.out
-g++ 8a_vecint_sort.cpp -O3 -std=c++17 && ./a.out
-g++ 8a_piiint_sort.cpp -O3 -std=c++17 && ./a.out
-g++ 8a_svec.cpp -O3 -std=c++17 && ./a.out
-g++ 8a_svec_sort.cpp -O3 -std=c++17 && ./a.out
+g++ 8a_nohint_int.cpp -O3 -std=c++17 && ./a.out
+g++ 8a_hint_int.cpp -O3 -std=c++17 && ./a.out
+g++ 8a_nohint_svec.cpp -O3 -std=c++17 && ./a.out
+g++ 8a_hint_svec.cpp -O3 -std=c++17 && ./a.out
+g++ 8a_nohint_svec_arr.cpp -O3 -std=c++17 && ./a.out
+g++ 8a_hint_svec_arr.cpp -O3 -std=c++17 && ./a.out
+g++ 8a_nohint_svec_tpl.cpp -O3 -std=c++17 && ./a.out
+g++ 8a_hint_svec_tpl.cpp -O3 -std=c++17 && ./a.out
+g++ 8a_nohint_svec_fld.cpp -O3 -std=c++17 && ./a.out
+g++ 8a_hint_svec_fld.cpp -O3 -std=c++17 && ./a.out

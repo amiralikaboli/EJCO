@@ -41,7 +41,6 @@ int main() {
 				interm0_offsets.push_back(cnt++);
 			}
 		}
-		timer.StoreElapsedTime(1);
 
 		auto rt_trie0 = phmap::flat_hash_map<int, bool>();
 		build_trie(rt_trie0, rt_id);
@@ -49,10 +48,11 @@ int main() {
 		build_trie(n1_trie0, n1_id);
 		auto interm0_trie0 = phmap::flat_hash_map<int, bool>();
 		build_trie(interm0_trie0, interm0_col1);
-		auto an1_vtrie0 = phmap::flat_hash_map<int, sv::small_vector<int, 4>>();
-		build_trie<4>(an1_vtrie0, an1_person_id);
-		auto t_vtrie0 = phmap::flat_hash_map<int, sv::small_vector<int, 4>>();
-		build_trie<4>(t_vtrie0, t_id);
+		auto an1_trie0 = phmap::flat_hash_map<int, sv::small_vector<int, 4>>();
+		build_trie<4>(an1_trie0, an1_person_id);
+		timer.StoreElapsedTime(1);
+		auto t_trie0 = phmap::flat_hash_map<int, int>(t_id.size());
+		build_trie(t_trie0, t_id);
 		timer.StoreElapsedTime(2);
 
 		string mn_t_title = "zzzzzzzz";
@@ -67,14 +67,13 @@ int main() {
 					auto x2 = ci_movie_id[ci_off];
 					if (interm0_trie0.contains(x2)) {
 						auto &interm0_trie1 = interm0_trie0.at(x2);
-						if (an1_vtrie0.contains(x1)) {
-							auto &an1_vtrie1 = an1_vtrie0.at(x1);
-							if (t_vtrie0.contains(x2)) {
-								auto &t_vtrie1 = t_vtrie0.at(x2);
-								for (const auto &t_off: t_vtrie1) {
-									mn_t_title = min(mn_t_title, t_title[t_off]);
-								}
-								for (const auto &an1_off: an1_vtrie1) {
+						if (an1_trie0.contains(x1)) {
+							auto &an1_trie1 = an1_trie0.at(x1);
+							if (t_trie0.contains(x2)) {
+								auto &t_trie1 = t_trie0.at(x2);
+								auto &t_off = t_trie1;
+								mn_t_title = min(mn_t_title, t_title[t_off]);
+								for (const auto &an1_off: an1_trie1) {
 									mn_an1_name = min(mn_an1_name, an1_name[an1_off]);
 								}
 							}
