@@ -1,5 +1,6 @@
 #include <iostream>
 #include <vector>
+#include <unordered_map>
 #include "parallel_hashmap/phmap.h"
 #include "small_vector.h"
 #include "small_vector2.h"
@@ -38,7 +39,18 @@ void build_trie(phmap::flat_hash_map<int, small_vector_fields<int>> &trie, vecto
 		trie[attr0[i]].push_back(i);
 }
 
+template <int N>
+void build_trie(phmap::flat_hash_map<int, small_vector_vecptr<int, N>> &trie, vector<int> &attr0) {
+	for (int i = 0; i < attr0.size(); ++i)
+		trie[attr0[i]].push_back(i);
+}
+
 void build_trie(phmap::flat_hash_map<int, bool> &trie, vector<int> &attr0) {
 	for (int i = 0; i < attr0.size(); ++i)
 		trie[attr0[i]] = true;
+}
+
+void build_trie(unordered_multimap<int, int> &trie, vector<int> &attr0) {
+	for (int i = 0; i < attr0.size(); ++i)
+		trie.emplace(attr0[i], i);
 }

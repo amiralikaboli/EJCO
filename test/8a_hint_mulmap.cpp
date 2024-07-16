@@ -16,13 +16,13 @@ int main() {
 
 	for (int iter = 0; iter < 1 + 10; ++iter) {
 		timer.Reset();
-		auto an1_trie0 = phmap::flat_hash_map<int, sv::small_vector<int, 4>>(an1_offsets.size());
-		build_trie<4>(an1_trie0, an1_person_id);
+		unordered_multimap<int, int> an1_trie0(an1_offsets.size());
+		build_trie(an1_trie0, an1_person_id);
 		timer.StoreElapsedTime(0);
 
 		timer.Reset();
-		auto t_trie0 = phmap::flat_hash_map<int, sv::small_vector<int, 4>>(t_offsets.size());
-		build_trie<4>(t_trie0, t_id);
+		unordered_multimap<int, int> t_trie0(t_offsets.size());
+		build_trie(t_trie0, t_id);
 		timer.StoreElapsedTime(1);
 
 		cout << "*" << " " << flush;

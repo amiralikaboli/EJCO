@@ -18,7 +18,7 @@ public:
 		} else {
 			throw std::runtime_error("small_vector_array: size exceeds capacity");
 		}
-		size_ += 1;
+		++size_;
 	}
 
 	T &operator[](size_t pos) {
@@ -50,7 +50,7 @@ public:
 		} else {
 			throw std::runtime_error("small_vector_array: size exceeds capacity");
 		}
-		size_ += 1;
+		++size_;
 	}
 
 	T &operator[](size_t pos) {
@@ -91,7 +91,7 @@ public:
 		} else {
 			throw std::runtime_error("small_vector_array: size exceeds capacity");
 		}
-		size_ += 1;
+		++size_;
 	}
 
 	T &operator[](size_t pos) {
@@ -105,6 +105,36 @@ public:
 			return fld3_;
 		} else {
 			throw std::runtime_error("small_vector_array: out of bounds");
+		}
+	}
+};
+
+template<typename T, size_t N>
+class small_vector_vecptr {
+	std::array<T, N> stack_;
+	std::vector<T> *heap_;
+	std::size_t size_{0};
+
+public:
+	size_t size() const { return size_; }
+
+	void push_back(const T &value) {
+		if (size_ < N) {
+			stack_[size_] = value;
+		} else {
+			if (size_ == N) {
+				heap_ = new std::vector<T>(stack_.begin(), stack_.end());
+			}
+			heap_->push_back(value);
+		}
+		++size_;
+	}
+
+	T &operator[](size_t pos) {
+		if (size_ < N) {
+			return stack_[pos];
+		} else {
+			return heap_->at(pos);
 		}
 	}
 };

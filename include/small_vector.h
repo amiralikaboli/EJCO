@@ -26,7 +26,7 @@ namespace sv {
 			if (count == N) {
 				stack_.fill(value);
 			} else if (count < N) {
-				for (size_t i = 0; i < count; i++) {
+				for (size_t i = 0; i < count; ++i) {
 					stack_[i] = value;
 				}
 			} else {
@@ -191,7 +191,7 @@ namespace sv {
 				}
 				heap_.push_back(value);
 			}
-			size_ += 1;
+			++size_;
 		}
 
 		void push_back(T &&value) {
@@ -204,7 +204,7 @@ namespace sv {
 				}
 				heap_.push_back(std::move(value));
 			}
-			size_ += 1;
+			++size_;
 		}
 
 		void pop_back() {
@@ -214,11 +214,11 @@ namespace sv {
 			}
 
 			if (size_ < N) {
-				size_ -= 1;
+				--size_;
 			} else {
 				// currently using heap
 				heap_.pop_back();
-				size_ -= 1;
+				--size_;
 
 				// now check if all data can fit on stack
 				// if so, move back to stack
@@ -280,12 +280,12 @@ namespace sv {
 			typedef int difference_type;
 			iterator(pointer ptr) : ptr_(ptr) {}
 			self_type operator++() {
-				ptr_++;
+				++ptr_;
 				return *this;
 			}
 			self_type operator++(int) {
 				self_type i = *this;
-				ptr_++;
+				++ptr_;
 				return i;
 			}
 			reference operator*() { return *ptr_; }
@@ -306,12 +306,12 @@ namespace sv {
 			typedef std::forward_iterator_tag iterator_category;
 			const_iterator(pointer ptr) : ptr_(ptr) {}
 			self_type operator++() {
-				ptr_++;
+				++ptr_;
 				return *this;
 			}
 			self_type operator++(int) {
 				self_type i = *this;
-				ptr_++;
+				++ptr_;
 				return i;
 			}
 			const value_type &operator*() { return *ptr_; }
