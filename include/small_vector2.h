@@ -131,7 +131,7 @@ public:
 	}
 
 	T &operator[](size_t pos) {
-		if (size_ < N) {
+		if (size_ <= N) {
 			return stack_[pos];
 		} else {
 			return heap_->at(pos);
