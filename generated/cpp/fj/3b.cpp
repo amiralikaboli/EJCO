@@ -19,8 +19,8 @@ int main() {
         int cnt;
         timer.Reset();
 
-        auto t_trie0 = phmap::flat_hash_map<int, vector<int>>();
-        build_trie(t_trie0, t_id);
+        auto t_trie0 = phmap::flat_hash_map<int, small_vector_vecptr<int, 4>>(t_offsets.size());
+        build_trie<4>(t_trie0, t_id);
         timer.StoreElapsedTime(0);
 
         vector<int> interm0_col0;
@@ -32,7 +32,8 @@ int main() {
             auto x0 = mk_movie_id[mk_off];
             if (t_trie0.contains(x0)) {
                 auto &t_trie1 = t_trie0.at(x0);
-                for (const auto &t_off : t_trie1) {
+                for (int t_i = 0; t_i < t_trie1.size(); ++t_i) {
+                    auto t_off = t_trie1[t_i];
                     interm0_col0.push_back(mk_movie_id[mk_off]);
                     interm0_col1.push_back(mk_keyword_id[mk_off]);
                     interm0_col2.push_back(t_title[t_off]);
@@ -42,9 +43,9 @@ int main() {
         }
         timer.StoreElapsedTime(1);
 
-        auto interm0_trie0 = phmap::flat_hash_map<int, vector<int>>();
-        build_trie(interm0_trie0, interm0_col0);
-        auto k_trie0 = phmap::flat_hash_map<int, bool>();
+        auto interm0_trie0 = phmap::flat_hash_map<int, small_vector_vecptr<int, 4>>(interm0_offsets.size());
+        build_trie<4>(interm0_trie0, interm0_col0);
+        auto k_trie0 = phmap::flat_hash_map<int, bool>(k_offsets.size());
         build_trie(k_trie0, k_id);
         timer.StoreElapsedTime(2);
 
@@ -53,7 +54,8 @@ int main() {
             auto x0 = mi_movie_id[mi_off];
             if (interm0_trie0.contains(x0)) {
                 auto &interm0_trie1 = interm0_trie0.at(x0);
-                for (const auto &interm0_off : interm0_trie1) {
+                for (int interm0_i = 0; interm0_i < interm0_trie1.size(); ++interm0_i) {
+                    auto interm0_off = interm0_trie1[interm0_i];
                     auto x1 = interm0_col1[interm0_off];
                     if (k_trie0.contains(x1)) {
                         auto &k_trie1 = k_trie0.at(x1);

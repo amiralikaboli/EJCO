@@ -21,10 +21,10 @@ int main() {
         int cnt;
         timer.Reset();
 
-        auto ml_trie0 = phmap::flat_hash_map<int, vector<int>>();
-        build_trie(ml_trie0, ml_movie_id);
-        auto t2_trie0 = phmap::flat_hash_map<int, vector<int>>();
-        build_trie(t2_trie0, t2_id);
+        auto ml_trie0 = phmap::flat_hash_map<int, small_vector_vecptr<int, 4>>(ml_offsets.size());
+        build_trie<4>(ml_trie0, ml_movie_id);
+        auto t2_trie0 = phmap::flat_hash_map<int, small_vector_vecptr<int, 4>>(t2_offsets.size());
+        build_trie<4>(t2_trie0, t2_id);
         timer.StoreElapsedTime(0);
 
         vector<int> interm0_col0;
@@ -38,11 +38,13 @@ int main() {
             auto x0 = t1_id[t1_off];
             if (ml_trie0.contains(x0)) {
                 auto &ml_trie1 = ml_trie0.at(x0);
-                for (const auto &ml_off : ml_trie1) {
+                for (int ml_i = 0; ml_i < ml_trie1.size(); ++ml_i) {
+                    auto ml_off = ml_trie1[ml_i];
                     auto x1 = ml_linked_movie_id[ml_off];
                     if (t2_trie0.contains(x1)) {
                         auto &t2_trie1 = t2_trie0.at(x1);
-                        for (const auto &t2_off : t2_trie1) {
+                        for (int t2_i = 0; t2_i < t2_trie1.size(); ++t2_i) {
+                            auto t2_off = t2_trie1[t2_i];
                             interm0_col0.push_back(t1_id[t1_off]);
                             interm0_col1.push_back(t1_title[t1_off]);
                             interm0_col2.push_back(ml_linked_movie_id[ml_off]);
@@ -56,11 +58,11 @@ int main() {
         }
         timer.StoreElapsedTime(1);
 
-        auto interm0_trie0 = phmap::flat_hash_map<int, vector<int>>();
-        build_trie(interm0_trie0, interm0_col0);
-        auto lt_trie0 = phmap::flat_hash_map<int, vector<int>>();
-        build_trie(lt_trie0, lt_id);
-        auto k_trie0 = phmap::flat_hash_map<int, bool>();
+        auto interm0_trie0 = phmap::flat_hash_map<int, small_vector_vecptr<int, 4>>(interm0_offsets.size());
+        build_trie<4>(interm0_trie0, interm0_col0);
+        auto lt_trie0 = phmap::flat_hash_map<int, small_vector_vecptr<int, 4>>(lt_offsets.size());
+        build_trie<4>(lt_trie0, lt_id);
+        auto k_trie0 = phmap::flat_hash_map<int, bool>(k_offsets.size());
         build_trie(k_trie0, k_id);
         timer.StoreElapsedTime(2);
 
@@ -71,7 +73,8 @@ int main() {
             auto x0 = mk_movie_id[mk_off];
             if (interm0_trie0.contains(x0)) {
                 auto &interm0_trie1 = interm0_trie0.at(x0);
-                for (const auto &interm0_off : interm0_trie1) {
+                for (int interm0_i = 0; interm0_i < interm0_trie1.size(); ++interm0_i) {
+                    auto interm0_off = interm0_trie1[interm0_i];
                     auto x1 = interm0_col3[interm0_off];
                     if (lt_trie0.contains(x1)) {
                         auto &lt_trie1 = lt_trie0.at(x1);
@@ -80,7 +83,8 @@ int main() {
                             auto &k_trie1 = k_trie0.at(x2);
                             mn_interm0_col1 = min(mn_interm0_col1, interm0_col1[interm0_off]);
                             mn_interm0_col4 = min(mn_interm0_col4, interm0_col4[interm0_off]);
-                            for (const auto &lt_off : lt_trie1) {
+                            for (int lt_i = 0; lt_i < lt_trie1.size(); ++lt_i) {
+                                auto lt_off = lt_trie1[lt_i];
                                 mn_lt_link = min(mn_lt_link, lt_link[lt_off]);
                             }
                         }

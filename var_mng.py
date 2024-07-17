@@ -13,7 +13,7 @@ class VariableManager:
 		self._last_x_var = 0
 
 	@staticmethod
-	def trie_def(level_types: Tuple[str], value_type: str = "vector<int>"):
+	def trie_def(level_types: Tuple[str], value_type: str = "small_vector_vecptr<int, 4>"):
 		return f"{''.join([f'phmap::flat_hash_map<{ttt}, ' for ttt in level_types])}{value_type}{'>' * len(level_types)}"
 
 	@staticmethod
@@ -50,6 +50,10 @@ class VariableManager:
 		return f"{rel}_{Templates.OffVar.value}"
 
 	@staticmethod
+	def i_var(rel: str):
+		return f"{rel}_{Templates.IVar.value}"
+
+	@staticmethod
 	def tuple_var(rel: str):
 		return f"{rel}_{Templates.TupleVar.value}"
 
@@ -72,10 +76,6 @@ class VariableManager:
 	@staticmethod
 	def build_func():
 		return Templates.BuildFunc.value
-
-	@staticmethod
-	def build_ordered_func():
-		return f"{Templates.BuildFunc.value}_ordered"
 
 	@staticmethod
 	def interm_rel(idx: int):

@@ -22,13 +22,13 @@ int main() {
         int cnt;
         timer.Reset();
 
-        auto k_trie0 = phmap::flat_hash_map<int, bool>();
+        auto k_trie0 = phmap::flat_hash_map<int, bool>(k_offsets.size());
         build_trie(k_trie0, k_id);
-        auto t_trie0 = phmap::flat_hash_map<int, bool>();
+        auto t_trie0 = phmap::flat_hash_map<int, bool>(t_offsets.size());
         build_trie(t_trie0, t_id);
-        auto mc_trie0 = phmap::flat_hash_map<int, vector<int>>();
-        build_trie(mc_trie0, mc_movie_id);
-        auto cn_trie0 = phmap::flat_hash_map<int, bool>();
+        auto mc_trie0 = phmap::flat_hash_map<int, small_vector_vecptr<int, 4>>(mc_offsets.size());
+        build_trie<4>(mc_trie0, mc_movie_id);
+        auto cn_trie0 = phmap::flat_hash_map<int, bool>(cn_offsets.size());
         build_trie(cn_trie0, cn_id);
         timer.StoreElapsedTime(0);
 
@@ -45,7 +45,8 @@ int main() {
                 if (t_trie0.contains(x1) && mc_trie0.contains(x1)) {
                     auto &t_trie1 = t_trie0.at(x1);
                     auto &mc_trie1 = mc_trie0.at(x1);
-                    for (const auto &mc_off : mc_trie1) {
+                    for (int mc_i = 0; mc_i < mc_trie1.size(); ++mc_i) {
+                        auto mc_off = mc_trie1[mc_i];
                         auto x2 = mc_company_id[mc_off];
                         if (cn_trie0.contains(x2)) {
                             auto &cn_trie1 = cn_trie0.at(x2);
@@ -60,9 +61,9 @@ int main() {
         }
         timer.StoreElapsedTime(1);
 
-        auto n_trie0 = phmap::flat_hash_map<int, vector<int>>();
-        build_trie(n_trie0, n_id);
-        auto interm0_trie0 = phmap::flat_hash_map<int, bool>();
+        auto n_trie0 = phmap::flat_hash_map<int, small_vector_vecptr<int, 4>>(n_offsets.size());
+        build_trie<4>(n_trie0, n_id);
+        auto interm0_trie0 = phmap::flat_hash_map<int, bool>(interm0_offsets.size());
         build_trie(interm0_trie0, interm0_col0);
         timer.StoreElapsedTime(2);
 
@@ -74,7 +75,8 @@ int main() {
                 auto x1 = ci_movie_id[ci_off];
                 if (interm0_trie0.contains(x1)) {
                     auto &interm0_trie1 = interm0_trie0.at(x1);
-                    for (const auto &n_off : n_trie1) {
+                    for (int n_i = 0; n_i < n_trie1.size(); ++n_i) {
+                        auto n_off = n_trie1[n_i];
                         mn_n_name = min(mn_n_name, n_name[n_off]);
                     }
                 }

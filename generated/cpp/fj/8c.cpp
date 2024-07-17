@@ -22,7 +22,7 @@ int main() {
         int cnt;
         timer.Reset();
 
-        auto cn_trie0 = phmap::flat_hash_map<int, bool>();
+        auto cn_trie0 = phmap::flat_hash_map<int, bool>(cn_offsets.size());
         build_trie(cn_trie0, cn_id);
         timer.StoreElapsedTime(0);
 
@@ -41,15 +41,15 @@ int main() {
         }
         timer.StoreElapsedTime(1);
 
-        auto rt_trie0 = phmap::flat_hash_map<int, bool>();
+        auto rt_trie0 = phmap::flat_hash_map<int, bool>(rt_offsets.size());
         build_trie(rt_trie0, rt_id);
-        auto a1_trie0 = phmap::flat_hash_map<int, vector<int>>();
-        build_trie(a1_trie0, a1_person_id);
-        auto interm0_trie0 = phmap::flat_hash_map<int, bool>();
+        auto a1_trie0 = phmap::flat_hash_map<int, small_vector_vecptr<int, 4>>(a1_offsets.size());
+        build_trie<4>(a1_trie0, a1_person_id);
+        auto interm0_trie0 = phmap::flat_hash_map<int, bool>(interm0_offsets.size());
         build_trie(interm0_trie0, interm0_col1);
-        auto t_trie0 = phmap::flat_hash_map<int, vector<int>>();
-        build_trie(t_trie0, t_id);
-        auto n1_trie0 = phmap::flat_hash_map<int, bool>();
+        auto t_trie0 = phmap::flat_hash_map<int, small_vector_vecptr<int, 4>>(t_offsets.size());
+        build_trie<4>(t_trie0, t_id);
+        auto n1_trie0 = phmap::flat_hash_map<int, bool>(n1_offsets.size());
         build_trie(n1_trie0, n1_id);
         timer.StoreElapsedTime(2);
 
@@ -68,10 +68,12 @@ int main() {
                         auto &t_trie1 = t_trie0.at(x2);
                         if (n1_trie0.contains(x1)) {
                             auto &n1_trie1 = n1_trie0.at(x1);
-                            for (const auto &t_off : t_trie1) {
+                            for (int t_i = 0; t_i < t_trie1.size(); ++t_i) {
+                                auto t_off = t_trie1[t_i];
                                 mn_t_title = min(mn_t_title, t_title[t_off]);
                             }
-                            for (const auto &a1_off : a1_trie1) {
+                            for (int a1_i = 0; a1_i < a1_trie1.size(); ++a1_i) {
+                                auto a1_off = a1_trie1[a1_i];
                                 mn_a1_name = min(mn_a1_name, a1_name[a1_off]);
                             }
                         }

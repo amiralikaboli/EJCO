@@ -23,8 +23,8 @@ int main() {
         int cnt;
         timer.Reset();
 
-        auto mi_idx_trie0 = phmap::flat_hash_map<int, vector<int>>();
-        build_trie(mi_idx_trie0, mi_idx_movie_id);
+        auto mi_idx_trie0 = phmap::flat_hash_map<int, small_vector_vecptr<int, 4>>(mi_idx_offsets.size());
+        build_trie<4>(mi_idx_trie0, mi_idx_movie_id);
         timer.StoreElapsedTime(0);
 
         vector<int> interm0_col0;
@@ -36,7 +36,8 @@ int main() {
             auto x0 = t_id[t_off];
             if (mi_idx_trie0.contains(x0)) {
                 auto &mi_idx_trie1 = mi_idx_trie0.at(x0);
-                for (const auto &mi_idx_off : mi_idx_trie1) {
+                for (int mi_idx_i = 0; mi_idx_i < mi_idx_trie1.size(); ++mi_idx_i) {
+                    auto mi_idx_off = mi_idx_trie1[mi_idx_i];
                     interm0_col0.push_back(t_id[t_off]);
                     interm0_col1.push_back(t_title[t_off]);
                     interm0_col2.push_back(mi_idx_info_type_id[mi_idx_off]);
@@ -46,17 +47,17 @@ int main() {
         }
         timer.StoreElapsedTime(1);
 
-        auto interm0_trie0 = phmap::flat_hash_map<int, vector<int>>();
-        build_trie(interm0_trie0, interm0_col0);
-        auto mc_trie0 = phmap::flat_hash_map<int, vector<int>>();
-        build_trie(mc_trie0, mc_movie_id);
-        auto it2_trie0 = phmap::flat_hash_map<int, bool>();
+        auto interm0_trie0 = phmap::flat_hash_map<int, small_vector_vecptr<int, 4>>(interm0_offsets.size());
+        build_trie<4>(interm0_trie0, interm0_col0);
+        auto mc_trie0 = phmap::flat_hash_map<int, small_vector_vecptr<int, 4>>(mc_offsets.size());
+        build_trie<4>(mc_trie0, mc_movie_id);
+        auto it2_trie0 = phmap::flat_hash_map<int, bool>(it2_offsets.size());
         build_trie(it2_trie0, it2_id);
-        auto it1_trie0 = phmap::flat_hash_map<int, bool>();
+        auto it1_trie0 = phmap::flat_hash_map<int, bool>(it1_offsets.size());
         build_trie(it1_trie0, it1_id);
-        auto ct_trie0 = phmap::flat_hash_map<int, bool>();
+        auto ct_trie0 = phmap::flat_hash_map<int, bool>(ct_offsets.size());
         build_trie(ct_trie0, ct_id);
-        auto cn_trie0 = phmap::flat_hash_map<int, bool>();
+        auto cn_trie0 = phmap::flat_hash_map<int, bool>(cn_offsets.size());
         build_trie(cn_trie0, cn_id);
         timer.StoreElapsedTime(2);
 
@@ -67,14 +68,16 @@ int main() {
             if (interm0_trie0.contains(x0) && mc_trie0.contains(x0)) {
                 auto &interm0_trie1 = interm0_trie0.at(x0);
                 auto &mc_trie1 = mc_trie0.at(x0);
-                for (const auto &interm0_off : interm0_trie1) {
+                for (int interm0_i = 0; interm0_i < interm0_trie1.size(); ++interm0_i) {
+                    auto interm0_off = interm0_trie1[interm0_i];
                     auto x1 = interm0_col2[interm0_off];
                     if (it2_trie0.contains(x1)) {
                         auto &it2_trie1 = it2_trie0.at(x1);
                         auto x2 = mi_info_type_id[mi_off];
                         if (it1_trie0.contains(x2)) {
                             auto &it1_trie1 = it1_trie0.at(x2);
-                            for (const auto &mc_off : mc_trie1) {
+                            for (int mc_i = 0; mc_i < mc_trie1.size(); ++mc_i) {
+                                auto mc_off = mc_trie1[mc_i];
                                 auto x3 = mc_company_type_id[mc_off];
                                 if (ct_trie0.contains(x3)) {
                                     auto &ct_trie1 = ct_trie0.at(x3);

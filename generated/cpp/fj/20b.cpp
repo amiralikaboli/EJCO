@@ -25,9 +25,9 @@ int main() {
         int cnt;
         timer.Reset();
 
-        auto cct1_trie0 = phmap::flat_hash_map<int, bool>();
+        auto cct1_trie0 = phmap::flat_hash_map<int, bool>(cct1_offsets.size());
         build_trie(cct1_trie0, cct1_id);
-        auto cct2_trie0 = phmap::flat_hash_map<int, bool>();
+        auto cct2_trie0 = phmap::flat_hash_map<int, bool>(cct2_offsets.size());
         build_trie(cct2_trie0, cct2_id);
         timer.StoreElapsedTime(0);
 
@@ -52,11 +52,11 @@ int main() {
         }
         timer.StoreElapsedTime(1);
 
-        auto t_trie0 = phmap::flat_hash_map<int, vector<int>>();
-        build_trie(t_trie0, t_id);
-        auto kt_trie0 = phmap::flat_hash_map<int, bool>();
+        auto t_trie0 = phmap::flat_hash_map<int, small_vector_vecptr<int, 4>>(t_offsets.size());
+        build_trie<4>(t_trie0, t_id);
+        auto kt_trie0 = phmap::flat_hash_map<int, bool>(kt_offsets.size());
         build_trie(kt_trie0, kt_id);
-        auto k_trie0 = phmap::flat_hash_map<int, bool>();
+        auto k_trie0 = phmap::flat_hash_map<int, bool>(k_offsets.size());
         build_trie(k_trie0, k_id);
         timer.StoreElapsedTime(2);
 
@@ -70,7 +70,8 @@ int main() {
             auto x0 = mk_movie_id[mk_off];
             if (t_trie0.contains(x0)) {
                 auto &t_trie1 = t_trie0.at(x0);
-                for (const auto &t_off : t_trie1) {
+                for (int t_i = 0; t_i < t_trie1.size(); ++t_i) {
+                    auto t_off = t_trie1[t_i];
                     auto x1 = t_kind_id[t_off];
                     if (kt_trie0.contains(x1)) {
                         auto &kt_trie1 = kt_trie0.at(x1);
@@ -89,13 +90,13 @@ int main() {
         }
         timer.StoreElapsedTime(3);
 
-        auto n_trie0 = phmap::flat_hash_map<int, bool>();
+        auto n_trie0 = phmap::flat_hash_map<int, bool>(n_offsets.size());
         build_trie(n_trie0, n_id);
-        auto chn_trie0 = phmap::flat_hash_map<int, bool>();
+        auto chn_trie0 = phmap::flat_hash_map<int, bool>(chn_offsets.size());
         build_trie(chn_trie0, chn_id);
-        auto interm1_trie0 = phmap::flat_hash_map<int, vector<int>>();
-        build_trie(interm1_trie0, interm1_col0);
-        auto interm0_trie0 = phmap::flat_hash_map<int, bool>();
+        auto interm1_trie0 = phmap::flat_hash_map<int, small_vector_vecptr<int, 4>>(interm1_offsets.size());
+        build_trie<4>(interm1_trie0, interm1_col0);
+        auto interm0_trie0 = phmap::flat_hash_map<int, bool>(interm0_offsets.size());
         build_trie(interm0_trie0, interm0_col2);
         timer.StoreElapsedTime(4);
 
@@ -111,7 +112,8 @@ int main() {
                     if (interm1_trie0.contains(x2) && interm0_trie0.contains(x2)) {
                         auto &interm1_trie1 = interm1_trie0.at(x2);
                         auto &interm0_trie1 = interm0_trie0.at(x2);
-                        for (const auto &interm1_off : interm1_trie1) {
+                        for (int interm1_i = 0; interm1_i < interm1_trie1.size(); ++interm1_i) {
+                            auto interm1_off = interm1_trie1[interm1_i];
                             mn_interm1_col3 = min(mn_interm1_col3, interm1_col3[interm1_off]);
                         }
                     }

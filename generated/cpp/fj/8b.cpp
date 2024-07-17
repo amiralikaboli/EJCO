@@ -22,7 +22,7 @@ int main() {
         int cnt;
         timer.Reset();
 
-        auto cn_trie0 = phmap::flat_hash_map<int, bool>();
+        auto cn_trie0 = phmap::flat_hash_map<int, bool>(cn_offsets.size());
         build_trie(cn_trie0, cn_id);
         timer.StoreElapsedTime(0);
 
@@ -41,16 +41,16 @@ int main() {
         }
         timer.StoreElapsedTime(1);
 
-        auto rt_trie0 = phmap::flat_hash_map<int, bool>();
+        auto rt_trie0 = phmap::flat_hash_map<int, bool>(rt_offsets.size());
         build_trie(rt_trie0, rt_id);
-        auto t_trie0 = phmap::flat_hash_map<int, vector<int>>();
-        build_trie(t_trie0, t_id);
-        auto interm0_trie0 = phmap::flat_hash_map<int, bool>();
+        auto t_trie0 = phmap::flat_hash_map<int, small_vector_vecptr<int, 4>>(t_offsets.size());
+        build_trie<4>(t_trie0, t_id);
+        auto interm0_trie0 = phmap::flat_hash_map<int, bool>(interm0_offsets.size());
         build_trie(interm0_trie0, interm0_col1);
-        auto n_trie0 = phmap::flat_hash_map<int, bool>();
+        auto n_trie0 = phmap::flat_hash_map<int, bool>(n_offsets.size());
         build_trie(n_trie0, n_id);
-        auto an_trie0 = phmap::flat_hash_map<int, vector<int>>();
-        build_trie(an_trie0, an_person_id);
+        auto an_trie0 = phmap::flat_hash_map<int, small_vector_vecptr<int, 4>>(an_offsets.size());
+        build_trie<4>(an_trie0, an_person_id);
         timer.StoreElapsedTime(2);
 
         string mn_t_title = "zzzzzzzz";
@@ -67,10 +67,12 @@ int main() {
                     if (n_trie0.contains(x2) && an_trie0.contains(x2)) {
                         auto &n_trie1 = n_trie0.at(x2);
                         auto &an_trie1 = an_trie0.at(x2);
-                        for (const auto &t_off : t_trie1) {
+                        for (int t_i = 0; t_i < t_trie1.size(); ++t_i) {
+                            auto t_off = t_trie1[t_i];
                             mn_t_title = min(mn_t_title, t_title[t_off]);
                         }
-                        for (const auto &an_off : an_trie1) {
+                        for (int an_i = 0; an_i < an_trie1.size(); ++an_i) {
+                            auto an_off = an_trie1[an_i];
                             mn_an_name = min(mn_an_name, an_name[an_off]);
                         }
                     }
