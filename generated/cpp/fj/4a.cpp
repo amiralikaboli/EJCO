@@ -22,10 +22,10 @@ int main() {
 
         auto k_trie0 = phmap::flat_hash_map<int, bool>(k_offsets.size());
         build_trie(k_trie0, k_id);
-        auto mi_idx_trie0 = phmap::flat_hash_map<int, small_vector_vecptr<int, 4>>(mi_idx_offsets.size());
-        build_trie<4>(mi_idx_trie0, mi_idx_movie_id);
-        auto t_trie0 = phmap::flat_hash_map<int, small_vector_vecptr<int, 4>>(t_offsets.size());
-        build_trie<4>(t_trie0, t_id);
+        unordered_multimap<int, int> mi_idx_trie0(mi_idx_offsets.size());
+        build_trie(mi_idx_trie0, mi_idx_movie_id);
+        unordered_multimap<int, int> t_trie0(t_offsets.size());
+        build_trie(t_trie0, t_id);
         auto it_trie0 = phmap::flat_hash_map<int, bool>(it_offsets.size());
         build_trie(it_trie0, it_id);
         timer.StoreElapsedTime(0);
@@ -37,16 +37,16 @@ int main() {
             if (k_trie0.contains(x0)) {
                 auto &k_trie1 = k_trie0.at(x0);
                 auto x1 = mk_movie_id[mk_off];
-                if (mi_idx_trie0.contains(x1) && t_trie0.contains(x1)) {
-                    auto &mi_idx_trie1 = mi_idx_trie0.at(x1);
-                    auto &t_trie1 = t_trie0.at(x1);
-                    for (int mi_idx_i = 0; mi_idx_i < mi_idx_trie1.size(); ++mi_idx_i) {
-                        auto mi_idx_off = mi_idx_trie1[mi_idx_i];
+                auto mi_idx_range = mi_idx_trie0.equal_range(x1);
+                auto t_range = t_trie0.equal_range(x1);
+                if (mi_idx_range.first != mi_idx_range.second && t_range.first != t_range.second) {
+                    for (auto mi_idx_it = mi_idx_range.first; mi_idx_it != mi_idx_range.second; ++mi_idx_it) {
+                        auto mi_idx_off = mi_idx_it->second;
                         auto x2 = mi_idx_info_type_id[mi_idx_off];
                         if (it_trie0.contains(x2)) {
                             auto &it_trie1 = it_trie0.at(x2);
-                            for (int t_i = 0; t_i < t_trie1.size(); ++t_i) {
-                                auto t_off = t_trie1[t_i];
+                            for (auto t_it = t_range.first; t_it != t_range.second; ++t_it) {
+                                auto t_off = t_it->second;
                                 mn_t_title = min(mn_t_title, t_title[t_off]);
                             }
                             mn_mi_idx_info = min(mn_mi_idx_info, mi_idx_info[mi_idx_off]);

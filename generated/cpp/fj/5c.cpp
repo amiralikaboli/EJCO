@@ -22,10 +22,10 @@ int main() {
 
         auto it_trie0 = phmap::flat_hash_map<int, bool>(it_offsets.size());
         build_trie(it_trie0, it_id);
-        auto mc_trie0 = phmap::flat_hash_map<int, small_vector_vecptr<int, 4>>(mc_offsets.size());
-        build_trie<4>(mc_trie0, mc_movie_id);
-        auto t_trie0 = phmap::flat_hash_map<int, small_vector_vecptr<int, 4>>(t_offsets.size());
-        build_trie<4>(t_trie0, t_id);
+        unordered_multimap<int, int> mc_trie0(mc_offsets.size());
+        build_trie(mc_trie0, mc_movie_id);
+        unordered_multimap<int, int> t_trie0(t_offsets.size());
+        build_trie(t_trie0, t_id);
         auto ct_trie0 = phmap::flat_hash_map<int, bool>(ct_offsets.size());
         build_trie(ct_trie0, ct_id);
         timer.StoreElapsedTime(0);
@@ -36,16 +36,16 @@ int main() {
             if (it_trie0.contains(x0)) {
                 auto &it_trie1 = it_trie0.at(x0);
                 auto x1 = mi_movie_id[mi_off];
-                if (mc_trie0.contains(x1) && t_trie0.contains(x1)) {
-                    auto &mc_trie1 = mc_trie0.at(x1);
-                    auto &t_trie1 = t_trie0.at(x1);
-                    for (int mc_i = 0; mc_i < mc_trie1.size(); ++mc_i) {
-                        auto mc_off = mc_trie1[mc_i];
+                auto mc_range = mc_trie0.equal_range(x1);
+                auto t_range = t_trie0.equal_range(x1);
+                if (mc_range.first != mc_range.second && t_range.first != t_range.second) {
+                    for (auto mc_it = mc_range.first; mc_it != mc_range.second; ++mc_it) {
+                        auto mc_off = mc_it->second;
                         auto x2 = mc_company_type_id[mc_off];
                         if (ct_trie0.contains(x2)) {
                             auto &ct_trie1 = ct_trie0.at(x2);
-                            for (int t_i = 0; t_i < t_trie1.size(); ++t_i) {
-                                auto t_off = t_trie1[t_i];
+                            for (auto t_it = t_range.first; t_it != t_range.second; ++t_it) {
+                                auto t_off = t_it->second;
                                 mn_t_title = min(mn_t_title, t_title[t_off]);
                             }
                         }

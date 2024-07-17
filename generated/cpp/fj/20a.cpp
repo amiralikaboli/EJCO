@@ -52,8 +52,8 @@ int main() {
         }
         timer.StoreElapsedTime(1);
 
-        auto t_trie0 = phmap::flat_hash_map<int, small_vector_vecptr<int, 4>>(t_offsets.size());
-        build_trie<4>(t_trie0, t_id);
+        unordered_multimap<int, int> t_trie0(t_offsets.size());
+        build_trie(t_trie0, t_id);
         auto kt_trie0 = phmap::flat_hash_map<int, bool>(kt_offsets.size());
         build_trie(kt_trie0, kt_id);
         auto k_trie0 = phmap::flat_hash_map<int, bool>(k_offsets.size());
@@ -68,10 +68,10 @@ int main() {
         cnt = 0;
         for (const auto &mk_off : mk_offsets) {
             auto x0 = mk_movie_id[mk_off];
-            if (t_trie0.contains(x0)) {
-                auto &t_trie1 = t_trie0.at(x0);
-                for (int t_i = 0; t_i < t_trie1.size(); ++t_i) {
-                    auto t_off = t_trie1[t_i];
+            auto t_range = t_trie0.equal_range(x0);
+            if (t_range.first != t_range.second) {
+                for (auto t_it = t_range.first; t_it != t_range.second; ++t_it) {
+                    auto t_off = t_it->second;
                     auto x1 = t_kind_id[t_off];
                     if (kt_trie0.contains(x1)) {
                         auto &kt_trie1 = kt_trie0.at(x1);
@@ -92,8 +92,8 @@ int main() {
 
         auto chn_trie0 = phmap::flat_hash_map<int, bool>(chn_offsets.size());
         build_trie(chn_trie0, chn_id);
-        auto interm1_trie0 = phmap::flat_hash_map<int, small_vector_vecptr<int, 4>>(interm1_offsets.size());
-        build_trie<4>(interm1_trie0, interm1_col0);
+        unordered_multimap<int, int> interm1_trie0(interm1_offsets.size());
+        build_trie(interm1_trie0, interm1_col0);
         auto interm0_trie0 = phmap::flat_hash_map<int, bool>(interm0_offsets.size());
         build_trie(interm0_trie0, interm0_col2);
         auto n_trie0 = phmap::flat_hash_map<int, bool>(n_offsets.size());
@@ -106,14 +106,14 @@ int main() {
             if (chn_trie0.contains(x0)) {
                 auto &chn_trie1 = chn_trie0.at(x0);
                 auto x1 = ci_movie_id[ci_off];
-                if (interm1_trie0.contains(x1) && interm0_trie0.contains(x1)) {
-                    auto &interm1_trie1 = interm1_trie0.at(x1);
+                auto interm1_range = interm1_trie0.equal_range(x1);
+                if (interm1_range.first != interm1_range.second && interm0_trie0.contains(x1)) {
                     auto &interm0_trie1 = interm0_trie0.at(x1);
                     auto x2 = ci_person_id[ci_off];
                     if (n_trie0.contains(x2)) {
                         auto &n_trie1 = n_trie0.at(x2);
-                        for (int interm1_i = 0; interm1_i < interm1_trie1.size(); ++interm1_i) {
-                            auto interm1_off = interm1_trie1[interm1_i];
+                        for (auto interm1_it = interm1_range.first; interm1_it != interm1_range.second; ++interm1_it) {
+                            auto interm1_off = interm1_it->second;
                             mn_interm1_col3 = min(mn_interm1_col3, interm1_col3[interm1_off]);
                         }
                     }

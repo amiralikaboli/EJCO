@@ -28,8 +28,8 @@ int main() {
 
         auto kt_trie0 = phmap::flat_hash_map<int, bool>(kt_offsets.size());
         build_trie(kt_trie0, kt_id);
-        auto mi_idx_trie0 = phmap::flat_hash_map<int, small_vector_vecptr<int, 4>>(mi_idx_offsets.size());
-        build_trie<4>(mi_idx_trie0, mi_idx_movie_id);
+        unordered_multimap<int, int> mi_idx_trie0(mi_idx_offsets.size());
+        build_trie(mi_idx_trie0, mi_idx_movie_id);
         auto it2_trie0 = phmap::flat_hash_map<int, bool>(it2_offsets.size());
         build_trie(it2_trie0, it2_id);
         timer.StoreElapsedTime(0);
@@ -46,10 +46,10 @@ int main() {
             if (kt_trie0.contains(x0)) {
                 auto &kt_trie1 = kt_trie0.at(x0);
                 auto x1 = t_id[t_off];
-                if (mi_idx_trie0.contains(x1)) {
-                    auto &mi_idx_trie1 = mi_idx_trie0.at(x1);
-                    for (int mi_idx_i = 0; mi_idx_i < mi_idx_trie1.size(); ++mi_idx_i) {
-                        auto mi_idx_off = mi_idx_trie1[mi_idx_i];
+                auto mi_idx_range = mi_idx_trie0.equal_range(x1);
+                if (mi_idx_range.first != mi_idx_range.second) {
+                    for (auto mi_idx_it = mi_idx_range.first; mi_idx_it != mi_idx_range.second; ++mi_idx_it) {
+                        auto mi_idx_off = mi_idx_it->second;
                         auto x2 = mi_idx_info_type_id[mi_idx_off];
                         if (it2_trie0.contains(x2)) {
                             auto &it2_trie1 = it2_trie0.at(x2);
@@ -68,10 +68,10 @@ int main() {
 
         auto ct_trie0 = phmap::flat_hash_map<int, bool>(ct_offsets.size());
         build_trie(ct_trie0, ct_id);
-        auto interm0_trie0 = phmap::flat_hash_map<int, small_vector_vecptr<int, 4>>(interm0_offsets.size());
-        build_trie<4>(interm0_trie0, interm0_col0);
-        auto cn_trie0 = phmap::flat_hash_map<int, small_vector_vecptr<int, 4>>(cn_offsets.size());
-        build_trie<4>(cn_trie0, cn_id);
+        unordered_multimap<int, int> interm0_trie0(interm0_offsets.size());
+        build_trie(interm0_trie0, interm0_col0);
+        unordered_multimap<int, int> cn_trie0(cn_offsets.size());
+        build_trie(cn_trie0, cn_id);
         timer.StoreElapsedTime(2);
 
         vector<int> interm1_col0;
@@ -87,15 +87,15 @@ int main() {
             if (ct_trie0.contains(x0)) {
                 auto &ct_trie1 = ct_trie0.at(x0);
                 auto x1 = mc_movie_id[mc_off];
-                if (interm0_trie0.contains(x1)) {
-                    auto &interm0_trie1 = interm0_trie0.at(x1);
+                auto interm0_range = interm0_trie0.equal_range(x1);
+                if (interm0_range.first != interm0_range.second) {
                     auto x2 = mc_company_id[mc_off];
-                    if (cn_trie0.contains(x2)) {
-                        auto &cn_trie1 = cn_trie0.at(x2);
-                        for (int cn_i = 0; cn_i < cn_trie1.size(); ++cn_i) {
-                            auto cn_off = cn_trie1[cn_i];
-                            for (int interm0_i = 0; interm0_i < interm0_trie1.size(); ++interm0_i) {
-                                auto interm0_off = interm0_trie1[interm0_i];
+                    auto cn_range = cn_trie0.equal_range(x2);
+                    if (cn_range.first != cn_range.second) {
+                        for (auto cn_it = cn_range.first; cn_it != cn_range.second; ++cn_it) {
+                            auto cn_off = cn_it->second;
+                            for (auto interm0_it = interm0_range.first; interm0_it != interm0_range.second; ++interm0_it) {
+                                auto interm0_off = interm0_it->second;
                                 interm1_col0.push_back(mc_company_id[mc_off]);
                                 interm1_col1.push_back(mc_company_type_id[mc_off]);
                                 interm1_col2.push_back(mc_movie_id[mc_off]);
@@ -113,8 +113,8 @@ int main() {
 
         auto k_trie0 = phmap::flat_hash_map<int, bool>(k_offsets.size());
         build_trie(k_trie0, k_id);
-        auto interm1_trie0 = phmap::flat_hash_map<int, small_vector_vecptr<int, 4>>(interm1_offsets.size());
-        build_trie<4>(interm1_trie0, interm1_col2);
+        unordered_multimap<int, int> interm1_trie0(interm1_offsets.size());
+        build_trie(interm1_trie0, interm1_col2);
         timer.StoreElapsedTime(4);
 
         vector<int> interm2_col0;
@@ -129,10 +129,10 @@ int main() {
             if (k_trie0.contains(x0)) {
                 auto &k_trie1 = k_trie0.at(x0);
                 auto x1 = mk_movie_id[mk_off];
-                if (interm1_trie0.contains(x1)) {
-                    auto &interm1_trie1 = interm1_trie0.at(x1);
-                    for (int interm1_i = 0; interm1_i < interm1_trie1.size(); ++interm1_i) {
-                        auto interm1_off = interm1_trie1[interm1_i];
+                auto interm1_range = interm1_trie0.equal_range(x1);
+                if (interm1_range.first != interm1_range.second) {
+                    for (auto interm1_it = interm1_range.first; interm1_it != interm1_range.second; ++interm1_it) {
+                        auto interm1_off = interm1_it->second;
                         interm2_col0.push_back(mk_keyword_id[mk_off]);
                         interm2_col1.push_back(mk_movie_id[mk_off]);
                         interm2_col4.push_back(interm1_col3[interm1_off]);
@@ -147,8 +147,8 @@ int main() {
 
         auto it1_trie0 = phmap::flat_hash_map<int, bool>(it1_offsets.size());
         build_trie(it1_trie0, it1_id);
-        auto interm2_trie0 = phmap::flat_hash_map<int, small_vector_vecptr<int, 4>>(interm2_offsets.size());
-        build_trie<4>(interm2_trie0, interm2_col1);
+        unordered_multimap<int, int> interm2_trie0(interm2_offsets.size());
+        build_trie(interm2_trie0, interm2_col1);
         timer.StoreElapsedTime(6);
 
         string mn_interm2_col4 = "zzzzzzzz";
@@ -159,10 +159,10 @@ int main() {
             if (it1_trie0.contains(x0)) {
                 auto &it1_trie1 = it1_trie0.at(x0);
                 auto x1 = mi_movie_id[mi_off];
-                if (interm2_trie0.contains(x1)) {
-                    auto &interm2_trie1 = interm2_trie0.at(x1);
-                    for (int interm2_i = 0; interm2_i < interm2_trie1.size(); ++interm2_i) {
-                        auto interm2_off = interm2_trie1[interm2_i];
+                auto interm2_range = interm2_trie0.equal_range(x1);
+                if (interm2_range.first != interm2_range.second) {
+                    for (auto interm2_it = interm2_range.first; interm2_it != interm2_range.second; ++interm2_it) {
+                        auto interm2_off = interm2_it->second;
                         mn_interm2_col4 = min(mn_interm2_col4, interm2_col4[interm2_off]);
                         mn_interm2_col6 = min(mn_interm2_col6, interm2_col6[interm2_off]);
                         mn_interm2_col8 = min(mn_interm2_col8, interm2_col8[interm2_off]);

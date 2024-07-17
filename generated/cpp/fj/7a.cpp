@@ -23,8 +23,8 @@ int main() {
         int cnt;
         timer.Reset();
 
-        auto pi_trie0 = phmap::flat_hash_map<int, small_vector_vecptr<int, 4>>(pi_offsets.size());
-        build_trie<4>(pi_trie0, pi_person_id);
+        unordered_multimap<int, int> pi_trie0(pi_offsets.size());
+        build_trie(pi_trie0, pi_person_id);
         auto it_trie0 = phmap::flat_hash_map<int, bool>(it_offsets.size());
         build_trie(it_trie0, it_id);
         timer.StoreElapsedTime(0);
@@ -36,10 +36,10 @@ int main() {
         cnt = 0;
         for (const auto &n_off : n_offsets) {
             auto x0 = n_id[n_off];
-            if (pi_trie0.contains(x0)) {
-                auto &pi_trie1 = pi_trie0.at(x0);
-                for (int pi_i = 0; pi_i < pi_trie1.size(); ++pi_i) {
-                    auto pi_off = pi_trie1[pi_i];
+            auto pi_range = pi_trie0.equal_range(x0);
+            if (pi_range.first != pi_range.second) {
+                for (auto pi_it = pi_range.first; pi_it != pi_range.second; ++pi_it) {
+                    auto pi_off = pi_it->second;
                     auto x1 = pi_info_type_id[pi_off];
                     if (it_trie0.contains(x1)) {
                         auto &it_trie1 = it_trie0.at(x1);
@@ -53,8 +53,8 @@ int main() {
         }
         timer.StoreElapsedTime(1);
 
-        auto ml_trie0 = phmap::flat_hash_map<int, small_vector_vecptr<int, 4>>(ml_offsets.size());
-        build_trie<4>(ml_trie0, ml_linked_movie_id);
+        unordered_multimap<int, int> ml_trie0(ml_offsets.size());
+        build_trie(ml_trie0, ml_linked_movie_id);
         auto lt_trie0 = phmap::flat_hash_map<int, bool>(lt_offsets.size());
         build_trie(lt_trie0, lt_id);
         timer.StoreElapsedTime(2);
@@ -66,10 +66,10 @@ int main() {
         cnt = 0;
         for (const auto &t_off : t_offsets) {
             auto x0 = t_id[t_off];
-            if (ml_trie0.contains(x0)) {
-                auto &ml_trie1 = ml_trie0.at(x0);
-                for (int ml_i = 0; ml_i < ml_trie1.size(); ++ml_i) {
-                    auto ml_off = ml_trie1[ml_i];
+            auto ml_range = ml_trie0.equal_range(x0);
+            if (ml_range.first != ml_range.second) {
+                for (auto ml_it = ml_range.first; ml_it != ml_range.second; ++ml_it) {
+                    auto ml_off = ml_it->second;
                     auto x1 = ml_link_type_id[ml_off];
                     if (lt_trie0.contains(x1)) {
                         auto &lt_trie1 = lt_trie0.at(x1);
@@ -83,10 +83,10 @@ int main() {
         }
         timer.StoreElapsedTime(3);
 
-        auto interm0_trie0 = phmap::flat_hash_map<int, small_vector_vecptr<int, 4>>(interm0_offsets.size());
-        build_trie<4>(interm0_trie0, interm0_col0);
-        auto interm1_trie0 = phmap::flat_hash_map<int, small_vector_vecptr<int, 4>>(interm1_offsets.size());
-        build_trie<4>(interm1_trie0, interm1_col0);
+        unordered_multimap<int, int> interm0_trie0(interm0_offsets.size());
+        build_trie(interm0_trie0, interm0_col0);
+        unordered_multimap<int, int> interm1_trie0(interm1_offsets.size());
+        build_trie(interm1_trie0, interm1_col0);
         auto an_trie0 = phmap::flat_hash_map<int, bool>(an_offsets.size());
         build_trie(an_trie0, an_person_id);
         timer.StoreElapsedTime(4);
@@ -95,19 +95,19 @@ int main() {
         string mn_interm0_col1 = "zzzzzzzz";
         for (const auto &ci_off : ci_offsets) {
             auto x0 = ci_person_id[ci_off];
-            if (interm0_trie0.contains(x0)) {
-                auto &interm0_trie1 = interm0_trie0.at(x0);
+            auto interm0_range = interm0_trie0.equal_range(x0);
+            if (interm0_range.first != interm0_range.second) {
                 auto x1 = ci_movie_id[ci_off];
-                if (interm1_trie0.contains(x1)) {
-                    auto &interm1_trie1 = interm1_trie0.at(x1);
+                auto interm1_range = interm1_trie0.equal_range(x1);
+                if (interm1_range.first != interm1_range.second) {
                     if (an_trie0.contains(x0)) {
                         auto &an_trie1 = an_trie0.at(x0);
-                        for (int interm1_i = 0; interm1_i < interm1_trie1.size(); ++interm1_i) {
-                            auto interm1_off = interm1_trie1[interm1_i];
+                        for (auto interm1_it = interm1_range.first; interm1_it != interm1_range.second; ++interm1_it) {
+                            auto interm1_off = interm1_it->second;
                             mn_interm1_col1 = min(mn_interm1_col1, interm1_col1[interm1_off]);
                         }
-                        for (int interm0_i = 0; interm0_i < interm0_trie1.size(); ++interm0_i) {
-                            auto interm0_off = interm0_trie1[interm0_i];
+                        for (auto interm0_it = interm0_range.first; interm0_it != interm0_range.second; ++interm0_it) {
+                            auto interm0_off = interm0_it->second;
                             mn_interm0_col1 = min(mn_interm0_col1, interm0_col1[interm0_off]);
                         }
                     }
