@@ -55,7 +55,6 @@ class AbstractCppGenerator:
 
 			cpp_file.write('for (int iter = 0; iter < 1 + 5; ++iter) {\n')
 			cpp_file.write(f'int {self.var_mng.cnt_var()};\n')
-			cpp_file.write(f'string {self.var_mng.ivs_var()};\n')
 			cpp_file.write('timer.Reset();\n\n')
 
 			for idx, (node, build_plan, compiled_plan) in enumerate(plans):
@@ -66,14 +65,12 @@ class AbstractCppGenerator:
 				cpp_file.write(f'timer.StoreElapsedTime({2 * idx + 1});\n\n')
 
 			root_build_plan = plans[-1][1]
-			cpp_file.write('if (iter == 0) {\n')
+			cpp_file.write('if (iter == 0)\n')
 			proj_relcols, _ = self._find_all_proj_cols_and_types(root_build_plan)
 			delimiter = ' << " | " << '
 			cpp_file.write(
 				f'cout << {delimiter.join([self.var_mng.mn_rel_col_var(rel, col) for rel, col in proj_relcols])} << endl;\n'
 			)
-			cpp_file.write(f'cout << {self.var_mng.ivs_var()};\n')
-			cpp_file.write('}\n')
 			cpp_file.write('cout << "*" << " " << flush;\n')
 
 			cpp_file.write('}\n')
@@ -356,16 +353,11 @@ class FJCppGenerator(AbstractCppGenerator):
 			level_types = tuple([rel2col2type[rel_wo_idx(rel)][join_col] for join_col in join_cols])
 			self.trie_types.add(level_types)
 			if rel in rels_in_interm_cols or rel in iter_rels:
-				trie_var = self.var_mng.trie_var(rel)
-				vtrie_var = trie_var.replace("trie", "vtrie")
-				itrie_var = trie_var.replace("trie", "itrie")
-				content += f"auto {vtrie_var} = {self.var_mng.trie_def(level_types)}();\n"
-				content += f"auto {itrie_var} = {self.var_mng.trie_def(level_types, 'int')}();\n"
-				content += f"auto {self.var_mng.isunq_var(rel)} = {self.var_mng.build_func()}({vtrie_var}, {itrie_var}, {self.var_mng.offsets_var(rel)}, {', '.join([self.var_mng.rel_col_var(rel, join_col) for join_col in join_cols])});\n"
+				content += f"auto {self.var_mng.trie_var(rel)} = {self.var_mng.trie_def(level_types)}();\n"
 				self.vector_tries.append(rel)
 			else:
 				content += f"auto {self.var_mng.trie_var(rel)} = {self.var_mng.trie_def(level_types, 'bool')}();\n"
-				content += f"{self.var_mng.build_func()}({self.var_mng.trie_var(rel)}, {self.var_mng.offsets_var(rel)}, {', '.join([self.var_mng.rel_col_var(rel, join_col) for join_col in join_cols])});\n"
+			content += f"{self.var_mng.build_func()}({self.var_mng.trie_var(rel)}, {', '.join([self.var_mng.rel_col_var(rel, join_col) for join_col in join_cols])});\n"
 		return content
 
 	def _generate_subquery(
@@ -375,6 +367,7 @@ class FJCppGenerator(AbstractCppGenerator):
 			compiled_plan: List[List[Tuple[str, str]]]
 	):
 		content = str()
+		brackets = 0
 
 		interm, interm_cols, _ = node
 
@@ -394,98 +387,58 @@ class FJCppGenerator(AbstractCppGenerator):
 			for rel, col in eq_cols:
 				join_attrs_order[rel][col] = min_idx
 
-		for mask in list(itertools.product([0, 1], repeat=len(self.vector_tries))):
-			self.query_clear()
-			self.var_mng.clear()
-			brackets = 0
-
-			rel2iv = defaultdict(str)
-			for rel, bitval in zip(self.vector_tries, mask):
-				rel2iv[rel] = "i" if bitval else "v"
-			if self.vector_tries:
-				if sum(mask) != 0:
-					content += "else "
-				if sum(mask) != len(self.vector_tries):
-					content += f"if ({' && '.join([f'{self.var_mng.isunq_var(rel)} == {bitval}' for rel, bitval in zip(self.vector_tries, mask)])}) "
-				content += "{\n"
-
-			if self.vector_tries:
-				double_quote = '"'
-				content += f'if (iter == 0)'
-				content += f'{self.var_mng.ivs_var()} += "{json.dumps(rel2iv).replace(double_quote, "")}\\n";\n'
-
-			for idx, eq_cols in enumerate(compiled_plan):
-				rel_it, col_it = eq_cols[0]
-				if join_attrs_order[rel_it][col_it] == idx:
-					if rel_it not in self.available_tuples:
-						offsets_var = self._mode_trie_var(self.var_mng.offsets_var(rel_it, it=True), rel2iv[rel_it])
-						if rel2iv[rel_it] == "v" or Templates.TrieVar.value not in offsets_var:
-							content += f"for (const auto &{self.var_mng.off_var(rel_it)}: {offsets_var}) {{\n"
-							brackets += 1
-						elif rel2iv[rel_it] == "i":
-							content += f"auto &{self.var_mng.off_var(rel_it)} = {offsets_var};\n"
-					content += f"auto {self.var_mng.x_var(idx)} = {self.var_mng.rel_col_var(rel_it, col_it)}[{self.var_mng.off_var(rel_it)}];\n"
-					self.available_tuples.add(rel_it)
-					self.resolved_attrs.add(eq_cols[0])
-					start_offset = 1
-				elif eq_cols[0] in self.resolved_attrs:
-					start_offset = 1
-				else:
-					start_offset = 0
-
-				conditions = []
-				for rel, col in eq_cols[start_offset:]:
-					trie_var = self._mode_trie_var(self.var_mng.trie_var(rel), rel2iv[rel])
-					conditions.append(f"{trie_var}.contains({self.var_mng.x_var(join_attrs_order[rel][col])})")
-				content += f"if ({' && '.join(conditions)}) {{\n"
-				brackets += 1
-
-				for rel, col in eq_cols[start_offset:]:
-					trie_var = self._mode_trie_var(self.var_mng.trie_var(rel), rel2iv[rel])
-					next_trie_var = self._mode_trie_var(self.var_mng.next_trie_var(rel), rel2iv[rel])
-					content += f"auto &{next_trie_var} = {trie_var}.at({self.var_mng.x_var(join_attrs_order[rel][col])});\n"
-					self.var_mng.next_trie_var(rel, inplace=True)
-					self.resolved_attrs.add((rel, col))
-
-			if self.var_mng.is_root_rel(interm):
-				rel2proj_cols = {rel: proj_cols for rel, _, proj_cols in build_plan if proj_cols}
-				for rel, proj_cols in rel2proj_cols.items():
-					is_available = rel in self.available_tuples
-					flag = False
-					if not is_available:
-						offsets_var = self._mode_trie_var(self.var_mng.offsets_var(rel, it=True), rel2iv[rel])
-						if rel2iv[rel] == "v":
-							content += f"for (const auto &{self.var_mng.off_var(rel)}: {offsets_var}) {{\n"
-							flag = True
-						elif rel2iv[rel] == "i":
-							content += f"auto &{self.var_mng.off_var(rel)} = {offsets_var};\n"
-					for col in proj_cols:
-						content += f'{self.var_mng.mn_rel_col_var(rel, col)} = min({self.var_mng.mn_rel_col_var(rel, col)}, {self.var_mng.rel_col_var(rel, col)}[{self.var_mng.off_var(rel)}]);\n'
-					if not is_available and flag:
-						content += '}\n'
+		for idx, eq_cols in enumerate(compiled_plan):
+			rel_it, col_it = eq_cols[0]
+			if join_attrs_order[rel_it][col_it] == idx:
+				if rel_it not in self.available_tuples:
+					content += f"for (const auto &{self.var_mng.off_var(rel_it)}: {self.var_mng.offsets_var(rel_it, it=True)}) {{\n"
+					brackets += 1
+				content += f"auto {self.var_mng.x_var(idx)} = {self.var_mng.rel_col_var(rel_it, col_it)}[{self.var_mng.off_var(rel_it)}];\n"
+				self.available_tuples.add(rel_it)
+				self.resolved_attrs.add(eq_cols[0])
+				start_offset = 1
+			elif eq_cols[0] in self.resolved_attrs:
+				start_offset = 1
 			else:
-				interm_rel2cols = defaultdict(list)
-				for _, (rel, col) in interm_cols:
-					interm_rel2cols[rel].append(col)
-				rel2col2type[interm] = dict()
-				for rel, cols in interm_rel2cols.items():
-					if rel not in self.available_tuples:
-						offsets_var = self._mode_trie_var(self.var_mng.offsets_var(rel, it=True), rel2iv[rel])
-						if rel2iv[rel] == "v":
-							content += f"for (const auto &{self.var_mng.off_var(rel)}: {offsets_var}) {{\n"
-							brackets += 1
-						elif rel2iv[rel] == "i":
-							content += f"auto &{self.var_mng.off_var(rel)} = {offsets_var};\n"
-				for idx, (rel, col) in interm_cols:
-					interm_col = self.var_mng.interm_col(idx)
-					interm_col_type = rel2col2type[rel_wo_idx(rel)][col]
-					rel2col2type[interm][interm_col] = interm_col_type
-					content += f'{self.var_mng.rel_col_var(interm, interm_col)}.push_back({self.var_mng.rel_col_var(rel, col)}[{self.var_mng.off_var(rel)}]);\n'
-				content += f'{self.var_mng.offsets_var(interm)}.push_back({self.var_mng.cnt_var()}++);\n'
-			content += '}\n' * brackets
+				start_offset = 0
 
-			if self.vector_tries:
-				content += "}\n"
+			conditions = []
+			for rel, col in eq_cols[start_offset:]:
+				conditions.append(f"{self.var_mng.trie_var(rel)}.contains({self.var_mng.x_var(join_attrs_order[rel][col])})")
+			content += f"if ({' && '.join(conditions)}) {{\n"
+			brackets += 1
+
+			for rel, col in eq_cols[start_offset:]:
+				content += f"auto &{self.var_mng.next_trie_var(rel)} = {self.var_mng.trie_var(rel)}.at({self.var_mng.x_var(join_attrs_order[rel][col])});\n"
+				self.var_mng.next_trie_var(rel, inplace=True)
+				self.resolved_attrs.add((rel, col))
+
+		if self.var_mng.is_root_rel(interm):
+			rel2proj_cols = {rel: proj_cols for rel, _, proj_cols in build_plan if proj_cols}
+			for rel, proj_cols in rel2proj_cols.items():
+				is_available = rel in self.available_tuples
+				if not is_available:
+					content += f"for (const auto &{self.var_mng.off_var(rel)}: {self.var_mng.offsets_var(rel, it=True)}) {{\n"
+				for col in proj_cols:
+					content += f'{self.var_mng.mn_rel_col_var(rel, col)} = min({self.var_mng.mn_rel_col_var(rel, col)}, {self.var_mng.rel_col_var(rel, col)}[{self.var_mng.off_var(rel)}]);\n'
+				if not is_available:
+					content += '}\n'
+		else:
+			interm_rel2cols = defaultdict(list)
+			for _, (rel, col) in interm_cols:
+				interm_rel2cols[rel].append(col)
+			rel2col2type[interm] = dict()
+			for rel, cols in interm_rel2cols.items():
+				if rel not in self.available_tuples:
+					content += f"for (const auto &{self.var_mng.off_var(rel)}: {self.var_mng.offsets_var(rel, it=True)}) {{\n"
+					brackets += 1
+			for idx, (rel, col) in interm_cols:
+				interm_col = self.var_mng.interm_col(idx)
+				interm_col_type = rel2col2type[rel_wo_idx(rel)][col]
+				rel2col2type[interm][interm_col] = interm_col_type
+				content += f'{self.var_mng.rel_col_var(interm, interm_col)}.push_back({self.var_mng.rel_col_var(rel, col)}[{self.var_mng.off_var(rel)}]);\n'
+			content += f'{self.var_mng.offsets_var(interm)}.push_back({self.var_mng.cnt_var()}++);\n'
+		content += '}\n' * brackets
 
 		return content
 

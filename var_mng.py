@@ -101,16 +101,8 @@ class VariableManager:
 	def cnt_var():
 		return Templates.CntVar.value
 
-	@staticmethod
-	def ivs_var():
-		return Templates.IvsVar.value
-
 	def offsets_var(self, rel: str, it=False):
 		var = f"{rel}_{Templates.OffsetsVar.value}"
 		if it:
 			return self.trie_var(rel) if rel in self._trie_vars.keys() else var
 		return var
-
-	@staticmethod
-	def isunq_var(rel: str):
-		return f"{rel}_{Templates.IsUnqVar.value}"
