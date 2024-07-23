@@ -1,5 +1,6 @@
 #include "../include/build.h"
 #include "../include/high_precision_timer.h"
+#include "../include/small_vector2.h"
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -98,10 +99,12 @@ int main() {
 		int cnt;
 		timer.Reset();
 
-		auto pst_trie0 = phmap::flat_hash_map<long, small_vector_vecptr<int, 4>>(pst_offsets.size());
-		build_trie<4>(pst_trie0, pst_id);
-		auto pkp_trie0 = phmap::flat_hash_map<long, phmap::flat_hash_map<long, bool>>(pkp_offsets.size());
-		build_trie(pkp_trie0, pkp_person2_id, pkp_person1_id);
+		auto pst_trie0 = phmap::flat_hash_map<long, smallvecdict<int, 4>>(pst_offsets.size());
+		for (int i = 0; i < pst_hascreator_person.size(); ++i)
+			pst_trie0[pst_id[i]][i] += 1;
+		auto pkp_trie0 = phmap::flat_hash_map<long, phmap::flat_hash_map<long, smallvecdict<int, 4>>>(pkp_offsets.size());
+		for (int i = 0; i < pkp_person1_id.size(); ++i)
+			pkp_trie0[pkp_person2_id[i]][pkp_person1_id[i]][i] += 1;
 		timer.StoreElapsedTime(0);
 
 		int ans = 0;
@@ -109,14 +112,14 @@ int main() {
 			auto x0 = cmnt_replyof_post[cmnt_off];
 			if (pst_trie0.contains(x0)) {
 				auto &pst_trie1 = pst_trie0.at(x0);
-				for (int pst_i = 0; pst_i < pst_trie1.size(); ++pst_i) {
-					auto &pst_off = pst_trie1[pst_i];
+				for (auto &pst_off: pst_trie1) {
 					auto x1 = pst_hascreator_person[pst_off];
 					if (pkp_trie0.contains(x1)) {
 						auto &pkp_trie1 = pkp_trie0.at(x1);
 						auto x2 = cmnt_hascreator_person[cmnt_off];
 						if (pkp_trie1.contains(x2)) {
-							++ans;
+							auto &pkp_trie2 = pkp_trie1.at(x2);
+							ans += pkp_trie2.size();
 						}
 					}
 				}

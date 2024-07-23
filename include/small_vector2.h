@@ -101,3 +101,26 @@ public:
 		}
 	}
 };
+
+template<typename T, size_t N>
+class smallvecdict {
+	smallvec<T, N> svec_;
+	T last_key_;
+
+public:
+	size_t size() const { return svec_.size(); }
+
+	smallvecdict &operator[](T key) {
+		last_key_ = key;
+		return *this;
+	}
+
+	smallvecdict &operator+=(bool) {
+		svec_.push_back(last_key_);
+		return *this;
+	}
+
+	typename smallvec<T, N>::iterator begin() { return svec_.begin(); }
+
+	typename smallvec<T, N>::iterator end() { return svec_.end(); }
+};
