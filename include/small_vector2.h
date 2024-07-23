@@ -32,4 +32,72 @@ public:
 			return heap_->at(pos);
 		}
 	}
+
+	class iterator {
+		T *ptr_;
+
+	public:
+		iterator(T *ptr) : ptr_(ptr) {}
+
+		iterator &operator++() {
+			++ptr_;
+			return *this;
+		}
+
+		T &operator*() { return *ptr_; }
+
+		bool operator==(const iterator &rhs) { return ptr_ == rhs.ptr_; }
+
+		bool operator!=(const iterator &rhs) { return ptr_ != rhs.ptr_; }
+	};
+
+	class const_iterator {
+		T *ptr_;
+
+	public:
+		const_iterator(T *ptr) : ptr_(ptr) {}
+
+		const_iterator &operator++() {
+			++ptr_;
+			return *this;
+		}
+
+		const T &operator*() { return *ptr_; }
+
+		bool operator==(const const_iterator &rhs) { return ptr_ == rhs.ptr_; }
+
+		bool operator!=(const const_iterator &rhs) { return ptr_ != rhs.ptr_; }
+	};
+
+	iterator begin() {
+		if (size_ <= N) {
+			return iterator(stack_.data());
+		} else {
+			return iterator(heap_->data());
+		}
+	}
+
+	iterator end() {
+		if (size_ <= N) {
+			return iterator(stack_.data() + size_);
+		} else {
+			return iterator(heap_->data() + size_);
+		}
+	}
+
+	const_iterator begin() const {
+		if (size_ <= N) {
+			return const_iterator(stack_.data());
+		} else {
+			return const_iterator(heap_->data());
+		}
+	}
+
+	const_iterator end() const {
+		if (size_ <= N) {
+			return const_iterator(stack_.data() + size_);
+		} else {
+			return const_iterator(heap_->data() + size_);
+		}
+	}
 };
