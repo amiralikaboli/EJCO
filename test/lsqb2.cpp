@@ -22,9 +22,14 @@ void load_pkp(const string path) {
 	while (getline(in, line)) {
 		stringstream ss(line);
 		getline(ss, token, '|');
-		pkp_person1_id.push_back(stol(token));
+		auto p1id = stol(token);
 		getline(ss, token, '|');
-		pkp_person2_id.push_back(stol(token));
+		auto p2id = stol(token);
+		pkp_person1_id.push_back(p1id);
+		pkp_person2_id.push_back(p2id);
+		pkp_person1_id.push_back(p2id);
+		pkp_person2_id.push_back(p1id);
+		pkp_offsets.push_back(cnt++);
 		pkp_offsets.push_back(cnt++);
 	}
 	in.close();
