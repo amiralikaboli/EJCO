@@ -106,11 +106,3 @@ class VariableManager:
 		if it:
 			return self.trie_var(rel) if rel in self._trie_vars.keys() else var
 		return var
-
-	@staticmethod
-	def range_var(rel: str):
-		return f"{rel}_{Templates.RangeVar.value}"
-
-	@staticmethod
-	def it_var(rel: str):
-		return f"{rel}_{Templates.ItVar.value}"

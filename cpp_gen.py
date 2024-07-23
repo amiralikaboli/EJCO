@@ -351,8 +351,8 @@ class FJCppGenerator(AbstractCppGenerator):
 			level_types = tuple([rel2col2type[rel_wo_idx(rel)][join_col] for join_col in join_cols])
 			self.trie_types.add(level_types)
 			if rel in rels_in_interm_cols or rel in iter_rels:
-				content += f"unordered_multimap<int, int> {self.var_mng.trie_var(rel)}({self.var_mng.offsets_var(rel)}.size());\n"
-				content += f"{self.var_mng.build_func()}({self.var_mng.trie_var(rel)}, {', '.join([self.var_mng.rel_col_var(rel, join_col) for join_col in join_cols])});\n"
+				content += f"auto {self.var_mng.trie_var(rel)} = {self.var_mng.trie_def(level_types)}({self.var_mng.offsets_var(rel)}.size());\n"
+				content += f"{self.var_mng.build_func()}<4>({self.var_mng.trie_var(rel)}, {', '.join([self.var_mng.rel_col_var(rel, join_col) for join_col in join_cols])});\n"
 				self.vector_tries.append(rel)
 			else:
 				content += f"auto {self.var_mng.trie_var(rel)} = {self.var_mng.trie_def(level_types, 'bool')}({self.var_mng.offsets_var(rel)}.size());\n"
@@ -393,8 +393,8 @@ class FJCppGenerator(AbstractCppGenerator):
 					if Templates.OffsetsVar.value in self.var_mng.offsets_var(rel_it, it=True):
 						content += f"for (const auto &{self.var_mng.off_var(rel_it)}: {self.var_mng.offsets_var(rel_it, it=True)}) {{\n"
 					else:
-						content += f"for (auto {self.var_mng.it_var(rel_it)} = {self.var_mng.range_var(rel_it)}.first; {self.var_mng.it_var(rel_it)} != {self.var_mng.range_var(rel_it)}.second; ++{self.var_mng.it_var(rel_it)}) {{\n"
-						content += f"auto {self.var_mng.off_var(rel_it)} = {self.var_mng.it_var(rel_it)}->second;\n"
+						content += f"for (int {self.var_mng.i_var(rel_it)} = 0; {self.var_mng.i_var(rel_it)} < {self.var_mng.offsets_var(rel_it, it=True)}.size(); ++{self.var_mng.i_var(rel_it)}) {{\n"
+						content += f"auto {self.var_mng.off_var(rel_it)} = {self.var_mng.offsets_var(rel_it, it=True)}[{self.var_mng.i_var(rel_it)}];\n"
 					brackets += 1
 				content += f"auto {self.var_mng.x_var(idx)} = {self.var_mng.rel_col_var(rel_it, col_it)}[{self.var_mng.off_var(rel_it)}];\n"
 				self.available_tuples.add(rel_it)
@@ -405,29 +405,25 @@ class FJCppGenerator(AbstractCppGenerator):
 			else:
 				start_offset = 0
 
-			conds = []
-			assigns = []
+			conditions = []
 			for rel, col in eq_cols[start_offset:]:
-				x_var = self.var_mng.x_var(join_attrs_order[rel][col])
-				if rel not in self.vector_tries:
-					conds.append(f"{self.var_mng.trie_var(rel)}.contains({x_var})")
-					assigns.append(f"auto &{self.var_mng.next_trie_var(rel)} = {self.var_mng.trie_var(rel)}.at({x_var});\n")
-				else:
-					content += f"auto {self.var_mng.range_var(rel)} = {self.var_mng.trie_var(rel)}.equal_range({x_var});\n"
-					conds.append(f"{self.var_mng.range_var(rel)}.first != {self.var_mng.range_var(rel)}.second")
+				conditions.append(
+					f"{self.var_mng.trie_var(rel)}.contains({self.var_mng.x_var(join_attrs_order[rel][col])})")
+			content += f"if ({' && '.join(conditions)}) {{\n"
+			brackets += 1
+
+			for rel, col in eq_cols[start_offset:]:
+				content += f"auto &{self.var_mng.next_trie_var(rel)} = {self.var_mng.trie_var(rel)}.at({self.var_mng.x_var(join_attrs_order[rel][col])});\n"
 				self.var_mng.next_trie_var(rel, inplace=True)
 				self.resolved_attrs.add((rel, col))
-			content += f"if ({' && '.join(conds)}) {{\n"
-			content += ''.join(assigns)
-			brackets += 1
 
 		if self.var_mng.is_root_rel(interm):
 			rel2proj_cols = {rel: proj_cols for rel, _, proj_cols in build_plan if proj_cols}
 			for rel, proj_cols in rel2proj_cols.items():
 				is_available = rel in self.available_tuples
 				if not is_available:
-					content += f"for (auto {self.var_mng.it_var(rel)} = {self.var_mng.range_var(rel)}.first; {self.var_mng.it_var(rel)} != {self.var_mng.range_var(rel)}.second; ++{self.var_mng.it_var(rel)}) {{\n"
-					content += f"auto {self.var_mng.off_var(rel)} = {self.var_mng.it_var(rel)}->second;\n"
+					content += f"for (int {self.var_mng.i_var(rel)} = 0; {self.var_mng.i_var(rel)} < {self.var_mng.offsets_var(rel, it=True)}.size(); ++{self.var_mng.i_var(rel)}) {{\n"
+					content += f"auto {self.var_mng.off_var(rel)} = {self.var_mng.offsets_var(rel, it=True)}[{self.var_mng.i_var(rel)}];\n"
 				for col in proj_cols:
 					content += f'{self.var_mng.mn_rel_col_var(rel, col)} = min({self.var_mng.mn_rel_col_var(rel, col)}, {self.var_mng.rel_col_var(rel, col)}[{self.var_mng.off_var(rel)}]);\n'
 				if not is_available:
@@ -439,8 +435,8 @@ class FJCppGenerator(AbstractCppGenerator):
 			rel2col2type[interm] = dict()
 			for rel, cols in interm_rel2cols.items():
 				if rel not in self.available_tuples:
-					content += f"for (auto {self.var_mng.it_var(rel)} = {self.var_mng.range_var(rel)}.first; {self.var_mng.it_var(rel)} != {self.var_mng.range_var(rel)}.second; ++{self.var_mng.it_var(rel)}) {{\n"
-					content += f"auto {self.var_mng.off_var(rel)} = {self.var_mng.it_var(rel)}->second;\n"
+					content += f"for (int {self.var_mng.i_var(rel)} = 0; {self.var_mng.i_var(rel)} < {self.var_mng.offsets_var(rel, it=True)}.size(); ++{self.var_mng.i_var(rel)}) {{\n"
+					content += f"auto {self.var_mng.off_var(rel)} = {self.var_mng.offsets_var(rel, it=True)}[{self.var_mng.i_var(rel)}];\n"
 					brackets += 1
 			for idx, (rel, col) in interm_cols:
 				interm_col = self.var_mng.interm_col(idx)
