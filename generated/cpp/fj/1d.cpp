@@ -34,8 +34,7 @@ int main() {
             auto x0 = t_id[t_off];
             if (mi_idx_trie0.contains(x0)) {
                 auto &mi_idx_trie1 = mi_idx_trie0.at(x0);
-                for (int mi_idx_i = 0; mi_idx_i < mi_idx_trie1.size(); ++mi_idx_i) {
-                    auto mi_idx_off = mi_idx_trie1[mi_idx_i];
+                for (const auto &mi_idx_off : mi_idx_trie1) {
                     interm0_col0.push_back(t_id[t_off]);
                     interm0_col1.push_back(t_title[t_off]);
                     interm0_col2.push_back(t_production_year[t_off]);
@@ -61,8 +60,7 @@ int main() {
             auto x0 = mc_movie_id[mc_off];
             if (interm0_trie0.contains(x0)) {
                 auto &interm0_trie1 = interm0_trie0.at(x0);
-                for (int interm0_i = 0; interm0_i < interm0_trie1.size(); ++interm0_i) {
-                    auto interm0_off = interm0_trie1[interm0_i];
+                for (const auto &interm0_off : interm0_trie1) {
                     auto x1 = interm0_col3[interm0_off];
                     if (it_trie0.contains(x1)) {
                         auto &it_trie1 = it_trie0.at(x1);

@@ -36,8 +36,7 @@ int main() {
             auto x0 = t_id[t_off];
             if (ml_trie0.contains(x0)) {
                 auto &ml_trie1 = ml_trie0.at(x0);
-                for (int ml_i = 0; ml_i < ml_trie1.size(); ++ml_i) {
-                    auto ml_off = ml_trie1[ml_i];
+                for (const auto &ml_off : ml_trie1) {
                     interm0_col0.push_back(t_id[t_off]);
                     interm0_col1.push_back(t_title[t_off]);
                     interm0_col2.push_back(ml_link_type_id[ml_off]);
@@ -69,16 +68,14 @@ int main() {
             if (interm0_trie0.contains(x0) && mc_trie0.contains(x0)) {
                 auto &interm0_trie1 = interm0_trie0.at(x0);
                 auto &mc_trie1 = mc_trie0.at(x0);
-                for (int interm0_i = 0; interm0_i < interm0_trie1.size(); ++interm0_i) {
-                    auto interm0_off = interm0_trie1[interm0_i];
+                for (const auto &interm0_off : interm0_trie1) {
                     auto x1 = interm0_col2[interm0_off];
                     if (lt_trie0.contains(x1)) {
                         auto &lt_trie1 = lt_trie0.at(x1);
                         auto x2 = mk_keyword_id[mk_off];
                         if (k_trie0.contains(x2)) {
                             auto &k_trie1 = k_trie0.at(x2);
-                            for (int mc_i = 0; mc_i < mc_trie1.size(); ++mc_i) {
-                                auto mc_off = mc_trie1[mc_i];
+                            for (const auto &mc_off : mc_trie1) {
                                 auto x3 = mc_company_type_id[mc_off];
                                 if (ct_trie0.contains(x3)) {
                                     auto &ct_trie1 = ct_trie0.at(x3);
@@ -87,8 +84,7 @@ int main() {
                                         auto &cn_trie1 = cn_trie0.at(x4);
                                         mn_interm0_col1 = min(mn_interm0_col1, interm0_col1[interm0_off]);
                                         mn_mc_note = min(mn_mc_note, mc_note[mc_off]);
-                                        for (int cn_i = 0; cn_i < cn_trie1.size(); ++cn_i) {
-                                            auto cn_off = cn_trie1[cn_i];
+                                        for (const auto &cn_off : cn_trie1) {
                                             mn_cn_name = min(mn_cn_name, cn_name[cn_off]);
                                         }
                                     }

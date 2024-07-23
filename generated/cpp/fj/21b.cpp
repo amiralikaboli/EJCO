@@ -37,8 +37,7 @@ int main() {
             auto x0 = t_id[t_off];
             if (ml_trie0.contains(x0)) {
                 auto &ml_trie1 = ml_trie0.at(x0);
-                for (int ml_i = 0; ml_i < ml_trie1.size(); ++ml_i) {
-                    auto ml_off = ml_trie1[ml_i];
+                for (const auto &ml_off : ml_trie1) {
                     interm0_col0.push_back(t_id[t_off]);
                     interm0_col1.push_back(t_title[t_off]);
                     interm0_col2.push_back(ml_link_type_id[ml_off]);
@@ -62,8 +61,7 @@ int main() {
             auto x0 = mk_movie_id[mk_off];
             if (interm0_trie0.contains(x0)) {
                 auto &interm0_trie1 = interm0_trie0.at(x0);
-                for (int interm0_i = 0; interm0_i < interm0_trie1.size(); ++interm0_i) {
-                    auto interm0_off = interm0_trie1[interm0_i];
+                for (const auto &interm0_off : interm0_trie1) {
                     interm1_col0.push_back(mk_movie_id[mk_off]);
                     interm1_col1.push_back(mk_keyword_id[mk_off]);
                     interm1_col2.push_back(interm0_col1[interm0_off]);
@@ -96,16 +94,14 @@ int main() {
             if (interm1_trie0.contains(x0) && mc_trie0.contains(x0)) {
                 auto &interm1_trie1 = interm1_trie0.at(x0);
                 auto &mc_trie1 = mc_trie0.at(x0);
-                for (int interm1_i = 0; interm1_i < interm1_trie1.size(); ++interm1_i) {
-                    auto interm1_off = interm1_trie1[interm1_i];
+                for (const auto &interm1_off : interm1_trie1) {
                     auto x1 = interm1_col3[interm1_off];
                     if (lt_trie0.contains(x1)) {
                         auto &lt_trie1 = lt_trie0.at(x1);
                         auto x2 = interm1_col1[interm1_off];
                         if (k_trie0.contains(x2)) {
                             auto &k_trie1 = k_trie0.at(x2);
-                            for (int mc_i = 0; mc_i < mc_trie1.size(); ++mc_i) {
-                                auto mc_off = mc_trie1[mc_i];
+                            for (const auto &mc_off : mc_trie1) {
                                 auto x3 = mc_company_type_id[mc_off];
                                 if (ct_trie0.contains(x3)) {
                                     auto &ct_trie1 = ct_trie0.at(x3);
@@ -113,12 +109,10 @@ int main() {
                                     if (cn_trie0.contains(x4)) {
                                         auto &cn_trie1 = cn_trie0.at(x4);
                                         mn_interm1_col2 = min(mn_interm1_col2, interm1_col2[interm1_off]);
-                                        for (int lt_i = 0; lt_i < lt_trie1.size(); ++lt_i) {
-                                            auto lt_off = lt_trie1[lt_i];
+                                        for (const auto &lt_off : lt_trie1) {
                                             mn_lt_link = min(mn_lt_link, lt_link[lt_off]);
                                         }
-                                        for (int cn_i = 0; cn_i < cn_trie1.size(); ++cn_i) {
-                                            auto cn_off = cn_trie1[cn_i];
+                                        for (const auto &cn_off : cn_trie1) {
                                             mn_cn_name = min(mn_cn_name, cn_name[cn_off]);
                                         }
                                     }

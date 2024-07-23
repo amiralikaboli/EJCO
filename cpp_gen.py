@@ -390,11 +390,7 @@ class FJCppGenerator(AbstractCppGenerator):
 			rel_it, col_it = eq_cols[0]
 			if join_attrs_order[rel_it][col_it] == idx:
 				if rel_it not in self.available_tuples:
-					if Templates.OffsetsVar.value in self.var_mng.offsets_var(rel_it, it=True):
-						content += f"for (const auto &{self.var_mng.off_var(rel_it)}: {self.var_mng.offsets_var(rel_it, it=True)}) {{\n"
-					else:
-						content += f"for (int {self.var_mng.i_var(rel_it)} = 0; {self.var_mng.i_var(rel_it)} < {self.var_mng.offsets_var(rel_it, it=True)}.size(); ++{self.var_mng.i_var(rel_it)}) {{\n"
-						content += f"auto {self.var_mng.off_var(rel_it)} = {self.var_mng.offsets_var(rel_it, it=True)}[{self.var_mng.i_var(rel_it)}];\n"
+					content += f"for (const auto &{self.var_mng.off_var(rel_it)}: {self.var_mng.offsets_var(rel_it, it=True)}) {{\n"
 					brackets += 1
 				content += f"auto {self.var_mng.x_var(idx)} = {self.var_mng.rel_col_var(rel_it, col_it)}[{self.var_mng.off_var(rel_it)}];\n"
 				self.available_tuples.add(rel_it)
@@ -422,8 +418,7 @@ class FJCppGenerator(AbstractCppGenerator):
 			for rel, proj_cols in rel2proj_cols.items():
 				is_available = rel in self.available_tuples
 				if not is_available:
-					content += f"for (int {self.var_mng.i_var(rel)} = 0; {self.var_mng.i_var(rel)} < {self.var_mng.offsets_var(rel, it=True)}.size(); ++{self.var_mng.i_var(rel)}) {{\n"
-					content += f"auto {self.var_mng.off_var(rel)} = {self.var_mng.offsets_var(rel, it=True)}[{self.var_mng.i_var(rel)}];\n"
+					content += f"for (const auto &{self.var_mng.off_var(rel)}: {self.var_mng.offsets_var(rel, it=True)}) {{\n"
 				for col in proj_cols:
 					content += f'{self.var_mng.mn_rel_col_var(rel, col)} = min({self.var_mng.mn_rel_col_var(rel, col)}, {self.var_mng.rel_col_var(rel, col)}[{self.var_mng.off_var(rel)}]);\n'
 				if not is_available:
@@ -435,8 +430,7 @@ class FJCppGenerator(AbstractCppGenerator):
 			rel2col2type[interm] = dict()
 			for rel, cols in interm_rel2cols.items():
 				if rel not in self.available_tuples:
-					content += f"for (int {self.var_mng.i_var(rel)} = 0; {self.var_mng.i_var(rel)} < {self.var_mng.offsets_var(rel, it=True)}.size(); ++{self.var_mng.i_var(rel)}) {{\n"
-					content += f"auto {self.var_mng.off_var(rel)} = {self.var_mng.offsets_var(rel, it=True)}[{self.var_mng.i_var(rel)}];\n"
+					content += f"for (const auto &{self.var_mng.off_var(rel)}: {self.var_mng.offsets_var(rel, it=True)}) {{\n"
 					brackets += 1
 			for idx, (rel, col) in interm_cols:
 				interm_col = self.var_mng.interm_col(idx)

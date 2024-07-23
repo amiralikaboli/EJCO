@@ -40,13 +40,11 @@ int main() {
                 if (mi_idx_trie0.contains(x1) && t_trie0.contains(x1)) {
                     auto &mi_idx_trie1 = mi_idx_trie0.at(x1);
                     auto &t_trie1 = t_trie0.at(x1);
-                    for (int mi_idx_i = 0; mi_idx_i < mi_idx_trie1.size(); ++mi_idx_i) {
-                        auto mi_idx_off = mi_idx_trie1[mi_idx_i];
+                    for (const auto &mi_idx_off : mi_idx_trie1) {
                         auto x2 = mi_idx_info_type_id[mi_idx_off];
                         if (it_trie0.contains(x2)) {
                             auto &it_trie1 = it_trie0.at(x2);
-                            for (int t_i = 0; t_i < t_trie1.size(); ++t_i) {
-                                auto t_off = t_trie1[t_i];
+                            for (const auto &t_off : t_trie1) {
                                 mn_t_title = min(mn_t_title, t_title[t_off]);
                             }
                             mn_mi_idx_info = min(mn_mi_idx_info, mi_idx_info[mi_idx_off]);

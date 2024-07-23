@@ -39,13 +39,11 @@ int main() {
                 if (mc_trie0.contains(x1) && t_trie0.contains(x1)) {
                     auto &mc_trie1 = mc_trie0.at(x1);
                     auto &t_trie1 = t_trie0.at(x1);
-                    for (int mc_i = 0; mc_i < mc_trie1.size(); ++mc_i) {
-                        auto mc_off = mc_trie1[mc_i];
+                    for (const auto &mc_off : mc_trie1) {
                         auto x2 = mc_company_type_id[mc_off];
                         if (ct_trie0.contains(x2)) {
                             auto &ct_trie1 = ct_trie0.at(x2);
-                            for (int t_i = 0; t_i < t_trie1.size(); ++t_i) {
-                                auto t_off = t_trie1[t_i];
+                            for (const auto &t_off : t_trie1) {
                                 mn_t_title = min(mn_t_title, t_title[t_off]);
                             }
                         }

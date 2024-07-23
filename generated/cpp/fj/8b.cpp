@@ -67,12 +67,10 @@ int main() {
                     if (n_trie0.contains(x2) && an_trie0.contains(x2)) {
                         auto &n_trie1 = n_trie0.at(x2);
                         auto &an_trie1 = an_trie0.at(x2);
-                        for (int t_i = 0; t_i < t_trie1.size(); ++t_i) {
-                            auto t_off = t_trie1[t_i];
+                        for (const auto &t_off : t_trie1) {
                             mn_t_title = min(mn_t_title, t_title[t_off]);
                         }
-                        for (int an_i = 0; an_i < an_trie1.size(); ++an_i) {
-                            auto an_off = an_trie1[an_i];
+                        for (const auto &an_off : an_trie1) {
                             mn_an_name = min(mn_an_name, an_name[an_off]);
                         }
                     }

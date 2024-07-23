@@ -44,10 +44,8 @@ int main() {
             if (mi_idx_trie0.contains(x0) && t_trie0.contains(x0)) {
                 auto &mi_idx_trie1 = mi_idx_trie0.at(x0);
                 auto &t_trie1 = t_trie0.at(x0);
-                for (int t_i = 0; t_i < t_trie1.size(); ++t_i) {
-                    auto t_off = t_trie1[t_i];
-                    for (int mi_idx_i = 0; mi_idx_i < mi_idx_trie1.size(); ++mi_idx_i) {
-                        auto mi_idx_off = mi_idx_trie1[mi_idx_i];
+                for (const auto &t_off : t_trie1) {
+                    for (const auto &mi_idx_off : mi_idx_trie1) {
                         interm0_col0.push_back(mk_movie_id[mk_off]);
                         interm0_col1.push_back(mk_keyword_id[mk_off]);
                         interm0_col2.push_back(t_title[t_off]);
@@ -89,8 +87,7 @@ int main() {
             if (mc_trie0.contains(x0) && interm0_trie0.contains(x0)) {
                 auto &mc_trie1 = mc_trie0.at(x0);
                 auto &interm0_trie1 = interm0_trie0.at(x0);
-                for (int interm0_i = 0; interm0_i < interm0_trie1.size(); ++interm0_i) {
-                    auto interm0_off = interm0_trie1[interm0_i];
+                for (const auto &interm0_off : interm0_trie1) {
                     auto x1 = interm0_col1[interm0_off];
                     if (k_trie0.contains(x1)) {
                         auto &k_trie1 = k_trie0.at(x1);
@@ -100,8 +97,7 @@ int main() {
                             auto x3 = mi_info_type_id[mi_off];
                             if (it1_trie0.contains(x3)) {
                                 auto &it1_trie1 = it1_trie0.at(x3);
-                                for (int mc_i = 0; mc_i < mc_trie1.size(); ++mc_i) {
-                                    auto mc_off = mc_trie1[mc_i];
+                                for (const auto &mc_off : mc_trie1) {
                                     auto x4 = mc_company_id[mc_off];
                                     if (cn_trie0.contains(x4)) {
                                         auto &cn_trie1 = cn_trie0.at(x4);
@@ -141,12 +137,10 @@ int main() {
                 auto x1 = ci_person_id[ci_off];
                 if (n_trie0.contains(x1)) {
                     auto &n_trie1 = n_trie0.at(x1);
-                    for (int n_i = 0; n_i < n_trie1.size(); ++n_i) {
-                        auto n_off = n_trie1[n_i];
+                    for (const auto &n_off : n_trie1) {
                         mn_n_name = min(mn_n_name, n_name[n_off]);
                     }
-                    for (int interm1_i = 0; interm1_i < interm1_trie1.size(); ++interm1_i) {
-                        auto interm1_off = interm1_trie1[interm1_i];
+                    for (const auto &interm1_off : interm1_trie1) {
                         mn_interm1_col2 = min(mn_interm1_col2, interm1_col2[interm1_off]);
                         mn_interm1_col5 = min(mn_interm1_col5, interm1_col5[interm1_off]);
                         mn_interm1_col6 = min(mn_interm1_col6, interm1_col6[interm1_off]);

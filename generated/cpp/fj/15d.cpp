@@ -37,8 +37,7 @@ int main() {
             auto x0 = mk_movie_id[mk_off];
             if (t_trie0.contains(x0)) {
                 auto &t_trie1 = t_trie0.at(x0);
-                for (int t_i = 0; t_i < t_trie1.size(); ++t_i) {
-                    auto t_off = t_trie1[t_i];
+                for (const auto &t_off : t_trie1) {
                     interm0_col0.push_back(mk_movie_id[mk_off]);
                     interm0_col1.push_back(mk_keyword_id[mk_off]);
                     interm0_col2.push_back(t_title[t_off]);
@@ -71,16 +70,14 @@ int main() {
             if (mc_trie0.contains(x0) && interm0_trie0.contains(x0)) {
                 auto &mc_trie1 = mc_trie0.at(x0);
                 auto &interm0_trie1 = interm0_trie0.at(x0);
-                for (int interm0_i = 0; interm0_i < interm0_trie1.size(); ++interm0_i) {
-                    auto interm0_off = interm0_trie1[interm0_i];
+                for (const auto &interm0_off : interm0_trie1) {
                     auto x1 = interm0_col1[interm0_off];
                     if (k_trie0.contains(x1)) {
                         auto &k_trie1 = k_trie0.at(x1);
                         auto x2 = mi_info_type_id[mi_off];
                         if (it1_trie0.contains(x2)) {
                             auto &it1_trie1 = it1_trie0.at(x2);
-                            for (int mc_i = 0; mc_i < mc_trie1.size(); ++mc_i) {
-                                auto mc_off = mc_trie1[mc_i];
+                            for (const auto &mc_off : mc_trie1) {
                                 auto x3 = mc_company_type_id[mc_off];
                                 if (ct_trie0.contains(x3)) {
                                     auto &ct_trie1 = ct_trie0.at(x3);
@@ -90,8 +87,7 @@ int main() {
                                         if (at_trie0.contains(x0)) {
                                             auto &at_trie1 = at_trie0.at(x0);
                                             mn_interm0_col2 = min(mn_interm0_col2, interm0_col2[interm0_off]);
-                                            for (int at_i = 0; at_i < at_trie1.size(); ++at_i) {
-                                                auto at_off = at_trie1[at_i];
+                                            for (const auto &at_off : at_trie1) {
                                                 mn_at_title = min(mn_at_title, at_title[at_off]);
                                             }
                                         }

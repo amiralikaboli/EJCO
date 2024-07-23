@@ -50,10 +50,6 @@ class VariableManager:
 		return f"{rel}_{Templates.OffVar.value}"
 
 	@staticmethod
-	def i_var(rel: str):
-		return f"{rel}_{Templates.IVar.value}"
-
-	@staticmethod
 	def tuple_var(rel: str):
 		return f"{rel}_{Templates.TupleVar.value}"
 

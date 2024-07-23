@@ -39,10 +39,8 @@ int main() {
                 auto x1 = mk_movie_id[mk_off];
                 if (t_trie0.contains(x1)) {
                     auto &t_trie1 = t_trie0.at(x1);
-                    for (int t_i = 0; t_i < t_trie1.size(); ++t_i) {
-                        auto t_off = t_trie1[t_i];
-                        for (int k_i = 0; k_i < k_trie1.size(); ++k_i) {
-                            auto k_off = k_trie1[k_i];
+                    for (const auto &t_off : t_trie1) {
+                        for (const auto &k_off : k_trie1) {
                             interm0_col0.push_back(mk_movie_id[mk_off]);
                             interm0_col1.push_back(mk_keyword_id[mk_off]);
                             interm0_col2.push_back(t_title[t_off]);
@@ -71,12 +69,10 @@ int main() {
                 auto x1 = ci_person_id[ci_off];
                 if (n_trie0.contains(x1)) {
                     auto &n_trie1 = n_trie0.at(x1);
-                    for (int n_i = 0; n_i < n_trie1.size(); ++n_i) {
-                        auto n_off = n_trie1[n_i];
+                    for (const auto &n_off : n_trie1) {
                         mn_n_name = min(mn_n_name, n_name[n_off]);
                     }
-                    for (int interm0_i = 0; interm0_i < interm0_trie1.size(); ++interm0_i) {
-                        auto interm0_off = interm0_trie1[interm0_i];
+                    for (const auto &interm0_off : interm0_trie1) {
                         mn_interm0_col2 = min(mn_interm0_col2, interm0_col2[interm0_off]);
                         mn_interm0_col3 = min(mn_interm0_col3, interm0_col3[interm0_off]);
                     }

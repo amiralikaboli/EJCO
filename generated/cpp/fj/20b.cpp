@@ -70,8 +70,7 @@ int main() {
             auto x0 = mk_movie_id[mk_off];
             if (t_trie0.contains(x0)) {
                 auto &t_trie1 = t_trie0.at(x0);
-                for (int t_i = 0; t_i < t_trie1.size(); ++t_i) {
-                    auto t_off = t_trie1[t_i];
+                for (const auto &t_off : t_trie1) {
                     auto x1 = t_kind_id[t_off];
                     if (kt_trie0.contains(x1)) {
                         auto &kt_trie1 = kt_trie0.at(x1);
@@ -112,8 +111,7 @@ int main() {
                     if (interm1_trie0.contains(x2) && interm0_trie0.contains(x2)) {
                         auto &interm1_trie1 = interm1_trie0.at(x2);
                         auto &interm0_trie1 = interm0_trie0.at(x2);
-                        for (int interm1_i = 0; interm1_i < interm1_trie1.size(); ++interm1_i) {
-                            auto interm1_off = interm1_trie1[interm1_i];
+                        for (const auto &interm1_off : interm1_trie1) {
                             mn_interm1_col3 = min(mn_interm1_col3, interm1_col3[interm1_off]);
                         }
                     }

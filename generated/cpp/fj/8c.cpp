@@ -68,12 +68,10 @@ int main() {
                         auto &t_trie1 = t_trie0.at(x2);
                         if (n1_trie0.contains(x1)) {
                             auto &n1_trie1 = n1_trie0.at(x1);
-                            for (int t_i = 0; t_i < t_trie1.size(); ++t_i) {
-                                auto t_off = t_trie1[t_i];
+                            for (const auto &t_off : t_trie1) {
                                 mn_t_title = min(mn_t_title, t_title[t_off]);
                             }
-                            for (int a1_i = 0; a1_i < a1_trie1.size(); ++a1_i) {
-                                auto a1_off = a1_trie1[a1_i];
+                            for (const auto &a1_off : a1_trie1) {
                                 mn_a1_name = min(mn_a1_name, a1_name[a1_off]);
                             }
                         }

@@ -76,16 +76,13 @@ int main() {
                                 auto x5 = ci_person_role_id[ci_off];
                                 if (chn_trie0.contains(x5)) {
                                     auto &chn_trie1 = chn_trie0.at(x5);
-                                    for (int t_i = 0; t_i < t_trie1.size(); ++t_i) {
-                                        auto t_off = t_trie1[t_i];
+                                    for (const auto &t_off : t_trie1) {
                                         mn_t_title = min(mn_t_title, t_title[t_off]);
                                     }
-                                    for (int chn_i = 0; chn_i < chn_trie1.size(); ++chn_i) {
-                                        auto chn_off = chn_trie1[chn_i];
+                                    for (const auto &chn_off : chn_trie1) {
                                         mn_chn_name = min(mn_chn_name, chn_name[chn_off]);
                                     }
-                                    for (int an_i = 0; an_i < an_trie1.size(); ++an_i) {
-                                        auto an_off = an_trie1[an_i];
+                                    for (const auto &an_off : an_trie1) {
                                         mn_an_name = min(mn_an_name, an_name[an_off]);
                                     }
                                 }

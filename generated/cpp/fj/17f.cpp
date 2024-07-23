@@ -45,8 +45,7 @@ int main() {
                 if (t_trie0.contains(x1) && mc_trie0.contains(x1)) {
                     auto &t_trie1 = t_trie0.at(x1);
                     auto &mc_trie1 = mc_trie0.at(x1);
-                    for (int mc_i = 0; mc_i < mc_trie1.size(); ++mc_i) {
-                        auto mc_off = mc_trie1[mc_i];
+                    for (const auto &mc_off : mc_trie1) {
                         auto x2 = mc_company_id[mc_off];
                         if (cn_trie0.contains(x2)) {
                             auto &cn_trie1 = cn_trie0.at(x2);
@@ -75,8 +74,7 @@ int main() {
                 auto x1 = ci_person_id[ci_off];
                 if (n_trie0.contains(x1)) {
                     auto &n_trie1 = n_trie0.at(x1);
-                    for (int n_i = 0; n_i < n_trie1.size(); ++n_i) {
-                        auto n_off = n_trie1[n_i];
+                    for (const auto &n_off : n_trie1) {
                         mn_n_name = min(mn_n_name, n_name[n_off]);
                     }
                 }
