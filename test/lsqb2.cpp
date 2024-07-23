@@ -1,5 +1,5 @@
-#include "build.h"
-#include "high_precision_timer.h"
+#include "../include/build.h"
+#include "../include/high_precision_timer.h"
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -101,15 +101,15 @@ int main() {
 
 		int ans = 0;
 		for (const auto &cmnt_off: cmnt_offsets) {
-			auto &x0 = cmnt_replyof_post[cmnt_off];
+			auto x0 = cmnt_replyof_post[cmnt_off];
 			if (pst_trie0.contains(x0)) {
 				auto &pst_trie1 = pst_trie0.at(x0);
 				for (int pst_i = 0; pst_i < pst_trie1.size(); ++pst_i) {
 					auto &pst_off = pst_trie1[pst_i];
-					auto &x1 = pst_hascreator_person[pst_off];
+					auto x1 = pst_hascreator_person[pst_off];
 					if (pkp_trie0.contains(x1)) {
 						auto &pkp_trie1 = pkp_trie0.at(x1);
-						auto &x2 = cmnt_hascreator_person[cmnt_off];
+						auto x2 = cmnt_hascreator_person[cmnt_off];
 						if (pkp_trie1.contains(x2)) {
 							++ans;
 						}
