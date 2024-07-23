@@ -43,11 +43,11 @@ int main() {
 
         auto rt_trie0 = phmap::flat_hash_map<int, bool>(rt_offsets.size());
         build_trie(rt_trie0, rt_id);
-        auto a1_trie0 = phmap::flat_hash_map<int, small_vector_vecptr<int, 4>>(a1_offsets.size());
+        auto a1_trie0 = phmap::flat_hash_map<int, smallvec<int, 4>>(a1_offsets.size());
         build_trie<4>(a1_trie0, a1_person_id);
         auto interm0_trie0 = phmap::flat_hash_map<int, bool>(interm0_offsets.size());
         build_trie(interm0_trie0, interm0_col1);
-        auto t_trie0 = phmap::flat_hash_map<int, small_vector_vecptr<int, 4>>(t_offsets.size());
+        auto t_trie0 = phmap::flat_hash_map<int, smallvec<int, 4>>(t_offsets.size());
         build_trie<4>(t_trie0, t_id);
         auto n1_trie0 = phmap::flat_hash_map<int, bool>(n1_offsets.size());
         build_trie(n1_trie0, n1_id);

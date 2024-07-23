@@ -24,7 +24,7 @@ int main() {
         int cnt;
         timer.Reset();
 
-        auto miidx_trie0 = phmap::flat_hash_map<int, small_vector_vecptr<int, 4>>(miidx_offsets.size());
+        auto miidx_trie0 = phmap::flat_hash_map<int, smallvec<int, 4>>(miidx_offsets.size());
         build_trie<4>(miidx_trie0, miidx_movie_id);
         timer.StoreElapsedTime(0);
 
@@ -52,9 +52,9 @@ int main() {
         }
         timer.StoreElapsedTime(1);
 
-        auto interm0_trie0 = phmap::flat_hash_map<int, small_vector_vecptr<int, 4>>(interm0_offsets.size());
+        auto interm0_trie0 = phmap::flat_hash_map<int, smallvec<int, 4>>(interm0_offsets.size());
         build_trie<4>(interm0_trie0, interm0_col0);
-        auto mc_trie0 = phmap::flat_hash_map<int, small_vector_vecptr<int, 4>>(mc_offsets.size());
+        auto mc_trie0 = phmap::flat_hash_map<int, smallvec<int, 4>>(mc_offsets.size());
         build_trie<4>(mc_trie0, mc_movie_id);
         auto kt_trie0 = phmap::flat_hash_map<int, bool>(kt_offsets.size());
         build_trie(kt_trie0, kt_id);
@@ -64,7 +64,7 @@ int main() {
         build_trie(it_trie0, it_id);
         auto ct_trie0 = phmap::flat_hash_map<int, bool>(ct_offsets.size());
         build_trie(ct_trie0, ct_id);
-        auto cn_trie0 = phmap::flat_hash_map<int, small_vector_vecptr<int, 4>>(cn_offsets.size());
+        auto cn_trie0 = phmap::flat_hash_map<int, smallvec<int, 4>>(cn_offsets.size());
         build_trie<4>(cn_trie0, cn_id);
         timer.StoreElapsedTime(2);
 

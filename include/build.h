@@ -23,30 +23,14 @@ void build_trie(phmap::flat_hash_map<int, sv::small_vector<int, N>> &trie, vecto
 		trie[attr0[i]].push_back(i);
 }
 
-template<int N>
-void build_trie(phmap::flat_hash_map<int, small_vector_array<int, N>> &trie, vector<int> &attr0) {
-	for (int i = 0; i < attr0.size(); ++i)
-		trie[attr0[i]].push_back(i);
-}
-
-void build_trie(phmap::flat_hash_map<int, small_vector_tuple<int>> &trie, vector<int> &attr0) {
-	for (int i = 0; i < attr0.size(); ++i)
-		trie[attr0[i]].push_back(i);
-}
-
-void build_trie(phmap::flat_hash_map<int, small_vector_fields<int>> &trie, vector<int> &attr0) {
+template <int N>
+void build_trie(phmap::flat_hash_map<int, smallvec<int, N>> &trie, vector<int> &attr0) {
 	for (int i = 0; i < attr0.size(); ++i)
 		trie[attr0[i]].push_back(i);
 }
 
 template <int N>
-void build_trie(phmap::flat_hash_map<int, small_vector_vecptr<int, N>> &trie, vector<int> &attr0) {
-	for (int i = 0; i < attr0.size(); ++i)
-		trie[attr0[i]].push_back(i);
-}
-
-template <int N>
-void build_trie(phmap::flat_hash_map<long, small_vector_vecptr<int, N>> &trie, vector<long> &attr0) {
+void build_trie(phmap::flat_hash_map<long, smallvec<int, N>> &trie, vector<long> &attr0) {
 	for (int i = 0; i < attr0.size(); ++i)
 		trie[attr0[i]].push_back(i);
 }

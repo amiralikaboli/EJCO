@@ -22,9 +22,9 @@ int main() {
 
         auto it_trie0 = phmap::flat_hash_map<int, bool>(it_offsets.size());
         build_trie(it_trie0, it_id);
-        auto mc_trie0 = phmap::flat_hash_map<int, small_vector_vecptr<int, 4>>(mc_offsets.size());
+        auto mc_trie0 = phmap::flat_hash_map<int, smallvec<int, 4>>(mc_offsets.size());
         build_trie<4>(mc_trie0, mc_movie_id);
-        auto t_trie0 = phmap::flat_hash_map<int, small_vector_vecptr<int, 4>>(t_offsets.size());
+        auto t_trie0 = phmap::flat_hash_map<int, smallvec<int, 4>>(t_offsets.size());
         build_trie<4>(t_trie0, t_id);
         auto ct_trie0 = phmap::flat_hash_map<int, bool>(ct_offsets.size());
         build_trie(ct_trie0, ct_id);

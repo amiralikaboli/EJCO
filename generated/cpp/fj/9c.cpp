@@ -44,15 +44,15 @@ int main() {
 
         auto rt_trie0 = phmap::flat_hash_map<int, bool>(rt_offsets.size());
         build_trie(rt_trie0, rt_id);
-        auto n_trie0 = phmap::flat_hash_map<int, small_vector_vecptr<int, 4>>(n_offsets.size());
+        auto n_trie0 = phmap::flat_hash_map<int, smallvec<int, 4>>(n_offsets.size());
         build_trie<4>(n_trie0, n_id);
-        auto an_trie0 = phmap::flat_hash_map<int, small_vector_vecptr<int, 4>>(an_offsets.size());
+        auto an_trie0 = phmap::flat_hash_map<int, smallvec<int, 4>>(an_offsets.size());
         build_trie<4>(an_trie0, an_person_id);
         auto interm0_trie0 = phmap::flat_hash_map<int, bool>(interm0_offsets.size());
         build_trie(interm0_trie0, interm0_col1);
-        auto t_trie0 = phmap::flat_hash_map<int, small_vector_vecptr<int, 4>>(t_offsets.size());
+        auto t_trie0 = phmap::flat_hash_map<int, smallvec<int, 4>>(t_offsets.size());
         build_trie<4>(t_trie0, t_id);
-        auto chn_trie0 = phmap::flat_hash_map<int, small_vector_vecptr<int, 4>>(chn_offsets.size());
+        auto chn_trie0 = phmap::flat_hash_map<int, smallvec<int, 4>>(chn_offsets.size());
         build_trie<4>(chn_trie0, chn_id);
         timer.StoreElapsedTime(2);
 

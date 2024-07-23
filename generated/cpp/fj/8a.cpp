@@ -47,9 +47,9 @@ int main() {
         build_trie(n1_trie0, n1_id);
         auto interm0_trie0 = phmap::flat_hash_map<int, bool>(interm0_offsets.size());
         build_trie(interm0_trie0, interm0_col1);
-        auto an1_trie0 = phmap::flat_hash_map<int, small_vector_vecptr<int, 4>>(an1_offsets.size());
+        auto an1_trie0 = phmap::flat_hash_map<int, smallvec<int, 4>>(an1_offsets.size());
         build_trie<4>(an1_trie0, an1_person_id);
-        auto t_trie0 = phmap::flat_hash_map<int, small_vector_vecptr<int, 4>>(t_offsets.size());
+        auto t_trie0 = phmap::flat_hash_map<int, smallvec<int, 4>>(t_offsets.size());
         build_trie<4>(t_trie0, t_id);
         timer.StoreElapsedTime(2);
 
