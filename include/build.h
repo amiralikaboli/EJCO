@@ -45,9 +45,22 @@ void build_trie(phmap::flat_hash_map<int, small_vector_vecptr<int, N>> &trie, ve
 		trie[attr0[i]].push_back(i);
 }
 
+template <int N>
+void build_trie(phmap::flat_hash_map<long, small_vector_vecptr<int, N>> &trie, vector<long> &attr0) {
+	for (int i = 0; i < attr0.size(); ++i)
+		trie[attr0[i]].push_back(i);
+}
+
 void build_trie(phmap::flat_hash_map<int, bool> &trie, vector<int> &attr0) {
 	for (int i = 0; i < attr0.size(); ++i)
 		trie[attr0[i]] = true;
+}
+
+void build_trie(phmap::flat_hash_map<long, phmap::flat_hash_map<long, bool>> &trie, vector<long> &attr0, vector<long> &attr1) {
+	for (int i = 0; i < attr0.size(); ++i) {
+		trie[attr0[i]][attr1[i]] = true;
+		trie[attr1[i]][attr0[i]] = true;
+	}
 }
 
 void build_trie(unordered_multimap<int, int> &trie, vector<int> &attr0) {
