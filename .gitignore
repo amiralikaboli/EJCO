@@ -7,3 +7,4 @@ CMakeLists.txt
 samples/benchmarks/db
 plan.txt
 gj.log
+*.dSYM
