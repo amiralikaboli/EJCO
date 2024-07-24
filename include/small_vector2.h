@@ -11,6 +11,8 @@ class smallvec {
 	std::size_t size_{0};
 
 public:
+	~smallvec() { delete heap_; }
+
 	size_t size() const { return size_; }
 
 	void push_back(const T &value) {
