@@ -13,7 +13,7 @@ class VariableManager:
 		self._last_x_var = 0
 
 	@staticmethod
-	def trie_def(level_types: Tuple[str], value_type: str = "smallvec<int, 4>"):
+	def trie_def(level_types: Tuple[str], value_type: str = "smallvecdict<int, 4>"):
 		return f"{''.join([f'phmap::flat_hash_map<{ttt}, ' for ttt in level_types])}{value_type}{'>' * len(level_types)}"
 
 	@staticmethod

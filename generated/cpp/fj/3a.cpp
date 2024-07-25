@@ -19,8 +19,9 @@ int main() {
         int cnt;
         timer.Reset();
 
-        auto t_trie0 = phmap::flat_hash_map<int, smallvec<int, 4>>(t_offsets.size());
-        build_trie<4>(t_trie0, t_id);
+        auto t_trie0 = phmap::flat_hash_map<int, smallvecdict<int, 4>>(t_offsets.size());
+        for (int i = 0; i < t_offsets.size(); ++i)
+            t_trie0[t_id[i]][i] += 1;
         timer.StoreElapsedTime(0);
 
         vector<int> interm0_col0;
@@ -42,10 +43,12 @@ int main() {
         }
         timer.StoreElapsedTime(1);
 
-        auto interm0_trie0 = phmap::flat_hash_map<int, smallvec<int, 4>>(interm0_offsets.size());
-        build_trie<4>(interm0_trie0, interm0_col0);
+        auto interm0_trie0 = phmap::flat_hash_map<int, smallvecdict<int, 4>>(interm0_offsets.size());
+        for (int i = 0; i < interm0_offsets.size(); ++i)
+            interm0_trie0[interm0_col0[i]][i] += 1;
         auto k_trie0 = phmap::flat_hash_map<int, bool>(k_offsets.size());
-        build_trie(k_trie0, k_id);
+        for (int i = 0; i < k_offsets.size(); ++i)
+            k_trie0[k_id[i]] += 1;
         timer.StoreElapsedTime(2);
 
         string mn_interm0_col2 = "zzzzzzzz";

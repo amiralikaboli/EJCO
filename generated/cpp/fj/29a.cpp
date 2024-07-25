@@ -33,9 +33,11 @@ int main() {
         timer.Reset();
 
         auto cct1_trie0 = phmap::flat_hash_map<int, bool>(cct1_offsets.size());
-        build_trie(cct1_trie0, cct1_id);
+        for (int i = 0; i < cct1_offsets.size(); ++i)
+            cct1_trie0[cct1_id[i]] += 1;
         auto cct2_trie0 = phmap::flat_hash_map<int, bool>(cct2_offsets.size());
-        build_trie(cct2_trie0, cct2_id);
+        for (int i = 0; i < cct2_offsets.size(); ++i)
+            cct2_trie0[cct2_id[i]] += 1;
         timer.StoreElapsedTime(0);
 
         vector<int> interm0_col0;
@@ -60,7 +62,8 @@ int main() {
         timer.StoreElapsedTime(1);
 
         auto interm0_trie0 = phmap::flat_hash_map<int, bool>(interm0_offsets.size());
-        build_trie(interm0_trie0, interm0_col2);
+        for (int i = 0; i < interm0_offsets.size(); ++i)
+            interm0_trie0[interm0_col2[i]] += 1;
         timer.StoreElapsedTime(2);
 
         vector<int> interm1_col0;
@@ -78,10 +81,12 @@ int main() {
         }
         timer.StoreElapsedTime(3);
 
-        auto interm1_trie0 = phmap::flat_hash_map<int, smallvec<int, 4>>(interm1_offsets.size());
-        build_trie<4>(interm1_trie0, interm1_col0);
+        auto interm1_trie0 = phmap::flat_hash_map<int, smallvecdict<int, 4>>(interm1_offsets.size());
+        for (int i = 0; i < interm1_offsets.size(); ++i)
+            interm1_trie0[interm1_col0[i]][i] += 1;
         auto cn_trie0 = phmap::flat_hash_map<int, bool>(cn_offsets.size());
-        build_trie(cn_trie0, cn_id);
+        for (int i = 0; i < cn_offsets.size(); ++i)
+            cn_trie0[cn_id[i]] += 1;
         timer.StoreElapsedTime(4);
 
         vector<int> interm2_col0;
@@ -108,9 +113,11 @@ int main() {
         timer.StoreElapsedTime(5);
 
         auto k_trie0 = phmap::flat_hash_map<int, bool>(k_offsets.size());
-        build_trie(k_trie0, k_id);
-        auto interm2_trie0 = phmap::flat_hash_map<int, smallvec<int, 4>>(interm2_offsets.size());
-        build_trie<4>(interm2_trie0, interm2_col1);
+        for (int i = 0; i < k_offsets.size(); ++i)
+            k_trie0[k_id[i]] += 1;
+        auto interm2_trie0 = phmap::flat_hash_map<int, smallvecdict<int, 4>>(interm2_offsets.size());
+        for (int i = 0; i < interm2_offsets.size(); ++i)
+            interm2_trie0[interm2_col1[i]][i] += 1;
         timer.StoreElapsedTime(6);
 
         vector<int> interm3_col0;
@@ -137,9 +144,11 @@ int main() {
         timer.StoreElapsedTime(7);
 
         auto it_trie0 = phmap::flat_hash_map<int, bool>(it_offsets.size());
-        build_trie(it_trie0, it_id);
-        auto interm3_trie0 = phmap::flat_hash_map<int, smallvec<int, 4>>(interm3_offsets.size());
-        build_trie<4>(interm3_trie0, interm3_col1);
+        for (int i = 0; i < it_offsets.size(); ++i)
+            it_trie0[it_id[i]] += 1;
+        auto interm3_trie0 = phmap::flat_hash_map<int, smallvecdict<int, 4>>(interm3_offsets.size());
+        for (int i = 0; i < interm3_offsets.size(); ++i)
+            interm3_trie0[interm3_col1[i]][i] += 1;
         timer.StoreElapsedTime(8);
 
         vector<int> interm4_col0;
@@ -166,9 +175,11 @@ int main() {
         timer.StoreElapsedTime(9);
 
         auto it3_trie0 = phmap::flat_hash_map<int, bool>(it3_offsets.size());
-        build_trie(it3_trie0, it3_id);
+        for (int i = 0; i < it3_offsets.size(); ++i)
+            it3_trie0[it3_id[i]] += 1;
         auto an_trie0 = phmap::flat_hash_map<int, bool>(an_offsets.size());
-        build_trie(an_trie0, an_person_id);
+        for (int i = 0; i < an_offsets.size(); ++i)
+            an_trie0[an_person_id[i]] += 1;
         timer.StoreElapsedTime(10);
 
         vector<int> interm5_col0;
@@ -191,7 +202,8 @@ int main() {
         timer.StoreElapsedTime(11);
 
         auto interm5_trie0 = phmap::flat_hash_map<int, bool>(interm5_offsets.size());
-        build_trie(interm5_trie0, interm5_col0);
+        for (int i = 0; i < interm5_offsets.size(); ++i)
+            interm5_trie0[interm5_col0[i]] += 1;
         timer.StoreElapsedTime(12);
 
         vector<int> interm6_col0;
@@ -209,14 +221,18 @@ int main() {
         }
         timer.StoreElapsedTime(13);
 
-        auto chn_trie0 = phmap::flat_hash_map<int, smallvec<int, 4>>(chn_offsets.size());
-        build_trie<4>(chn_trie0, chn_id);
+        auto chn_trie0 = phmap::flat_hash_map<int, smallvecdict<int, 4>>(chn_offsets.size());
+        for (int i = 0; i < chn_offsets.size(); ++i)
+            chn_trie0[chn_id[i]][i] += 1;
         auto rt_trie0 = phmap::flat_hash_map<int, bool>(rt_offsets.size());
-        build_trie(rt_trie0, rt_id);
-        auto interm4_trie0 = phmap::flat_hash_map<int, smallvec<int, 4>>(interm4_offsets.size());
-        build_trie<4>(interm4_trie0, interm4_col1);
-        auto interm6_trie0 = phmap::flat_hash_map<int, smallvec<int, 4>>(interm6_offsets.size());
-        build_trie<4>(interm6_trie0, interm6_col0);
+        for (int i = 0; i < rt_offsets.size(); ++i)
+            rt_trie0[rt_id[i]] += 1;
+        auto interm4_trie0 = phmap::flat_hash_map<int, smallvecdict<int, 4>>(interm4_offsets.size());
+        for (int i = 0; i < interm4_offsets.size(); ++i)
+            interm4_trie0[interm4_col1[i]][i] += 1;
+        auto interm6_trie0 = phmap::flat_hash_map<int, smallvecdict<int, 4>>(interm6_offsets.size());
+        for (int i = 0; i < interm6_offsets.size(); ++i)
+            interm6_trie0[interm6_col0[i]][i] += 1;
         timer.StoreElapsedTime(14);
 
         string mn_chn_name = "zzzzzzzz";

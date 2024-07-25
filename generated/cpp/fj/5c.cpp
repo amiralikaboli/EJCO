@@ -21,13 +21,17 @@ int main() {
         timer.Reset();
 
         auto it_trie0 = phmap::flat_hash_map<int, bool>(it_offsets.size());
-        build_trie(it_trie0, it_id);
-        auto mc_trie0 = phmap::flat_hash_map<int, smallvec<int, 4>>(mc_offsets.size());
-        build_trie<4>(mc_trie0, mc_movie_id);
-        auto t_trie0 = phmap::flat_hash_map<int, smallvec<int, 4>>(t_offsets.size());
-        build_trie<4>(t_trie0, t_id);
+        for (int i = 0; i < it_offsets.size(); ++i)
+            it_trie0[it_id[i]] += 1;
+        auto mc_trie0 = phmap::flat_hash_map<int, smallvecdict<int, 4>>(mc_offsets.size());
+        for (int i = 0; i < mc_offsets.size(); ++i)
+            mc_trie0[mc_movie_id[i]][i] += 1;
+        auto t_trie0 = phmap::flat_hash_map<int, smallvecdict<int, 4>>(t_offsets.size());
+        for (int i = 0; i < t_offsets.size(); ++i)
+            t_trie0[t_id[i]][i] += 1;
         auto ct_trie0 = phmap::flat_hash_map<int, bool>(ct_offsets.size());
-        build_trie(ct_trie0, ct_id);
+        for (int i = 0; i < ct_offsets.size(); ++i)
+            ct_trie0[ct_id[i]] += 1;
         timer.StoreElapsedTime(0);
 
         string mn_t_title = "zzzzzzzz";

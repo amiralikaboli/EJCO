@@ -23,8 +23,9 @@ int main() {
         int cnt;
         timer.Reset();
 
-        auto ml_trie0 = phmap::flat_hash_map<int, smallvec<int, 4>>(ml_offsets.size());
-        build_trie<4>(ml_trie0, ml_movie_id);
+        auto ml_trie0 = phmap::flat_hash_map<int, smallvecdict<int, 4>>(ml_offsets.size());
+        for (int i = 0; i < ml_offsets.size(); ++i)
+            ml_trie0[ml_movie_id[i]][i] += 1;
         timer.StoreElapsedTime(0);
 
         vector<int> interm0_col0;
@@ -46,18 +47,24 @@ int main() {
         }
         timer.StoreElapsedTime(1);
 
-        auto interm0_trie0 = phmap::flat_hash_map<int, smallvec<int, 4>>(interm0_offsets.size());
-        build_trie<4>(interm0_trie0, interm0_col0);
-        auto mc_trie0 = phmap::flat_hash_map<int, smallvec<int, 4>>(mc_offsets.size());
-        build_trie<4>(mc_trie0, mc_movie_id);
+        auto interm0_trie0 = phmap::flat_hash_map<int, smallvecdict<int, 4>>(interm0_offsets.size());
+        for (int i = 0; i < interm0_offsets.size(); ++i)
+            interm0_trie0[interm0_col0[i]][i] += 1;
+        auto mc_trie0 = phmap::flat_hash_map<int, smallvecdict<int, 4>>(mc_offsets.size());
+        for (int i = 0; i < mc_offsets.size(); ++i)
+            mc_trie0[mc_movie_id[i]][i] += 1;
         auto lt_trie0 = phmap::flat_hash_map<int, bool>(lt_offsets.size());
-        build_trie(lt_trie0, lt_id);
+        for (int i = 0; i < lt_offsets.size(); ++i)
+            lt_trie0[lt_id[i]] += 1;
         auto k_trie0 = phmap::flat_hash_map<int, bool>(k_offsets.size());
-        build_trie(k_trie0, k_id);
+        for (int i = 0; i < k_offsets.size(); ++i)
+            k_trie0[k_id[i]] += 1;
         auto ct_trie0 = phmap::flat_hash_map<int, bool>(ct_offsets.size());
-        build_trie(ct_trie0, ct_id);
-        auto cn_trie0 = phmap::flat_hash_map<int, smallvec<int, 4>>(cn_offsets.size());
-        build_trie<4>(cn_trie0, cn_id);
+        for (int i = 0; i < ct_offsets.size(); ++i)
+            ct_trie0[ct_id[i]] += 1;
+        auto cn_trie0 = phmap::flat_hash_map<int, smallvecdict<int, 4>>(cn_offsets.size());
+        for (int i = 0; i < cn_offsets.size(); ++i)
+            cn_trie0[cn_id[i]][i] += 1;
         timer.StoreElapsedTime(2);
 
         string mn_interm0_col1 = "zzzzzzzz";

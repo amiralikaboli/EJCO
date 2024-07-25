@@ -23,10 +23,12 @@ int main() {
         int cnt;
         timer.Reset();
 
-        auto pi_trie0 = phmap::flat_hash_map<int, smallvec<int, 4>>(pi_offsets.size());
-        build_trie<4>(pi_trie0, pi_person_id);
+        auto pi_trie0 = phmap::flat_hash_map<int, smallvecdict<int, 4>>(pi_offsets.size());
+        for (int i = 0; i < pi_offsets.size(); ++i)
+            pi_trie0[pi_person_id[i]][i] += 1;
         auto it_trie0 = phmap::flat_hash_map<int, bool>(it_offsets.size());
-        build_trie(it_trie0, it_id);
+        for (int i = 0; i < it_offsets.size(); ++i)
+            it_trie0[it_id[i]] += 1;
         timer.StoreElapsedTime(0);
 
         vector<int> interm0_col0;
@@ -52,10 +54,12 @@ int main() {
         }
         timer.StoreElapsedTime(1);
 
-        auto ml_trie0 = phmap::flat_hash_map<int, smallvec<int, 4>>(ml_offsets.size());
-        build_trie<4>(ml_trie0, ml_linked_movie_id);
+        auto ml_trie0 = phmap::flat_hash_map<int, smallvecdict<int, 4>>(ml_offsets.size());
+        for (int i = 0; i < ml_offsets.size(); ++i)
+            ml_trie0[ml_linked_movie_id[i]][i] += 1;
         auto lt_trie0 = phmap::flat_hash_map<int, bool>(lt_offsets.size());
-        build_trie(lt_trie0, lt_id);
+        for (int i = 0; i < lt_offsets.size(); ++i)
+            lt_trie0[lt_id[i]] += 1;
         timer.StoreElapsedTime(2);
 
         vector<int> interm1_col0;
@@ -81,12 +85,15 @@ int main() {
         }
         timer.StoreElapsedTime(3);
 
-        auto interm0_trie0 = phmap::flat_hash_map<int, smallvec<int, 4>>(interm0_offsets.size());
-        build_trie<4>(interm0_trie0, interm0_col0);
-        auto interm1_trie0 = phmap::flat_hash_map<int, smallvec<int, 4>>(interm1_offsets.size());
-        build_trie<4>(interm1_trie0, interm1_col0);
+        auto interm0_trie0 = phmap::flat_hash_map<int, smallvecdict<int, 4>>(interm0_offsets.size());
+        for (int i = 0; i < interm0_offsets.size(); ++i)
+            interm0_trie0[interm0_col0[i]][i] += 1;
+        auto interm1_trie0 = phmap::flat_hash_map<int, smallvecdict<int, 4>>(interm1_offsets.size());
+        for (int i = 0; i < interm1_offsets.size(); ++i)
+            interm1_trie0[interm1_col0[i]][i] += 1;
         auto an_trie0 = phmap::flat_hash_map<int, bool>(an_offsets.size());
-        build_trie(an_trie0, an_person_id);
+        for (int i = 0; i < an_offsets.size(); ++i)
+            an_trie0[an_person_id[i]] += 1;
         timer.StoreElapsedTime(4);
 
         string mn_interm1_col1 = "zzzzzzzz";

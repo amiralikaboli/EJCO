@@ -351,12 +351,15 @@ class FJCppGenerator(AbstractCppGenerator):
 			level_types = tuple([rel2col2type[rel_wo_idx(rel)][join_col] for join_col in join_cols])
 			self.trie_types.add(level_types)
 			if rel in rels_in_interm_cols or rel in iter_rels:
-				content += f"auto {self.var_mng.trie_var(rel)} = {self.var_mng.trie_def(level_types)}({self.var_mng.offsets_var(rel)}.size());\n"
-				content += f"{self.var_mng.build_func()}<4>({self.var_mng.trie_var(rel)}, {', '.join([self.var_mng.rel_col_var(rel, join_col) for join_col in join_cols])});\n"
+				trie_def = f"auto {self.var_mng.trie_var(rel)} = {self.var_mng.trie_def(level_types)}({self.var_mng.offsets_var(rel)}.size());\n"
+				assign = f"{self.var_mng.trie_var(rel)}{''.join([f'[{self.var_mng.rel_col_var(rel, join_col)}[i]]' for join_col in join_cols])}[i] += 1;\n"
 				self.vector_tries.append(rel)
 			else:
-				content += f"auto {self.var_mng.trie_var(rel)} = {self.var_mng.trie_def(level_types, 'bool')}({self.var_mng.offsets_var(rel)}.size());\n"
-				content += f"{self.var_mng.build_func()}({self.var_mng.trie_var(rel)}, {', '.join([self.var_mng.rel_col_var(rel, join_col) for join_col in join_cols])});\n"
+				trie_def = f"auto {self.var_mng.trie_var(rel)} = {self.var_mng.trie_def(level_types, 'bool')}({self.var_mng.offsets_var(rel)}.size());\n"
+				assign = f"{self.var_mng.trie_var(rel)}{''.join([f'[{self.var_mng.rel_col_var(rel, join_col)}[i]]' for join_col in join_cols])} += 1;\n"
+			content += trie_def
+			content += f"for (int i = 0; i < {self.var_mng.offsets_var(rel)}.size(); ++i)\n"
+			content += assign
 		return content
 
 	def _generate_subquery(
