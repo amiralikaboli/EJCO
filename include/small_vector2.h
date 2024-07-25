@@ -4,30 +4,32 @@
 #include <iostream>
 #include <vector>
 
+using namespace std;
+
 template<typename T, size_t N>
 class smallvec {
-	std::array<T, N> stack_;
-	std::vector<T> *heap_;
-	std::size_t size_{0};
+	array<T, N> stack_;
+	vector<T> *heap_;
+	size_t size_{0};
 
 public:
 	~smallvec() { delete heap_; }
 
-	size_t size() const { return size_; }
+	inline size_t size() const { return size_; }
 
-	void push_back(const T &value) {
+	inline void push_back(const T &value) {
 		if (size_ < N) {
 			stack_[size_] = value;
 		} else {
 			if (size_ == N) {
-				heap_ = new std::vector<T>(stack_.begin(), stack_.end());
+				heap_ = new vector<T>(stack_.begin(), stack_.end());
 			}
 			heap_->push_back(value);
 		}
 		++size_;
 	}
 
-	T &operator[](size_t pos) {
+	inline T &operator[](size_t pos) {
 		if (size_ <= N) {
 			return stack_[pos];
 		} else {
@@ -46,11 +48,11 @@ public:
 			return *this;
 		}
 
-		T &operator*() { return *ptr_; }
+		inline T &operator*() { return *ptr_; }
 
-		bool operator==(const iterator &rhs) { return ptr_ == rhs.ptr_; }
+		inline bool operator==(const iterator &rhs) { return ptr_ == rhs.ptr_; }
 
-		bool operator!=(const iterator &rhs) { return ptr_ != rhs.ptr_; }
+		inline bool operator!=(const iterator &rhs) { return ptr_ != rhs.ptr_; }
 	};
 
 	class const_iterator {
@@ -64,14 +66,14 @@ public:
 			return *this;
 		}
 
-		const T &operator*() { return *ptr_; }
+		inline const T &operator*() { return *ptr_; }
 
-		bool operator==(const const_iterator &rhs) { return ptr_ == rhs.ptr_; }
+		inline bool operator==(const const_iterator &rhs) { return ptr_ == rhs.ptr_; }
 
-		bool operator!=(const const_iterator &rhs) { return ptr_ != rhs.ptr_; }
+		inline bool operator!=(const const_iterator &rhs) { return ptr_ != rhs.ptr_; }
 	};
 
-	iterator begin() {
+	inline iterator begin() {
 		if (size_ <= N) {
 			return iterator(stack_.data());
 		} else {
@@ -79,7 +81,7 @@ public:
 		}
 	}
 
-	iterator end() {
+	inline iterator end() {
 		if (size_ <= N) {
 			return iterator(stack_.data() + size_);
 		} else {
@@ -87,7 +89,7 @@ public:
 		}
 	}
 
-	const_iterator begin() const {
+	inline const_iterator begin() const {
 		if (size_ <= N) {
 			return const_iterator(stack_.data());
 		} else {
@@ -95,7 +97,7 @@ public:
 		}
 	}
 
-	const_iterator end() const {
+	inline const_iterator end() const {
 		if (size_ <= N) {
 			return const_iterator(stack_.data() + size_);
 		} else {
@@ -110,19 +112,16 @@ class smallvecdict {
 	T last_key_;
 
 public:
-	size_t size() const { return svec_.size(); }
+	inline size_t size() const { return svec_.size(); }
 
-	smallvecdict &operator[](T key) {
+	inline smallvecdict &operator[](T key) {
 		last_key_ = key;
 		return *this;
 	}
 
-	smallvecdict &operator+=(bool) {
-		svec_.push_back(last_key_);
-		return *this;
-	}
+	inline void operator+=(bool) { svec_.push_back(last_key_); }
 
-	typename smallvec<T, N>::iterator begin() { return svec_.begin(); }
+	inline typename smallvec<T, N>::iterator begin() { return svec_.begin(); }
 
-	typename smallvec<T, N>::iterator end() { return svec_.end(); }
+	inline typename smallvec<T, N>::iterator end() { return svec_.end(); }
 };
