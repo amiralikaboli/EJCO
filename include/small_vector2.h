@@ -109,17 +109,26 @@ public:
 template<typename T, size_t N>
 class smallvecdict {
 	smallvec<T, N> svec_;
-	T last_key_;
 
 public:
 	inline size_t size() const { return svec_.size(); }
 
-	inline smallvecdict &operator[](T key) {
-		last_key_ = key;
-		return *this;
-	}
+	class Proxy {
+		smallvecdict<T, N> &svec_;
+		T key_;
 
-	inline void operator+=(bool) { svec_.push_back(last_key_); }
+	public:
+		Proxy(smallvecdict &svec, T key) : svec_(svec), key_(key) {}
+
+		inline Proxy &operator+=(bool) {
+			svec_.svec_.push_back(key_);
+			return *this;
+		}
+	};
+
+	inline Proxy operator[](T key) {
+		return Proxy(*this, key);
+	}
 
 	inline typename smallvec<T, N>::iterator begin() { return svec_.begin(); }
 
