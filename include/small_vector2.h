@@ -114,14 +114,14 @@ public:
 	inline size_t size() const { return svec_.size(); }
 
 	class Proxy {
-		smallvecdict<T, N> &svec_;
+		smallvecdict<T, N> &svecdict_;
 		T key_;
 
 	public:
-		Proxy(smallvecdict &svec, T key) : svec_(svec), key_(key) {}
+		Proxy(smallvecdict &svecdict, T key) : svecdict_(svecdict), key_(key) {}
 
 		inline Proxy &operator+=(bool) {
-			svec_.svec_.push_back(key_);
+			svecdict_.svec_.push_back(key_);
 			return *this;
 		}
 	};
