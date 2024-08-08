@@ -11,7 +11,7 @@ let mi = load[<id: @vec {int -> int}, movie_id: @vec {int -> int}, info_type_id:
 let it1 = load[<id: @vec {int -> int}, info: @vec {int -> string}, size: int>]("datasets/job/23a/it1.csv")
 
 let cct1_trie0 = sum(<i, _> <- range(cct1.size)) { cct1.id(i) -> 1 } in
-let interm0_trie0 = sum(<cc_off, _> <- cc)
+let interm0_trie0 = sum(<cc_off, _> <- range(cc.size))
 	let x0 = cc.status_id(cc_off) in
 	if (x0 ∈ cct1_trie0) then
 		let cct1_trie1 = cct1_trie0(x0) in
@@ -20,7 +20,7 @@ in
 
 let kt_trie0 = sum(<i, _> <- range(kt.size)) { kt.id(i) -> @vecdict { i -> 1 } } in
 let interm0_trie0 = sum(<i, _> <- range(interm0.size)) { interm0.col1(i) -> 1 } in
-let interm1_trie0 = sum(<t_off, _> <- t)
+let interm1_trie0 = sum(<t_off, _> <- range(t.size))
 	let x0 = t.kind_id(t_off) in
 	if (x0 ∈ kt_trie0) then
 		let kt_trie1 = kt_trie0(x0) in
@@ -34,7 +34,7 @@ in
 let ct_trie0 = sum(<i, _> <- range(ct.size)) { ct.id(i) -> 1 } in
 let interm1_trie0 = sum(<i, _> <- range(interm1.size)) { interm1.col1(i) -> @vecdict { i -> 1 } } in
 let cn_trie0 = sum(<i, _> <- range(cn.size)) { cn.id(i) -> 1 } in
-let interm2_trie0 = sum(<mc_off, _> <- mc)
+let interm2_trie0 = sum(<mc_off, _> <- range(mc.size))
 	let x0 = mc.company_type_id(mc_off) in
 	if (x0 ∈ ct_trie0) then
 		let ct_trie1 = ct_trie0(x0) in
@@ -50,7 +50,7 @@ in
 
 let interm2_trie0 = sum(<i, _> <- range(interm2.size)) { interm2.col2(i) -> @vecdict { i -> 1 } } in
 let k_trie0 = sum(<i, _> <- range(k.size)) { k.id(i) -> 1 } in
-let interm3_trie0 = sum(<mk_off, _> <- mk)
+let interm3_trie0 = sum(<mk_off, _> <- range(mk.size))
 	let x0 = mk.movie_id(mk_off) in
 	if (x0 ∈ interm2_trie0) then
 		let interm2_trie1 = interm2_trie0(x0) in
@@ -63,7 +63,7 @@ in
 
 let it1_trie0 = sum(<i, _> <- range(it1.size)) { it1.id(i) -> 1 } in
 let interm3_trie0 = sum(<i, _> <- range(interm3.size)) { interm3.col1(i) -> @vecdict { i -> 1 } } in
-sum(<mi_off, _> <- mi)
+sum(<mi_off, _> <- range(mi.size))
 	let x0 = mi.info_type_id(mi_off) in
 	if (x0 ∈ it1_trie0) then
 		let it1_trie1 = it1_trie0(x0) in

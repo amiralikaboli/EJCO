@@ -35,7 +35,7 @@ class VariableManager:
 		return next_level_trie
 
 	def tuples_var(self, rel: str):
-		return self.trie_var(rel) if rel in self._trie_vars.keys() else rel
+		return self.trie_var(rel) if rel in self._trie_vars.keys() else f"range({rel}.size)"
 
 	@staticmethod
 	def x_var(idx: int):

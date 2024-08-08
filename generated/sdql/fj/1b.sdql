@@ -5,7 +5,7 @@ let it = load[<id: @vec {int -> int}, info: @vec {int -> string}, size: int>]("d
 let ct = load[<id: @vec {int -> int}, kind: @vec {int -> string}, size: int>]("datasets/job/1b/ct.csv")
 
 let mi_idx_trie0 = sum(<i, _> <- range(mi_idx.size)) { mi_idx.movie_id(i) -> @vecdict { i -> 1 } } in
-let interm0_trie0 = sum(<t_off, _> <- t)
+let interm0_trie0 = sum(<t_off, _> <- range(t.size))
 	let x0 = t.id(t_off) in
 	if (x0 ∈ mi_idx_trie0) then
 		let mi_idx_trie1 = mi_idx_trie0(x0) in
@@ -16,7 +16,7 @@ in
 let interm0_trie0 = sum(<i, _> <- range(interm0.size)) { interm0.col0(i) -> @vecdict { i -> 1 } } in
 let it_trie0 = sum(<i, _> <- range(it.size)) { it.id(i) -> 1 } in
 let ct_trie0 = sum(<i, _> <- range(ct.size)) { ct.id(i) -> 1 } in
-sum(<mc_off, _> <- mc)
+sum(<mc_off, _> <- range(mc.size))
 	let x0 = mc.movie_id(mc_off) in
 	if (x0 ∈ interm0_trie0) then
 		let interm0_trie1 = interm0_trie0(x0) in

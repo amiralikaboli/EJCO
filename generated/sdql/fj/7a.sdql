@@ -9,7 +9,7 @@ let an = load[<id: @vec {int -> int}, person_id: @vec {int -> int}, name: @vec {
 
 let pi_trie0 = sum(<i, _> <- range(pi.size)) { pi.person_id(i) -> @vecdict { i -> 1 } } in
 let it_trie0 = sum(<i, _> <- range(it.size)) { it.id(i) -> 1 } in
-let interm0_trie0 = sum(<n_off, _> <- n)
+let interm0_trie0 = sum(<n_off, _> <- range(n.size))
 	let x0 = n.id(n_off) in
 	if (x0 ∈ pi_trie0) then
 		let pi_trie1 = pi_trie0(x0) in
@@ -22,7 +22,7 @@ in
 
 let ml_trie0 = sum(<i, _> <- range(ml.size)) { ml.linked_movie_id(i) -> @vecdict { i -> 1 } } in
 let lt_trie0 = sum(<i, _> <- range(lt.size)) { lt.id(i) -> 1 } in
-let interm1_trie0 = sum(<t_off, _> <- t)
+let interm1_trie0 = sum(<t_off, _> <- range(t.size))
 	let x0 = t.id(t_off) in
 	if (x0 ∈ ml_trie0) then
 		let ml_trie1 = ml_trie0(x0) in
@@ -36,7 +36,7 @@ in
 let interm0_trie0 = sum(<i, _> <- range(interm0.size)) { interm0.col0(i) -> @vecdict { i -> 1 } } in
 let interm1_trie0 = sum(<i, _> <- range(interm1.size)) { interm1.col0(i) -> @vecdict { i -> 1 } } in
 let an_trie0 = sum(<i, _> <- range(an.size)) { an.person_id(i) -> 1 } in
-sum(<ci_off, _> <- ci)
+sum(<ci_off, _> <- range(ci.size))
 	let x0 = ci.person_id(ci_off) in
 	if (x0 ∈ interm0_trie0) then
 		let interm0_trie1 = interm0_trie0(x0) in

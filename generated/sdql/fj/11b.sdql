@@ -8,7 +8,7 @@ let ct = load[<id: @vec {int -> int}, kind: @vec {int -> string}, size: int>]("d
 let cn = load[<id: @vec {int -> int}, name: @vec {int -> string}, country_code: @vec {int -> string}, imdb_id: @vec {int -> string}, name_pcode_nf: @vec {int -> string}, name_pcode_sf: @vec {int -> string}, md5sum: @vec {int -> string}, size: int>]("datasets/job/11b/cn.csv")
 
 let ml_trie0 = sum(<i, _> <- range(ml.size)) { ml.movie_id(i) -> @vecdict { i -> 1 } } in
-let interm0_trie0 = sum(<t_off, _> <- t)
+let interm0_trie0 = sum(<t_off, _> <- range(t.size))
 	let x0 = t.id(t_off) in
 	if (x0 ∈ ml_trie0) then
 		let ml_trie1 = ml_trie0(x0) in
@@ -22,7 +22,7 @@ let lt_trie0 = sum(<i, _> <- range(lt.size)) { lt.id(i) -> @vecdict { i -> 1 } }
 let k_trie0 = sum(<i, _> <- range(k.size)) { k.id(i) -> 1 } in
 let ct_trie0 = sum(<i, _> <- range(ct.size)) { ct.id(i) -> 1 } in
 let cn_trie0 = sum(<i, _> <- range(cn.size)) { cn.id(i) -> @vecdict { i -> 1 } } in
-sum(<mk_off, _> <- mk)
+sum(<mk_off, _> <- range(mk.size))
 	let x0 = mk.movie_id(mk_off) in
 	if (x0 ∈ interm0_trie0) then
 		if (x0 ∈ mc_trie0) then

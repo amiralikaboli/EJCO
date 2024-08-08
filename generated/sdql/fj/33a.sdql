@@ -14,7 +14,7 @@ let mc2 = load[<id: @vec {int -> int}, movie_id: @vec {int -> int}, company_id: 
 let cn2 = load[<id: @vec {int -> int}, name: @vec {int -> string}, country_code: @vec {int -> string}, imdb_id: @vec {int -> string}, name_pcode_nf: @vec {int -> string}, name_pcode_sf: @vec {int -> string}, md5sum: @vec {int -> string}, size: int>]("datasets/job/company_name.csv")
 
 let lt_trie0 = sum(<i, _> <- range(lt.size)) { lt.id(i) -> 1 } in
-let interm0_trie0 = sum(<ml_off, _> <- ml)
+let interm0_trie0 = sum(<ml_off, _> <- range(ml.size))
 	let x0 = ml.link_type_id(ml_off) in
 	if (x0 ∈ lt_trie0) then
 		let lt_trie1 = lt_trie0(x0) in
@@ -23,7 +23,7 @@ in
 
 let it1_trie0 = sum(<i, _> <- range(it1.size)) { it1.id(i) -> 1 } in
 let interm0_trie0 = sum(<i, _> <- range(interm0.size)) { interm0.col1(i) -> @vecdict { i -> 1 } } in
-let interm1_trie0 = sum(<mi_idx1_off, _> <- mi_idx1)
+let interm1_trie0 = sum(<mi_idx1_off, _> <- range(mi_idx1.size))
 	let x0 = mi_idx1.info_type_id(mi_idx1_off) in
 	if (x0 ∈ it1_trie0) then
 		let it1_trie1 = it1_trie0(x0) in
@@ -36,7 +36,7 @@ in
 
 let it2_trie0 = sum(<i, _> <- range(it2.size)) { it2.id(i) -> 1 } in
 let interm1_trie0 = sum(<i, _> <- range(interm1.size)) { interm1.col4(i) -> @vecdict { i -> 1 } } in
-let interm2_trie0 = sum(<mi_idx2_off, _> <- mi_idx2)
+let interm2_trie0 = sum(<mi_idx2_off, _> <- range(mi_idx2.size))
 	let x0 = mi_idx2.info_type_id(mi_idx2_off) in
 	if (x0 ∈ it2_trie0) then
 		let it2_trie1 = it2_trie0(x0) in
@@ -49,7 +49,7 @@ in
 
 let kt1_trie0 = sum(<i, _> <- range(kt1.size)) { kt1.id(i) -> 1 } in
 let interm2_trie0 = sum(<i, _> <- range(interm2.size)) { interm2.col4(i) -> @vecdict { i -> 1 } } in
-let interm3_trie0 = sum(<t1_off, _> <- t1)
+let interm3_trie0 = sum(<t1_off, _> <- range(t1.size))
 	let x0 = t1.kind_id(t1_off) in
 	if (x0 ∈ kt1_trie0) then
 		let kt1_trie1 = kt1_trie0(x0) in
@@ -62,7 +62,7 @@ in
 
 let kt2_trie0 = sum(<i, _> <- range(kt2.size)) { kt2.id(i) -> 1 } in
 let interm3_trie0 = sum(<i, _> <- range(interm3.size)) { interm3.col4(i) -> @vecdict { i -> 1 } } in
-let interm4_trie0 = sum(<t2_off, _> <- t2)
+let interm4_trie0 = sum(<t2_off, _> <- range(t2.size))
 	let x0 = t2.kind_id(t2_off) in
 	if (x0 ∈ kt2_trie0) then
 		let kt2_trie1 = kt2_trie0(x0) in
@@ -75,7 +75,7 @@ in
 
 let interm4_trie0 = sum(<i, _> <- range(interm4.size)) { interm4.col4(i) -> @vecdict { i -> 1 } } in
 let cn1_trie0 = sum(<i, _> <- range(cn1.size)) { cn1.id(i) -> @vecdict { i -> 1 } } in
-let interm5_trie0 = sum(<mc1_off, _> <- mc1)
+let interm5_trie0 = sum(<mc1_off, _> <- range(mc1.size))
 	let x0 = mc1.movie_id(mc1_off) in
 	if (x0 ∈ interm4_trie0) then
 		let interm4_trie1 = interm4_trie0(x0) in
@@ -89,7 +89,7 @@ in
 
 let interm5_trie0 = sum(<i, _> <- range(interm5.size)) { interm5.col4(i) -> @vecdict { i -> 1 } } in
 let cn2_trie0 = sum(<i, _> <- range(cn2.size)) { cn2.id(i) -> @vecdict { i -> 1 } } in
-sum(<mc2_off, _> <- mc2)
+sum(<mc2_off, _> <- range(mc2.size))
 	let x0 = mc2.movie_id(mc2_off) in
 	if (x0 ∈ interm5_trie0) then
 		let interm5_trie1 = interm5_trie0(x0) in

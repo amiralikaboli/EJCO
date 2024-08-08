@@ -7,7 +7,7 @@ let k = load[<id: @vec {int -> int}, keyword: @vec {int -> string}, phonetic_cod
 
 let ml_trie0 = sum(<i, _> <- range(ml.size)) { ml.movie_id(i) -> @vecdict { i -> 1 } } in
 let t2_trie0 = sum(<i, _> <- range(t2.size)) { t2.id(i) -> @vecdict { i -> 1 } } in
-let interm0_trie0 = sum(<t1_off, _> <- t1)
+let interm0_trie0 = sum(<t1_off, _> <- range(t1.size))
 	let x0 = t1.id(t1_off) in
 	if (x0 ∈ ml_trie0) then
 		let ml_trie1 = ml_trie0(x0) in
@@ -22,7 +22,7 @@ in
 let interm0_trie0 = sum(<i, _> <- range(interm0.size)) { interm0.col0(i) -> @vecdict { i -> 1 } } in
 let lt_trie0 = sum(<i, _> <- range(lt.size)) { lt.id(i) -> @vecdict { i -> 1 } } in
 let k_trie0 = sum(<i, _> <- range(k.size)) { k.id(i) -> 1 } in
-sum(<mk_off, _> <- mk)
+sum(<mk_off, _> <- range(mk.size))
 	let x0 = mk.movie_id(mk_off) in
 	if (x0 ∈ interm0_trie0) then
 		let interm0_trie1 = interm0_trie0(x0) in

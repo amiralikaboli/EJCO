@@ -6,7 +6,7 @@ let n = load[<id: @vec {int -> int}, name: @vec {int -> string}, imdb_index: @ve
 
 let k_trie0 = sum(<i, _> <- range(k.size)) { k.id(i) -> @vecdict { i -> 1 } } in
 let t_trie0 = sum(<i, _> <- range(t.size)) { t.id(i) -> @vecdict { i -> 1 } } in
-let interm0_trie0 = sum(<mk_off, _> <- mk)
+let interm0_trie0 = sum(<mk_off, _> <- range(mk.size))
 	let x0 = mk.keyword_id(mk_off) in
 	if (x0 ∈ k_trie0) then
 		let k_trie1 = k_trie0(x0) in
@@ -20,7 +20,7 @@ in
 
 let n_trie0 = sum(<i, _> <- range(n.size)) { n.id(i) -> @vecdict { i -> 1 } } in
 let interm0_trie0 = sum(<i, _> <- range(interm0.size)) { interm0.col0(i) -> @vecdict { i -> 1 } } in
-sum(<ci_off, _> <- ci)
+sum(<ci_off, _> <- range(ci.size))
 	let x0 = ci.person_id(ci_off) in
 	if (x0 ∈ n_trie0) then
 		let n_trie1 = n_trie0(x0) in
