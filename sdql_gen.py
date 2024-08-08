@@ -3,8 +3,7 @@ import os
 from collections import defaultdict
 from typing import List, Tuple
 
-from consts import generated_sdql_path, preprocessed_data_path, raw_data_path, abbr2rel, rel_wo_idx, rel2col2type, \
-	JoinMode
+from consts import generated_sdql_path, preprocessed_data_path, abbr2rel, rel_wo_idx, rel2col2type, JoinMode
 from var_mng import VariableManager
 
 
@@ -53,7 +52,7 @@ class SDQLGenerator:
 			else:
 				path = f"datasets/job/{abbr2rel[rel_wo_idx(rel)]}.csv"
 			path = os.path.normpath(path)
-			yield f'let {rel} = load[{{<{", ".join([f"{col_n}: {col_t}" for col_n, col_t in rel2col2type[rel_wo_idx(rel)].items()])}> -> int}}]("{path}")\n'
+			yield f'let {rel} = load[<{", ".join([f"{col_n}: @vec {{int -> {col_t}}}" for col_n, col_t in rel2col2type[rel_wo_idx(rel)].items()])}, size: int>]("{path}")\n'
 
 	def _generate_subquery(
 			self,
@@ -69,7 +68,6 @@ class SDQLGenerator:
 		if not self.var_mng.is_root_rel(interm):
 			yield f"let {self.var_mng.trie_var(interm)} = "
 
-		else_cases = list()
 		join_attrs_order = {rel: {col: math.inf for col in join_cols} for rel, join_cols, _ in build_plan}
 		for idx, eq_cols in enumerate(compiled_plan):
 			min_idx = min(idx, *[join_attrs_order[rel][col] for rel, col in eq_cols])
@@ -90,7 +88,6 @@ class SDQLGenerator:
 			for rel, col in eq_cols[start_offset:]:
 				yield f"if ({self.var_mng.x_var(join_attrs_order[rel][col])} ∈ {self.var_mng.trie_var(rel)}) then\n"
 				self.indent += 1
-				else_cases.append(('{}', self.indent))
 
 			for rel, col in eq_cols[start_offset:]:
 				yield f"let {self.var_mng.next_trie_var(rel)} = {self.var_mng.trie_var(rel)}({self.var_mng.x_var(join_attrs_order[rel][col])}) in\n"
@@ -99,22 +96,13 @@ class SDQLGenerator:
 		if self.var_mng.is_root_rel(interm):
 			interm_col2idx = {rel_col: interm_col_idx for interm_col_idx, rel_col in interm_cols}
 			elems = list()
-			else_elems = list()
 			for rel, _, proj_cols in build_plan:
 				if proj_cols:
 					for s in self.call_func("min", rel, proj_cols):
 						yield s
 				for col in proj_cols:
 					elems.append((self.var_mng.interm_col(interm_col2idx[(rel, col)]), f'{self.var_mng.mn_rel_var(rel)}.{col}'))
-					else_elems.append((
-						self.var_mng.interm_col(interm_col2idx[(rel, col)]),
-						0 if rel2col2type[rel_wo_idx(rel)][col] == "int" else '""'
-					))
-			yield f"<{', '.join([f'{elem_key}={elem_val}' for elem_key, elem_val in elems])}>\n"
-			else_cases[-1] = (
-				f"<{', '.join([f'{elem_key}={elem_val}' for elem_key, elem_val in else_elems])}>",
-				self.indent
-			)
+			yield f"promote[min_sum](<{', '.join([f'{elem_key}={elem_val}' for elem_key, elem_val in elems])}>)\n"
 		else:
 			interm_rel2cols = defaultdict(list)
 			for _, (rel, col) in interm_cols:
@@ -123,11 +111,11 @@ class SDQLGenerator:
 				for s in self.call_func("tuple_iteration", rel):
 					yield s
 			new2old_map = {
-				self.var_mng.interm_col(idx): f"{self.var_mng.tuple_var(rel)}.{col}"
+				self.var_mng.interm_col(idx): self._tuple_col_var(rel, col)
 				for idx, (rel, col) in interm_cols
 			}
 			tuple_value = f"<{', '.join([f'{new_col}={old_col}' for new_col, old_col in new2old_map.items()])}>"
-			trie_value = f"{{ {tuple_value} -> 1 }}"
+			trie_value = f"@vecdict {{ {tuple_value} -> 1 }}"
 			for idx in interm_trie_cols[::-1]:
 				trie_value = f"{{ {new2old_map[self.var_mng.interm_col(idx)]} -> {trie_value} }}"
 			yield f'{trie_value}\n'
@@ -135,12 +123,6 @@ class SDQLGenerator:
 		rel2col2type[interm] = dict()
 		for interm_col_idx, (rel, col) in interm_cols:
 			rel2col2type[interm][self.var_mng.interm_col(interm_col_idx)] = rel2col2type[rel_wo_idx(rel)][col]
-
-		for else_case, indent in else_cases[::-1]:
-			self.indent = indent - 1
-			yield f"else\n"
-			self.indent += 1
-			yield f"{else_case}\n"
 
 		if not self.var_mng.is_root_rel(interm):
 			self.indent = 0
@@ -151,14 +133,13 @@ class SDQLGenerator:
 		for rel, join_cols, proj_cols in build_plan:
 			if self.var_mng.is_interm_rel(rel):
 				continue
-			tuple_var = self.var_mng.tuple_var(rel)
 			if rel in rels_in_interm_cols:
-				trie_value = f"{{ {tuple_var} -> 1 }}"
+				trie_value = f"@vecdict {{ i -> 1 }}"
 			else:
 				trie_value = "1"
 			for col in join_cols[::-1]:
-				trie_value = f"{{ {tuple_var}.{col} -> {trie_value} }}"
-			yield f"let {self.var_mng.trie_var(rel)} = sum(<{tuple_var}, _> <- {rel}) {trie_value} in\n"
+				trie_value = f"{{ {rel}.{col}(i) -> {trie_value} }}"
+			yield f"let {self.var_mng.trie_var(rel)} = sum(<i, _> <- range({rel}.size)) {trie_value} in\n"
 
 	def _fj_build_tries(self, interm_cols, build_plan, compiled_plan):
 		rel2trie_levels = defaultdict(list)
@@ -172,14 +153,13 @@ class SDQLGenerator:
 
 		rels_in_interm_cols = set(rel for _, (rel, _) in interm_cols)
 		for rel, trie_levels in rel2trie_levels.items():
-			tuple_var = self.var_mng.tuple_var(rel)
 			if rel in rels_in_interm_cols or rel in iter_rels:
-				trie_value = f"{{ {tuple_var} -> 1 }}"
+				trie_value = f"@vecdict {{ i -> 1 }}"
 			else:
 				trie_value = "1"
 			for col in trie_levels[::-1]:
-				trie_value = f"{{ {tuple_var}.{col} -> {trie_value} }}"
-			yield f"let {self.var_mng.trie_var(rel)} = sum(<{tuple_var}, _> <- {rel}) {trie_value} in\n"
+				trie_value = f"{{ {rel}.{col}(i) -> {trie_value} }}"
+			yield f"let {self.var_mng.trie_var(rel)} = sum(<i, _> <- range({rel}.size)) {trie_value} in\n"
 
 	def _gj_attr_iteration(self, rel_it, col_it, idx):
 		yield f"sum(<{self.var_mng.x_var(idx)}, {self.var_mng.next_trie_var(rel_it)}> <- {self.var_mng.trie_var(rel_it)})\n"
@@ -190,16 +170,16 @@ class SDQLGenerator:
 		if rel_it not in self.available_tuples:
 			yield f"{self._tuple_iteration(rel_it)}\n"
 			self.indent += 1
-		yield f"let {self.var_mng.x_var(idx)} = {self.var_mng.tuple_var(rel_it)}.{col_it} in\n"
+		yield f"let {self.var_mng.x_var(idx)} = {self._tuple_col_var(rel_it, col_it)} in\n"
 		self.available_tuples.add(rel_it)
 
 	def _gj_min(self, rel, cols):
-		yield f"let {self.var_mng.mn_rel_var(rel)} = {self._tuple_iteration(rel)} <{', '.join(f'{col}={self.var_mng.tuple_var(rel)}.{col}' for col in cols)}> in\n"
+		yield f"let {self.var_mng.mn_rel_var(rel)} = {self._tuple_iteration(rel)} promote[min_sum](<{', '.join(f'{col}={self._tuple_col_var(rel, col)}' for col in cols)}>) in\n"
 
 	def _fj_min(self, rel, cols):
-		let_value = f"<{', '.join(f'{col}={self.var_mng.tuple_var(rel)}.{col}' for col in cols)}>"
+		let_value = f"<{', '.join(f'{col}={self._tuple_col_var(rel, col)}' for col in cols)}>"
 		if rel not in self.available_tuples:
-			let_value = f"{self._tuple_iteration(rel)} {let_value}"
+			let_value = f"{self._tuple_iteration(rel)} promote[min_sum]({let_value})"
 		yield f"let {self.var_mng.mn_rel_var(rel)} = {let_value} in\n"
 
 	def _gj_tuple_iteration(self, rel):
@@ -212,4 +192,13 @@ class SDQLGenerator:
 			self.indent += 1
 
 	def _tuple_iteration(self, rel):
-		return f"sum(<{self.var_mng.tuple_var(rel)}, _> <- {self.var_mng.tuples_var(rel)})"
+		if self.var_mng.is_interm_rel(rel):
+			return f"sum(<{self.var_mng.tuple_var(rel)}, _> <- {self.var_mng.tuples_var(rel)})"
+		else:
+			return f"sum(<{self.var_mng.off_var(rel)}, _> <- {self.var_mng.tuples_var(rel)})"
+
+	def _tuple_col_var(self, rel, col):
+		if self.var_mng.is_interm_rel(rel):
+			return f"{self.var_mng.tuple_var(rel)}.{col}"
+		else:
+			return f"{rel}.{col}({self.var_mng.off_var(rel)})"
