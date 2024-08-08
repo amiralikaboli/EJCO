@@ -28,7 +28,6 @@ let interm0_trie0 = sum(<cc_off, _> <- range(cc.size))
 			{ cc.movie_id(cc_off) -> @vecdict { <col0=cc.subject_id(cc_off), col1=cc.status_id(cc_off), col2=cc.movie_id(cc_off)> -> 1 } }
 in
 
-let interm0_trie0 = sum(<i, _> <- range(interm0.size)) { interm0.col2(i) -> 1 } in
 let interm1_trie0 = sum(<t_off, _> <- range(t.size))
 	let x0 = t.id(t_off) in
 	if (x0 ∈ interm0_trie0) then
@@ -36,7 +35,6 @@ let interm1_trie0 = sum(<t_off, _> <- range(t.size))
 		{ t.id(t_off) -> @vecdict { <col0=t.id(t_off), col1=t.title(t_off)> -> 1 } }
 in
 
-let interm1_trie0 = sum(<i, _> <- range(interm1.size)) { interm1.col0(i) -> @vecdict { i -> 1 } } in
 let cn_trie0 = sum(<i, _> <- range(cn.size)) { cn.id(i) -> 1 } in
 let interm2_trie0 = sum(<mc_off, _> <- range(mc.size))
 	let x0 = mc.movie_id(mc_off) in
@@ -50,7 +48,6 @@ let interm2_trie0 = sum(<mc_off, _> <- range(mc.size))
 in
 
 let k_trie0 = sum(<i, _> <- range(k.size)) { k.id(i) -> 1 } in
-let interm2_trie0 = sum(<i, _> <- range(interm2.size)) { interm2.col1(i) -> @vecdict { i -> 1 } } in
 let interm3_trie0 = sum(<mk_off, _> <- range(mk.size))
 	let x0 = mk.keyword_id(mk_off) in
 	if (x0 ∈ k_trie0) then
@@ -63,7 +60,6 @@ let interm3_trie0 = sum(<mk_off, _> <- range(mk.size))
 in
 
 let it_trie0 = sum(<i, _> <- range(it.size)) { it.id(i) -> 1 } in
-let interm3_trie0 = sum(<i, _> <- range(interm3.size)) { interm3.col1(i) -> @vecdict { i -> 1 } } in
 let interm4_trie0 = sum(<mi_off, _> <- range(mi.size))
 	let x0 = mi.info_type_id(mi_off) in
 	if (x0 ∈ it_trie0) then
@@ -87,7 +83,6 @@ let interm5_trie0 = sum(<pi_off, _> <- range(pi.size))
 			{ pi.person_id(pi_off) -> @vecdict { <col0=pi.person_id(pi_off), col1=pi.info_type_id(pi_off)> -> 1 } }
 in
 
-let interm5_trie0 = sum(<i, _> <- range(interm5.size)) { interm5.col0(i) -> 1 } in
 let interm6_trie0 = sum(<n_off, _> <- range(n.size))
 	let x0 = n.id(n_off) in
 	if (x0 ∈ interm5_trie0) then
@@ -96,8 +91,6 @@ let interm6_trie0 = sum(<n_off, _> <- range(n.size))
 in
 
 let rt_trie0 = sum(<i, _> <- range(rt.size)) { rt.id(i) -> 1 } in
-let interm4_trie0 = sum(<i, _> <- range(interm4.size)) { interm4.col1(i) -> @vecdict { i -> 1 } } in
-let interm6_trie0 = sum(<i, _> <- range(interm6.size)) { interm6.col0(i) -> @vecdict { i -> 1 } } in
 let chn_trie0 = sum(<i, _> <- range(chn.size)) { chn.id(i) -> @vecdict { i -> 1 } } in
 sum(<ci_off, _> <- range(ci.size))
 	let x0 = ci.role_id(ci_off) in

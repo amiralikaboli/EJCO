@@ -17,7 +17,6 @@ let interm0_trie0 = sum(<t_off, _> <- range(t.size))
 			{ t.id(t_off) -> @vecdict { <col0=t.id(t_off), col1=t.title(t_off), col2=ml.link_type_id(ml_off)> -> 1 } }
 in
 
-let interm0_trie0 = sum(<i, _> <- range(interm0.size)) { interm0.col0(i) -> @vecdict { i -> 1 } } in
 let interm1_trie0 = sum(<mk_off, _> <- range(mk.size))
 	let x0 = mk.movie_id(mk_off) in
 	if (x0 ∈ interm0_trie0) then
@@ -26,7 +25,6 @@ let interm1_trie0 = sum(<mk_off, _> <- range(mk.size))
 			{ mk.movie_id(mk_off) -> { interm0_tuple.col2 -> { mk.keyword_id(mk_off) -> @vecdict { <col0=mk.movie_id(mk_off), col1=mk.keyword_id(mk_off), col2=interm0_tuple.col1, col3=interm0_tuple.col2> -> 1 } } } }
 in
 
-let interm1_trie0 = sum(<i, _> <- range(interm1.size)) { interm1.col0(i) -> @vecdict { i -> 1 } } in
 let mc_trie0 = sum(<i, _> <- range(mc.size)) { mc.movie_id(i) -> @vecdict { i -> 1 } } in
 let lt_trie0 = sum(<i, _> <- range(lt.size)) { lt.id(i) -> @vecdict { i -> 1 } } in
 let k_trie0 = sum(<i, _> <- range(k.size)) { k.id(i) -> 1 } in

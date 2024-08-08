@@ -28,7 +28,6 @@ let interm0_trie0 = sum(<t_off, _> <- range(t.size))
 in
 
 let ct_trie0 = sum(<i, _> <- range(ct.size)) { ct.id(i) -> 1 } in
-let interm0_trie0 = sum(<i, _> <- range(interm0.size)) { interm0.col0(i) -> @vecdict { i -> 1 } } in
 let cn_trie0 = sum(<i, _> <- range(cn.size)) { cn.id(i) -> @vecdict { i -> 1 } } in
 let interm1_trie0 = sum(<mc_off, _> <- range(mc.size))
 	let x0 = mc.company_type_id(mc_off) in
@@ -46,7 +45,6 @@ let interm1_trie0 = sum(<mc_off, _> <- range(mc.size))
 in
 
 let k_trie0 = sum(<i, _> <- range(k.size)) { k.id(i) -> 1 } in
-let interm1_trie0 = sum(<i, _> <- range(interm1.size)) { interm1.col2(i) -> @vecdict { i -> 1 } } in
 let interm2_trie0 = sum(<mk_off, _> <- range(mk.size))
 	let x0 = mk.keyword_id(mk_off) in
 	if (x0 ∈ k_trie0) then
@@ -59,7 +57,6 @@ let interm2_trie0 = sum(<mk_off, _> <- range(mk.size))
 in
 
 let it1_trie0 = sum(<i, _> <- range(it1.size)) { it1.id(i) -> 1 } in
-let interm2_trie0 = sum(<i, _> <- range(interm2.size)) { interm2.col1(i) -> @vecdict { i -> 1 } } in
 sum(<mi_off, _> <- range(mi.size))
 	let x0 = mi.info_type_id(mi_off) in
 	if (x0 ∈ it1_trie0) then

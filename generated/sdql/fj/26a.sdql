@@ -24,7 +24,6 @@ let interm0_trie0 = sum(<cc_off, _> <- range(cc.size))
 in
 
 let it2_trie0 = sum(<i, _> <- range(it2.size)) { it2.id(i) -> 1 } in
-let interm0_trie0 = sum(<i, _> <- range(interm0.size)) { interm0.col2(i) -> 1 } in
 let interm1_trie0 = sum(<mi_idx_off, _> <- range(mi_idx.size))
 	let x0 = mi_idx.info_type_id(mi_idx_off) in
 	if (x0 ∈ it2_trie0) then
@@ -36,7 +35,6 @@ let interm1_trie0 = sum(<mi_idx_off, _> <- range(mi_idx.size))
 in
 
 let kt_trie0 = sum(<i, _> <- range(kt.size)) { kt.id(i) -> 1 } in
-let interm1_trie0 = sum(<i, _> <- range(interm1.size)) { interm1.col1(i) -> @vecdict { i -> 1 } } in
 let interm2_trie0 = sum(<t_off, _> <- range(t.size))
 	let x0 = t.kind_id(t_off) in
 	if (x0 ∈ kt_trie0) then
@@ -49,7 +47,6 @@ let interm2_trie0 = sum(<t_off, _> <- range(t.size))
 in
 
 let k_trie0 = sum(<i, _> <- range(k.size)) { k.id(i) -> 1 } in
-let interm2_trie0 = sum(<i, _> <- range(interm2.size)) { interm2.col1(i) -> @vecdict { i -> 1 } } in
 let interm3_trie0 = sum(<mk_off, _> <- range(mk.size))
 	let x0 = mk.keyword_id(mk_off) in
 	if (x0 ∈ k_trie0) then
@@ -61,7 +58,6 @@ let interm3_trie0 = sum(<mk_off, _> <- range(mk.size))
 				{ mk.movie_id(mk_off) -> @vecdict { <col0=mk.keyword_id(mk_off), col1=mk.movie_id(mk_off), col3=interm2_tuple.col2, col5=interm2_tuple.col4> -> 1 } }
 in
 
-let interm3_trie0 = sum(<i, _> <- range(interm3.size)) { interm3.col1(i) -> @vecdict { i -> 1 } } in
 let chn_trie0 = sum(<i, _> <- range(chn.size)) { chn.id(i) -> @vecdict { i -> 1 } } in
 let n_trie0 = sum(<i, _> <- range(n.size)) { n.id(i) -> @vecdict { i -> 1 } } in
 sum(<ci_off, _> <- range(ci.size))

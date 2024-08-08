@@ -18,7 +18,6 @@ let interm0_trie0 = sum(<mk_off, _> <- range(mk.size))
 in
 
 let mc_trie0 = sum(<i, _> <- range(mc.size)) { mc.movie_id(i) -> @vecdict { i -> 1 } } in
-let interm0_trie0 = sum(<i, _> <- range(interm0.size)) { interm0.col0(i) -> @vecdict { i -> 1 } } in
 let k_trie0 = sum(<i, _> <- range(k.size)) { k.id(i) -> 1 } in
 let it1_trie0 = sum(<i, _> <- range(it1.size)) { it1.id(i) -> 1 } in
 let ct_trie0 = sum(<i, _> <- range(ct.size)) { ct.id(i) -> 1 } in

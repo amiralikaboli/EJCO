@@ -12,7 +12,6 @@ let interm0_trie0 = sum(<mk_off, _> <- range(mk.size))
 			{ mk.movie_id(mk_off) -> { mk.keyword_id(mk_off) -> @vecdict { <col0=mk.movie_id(mk_off), col1=mk.keyword_id(mk_off), col2=t.title(t_off)> -> 1 } } }
 in
 
-let interm0_trie0 = sum(<i, _> <- range(interm0.size)) { interm0.col0(i) -> @vecdict { i -> 1 } } in
 let k_trie0 = sum(<i, _> <- range(k.size)) { k.id(i) -> 1 } in
 sum(<mi_off, _> <- range(mi.size))
 	let x0 = mi.movie_id(mi_off) in

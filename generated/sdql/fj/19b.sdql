@@ -39,8 +39,6 @@ let interm1_trie0 = sum(<n_off, _> <- range(n.size))
 in
 
 let rt_trie0 = sum(<i, _> <- range(rt.size)) { rt.id(i) -> 1 } in
-let interm0_trie0 = sum(<i, _> <- range(interm0.size)) { interm0.col0(i) -> @vecdict { i -> 1 } } in
-let interm1_trie0 = sum(<i, _> <- range(interm1.size)) { interm1.col0(i) -> @vecdict { i -> 1 } } in
 let chn_trie0 = sum(<i, _> <- range(chn.size)) { chn.id(i) -> 1 } in
 sum(<ci_off, _> <- range(ci.size))
 	let x0 = ci.role_id(ci_off) in

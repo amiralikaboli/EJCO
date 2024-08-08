@@ -19,7 +19,6 @@ let interm0_trie0 = sum(<mk_off, _> <- range(mk.size))
 in
 
 let n_trie0 = sum(<i, _> <- range(n.size)) { n.id(i) -> @vecdict { i -> 1 } } in
-let interm0_trie0 = sum(<i, _> <- range(interm0.size)) { interm0.col0(i) -> @vecdict { i -> 1 } } in
 sum(<ci_off, _> <- range(ci.size))
 	let x0 = ci.person_id(ci_off) in
 	if (x0 ∈ n_trie0) then

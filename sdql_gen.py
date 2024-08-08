@@ -153,6 +153,8 @@ class SDQLGenerator:
 
 		rels_in_interm_cols = set(rel for _, (rel, _) in interm_cols)
 		for rel, trie_levels in rel2trie_levels.items():
+			if self.var_mng.is_interm_rel(rel):
+				continue
 			if rel in rels_in_interm_cols or rel in iter_rels:
 				trie_value = f"@vecdict {{ i -> 1 }}"
 			else:

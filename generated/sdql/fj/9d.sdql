@@ -18,7 +18,6 @@ in
 let rt_trie0 = sum(<i, _> <- range(rt.size)) { rt.id(i) -> 1 } in
 let an_trie0 = sum(<i, _> <- range(an.size)) { an.person_id(i) -> @vecdict { i -> 1 } } in
 let n_trie0 = sum(<i, _> <- range(n.size)) { n.id(i) -> @vecdict { i -> 1 } } in
-let interm0_trie0 = sum(<i, _> <- range(interm0.size)) { interm0.col1(i) -> 1 } in
 let t_trie0 = sum(<i, _> <- range(t.size)) { t.id(i) -> @vecdict { i -> 1 } } in
 let chn_trie0 = sum(<i, _> <- range(chn.size)) { chn.id(i) -> @vecdict { i -> 1 } } in
 sum(<ci_off, _> <- range(ci.size))

@@ -16,7 +16,6 @@ let interm0_trie0 = sum(<t_off, _> <- range(t.size))
 			{ t.id(t_off) -> { ml.link_type_id(ml_off) -> @vecdict { <col0=t.id(t_off), col1=t.title(t_off), col2=ml.link_type_id(ml_off)> -> 1 } } }
 in
 
-let interm0_trie0 = sum(<i, _> <- range(interm0.size)) { interm0.col0(i) -> @vecdict { i -> 1 } } in
 let mc_trie0 = sum(<i, _> <- range(mc.size)) { mc.movie_id(i) -> @vecdict { i -> 1 } } in
 let lt_trie0 = sum(<i, _> <- range(lt.size)) { lt.id(i) -> @vecdict { i -> 1 } } in
 let k_trie0 = sum(<i, _> <- range(k.size)) { k.id(i) -> 1 } in
