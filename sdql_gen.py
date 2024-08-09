@@ -7,41 +7,32 @@ from consts import generated_sdql_path, preprocessed_data_path, abbr2rel, rel_wo
 from var_mng import VariableManager
 
 
-class SDQLGenerator:
-	def __init__(self, mode: JoinMode, var_mng: VariableManager):
+class AbstractSDQLGenerator:
+	def __init__(self, var_mng: VariableManager):
 		self.resolved_attrs = set()
 		self.available_tuples = set()
 		self.indent = 0
 
-		self.mode = mode
 		self.var_mng = var_mng
-		self.save_path = os.path.join(generated_sdql_path, self.mode.value)
+		self.save_path = str()
 
 	def clear(self):
 		self.indent = 0
 		self.resolved_attrs.clear()
 		self.available_tuples.clear()
 
-	def call_func(self, func_name: str, *args):
-		for s in getattr(self, f"_{self.mode.value}_{func_name}")(*args):
-			yield s
-
 	def generate(self, query: str, plans: List[Tuple[Tuple[str, List, List], List, List]]):
 		with open(os.path.join(self.save_path, f"{query}.sdql"), "w") as sdql_file:
-			for line in self._generate(query, plans):
-				sdql_file.write('\t' * self.indent + line)
+			for _, build_plan, _ in plans:
+				for line in self._generate_loads(query, build_plan):
+					sdql_file.write('\t' * self.indent + line)
+			sdql_file.write("\n")
 
-	def _generate(self, query: str, plans: List[Tuple[Tuple[str, List, List], List, List]]):
-		for _, build_plan, _ in plans:
-			for line in self._generate_loads(query, build_plan):
-				yield line
-		yield "\n"
-
-		for node, build_plan, compiled_plan in plans:
-			for line in self._generate_subquery(node, build_plan, compiled_plan):
-				yield line
-			self.indent = 0
-			yield "\n"
+			for node, build_plan, compiled_plan in plans:
+				for line in self._generate_subquery(node, build_plan, compiled_plan):
+					sdql_file.write('\t' * self.indent + line)
+				self.indent = 0
+				sdql_file.write("\n")
 
 	def _generate_loads(self, query: str, build_plan: List[Tuple[str, List[str], List[str]]]):
 		for rel, _, _ in build_plan:
@@ -60,10 +51,45 @@ class SDQLGenerator:
 			build_plan: List[Tuple[str, List[str], List[str]]],
 			compiled_plan: List[List[Tuple[str, str]]]
 	):
+		raise NotImplementedError
+
+	def _tuple_iteration(self, rel):
+		if self.var_mng.is_interm_rel(rel):
+			return f"sum(<{self.var_mng.tuple_var(rel)}, _> <- {self.var_mng.tuples_var(rel)})"
+		else:
+			return f"sum(<{self.var_mng.off_var(rel)}, _> <- {self.var_mng.tuples_var(rel)})"
+
+	def _tuple_col_var(self, rel, col):
+		if self.var_mng.is_interm_rel(rel):
+			return f"{self.var_mng.tuple_var(rel)}.{col}"
+		else:
+			return f"{rel}.{col}({self.var_mng.off_var(rel)})"
+
+
+class GJSDQLGenerator(AbstractSDQLGenerator):
+	def __init__(self, var_mng: VariableManager):
+		super().__init__(var_mng)
+		self.save_path = os.path.join(generated_sdql_path, "gj")
+
+	def _generate_subquery(
+			self,
+			node: Tuple[str, List[Tuple[int, Tuple[str, str]]], List[int]],
+			build_plan: List[Tuple[str, List[str], List[str]]],
+			compiled_plan: List[List[Tuple[str, str]]]
+	):
 		interm, interm_cols, interm_trie_cols = node
 
-		for s in self.call_func("build_tries", interm_cols, build_plan, compiled_plan):
-			yield s
+		rels_in_interm_cols = set(rel for _, (rel, _) in interm_cols)
+		for rel, join_cols, proj_cols in build_plan:
+			if self.var_mng.is_interm_rel(rel):
+				continue
+			if rel in rels_in_interm_cols:
+				trie_value = f"@vecdict {{ i -> 1 }}"
+			else:
+				trie_value = "1"
+			for col in join_cols[::-1]:
+				trie_value = f"{{ {rel}.{col}(i) -> {trie_value} }}"
+			yield f"let {self.var_mng.trie_var(rel)} = sum(<i, _> <- range({rel}.size)) {trie_value} in\n"
 
 		if not self.var_mng.is_root_rel(interm):
 			yield f"let {self.var_mng.trie_var(interm)} = "
@@ -76,8 +102,9 @@ class SDQLGenerator:
 		for idx, eq_cols in enumerate(compiled_plan):
 			rel_it, col_it = eq_cols[0]
 			if join_attrs_order[rel_it][col_it] == idx:
-				for s in self.call_func("attr_iteration", rel_it, col_it, idx):
-					yield s
+				yield f"sum(<{self.var_mng.x_var(idx)}, {self.var_mng.next_trie_var(rel_it)}> <- {self.var_mng.trie_var(rel_it)})\n"
+				self.var_mng.next_trie_var(rel_it, inplace=True)
+				self.indent += 1
 				self.resolved_attrs.add(eq_cols[0])
 				start_offset = 1
 			elif eq_cols[0] in self.resolved_attrs:
@@ -98,18 +125,18 @@ class SDQLGenerator:
 			elems = list()
 			for rel, _, proj_cols in build_plan:
 				if proj_cols:
-					for s in self.call_func("min", rel, proj_cols):
-						yield s
+					yield f"let {self.var_mng.mn_rel_var(rel)} = {self._tuple_iteration(rel)} promote[min_sum](<{', '.join(f'{col}={self._tuple_col_var(rel, col)}' for col in proj_cols)}>) in\n"
 				for col in proj_cols:
-					elems.append((self.var_mng.interm_col(interm_col2idx[(rel, col)]), f'{self.var_mng.mn_rel_var(rel)}.{col}'))
+					elems.append(
+						(self.var_mng.interm_col(interm_col2idx[(rel, col)]), f'{self.var_mng.mn_rel_var(rel)}.{col}'))
 			yield f"promote[min_sum](<{', '.join([f'{elem_key}={elem_val}' for elem_key, elem_val in elems])}>)\n"
 		else:
 			interm_rel2cols = defaultdict(list)
 			for _, (rel, col) in interm_cols:
 				interm_rel2cols[rel].append(col)
 			for rel, cols in interm_rel2cols.items():
-				for s in self.call_func("tuple_iteration", rel):
-					yield s
+				yield f"{self._tuple_iteration(rel)}\n"
+				self.indent += 1
 			new2old_map = {
 				self.var_mng.interm_col(idx): self._tuple_col_var(rel, col)
 				for idx, (rel, col) in interm_cols
@@ -128,20 +155,20 @@ class SDQLGenerator:
 			self.indent = 0
 			yield f"in\n"
 
-	def _gj_build_tries(self, interm_cols, build_plan, compiled_plan):
-		rels_in_interm_cols = set(rel for _, (rel, _) in interm_cols)
-		for rel, join_cols, proj_cols in build_plan:
-			if self.var_mng.is_interm_rel(rel):
-				continue
-			if rel in rels_in_interm_cols:
-				trie_value = f"@vecdict {{ i -> 1 }}"
-			else:
-				trie_value = "1"
-			for col in join_cols[::-1]:
-				trie_value = f"{{ {rel}.{col}(i) -> {trie_value} }}"
-			yield f"let {self.var_mng.trie_var(rel)} = sum(<i, _> <- range({rel}.size)) {trie_value} in\n"
 
-	def _fj_build_tries(self, interm_cols, build_plan, compiled_plan):
+class FJSDQLGenerator(AbstractSDQLGenerator):
+	def __init__(self, var_mng: VariableManager):
+		super().__init__(var_mng)
+		self.save_path = os.path.join(generated_sdql_path, "fj")
+
+	def _generate_subquery(
+			self,
+			node: Tuple[str, List[Tuple[int, Tuple[str, str]]], List[int]],
+			build_plan: List[Tuple[str, List[str], List[str]]],
+			compiled_plan: List[List[Tuple[str, str]]]
+	):
+		interm, interm_cols, interm_trie_cols = node
+
 		rel2trie_levels = defaultdict(list)
 		iter_rels = set()
 		for eq_cols in compiled_plan:
@@ -163,44 +190,72 @@ class SDQLGenerator:
 				trie_value = f"{{ {rel}.{col}(i) -> {trie_value} }}"
 			yield f"let {self.var_mng.trie_var(rel)} = sum(<i, _> <- range({rel}.size)) {trie_value} in\n"
 
-	def _gj_attr_iteration(self, rel_it, col_it, idx):
-		yield f"sum(<{self.var_mng.x_var(idx)}, {self.var_mng.next_trie_var(rel_it)}> <- {self.var_mng.trie_var(rel_it)})\n"
-		self.var_mng.next_trie_var(rel_it, inplace=True)
-		self.indent += 1
+		if not self.var_mng.is_root_rel(interm):
+			yield f"let {self.var_mng.trie_var(interm)} = "
 
-	def _fj_attr_iteration(self, rel_it, col_it, idx):
-		if rel_it not in self.available_tuples:
-			yield f"{self._tuple_iteration(rel_it)}\n"
-			self.indent += 1
-		yield f"let {self.var_mng.x_var(idx)} = {self._tuple_col_var(rel_it, col_it)} in\n"
-		self.available_tuples.add(rel_it)
+		join_attrs_order = {rel: {col: math.inf for col in join_cols} for rel, join_cols, _ in build_plan}
+		for idx, eq_cols in enumerate(compiled_plan):
+			min_idx = min(idx, *[join_attrs_order[rel][col] for rel, col in eq_cols])
+			for rel, col in eq_cols:
+				join_attrs_order[rel][col] = min_idx
+		for idx, eq_cols in enumerate(compiled_plan):
+			rel_it, col_it = eq_cols[0]
+			if join_attrs_order[rel_it][col_it] == idx:
+				if rel_it not in self.available_tuples:
+					yield f"{self._tuple_iteration(rel_it)}\n"
+					self.indent += 1
+				yield f"let {self.var_mng.x_var(idx)} = {self._tuple_col_var(rel_it, col_it)} in\n"
+				self.available_tuples.add(rel_it)
+				self.resolved_attrs.add(eq_cols[0])
+				start_offset = 1
+			elif eq_cols[0] in self.resolved_attrs:
+				start_offset = 1
+			else:
+				start_offset = 0
 
-	def _gj_min(self, rel, cols):
-		yield f"let {self.var_mng.mn_rel_var(rel)} = {self._tuple_iteration(rel)} promote[min_sum](<{', '.join(f'{col}={self._tuple_col_var(rel, col)}' for col in cols)}>) in\n"
+			for rel, col in eq_cols[start_offset:]:
+				yield f"if ({self.var_mng.x_var(join_attrs_order[rel][col])} ∈ {self.var_mng.trie_var(rel)}) then\n"
+				self.indent += 1
 
-	def _fj_min(self, rel, cols):
-		let_value = f"<{', '.join(f'{col}={self._tuple_col_var(rel, col)}' for col in cols)}>"
-		if rel not in self.available_tuples:
-			let_value = f"{self._tuple_iteration(rel)} promote[min_sum]({let_value})"
-		yield f"let {self.var_mng.mn_rel_var(rel)} = {let_value} in\n"
+			for rel, col in eq_cols[start_offset:]:
+				yield f"let {self.var_mng.next_trie_var(rel)} = {self.var_mng.trie_var(rel)}({self.var_mng.x_var(join_attrs_order[rel][col])}) in\n"
+				self.var_mng.next_trie_var(rel, inplace=True)
 
-	def _gj_tuple_iteration(self, rel):
-		yield f"{self._tuple_iteration(rel)}\n"
-		self.indent += 1
-
-	def _fj_tuple_iteration(self, rel):
-		if rel not in self.available_tuples:
-			yield f"{self._tuple_iteration(rel)}\n"
-			self.indent += 1
-
-	def _tuple_iteration(self, rel):
-		if self.var_mng.is_interm_rel(rel):
-			return f"sum(<{self.var_mng.tuple_var(rel)}, _> <- {self.var_mng.tuples_var(rel)})"
+		if self.var_mng.is_root_rel(interm):
+			interm_col2idx = {rel_col: interm_col_idx for interm_col_idx, rel_col in interm_cols}
+			elems = list()
+			for rel, _, proj_cols in build_plan:
+				if proj_cols:
+					let_value = f"<{', '.join(f'{col}={self._tuple_col_var(rel, col)}' for col in proj_cols)}>"
+					if rel not in self.available_tuples:
+						let_value = f"{self._tuple_iteration(rel)} promote[min_sum]({let_value})"
+					yield f"let {self.var_mng.mn_rel_var(rel)} = {let_value} in\n"
+				for col in proj_cols:
+					elems.append(
+						(self.var_mng.interm_col(interm_col2idx[(rel, col)]), f'{self.var_mng.mn_rel_var(rel)}.{col}'))
+			yield f"promote[min_sum](<{', '.join([f'{elem_key}={elem_val}' for elem_key, elem_val in elems])}>)\n"
 		else:
-			return f"sum(<{self.var_mng.off_var(rel)}, _> <- {self.var_mng.tuples_var(rel)})"
+			interm_rel2cols = defaultdict(list)
+			for _, (rel, col) in interm_cols:
+				interm_rel2cols[rel].append(col)
+			for rel, cols in interm_rel2cols.items():
+				if rel not in self.available_tuples:
+					yield f"{self._tuple_iteration(rel)}\n"
+					self.indent += 1
+			new2old_map = {
+				self.var_mng.interm_col(idx): self._tuple_col_var(rel, col)
+				for idx, (rel, col) in interm_cols
+			}
+			tuple_value = f"<{', '.join([f'{new_col}={old_col}' for new_col, old_col in new2old_map.items()])}>"
+			trie_value = f"@vecdict {{ {tuple_value} -> 1 }}"
+			for idx in interm_trie_cols[::-1]:
+				trie_value = f"{{ {new2old_map[self.var_mng.interm_col(idx)]} -> {trie_value} }}"
+			yield f'{trie_value}\n'
 
-	def _tuple_col_var(self, rel, col):
-		if self.var_mng.is_interm_rel(rel):
-			return f"{self.var_mng.tuple_var(rel)}.{col}"
-		else:
-			return f"{rel}.{col}({self.var_mng.off_var(rel)})"
+		rel2col2type[interm] = dict()
+		for interm_col_idx, (rel, col) in interm_cols:
+			rel2col2type[interm][self.var_mng.interm_col(interm_col_idx)] = rel2col2type[rel_wo_idx(rel)][col]
+
+		if not self.var_mng.is_root_rel(interm):
+			self.indent = 0
+			yield f"in\n"
