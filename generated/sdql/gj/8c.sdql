@@ -8,15 +8,16 @@ let a1 = load[<id: @vec {int -> int}, person_id: @vec {int -> int}, name: @vec {
 
 let mc_trie0 = sum(<i, _> <- range(mc.size)) { mc.company_id(i) -> @vecdict { i -> 1 } } in
 let cn_trie0 = sum(<i, _> <- range(cn.size)) { cn.id(i) -> 1 } in
-let interm0_trie0 = sum(<x0, mc_trie1> <- mc_trie0)
+let interm0 = sum(<x0, mc_trie1> <- mc_trie0)
 	if (x0 ∈ cn_trie0) then
 		let cn_trie1 = cn_trie0(x0) in
 		sum(<mc_off, _> <- mc_trie1)
-			{ mc.movie_id(mc_off) -> @vecdict { <col0=mc.company_id(mc_off), col1=mc.movie_id(mc_off)> -> 1 } }
+			@vecdict { <col0=mc.company_id(mc_off), col1=mc.movie_id(mc_off)> -> 1 }
 in
 
 let ci_trie0 = sum(<i, _> <- range(ci.size)) { ci.person_id(i) -> { ci.movie_id(i) -> { ci.role_id(i) -> 1 } } } in
 let n1_trie0 = sum(<i, _> <- range(n1.size)) { n1.id(i) -> 1 } in
+let interm0_trie0 = sum(<interm0_tuple, _> <- interm0) { interm0_tuple.col1 -> 1 } in
 let rt_trie0 = sum(<i, _> <- range(rt.size)) { rt.id(i) -> 1 } in
 let t_trie0 = sum(<i, _> <- range(t.size)) { t.id(i) -> @vecdict { i -> 1 } } in
 let a1_trie0 = sum(<i, _> <- range(a1.size)) { a1.person_id(i) -> @vecdict { i -> 1 } } in

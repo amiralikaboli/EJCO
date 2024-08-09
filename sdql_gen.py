@@ -80,19 +80,26 @@ class GJSDQLGenerator(AbstractSDQLGenerator):
 		interm, interm_cols, interm_trie_cols = node
 
 		rels_in_interm_cols = set(rel for _, (rel, _) in interm_cols)
-		for rel, join_cols, proj_cols in build_plan:
+		for rel, join_cols, _ in build_plan:
 			if self.var_mng.is_interm_rel(rel):
-				continue
-			if rel in rels_in_interm_cols:
-				trie_value = f"@vecdict {{ i -> 1 }}"
+				if rel in rels_in_interm_cols:
+					trie_value = f"@vecdict {{ {self.var_mng.tuple_var(rel)} -> 1 }}"
+				else:
+					trie_value = "1"
+				for col in join_cols[::-1]:
+					trie_value = f"{{ {self._tuple_col_var(rel, col)} -> {trie_value} }}"
+				yield f"let {self.var_mng.trie_var(rel)} = sum(<{self.var_mng.tuple_var(rel)}, _> <- {rel}) {trie_value} in\n"
 			else:
-				trie_value = "1"
-			for col in join_cols[::-1]:
-				trie_value = f"{{ {rel}.{col}(i) -> {trie_value} }}"
-			yield f"let {self.var_mng.trie_var(rel)} = sum(<i, _> <- range({rel}.size)) {trie_value} in\n"
+				if rel in rels_in_interm_cols:
+					trie_value = f"@vecdict {{ i -> 1 }}"
+				else:
+					trie_value = "1"
+				for col in join_cols[::-1]:
+					trie_value = f"{{ {rel}.{col}(i) -> {trie_value} }}"
+				yield f"let {self.var_mng.trie_var(rel)} = sum(<i, _> <- range({rel}.size)) {trie_value} in\n"
 
 		if not self.var_mng.is_root_rel(interm):
-			yield f"let {self.var_mng.trie_var(interm)} = "
+			yield f"let {interm} = "
 
 		join_attrs_order = {rel: {col: math.inf for col in join_cols} for rel, join_cols, _ in build_plan}
 		for idx, eq_cols in enumerate(compiled_plan):
@@ -141,11 +148,7 @@ class GJSDQLGenerator(AbstractSDQLGenerator):
 				self.var_mng.interm_col(idx): self._tuple_col_var(rel, col)
 				for idx, (rel, col) in interm_cols
 			}
-			tuple_value = f"<{', '.join([f'{new_col}={old_col}' for new_col, old_col in new2old_map.items()])}>"
-			trie_value = f"@vecdict {{ {tuple_value} -> 1 }}"
-			for idx in interm_trie_cols[::-1]:
-				trie_value = f"{{ {new2old_map[self.var_mng.interm_col(idx)]} -> {trie_value} }}"
-			yield f'{trie_value}\n'
+			yield f"@vecdict {{ <{', '.join([f'{new_col}={old_col}' for new_col, old_col in new2old_map.items()])}> -> 1 }}\n"
 
 		rel2col2type[interm] = dict()
 		for interm_col_idx, (rel, col) in interm_cols:
@@ -179,19 +182,26 @@ class FJSDQLGenerator(AbstractSDQLGenerator):
 					rel2trie_levels[rel].append(col)
 
 		rels_in_interm_cols = set(rel for _, (rel, _) in interm_cols)
-		for rel, trie_levels in rel2trie_levels.items():
+		for rel, join_cols in rel2trie_levels.items():
 			if self.var_mng.is_interm_rel(rel):
-				continue
-			if rel in rels_in_interm_cols or rel in iter_rels:
-				trie_value = f"@vecdict {{ i -> 1 }}"
+				if rel in rels_in_interm_cols or rel in iter_rels:
+					trie_value = f"@vecdict {{ {self.var_mng.tuple_var(rel)} -> 1 }}"
+				else:
+					trie_value = "1"
+				for col in join_cols[::-1]:
+					trie_value = f"{{ {self._tuple_col_var(rel, col)} -> {trie_value} }}"
+				yield f"let {self.var_mng.trie_var(rel)} = sum(<{self.var_mng.tuple_var(rel)}, _> <- {rel}) {trie_value} in\n"
 			else:
-				trie_value = "1"
-			for col in trie_levels[::-1]:
-				trie_value = f"{{ {rel}.{col}(i) -> {trie_value} }}"
-			yield f"let {self.var_mng.trie_var(rel)} = sum(<i, _> <- range({rel}.size)) {trie_value} in\n"
+				if rel in rels_in_interm_cols or rel in iter_rels:
+					trie_value = f"@vecdict {{ i -> 1 }}"
+				else:
+					trie_value = "1"
+				for col in join_cols[::-1]:
+					trie_value = f"{{ {rel}.{col}(i) -> {trie_value} }}"
+				yield f"let {self.var_mng.trie_var(rel)} = sum(<i, _> <- range({rel}.size)) {trie_value} in\n"
 
 		if not self.var_mng.is_root_rel(interm):
-			yield f"let {self.var_mng.trie_var(interm)} = "
+			yield f"let {interm} = "
 
 		join_attrs_order = {rel: {col: math.inf for col in join_cols} for rel, join_cols, _ in build_plan}
 		for idx, eq_cols in enumerate(compiled_plan):
@@ -246,11 +256,7 @@ class FJSDQLGenerator(AbstractSDQLGenerator):
 				self.var_mng.interm_col(idx): self._tuple_col_var(rel, col)
 				for idx, (rel, col) in interm_cols
 			}
-			tuple_value = f"<{', '.join([f'{new_col}={old_col}' for new_col, old_col in new2old_map.items()])}>"
-			trie_value = f"@vecdict {{ {tuple_value} -> 1 }}"
-			for idx in interm_trie_cols[::-1]:
-				trie_value = f"{{ {new2old_map[self.var_mng.interm_col(idx)]} -> {trie_value} }}"
-			yield f'{trie_value}\n'
+			yield f"@vecdict {{ <{', '.join([f'{new_col}={old_col}' for new_col, old_col in new2old_map.items()])}> -> 1 }}\n"
 
 		rel2col2type[interm] = dict()
 		for interm_col_idx, (rel, col) in interm_cols:
