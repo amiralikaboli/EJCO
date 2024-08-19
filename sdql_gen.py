@@ -87,7 +87,7 @@ class GJSDQLGenerator(AbstractSDQLGenerator):
 				else:
 					trie_value = "1"
 				for col in join_cols[::-1]:
-					trie_value = f"{{ {self._tuple_col_var(rel, col)} -> {trie_value} }}"
+					trie_value = f"@phmap {{ {self._tuple_col_var(rel, col)} -> {trie_value} }}"
 				yield f"let {self.var_mng.trie_var(rel)} = sum(<{self.var_mng.tuple_var(rel)}, _> <- {rel}) {trie_value} in\n"
 			else:
 				if rel in rels_in_interm_cols:
@@ -95,7 +95,7 @@ class GJSDQLGenerator(AbstractSDQLGenerator):
 				else:
 					trie_value = "1"
 				for col in join_cols[::-1]:
-					trie_value = f"{{ {rel}.{col}(i) -> {trie_value} }}"
+					trie_value = f"@phmap {{ {rel}.{col}(i) -> {trie_value} }}"
 				yield f"let {self.var_mng.trie_var(rel)} = sum(<i, _> <- range({rel}.size)) {trie_value} in\n"
 
 		if not self.var_mng.is_root_rel(interm):
@@ -189,7 +189,7 @@ class FJSDQLGenerator(AbstractSDQLGenerator):
 				else:
 					trie_value = "1"
 				for col in join_cols[::-1]:
-					trie_value = f"{{ {self._tuple_col_var(rel, col)} -> {trie_value} }}"
+					trie_value = f"@phmap(ext(`Size`, {rel})) {{ {self._tuple_col_var(rel, col)} -> {trie_value} }}"
 				yield f"let {self.var_mng.trie_var(rel)} = sum(<{self.var_mng.tuple_var(rel)}, _> <- {rel}) {trie_value} in\n"
 			else:
 				if rel in rels_in_interm_cols or rel in iter_rels:
@@ -197,7 +197,7 @@ class FJSDQLGenerator(AbstractSDQLGenerator):
 				else:
 					trie_value = "1"
 				for col in join_cols[::-1]:
-					trie_value = f"{{ {rel}.{col}(i) -> {trie_value} }}"
+					trie_value = f"@phmap({rel}.size) {{ {rel}.{col}(i) -> {trie_value} }}"
 				yield f"let {self.var_mng.trie_var(rel)} = sum(<i, _> <- range({rel}.size)) {trie_value} in\n"
 
 		if not self.var_mng.is_root_rel(interm):
