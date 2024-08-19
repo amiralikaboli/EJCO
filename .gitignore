@@ -8,3 +8,7 @@ samples/benchmarks/db
 plan.txt
 gj.log
 *.dSYM
+
+.python-version
+*.lock
+__pycache__/
