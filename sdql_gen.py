@@ -1,7 +1,8 @@
 import math
 import os
+import re
 from collections import defaultdict
-from typing import List, Tuple
+from typing import List, Tuple, Set, Union
 
 from consts import generated_sdql_path, preprocessed_data_path, abbr2rel, rel_wo_idx, rel2col2type, JoinMode
 from var_mng import VariableManager
@@ -28,8 +29,14 @@ class AbstractSDQLGenerator:
 					sdql_file.write('\t' * self.indent + line)
 			sdql_file.write("\n")
 
-			for node, build_plan, compiled_plan in plans:
-				for line in self._generate_subquery(node, build_plan, compiled_plan):
+			for i, (node, build_plan, compiled_plan) in enumerate(plans):
+				# look ahead to the next compiled plan - to see which columns are needed for intermediate variable
+				if re.search(r"interm\d", node[0]) is not None:
+					include_cols = self.get_include_cols(plans[i+1][2], node[0])
+				else:
+					include_cols = None
+
+				for line in self._generate_subquery(node, build_plan, compiled_plan, include_cols):
 					sdql_file.write('\t' * self.indent + line)
 				self.indent = 0
 				sdql_file.write("\n")
@@ -49,7 +56,8 @@ class AbstractSDQLGenerator:
 			self,
 			node: Tuple[str, List[Tuple[int, Tuple[str, str]]], List[int]],
 			build_plan: List[Tuple[str, List[str], List[str]]],
-			compiled_plan: List[List[Tuple[str, str]]]
+			compiled_plan: List[List[Tuple[str, str]]],
+			include_cols = None,
 	):
 		raise NotImplementedError
 
@@ -65,6 +73,20 @@ class AbstractSDQLGenerator:
 		else:
 			return f"{rel}.{col}({self.var_mng.off_var(rel)})"
 
+	@staticmethod
+	def get_include_cols(compiled_plan: List, target: str) -> Union[None, Set[int]]:
+		rel2trie_levels = defaultdict(list)
+		iter_rels = set()
+		for eq_cols in compiled_plan:
+			rel_it, _ = eq_cols[0]
+			iter_rels.add(rel_it)
+			for rel, col in eq_cols[1:]:
+				if rel not in iter_rels:
+					rel2trie_levels[rel].append(col)
+
+		res = next((v for k, v in rel2trie_levels.items() if k == target), None)
+		return None if res is None else set(int(x[3:]) for x in res)
+
 
 class GJSDQLGenerator(AbstractSDQLGenerator):
 	def __init__(self, var_mng: VariableManager):
@@ -75,7 +97,8 @@ class GJSDQLGenerator(AbstractSDQLGenerator):
 			self,
 			node: Tuple[str, List[Tuple[int, Tuple[str, str]]], List[int]],
 			build_plan: List[Tuple[str, List[str], List[str]]],
-			compiled_plan: List[List[Tuple[str, str]]]
+			compiled_plan: List[List[Tuple[str, str]]],
+			include_cols = Union[None, Set[int]],
 	):
 		interm, interm_cols, interm_trie_cols = node
 
@@ -165,7 +188,8 @@ class FJSDQLGenerator(AbstractSDQLGenerator):
 			self,
 			node: Tuple[str, List[Tuple[int, Tuple[str, str]]], List[int]],
 			build_plan: List[Tuple[str, List[str], List[str]]],
-			compiled_plan: List[List[Tuple[str, str]]]
+			compiled_plan: List[List[Tuple[str, str]]],
+			include_cols = Union[None, Set[int]],
 	):
 		interm, interm_cols, interm_trie_cols = node
 
@@ -248,11 +272,15 @@ class FJSDQLGenerator(AbstractSDQLGenerator):
 			}
 			tuple_value = f"<{', '.join([f'{new_col}={old_col}' for new_col, old_col in new2old_map.items()])}>"
 			trie_value = f"@smallvecdict(4) {{ {tuple_value} -> 1 }}"
-			# TODO fixme - generates too many columns
 			for idx in interm_trie_cols[::-1]:
+				# use the lookahead to exclude columns that won't be used
+				if include_cols is not None and idx not in include_cols:
+					continue
 				field = new2old_map[self.var_mng.interm_col(idx)]
 				(orig, _) = field.split(".", 1)
-				trie_value = f"@phmap({orig}.size) {{ {field} -> {trie_value} }}"
+				# TODO handle FJ 33a,b,c
+				hint = "@phmap(1000)" if orig.endswith("_tuple") else f"@phmap({orig}.size)"
+				trie_value = f"{hint} {{ {field} -> {trie_value} }}"
 			yield f'{trie_value}\n'
 
 		rel2col2type[interm] = dict()
