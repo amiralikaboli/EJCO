@@ -83,7 +83,7 @@ class GJSDQLGenerator(AbstractSDQLGenerator):
 		for rel, join_cols, _ in build_plan:
 			if self.var_mng.is_interm_rel(rel):
 				if rel in rels_in_interm_cols:
-					trie_value = f"@vecdict {{ {self.var_mng.tuple_var(rel)} -> 1 }}"
+					trie_value = f"@smallvecdict(4) {{ {self.var_mng.tuple_var(rel)} -> 1 }}"
 				else:
 					trie_value = "1"
 				for col in join_cols[::-1]:
@@ -91,7 +91,7 @@ class GJSDQLGenerator(AbstractSDQLGenerator):
 				yield f"let {self.var_mng.trie_var(rel)} = sum(<{self.var_mng.tuple_var(rel)}, _> <- {rel}) {trie_value} in\n"
 			else:
 				if rel in rels_in_interm_cols:
-					trie_value = f"@vecdict {{ i -> 1 }}"
+					trie_value = f"@smallvecdict(4) {{ i -> 1 }}"
 				else:
 					trie_value = "1"
 				for col in join_cols[::-1]:
@@ -148,7 +148,7 @@ class GJSDQLGenerator(AbstractSDQLGenerator):
 				self.var_mng.interm_col(idx): self._tuple_col_var(rel, col)
 				for idx, (rel, col) in interm_cols
 			}
-			yield f"@vecdict {{ <{', '.join([f'{new_col}={old_col}' for new_col, old_col in new2old_map.items()])}> -> 1 }}\n"
+			yield f"@smallvecdict(4) {{ <{', '.join([f'{new_col}={old_col}' for new_col, old_col in new2old_map.items()])}> -> 1 }}\n"
 
 		rel2col2type[interm] = dict()
 		for interm_col_idx, (rel, col) in interm_cols:
@@ -185,7 +185,7 @@ class FJSDQLGenerator(AbstractSDQLGenerator):
 		for rel, join_cols in rel2trie_levels.items():
 			if self.var_mng.is_interm_rel(rel):
 				if rel in rels_in_interm_cols or rel in iter_rels:
-					trie_value = f"@vecdict {{ {self.var_mng.tuple_var(rel)} -> 1 }}"
+					trie_value = f"@smallvecdict(4) {{ {self.var_mng.tuple_var(rel)} -> 1 }}"
 				else:
 					trie_value = "1"
 				for col in join_cols[::-1]:
@@ -193,7 +193,7 @@ class FJSDQLGenerator(AbstractSDQLGenerator):
 				yield f"let {self.var_mng.trie_var(rel)} = sum(<{self.var_mng.tuple_var(rel)}, _> <- {rel}) {trie_value} in\n"
 			else:
 				if rel in rels_in_interm_cols or rel in iter_rels:
-					trie_value = f"@vecdict {{ i -> 1 }}"
+					trie_value = f"@smallvecdict(4) {{ i -> 1 }}"
 				else:
 					trie_value = "1"
 				for col in join_cols[::-1]:
@@ -256,7 +256,7 @@ class FJSDQLGenerator(AbstractSDQLGenerator):
 				self.var_mng.interm_col(idx): self._tuple_col_var(rel, col)
 				for idx, (rel, col) in interm_cols
 			}
-			yield f"@vecdict {{ <{', '.join([f'{new_col}={old_col}' for new_col, old_col in new2old_map.items()])}> -> 1 }}\n"
+			yield f"@smallvecdict(4) {{ <{', '.join([f'{new_col}={old_col}' for new_col, old_col in new2old_map.items()])}> -> 1 }}\n"
 
 		rel2col2type[interm] = dict()
 		for interm_col_idx, (rel, col) in interm_cols:
