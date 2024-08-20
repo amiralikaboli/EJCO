@@ -285,8 +285,11 @@ class FJSDQLGenerator(AbstractSDQLGenerator):
 				if i > 0:
 					hint = ""
 				else:
-					# TODO handle FJ 33a,b,c without hardcoding value
-					hint = "@phmap(1000) " if orig.endswith("_tuple") else f"@phmap({orig}.size) "
+					if orig.endswith("_tuple"):
+						# TODO handle FJ 33a,b,c without hardcoding value
+						hint = "@phmap(1000) "
+					else:
+						hint = f"@phmap(sum(<k, _> <- {{1000000, {orig}.size}}) promote[min_sum](k)) "
 				i += 1
 				trie_value = f"{hint}{{ {field} -> {trie_value} }}"
 			yield f'{trie_value}\n'
