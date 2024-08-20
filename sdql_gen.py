@@ -272,6 +272,7 @@ class FJSDQLGenerator(AbstractSDQLGenerator):
 				self.var_mng.interm_col(idx): self._tuple_col_var(rel, col)
 				for idx, (rel, col) in interm_cols
 			}
+			# TODO filter these values
 			tuple_value = f"<{', '.join([f'{new_col}={old_col}' for new_col, old_col in new2old_map.items()])}>"
 			trie_value = f"@smallvecdict(4) {{ {tuple_value} -> 1 }}"
 			# i check isn't needed as FJ queries have 1 level of nesting - keeping it for robustness/correctness
