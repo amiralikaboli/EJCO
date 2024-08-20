@@ -32,11 +32,11 @@ class AbstractSDQLGenerator:
 			for i, (node, build_plan, compiled_plan) in enumerate(plans):
 				# look ahead to the next compiled plan - to see which columns are needed for intermediate variable
 				if re.search(r"interm\d", node[0]) is not None:
-					include_cols = self.get_include_cols(plans[i+1][2], node[0])
+					lookup_cols = self.get_include_cols(plans[i+1][2], node[0])
 				else:
-					include_cols = None
+					lookup_cols = None
 
-				for line in self._generate_subquery(node, build_plan, compiled_plan, include_cols):
+				for line in self._generate_subquery(node, build_plan, compiled_plan, lookup_cols):
 					sdql_file.write('\t' * self.indent + line)
 				self.indent = 0
 				sdql_file.write("\n")
@@ -57,7 +57,7 @@ class AbstractSDQLGenerator:
 			node: Tuple[str, List[Tuple[int, Tuple[str, str]]], List[int]],
 			build_plan: List[Tuple[str, List[str], List[str]]],
 			compiled_plan: List[List[Tuple[str, str]]],
-			include_cols = None,
+			lookup_cols = None,
 	):
 		raise NotImplementedError
 
@@ -98,7 +98,7 @@ class GJSDQLGenerator(AbstractSDQLGenerator):
 			node: Tuple[str, List[Tuple[int, Tuple[str, str]]], List[int]],
 			build_plan: List[Tuple[str, List[str], List[str]]],
 			compiled_plan: List[List[Tuple[str, str]]],
-			include_cols = Union[None, Set[int]],
+			lookup_cols = Union[None, Set[int]],
 	):
 		interm, interm_cols, interm_trie_cols = node
 
@@ -189,7 +189,7 @@ class FJSDQLGenerator(AbstractSDQLGenerator):
 			node: Tuple[str, List[Tuple[int, Tuple[str, str]]], List[int]],
 			build_plan: List[Tuple[str, List[str], List[str]]],
 			compiled_plan: List[List[Tuple[str, str]]],
-			include_cols = Union[None, Set[int]],
+			lookup_cols = Union[None, Set[int]],
 	):
 		interm, interm_cols, interm_trie_cols = node
 
@@ -272,14 +272,17 @@ class FJSDQLGenerator(AbstractSDQLGenerator):
 				self.var_mng.interm_col(idx): self._tuple_col_var(rel, col)
 				for idx, (rel, col) in interm_cols
 			}
-			# TODO filter these values
-			tuple_value = f"<{', '.join([f'{new_col}={old_col}' for new_col, old_col in new2old_map.items()])}>"
+			# columns that are used for lookup aren't needed inside the tuple
+			cols = [f'{new_col}={old_col}' for new_col, old_col in new2old_map.items() if (
+				lookup_cols is None or int(new_col[3:]) not in lookup_cols
+			)]
+			tuple_value = f"<{', '.join(cols)}>"
 			trie_value = f"@smallvecdict(4) {{ {tuple_value} -> 1 }}"
 			# i check isn't needed as FJ queries have 1 level of nesting - keeping it for robustness/correctness
 			i = 0
 			for idx in interm_trie_cols[::-1]:
-				# use the lookahead to exclude columns that won't be used
-				if include_cols is not None and idx not in include_cols:
+				# exclude columns that won't be used for lookup
+				if lookup_cols is not None and idx not in lookup_cols:
 					continue
 				field = new2old_map[self.var_mng.interm_col(idx)]
 				(orig, _) = field.split(".", 1)
