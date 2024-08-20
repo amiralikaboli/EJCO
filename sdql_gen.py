@@ -213,7 +213,7 @@ class FJSDQLGenerator(AbstractSDQLGenerator):
 			for i, col in enumerate(trie_levels[::-1]):
 				# i check isn't needed as FJ queries have 1 level of nesting - keeping it for robustness/correctness
 				hint = "" if i > 0 else f"@phmap({rel}.size) "
-				trie_value = f"{hint}{{ {rel}.{col}(i) -> {trie_value} }}"
+				trie_value = f"{hint}{{ unique({rel}.{col}(i)) -> {trie_value} }}"
 			yield f"let {self.var_mng.trie_var(rel)} = sum(<i, _> <- range({rel}.size)) {trie_value} in\n"
 
 		if not self.var_mng.is_root_rel(interm):
