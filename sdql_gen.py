@@ -210,8 +210,10 @@ class FJSDQLGenerator(AbstractSDQLGenerator):
 				trie_value = f"@smallvecdict(4) {{ i -> 1 }}"
 			else:
 				trie_value = "1"
-			for col in trie_levels[::-1]:
-				trie_value = f"@phmap({rel}.size) {{ {rel}.{col}(i) -> {trie_value} }}"
+			for i, col in enumerate(trie_levels[::-1]):
+				# i check isn't needed as FJ queries have 1 level of nesting - keeping it for robustness/correctness
+				hint = "" if i > 0 else f"@phmap({rel}.size) "
+				trie_value = f"{hint}{{ {rel}.{col}(i) -> {trie_value} }}"
 			yield f"let {self.var_mng.trie_var(rel)} = sum(<i, _> <- range({rel}.size)) {trie_value} in\n"
 
 		if not self.var_mng.is_root_rel(interm):
@@ -272,15 +274,21 @@ class FJSDQLGenerator(AbstractSDQLGenerator):
 			}
 			tuple_value = f"<{', '.join([f'{new_col}={old_col}' for new_col, old_col in new2old_map.items()])}>"
 			trie_value = f"@smallvecdict(4) {{ {tuple_value} -> 1 }}"
+			# i check isn't needed as FJ queries have 1 level of nesting - keeping it for robustness/correctness
+			i = 0
 			for idx in interm_trie_cols[::-1]:
 				# use the lookahead to exclude columns that won't be used
 				if include_cols is not None and idx not in include_cols:
 					continue
 				field = new2old_map[self.var_mng.interm_col(idx)]
 				(orig, _) = field.split(".", 1)
-				# TODO handle FJ 33a,b,c
-				hint = "@phmap(1000)" if orig.endswith("_tuple") else f"@phmap({orig}.size)"
-				trie_value = f"{hint} {{ {field} -> {trie_value} }}"
+				if i > 0:
+					hint = ""
+				else:
+					# TODO handle FJ 33a,b,c without hardcoding value
+					hint = "@phmap(1000) " if orig.endswith("_tuple") else f"@phmap({orig}.size) "
+				i += 1
+				trie_value = f"{hint}{{ {field} -> {trie_value} }}"
 			yield f'{trie_value}\n'
 
 		rel2col2type[interm] = dict()
