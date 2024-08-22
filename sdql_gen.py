@@ -291,11 +291,12 @@ class FJSDQLGenerator(AbstractSDQLGenerator):
 				if i > 0:
 					hint = ""
 				else:
+					# special case FJ 33a,b,c
 					if orig.endswith("_tuple"):
-						# TODO handle FJ 33a,b,c without hardcoding value
-						hint = "@phmap(1000) "
-					else:
-						hint = f"@phmap(promote[min_sum](1000000) + promote[min_sum]({orig}.size)) "
+						(same, col) = field.split(".", 1)
+						assert same == orig
+						(orig, _) = new2old_map[col].split(".")
+					hint = f"@phmap(promote[min_sum](1000000) + promote[min_sum]({orig}.size)) "
 				i += 1
 				trie_value = f"{hint}{{ {field} -> {trie_value} }}"
 			yield f'{trie_value}\n'
