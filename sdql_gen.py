@@ -295,7 +295,7 @@ class FJSDQLGenerator(AbstractSDQLGenerator):
 						# TODO handle FJ 33a,b,c without hardcoding value
 						hint = "@phmap(1000) "
 					else:
-						hint = f"@phmap(sum(<k, _> <- {{1000000, {orig}.size}}) promote[min_sum](k)) "
+						hint = f"@phmap(promote[min_sum](1000000) + promote[min_sum]({orig}.size)) "
 				i += 1
 				trie_value = f"{hint}{{ {field} -> {trie_value} }}"
 			yield f'{trie_value}\n'
