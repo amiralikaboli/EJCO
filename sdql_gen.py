@@ -29,6 +29,10 @@ class AbstractSDQLGenerator:
 			sdql_file.write("\n")
 
 			for i, (node, build_plan, compiled_plan) in enumerate(plans):
+				"""
+				CAUTION: this approach is not robust, 
+				as it assumes that the next plan is always the one that uses the intermediate variable
+				"""
 				# look ahead to the next compiled plan - to see which columns are needed for intermediate variable
 				if self.var_mng.is_interm_rel(node[0]):
 					lookup_cols = self.get_include_cols(plans[i + 1][2], node[0])
