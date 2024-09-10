@@ -1,6 +1,5 @@
 import math
 import os
-import re
 from collections import defaultdict
 from typing import List, Tuple, Set, Union
 
@@ -31,8 +30,8 @@ class AbstractSDQLGenerator:
 
 			for i, (node, build_plan, compiled_plan) in enumerate(plans):
 				# look ahead to the next compiled plan - to see which columns are needed for intermediate variable
-				if re.search(r"interm\d", node[0]) is not None:
-					lookup_cols = self.get_include_cols(plans[i+1][2], node[0])
+				if self.var_mng.is_interm_rel(node[0]):
+					lookup_cols = self.get_include_cols(plans[i + 1][2], node[0])
 				else:
 					lookup_cols = None
 
@@ -57,7 +56,7 @@ class AbstractSDQLGenerator:
 			node: Tuple[str, List[Tuple[int, Tuple[str, str]]], List[int]],
 			build_plan: List[Tuple[str, List[str], List[str]]],
 			compiled_plan: List[List[Tuple[str, str]]],
-			lookup_cols = None,
+			lookup_cols=None,
 	):
 		raise NotImplementedError
 
@@ -98,7 +97,7 @@ class GJSDQLGenerator(AbstractSDQLGenerator):
 			node: Tuple[str, List[Tuple[int, Tuple[str, str]]], List[int]],
 			build_plan: List[Tuple[str, List[str], List[str]]],
 			compiled_plan: List[List[Tuple[str, str]]],
-			lookup_cols = Union[None, Set[int]],
+			lookup_cols=Union[None, Set[int]],
 	):
 		interm, interm_cols, interm_trie_cols = node
 
@@ -189,7 +188,7 @@ class FJSDQLGenerator(AbstractSDQLGenerator):
 			node: Tuple[str, List[Tuple[int, Tuple[str, str]]], List[int]],
 			build_plan: List[Tuple[str, List[str], List[str]]],
 			compiled_plan: List[List[Tuple[str, str]]],
-			lookup_cols = Union[None, Set[int]],
+			lookup_cols=Union[None, Set[int]],
 	):
 		interm, interm_cols, interm_trie_cols = node
 
@@ -276,7 +275,7 @@ class FJSDQLGenerator(AbstractSDQLGenerator):
 			}
 			# columns that are used for lookup aren't needed inside the tuple
 			cols = [f'{new_col}={old_col}' for new_col, old_col in new2old_map.items() if (
-				lookup_cols is None or int(new_col[3:]) not in lookup_cols
+					lookup_cols is None or int(new_col[3:]) not in lookup_cols
 			)]
 			tuple_value = f"<{', '.join(cols)}>"
 			trie_value = f"@smallvecdict(4) {{ {tuple_value} -> 1 }}"
