@@ -1,7 +1,7 @@
 import math
 import os
 from collections import defaultdict
-from typing import List, Tuple
+from typing import List, Tuple, Set, Union
 
 from consts import generated_sdql_path, preprocessed_data_path, abbr2rel, rel_wo_idx, rel2col2type, JoinMode
 from var_mng import VariableManager
@@ -28,8 +28,18 @@ class AbstractSDQLGenerator:
 					sdql_file.write('\t' * self.indent + line)
 			sdql_file.write("\n")
 
-			for node, build_plan, compiled_plan in plans:
-				for line in self._generate_subquery(node, build_plan, compiled_plan):
+			for i, (node, build_plan, compiled_plan) in enumerate(plans):
+				"""
+				CAUTION: this approach is not robust, 
+				as it assumes that the next plan is always the one that uses the intermediate variable
+				"""
+				# look ahead to the next compiled plan - to see which columns are needed for intermediate variable
+				if self.var_mng.is_interm_rel(node[0]):
+					lookup_cols = self.get_include_cols(plans[i + 1][2], node[0])
+				else:
+					lookup_cols = None
+
+				for line in self._generate_subquery(node, build_plan, compiled_plan, lookup_cols):
 					sdql_file.write('\t' * self.indent + line)
 				self.indent = 0
 				sdql_file.write("\n")
@@ -49,7 +59,8 @@ class AbstractSDQLGenerator:
 			self,
 			node: Tuple[str, List[Tuple[int, Tuple[str, str]]], List[int]],
 			build_plan: List[Tuple[str, List[str], List[str]]],
-			compiled_plan: List[List[Tuple[str, str]]]
+			compiled_plan: List[List[Tuple[str, str]]],
+			lookup_cols=None,
 	):
 		raise NotImplementedError
 
@@ -65,6 +76,20 @@ class AbstractSDQLGenerator:
 		else:
 			return f"{rel}.{col}({self.var_mng.off_var(rel)})"
 
+	@staticmethod
+	def get_include_cols(compiled_plan: List, target: str) -> Union[None, Set[int]]:
+		rel2trie_levels = defaultdict(list)
+		iter_rels = set()
+		for eq_cols in compiled_plan:
+			rel_it, _ = eq_cols[0]
+			iter_rels.add(rel_it)
+			for rel, col in eq_cols[1:]:
+				if rel not in iter_rels:
+					rel2trie_levels[rel].append(col)
+
+		res = next((v for k, v in rel2trie_levels.items() if k == target), None)
+		return None if res is None else set(int(x[3:]) for x in res)
+
 
 class GJSDQLGenerator(AbstractSDQLGenerator):
 	def __init__(self, var_mng: VariableManager):
@@ -75,31 +100,25 @@ class GJSDQLGenerator(AbstractSDQLGenerator):
 			self,
 			node: Tuple[str, List[Tuple[int, Tuple[str, str]]], List[int]],
 			build_plan: List[Tuple[str, List[str], List[str]]],
-			compiled_plan: List[List[Tuple[str, str]]]
+			compiled_plan: List[List[Tuple[str, str]]],
+			lookup_cols=Union[None, Set[int]],
 	):
 		interm, interm_cols, interm_trie_cols = node
 
 		rels_in_interm_cols = set(rel for _, (rel, _) in interm_cols)
-		for rel, join_cols, _ in build_plan:
+		for rel, join_cols, proj_cols in build_plan:
 			if self.var_mng.is_interm_rel(rel):
-				if rel in rels_in_interm_cols:
-					trie_value = f"@vecdict {{ {self.var_mng.tuple_var(rel)} -> 1 }}"
-				else:
-					trie_value = "1"
-				for col in join_cols[::-1]:
-					trie_value = f"{{ {self._tuple_col_var(rel, col)} -> {trie_value} }}"
-				yield f"let {self.var_mng.trie_var(rel)} = sum(<{self.var_mng.tuple_var(rel)}, _> <- {rel}) {trie_value} in\n"
+				continue
+			if rel in rels_in_interm_cols:
+				trie_value = f"@smallvecdict(0) {{ i -> 1 }}"
 			else:
-				if rel in rels_in_interm_cols:
-					trie_value = f"@vecdict {{ i -> 1 }}"
-				else:
-					trie_value = "1"
-				for col in join_cols[::-1]:
-					trie_value = f"{{ {rel}.{col}(i) -> {trie_value} }}"
-				yield f"let {self.var_mng.trie_var(rel)} = sum(<i, _> <- range({rel}.size)) {trie_value} in\n"
+				trie_value = "1"
+			for col in join_cols[::-1]:
+				trie_value = f"{{ {rel}.{col}(i) -> {trie_value} }}"
+			yield f"let {self.var_mng.trie_var(rel)} = sum(<i, _> <- range({rel}.size)) {trie_value} in\n"
 
 		if not self.var_mng.is_root_rel(interm):
-			yield f"let {interm} = "
+			yield f"let {self.var_mng.trie_var(interm)} = "
 
 		join_attrs_order = {rel: {col: math.inf for col in join_cols} for rel, join_cols, _ in build_plan}
 		for idx, eq_cols in enumerate(compiled_plan):
@@ -148,7 +167,11 @@ class GJSDQLGenerator(AbstractSDQLGenerator):
 				self.var_mng.interm_col(idx): self._tuple_col_var(rel, col)
 				for idx, (rel, col) in interm_cols
 			}
-			yield f"@vecdict {{ <{', '.join([f'{new_col}={old_col}' for new_col, old_col in new2old_map.items()])}> -> 1 }}\n"
+			tuple_value = f"<{', '.join([f'{new_col}={old_col}' for new_col, old_col in new2old_map.items()])}>"
+			trie_value = f"@smallvecdict(0) {{ {tuple_value} -> 1 }}"
+			for idx in interm_trie_cols[::-1]:
+				trie_value = f"{{ {new2old_map[self.var_mng.interm_col(idx)]} -> {trie_value} }}"
+			yield f'{trie_value}\n'
 
 		rel2col2type[interm] = dict()
 		for interm_col_idx, (rel, col) in interm_cols:
@@ -168,7 +191,8 @@ class FJSDQLGenerator(AbstractSDQLGenerator):
 			self,
 			node: Tuple[str, List[Tuple[int, Tuple[str, str]]], List[int]],
 			build_plan: List[Tuple[str, List[str], List[str]]],
-			compiled_plan: List[List[Tuple[str, str]]]
+			compiled_plan: List[List[Tuple[str, str]]],
+			lookup_cols=Union[None, Set[int]],
 	):
 		interm, interm_cols, interm_trie_cols = node
 
@@ -182,26 +206,23 @@ class FJSDQLGenerator(AbstractSDQLGenerator):
 					rel2trie_levels[rel].append(col)
 
 		rels_in_interm_cols = set(rel for _, (rel, _) in interm_cols)
-		for rel, join_cols in rel2trie_levels.items():
+		for rel, trie_levels in rel2trie_levels.items():
 			if self.var_mng.is_interm_rel(rel):
-				if rel in rels_in_interm_cols or rel in iter_rels:
-					trie_value = f"@vecdict {{ {self.var_mng.tuple_var(rel)} -> 1 }}"
-				else:
-					trie_value = "1"
-				for col in join_cols[::-1]:
-					trie_value = f"{{ {self._tuple_col_var(rel, col)} -> {trie_value} }}"
-				yield f"let {self.var_mng.trie_var(rel)} = sum(<{self.var_mng.tuple_var(rel)}, _> <- {rel}) {trie_value} in\n"
+				continue
+			if rel in rels_in_interm_cols or rel in iter_rels:
+				trie_value = f"@smallvecdict(4) {{ i -> 1 }}"
 			else:
-				if rel in rels_in_interm_cols or rel in iter_rels:
-					trie_value = f"@vecdict {{ i -> 1 }}"
-				else:
-					trie_value = "1"
-				for col in join_cols[::-1]:
-					trie_value = f"{{ {rel}.{col}(i) -> {trie_value} }}"
-				yield f"let {self.var_mng.trie_var(rel)} = sum(<i, _> <- range({rel}.size)) {trie_value} in\n"
+				trie_value = "1"
+			for i, col in enumerate(trie_levels[::-1]):
+				# i check isn't needed as FJ queries have 1 level of nesting - keeping it for robustness/correctness
+				hint = "" if i > 0 else f"@phmap({rel}.size) "
+				inner = f"{rel}.{col}(i)"
+				key = inner if "@smallvecdict" in trie_value else f"unique({inner})"
+				trie_value = f"{hint}{{ {key} -> {trie_value} }}"
+			yield f"let {self.var_mng.trie_var(rel)} = sum(<i, _> <- range({rel}.size)) {trie_value} in\n"
 
 		if not self.var_mng.is_root_rel(interm):
-			yield f"let {interm} = "
+			yield f"let {self.var_mng.trie_var(interm)} = "
 
 		join_attrs_order = {rel: {col: math.inf for col in join_cols} for rel, join_cols, _ in build_plan}
 		for idx, eq_cols in enumerate(compiled_plan):
@@ -256,7 +277,32 @@ class FJSDQLGenerator(AbstractSDQLGenerator):
 				self.var_mng.interm_col(idx): self._tuple_col_var(rel, col)
 				for idx, (rel, col) in interm_cols
 			}
-			yield f"@vecdict {{ <{', '.join([f'{new_col}={old_col}' for new_col, old_col in new2old_map.items()])}> -> 1 }}\n"
+			# columns that are used for lookup aren't needed inside the tuple
+			cols = [f'{new_col}={old_col}' for new_col, old_col in new2old_map.items() if (
+					lookup_cols is None or int(new_col[3:]) not in lookup_cols
+			)]
+			tuple_value = f"<{', '.join(cols)}>"
+			trie_value = f"@smallvecdict(4) {{ {tuple_value} -> 1 }}"
+			# i check isn't needed as FJ queries have 1 level of nesting - keeping it for robustness/correctness
+			i = 0
+			for idx in interm_trie_cols[::-1]:
+				# exclude columns that won't be used for lookup
+				if lookup_cols is not None and idx not in lookup_cols:
+					continue
+				field = new2old_map[self.var_mng.interm_col(idx)]
+				(orig, _) = field.split(".", 1)
+				if i > 0:
+					hint = ""
+				else:
+					# special case FJ 33a,b,c
+					if orig.endswith("_tuple"):
+						(same, col) = field.split(".", 1)
+						assert same == orig
+						(orig, _) = new2old_map[col].split(".")
+					hint = f"@phmap(promote[min_sum](1000000) + promote[min_sum]({orig}.size)) "
+				i += 1
+				trie_value = f"{hint}{{ {field} -> {trie_value} }}"
+			yield f'{trie_value}\n'
 
 		rel2col2type[interm] = dict()
 		for interm_col_idx, (rel, col) in interm_cols:
