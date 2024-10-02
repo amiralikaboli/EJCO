@@ -9,7 +9,7 @@ from var_mng import VariableManager
 
 if __name__ == '__main__':
 	args = sys.argv[1:]
-	mode = JoinMode(args[0]) if args else JoinMode.GJ
+	mode = JoinMode(args[0]) if args else JoinMode.FJ
 	print(f"JoinMode: {mode}")
 
 	queries = []
@@ -27,7 +27,7 @@ if __name__ == '__main__':
 		cpp_gen.clear()
 
 		plans = parser.parse(query, use_cache=False)
-		# sdql_gen.generate(query, plans)
-		cpp_gen.generate(query, plans)
-		cpp_gen.generate_load_file(query)
+		sdql_gen.generate(query, plans)
+		# cpp_gen.generate(query, plans)
+		# cpp_gen.generate_load_file(query)
 	# cpp_gen.generate_build_file()

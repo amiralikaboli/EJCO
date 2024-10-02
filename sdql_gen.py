@@ -3,7 +3,7 @@ import os
 from collections import defaultdict
 from typing import List, Tuple, Set, Union
 
-from consts import generated_sdql_path, preprocessed_data_path, abbr2rel, rel_wo_idx, rel2col2type, JoinMode
+from consts import generated_sdql_path, preprocessed_data_path, abbr2rel, rel_wo_idx, rel2col2type
 from var_mng import VariableManager
 
 
@@ -52,7 +52,6 @@ class AbstractSDQLGenerator:
 				path = f"datasets/job/{query}/{rel}.csv"
 			else:
 				path = f"datasets/job/{abbr2rel[rel_wo_idx(rel)]}.csv"
-			path = os.path.normpath(path)
 			yield f'let {rel} = load[<{", ".join([f"{col_n}: @vec {{int -> {col_t}}}" for col_n, col_t in rel2col2type[rel_wo_idx(rel)].items()])}, size: int>]("{path}")\n'
 
 	def _generate_subquery(
@@ -273,35 +272,27 @@ class FJSDQLGenerator(AbstractSDQLGenerator):
 				if rel not in self.available_tuples:
 					yield f"{self._tuple_iteration(rel)}\n"
 					self.indent += 1
-			new2old_map = {
-				self.var_mng.interm_col(idx): self._tuple_col_var(rel, col)
-				for idx, (rel, col) in interm_cols
-			}
+
+			interm_idx2relcols = {idx: relcol for idx, relcol in interm_cols}
 			# columns that are used for lookup aren't needed inside the tuple
-			cols = [f'{new_col}={old_col}' for new_col, old_col in new2old_map.items() if (
-					lookup_cols is None or int(new_col[3:]) not in lookup_cols
-			)]
+			cols = [
+				f'{self.var_mng.interm_col(idx)}={self._tuple_col_var(rel, col)}'
+				for idx, (rel, col) in interm_idx2relcols.items()
+				if lookup_cols is None or idx not in lookup_cols
+			]
 			tuple_value = f"<{', '.join(cols)}>"
 			trie_value = f"@smallvecdict(4) {{ {tuple_value} -> 1 }}"
-			# i check isn't needed as FJ queries have 1 level of nesting - keeping it for robustness/correctness
-			i = 0
+
 			for idx in interm_trie_cols[::-1]:
 				# exclude columns that won't be used for lookup
 				if lookup_cols is not None and idx not in lookup_cols:
 					continue
-				field = new2old_map[self.var_mng.interm_col(idx)]
-				(orig, _) = field.split(".", 1)
-				if i > 0:
-					hint = ""
-				else:
-					# special case FJ 33a,b,c
-					if orig.endswith("_tuple"):
-						(same, col) = field.split(".", 1)
-						assert same == orig
-						(orig, _) = new2old_map[col].split(".")
-					hint = f"@phmap(promote[min_sum](1000000) + promote[min_sum]({orig}.size)) "
-				i += 1
-				trie_value = f"{hint}{{ {field} -> {trie_value} }}"
+
+				rel, col = interm_idx2relcols[idx]
+				if self.var_mng.is_interm_rel(rel):
+					rel, col = interm_idx2relcols[int(col[3:])]
+				hint = f"@phmap(promote[min_sum](1000000) + promote[min_sum]({rel}.size)) "
+				trie_value = f"{hint}{{ {self._tuple_col_var(*interm_idx2relcols[idx])} -> {trie_value} }}"
 			yield f'{trie_value}\n'
 
 		rel2col2type[interm] = dict()
