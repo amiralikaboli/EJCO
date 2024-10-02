@@ -15,7 +15,7 @@ let interm0_trie0 = sum(<x0, t_trie1> <- t_trie0)
 		let miidx_trie1 = miidx_trie0(x0) in
 		sum(<t_off, _> <- t_trie1)
 			sum(<miidx_off, _> <- miidx_trie1)
-				{ t.id(t_off) -> { t.kind_id(t_off) -> { miidx.info_type_id(miidx_off) -> @smallvecdict(0) { <col0=t.id(t_off), col1=t.title(t_off), col2=t.kind_id(t_off), col3=miidx.info(miidx_off), col4=miidx.info_type_id(miidx_off)> -> 1 } } } }
+				{ t.id(t_off) -> { t.kind_id(t_off) -> { miidx.info_type_id(miidx_off) -> @smallvecdict(4) { <col0=t.id(t_off), col1=t.title(t_off), col2=t.kind_id(t_off), col3=miidx.info(miidx_off), col4=miidx.info_type_id(miidx_off)> -> 1 } } } }
 in
 
 let mi_trie0 = sum(<i, _> <- range(mi.size)) { mi.movie_id(i) -> { mi.info_type_id(i) -> 1 } } in

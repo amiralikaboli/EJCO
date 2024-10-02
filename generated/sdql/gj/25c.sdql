@@ -19,7 +19,7 @@ let interm0_trie0 = sum(<x0, mk_trie1> <- mk_trie0)
 			sum(<mk_off, _> <- mk_trie1)
 				sum(<t_off, _> <- t_trie1)
 					sum(<mi_idx_off, _> <- mi_idx_trie1)
-						{ mk.movie_id(mk_off) -> { mk.keyword_id(mk_off) -> { mi_idx.info_type_id(mi_idx_off) -> @smallvecdict(0) { <col0=mk.movie_id(mk_off), col1=mk.keyword_id(mk_off), col2=t.title(t_off), col3=mi_idx.info_type_id(mi_idx_off), col4=mi_idx.info(mi_idx_off)> -> 1 } } } }
+						{ mk.movie_id(mk_off) -> { mk.keyword_id(mk_off) -> { mi_idx.info_type_id(mi_idx_off) -> @smallvecdict(4) { <col0=mk.movie_id(mk_off), col1=mk.keyword_id(mk_off), col2=t.title(t_off), col3=mi_idx.info_type_id(mi_idx_off), col4=mi_idx.info(mi_idx_off)> -> 1 } } } }
 in
 
 let mi_trie0 = sum(<i, _> <- range(mi.size)) { mi.movie_id(i) -> { mi.info_type_id(i) -> @smallvecdict(0) { i -> 1 } } } in
@@ -40,7 +40,7 @@ let interm1_trie0 = sum(<x0, mi_trie1> <- mi_trie0)
 								let it1_trie1 = it1_trie0(x3) in
 								sum(<mi_off, _> <- mi_trie2)
 									sum(<interm0_tuple, _> <- interm0_trie3)
-										{ mi.movie_id(mi_off) -> @smallvecdict(0) { <col0=mi.movie_id(mi_off), col1=mi.info_type_id(mi_off), col2=mi.info(mi_off), col3=interm0_tuple.col1, col4=interm0_tuple.col3, col5=interm0_tuple.col2, col6=interm0_tuple.col4> -> 1 } }
+										{ mi.movie_id(mi_off) -> @smallvecdict(4) { <col0=mi.movie_id(mi_off), col1=mi.info_type_id(mi_off), col2=mi.info(mi_off), col3=interm0_tuple.col1, col4=interm0_tuple.col3, col5=interm0_tuple.col2, col6=interm0_tuple.col4> -> 1 } }
 in
 
 let ci_trie0 = sum(<i, _> <- range(ci.size)) { ci.person_id(i) -> { ci.movie_id(i) -> 1 } } in

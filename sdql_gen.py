@@ -167,7 +167,7 @@ class GJSDQLGenerator(AbstractSDQLGenerator):
 				for idx, (rel, col) in interm_cols
 			}
 			tuple_value = f"<{', '.join([f'{new_col}={old_col}' for new_col, old_col in new2old_map.items()])}>"
-			trie_value = f"@smallvecdict(0) {{ {tuple_value} -> 1 }}"
+			trie_value = f"@smallvecdict(4) {{ {tuple_value} -> 1 }}"
 			for idx in interm_trie_cols[::-1]:
 				trie_value = f"{{ {new2old_map[self.var_mng.interm_col(idx)]} -> {trie_value} }}"
 			yield f'{trie_value}\n'
