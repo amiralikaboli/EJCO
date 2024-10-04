@@ -36,17 +36,18 @@ class PlanParser:
 			for i in range(0, len(lines), 4)
 		]
 
-		parsed_plans = self._resolve_intermediate_stuff(parsed_plans)
-		parsed_plans = self._remove_extra_proj_columns(parsed_plans)
+		nonopt_plans = self._resolve_intermediate_stuff(parsed_plans)
+		opt_plans = self._remove_extra_proj_columns(nonopt_plans)
+		# opt_plans = self._convert_to_naive(nonopt_plans, opt_plans)
 
 		with open(os.path.join(self._plans_path, "parsed", f"{query}.log"), 'w') as log_file:
-			for node, build_plan, compiled_plan in parsed_plans:
+			for node, build_plan, compiled_plan in opt_plans:
 				log_file.write(f"{node}\n")
 				log_file.write(f"{build_plan}\n")
 				log_file.write(f"{compiled_plan}\n")
 				log_file.write(f"{'#' * 200}\n")
 
-		return parsed_plans
+		return opt_plans
 
 	@staticmethod
 	def _parse_build_plan(build_plan: str) -> List[Tuple[str, List[str], List[str]]]:
@@ -125,8 +126,9 @@ class PlanParser:
 	# TODO: rename this function
 	def _resolve_intermediate_stuff(
 			self,
-			plans: List[Tuple[str, List, List]]
+			inp_plans: List[Tuple[str, List, List]]
 	) -> List[Tuple[Tuple[str, List, List], List, List]]:
+		plans = inp_plans.copy()
 		for idx_u, (node_u, build_u, compiled_u) in enumerate(plans):
 			interm_rel = self._var_mng.interm_rel(idx_u)
 			interm_cols = self._intermediate_columns_list(build_u, compiled_u)
@@ -159,15 +161,7 @@ class PlanParser:
 
 				plans[idx_d] = (node_d, build_d, compiled_d)
 			plans[idx_u] = ((interm_rel, interm_cols_enumerated, interm_trie_levels), build_u, compiled_u)
-		proj_rel_cols = set()
-		for rel, _, proj_cols in plans[-1][1]:
-			for proj_col in proj_cols:
-				proj_rel_cols.add((rel, proj_col))
-		indexed_proj_rel_cols = list()
-		for idx, rel_col in plans[-1][0][1]:
-			if rel_col in proj_rel_cols:
-				indexed_proj_rel_cols.append((idx, rel_col))
-		plans[-1] = (('root', indexed_proj_rel_cols, []), plans[-1][1], plans[-1][2])
+		plans[-1] = (('root', plans[-1][0][1], []), plans[-1][1], plans[-1][2])
 		return plans
 
 	@staticmethod
@@ -206,8 +200,18 @@ class PlanParser:
 
 	def _remove_extra_proj_columns(
 			self,
-			plans: List[Tuple[Tuple[str, List, List], List, List]]
+			inp_plans: List[Tuple[Tuple[str, List, List], List, List]]
 	) -> List[Tuple[Tuple[str, List, List], List, List]]:
+		plans = inp_plans.copy()
+		proj_rel_cols = set()
+		for rel, _, proj_cols in plans[-1][1]:
+			for proj_col in proj_cols:
+				proj_rel_cols.add((rel, proj_col))
+		indexed_proj_rel_cols = list()
+		for idx, rel_col in plans[-1][0][1]:
+			if rel_col in proj_rel_cols:
+				indexed_proj_rel_cols.append((idx, rel_col))
+		plans[-1] = (('root', indexed_proj_rel_cols, []), plans[-1][1], plans[-1][2])
 		interm_col_origins = dict()
 		first_indices = dict()
 		for i, ((interm, interm_cols, _), build_plan, compiled_plan) in enumerate(plans):
@@ -242,6 +246,22 @@ class PlanParser:
 			plans[i] = ((interm, new_interm_cols, interm_trie_levels), new_build_plan, compiled_plan)
 
 		return plans
+
+	def _convert_to_naive(
+			self,
+			before_plans: List[Tuple[Tuple[str, List, List], List, List]],
+			after_plans: List[Tuple[Tuple[str, List, List], List, List]]
+	) -> List[Tuple[Tuple[str, List, List], List, List]]:
+		root_plan = before_plans[-1]
+		last_interm = self._var_mng.interm_rel(len(before_plans) - 1)
+		before_plans[-1] = ((last_interm, root_plan[0][1], root_plan[0][2]), root_plan[1], root_plan[2])
+		proj_cols = [self._var_mng.interm_col(idx) for idx, _ in after_plans[-1][0][1]]
+		before_plans.append((
+			('root', [(idx, (last_interm, col)) for idx, col in enumerate(proj_cols)], []),
+			[(last_interm, [], proj_cols)],
+			[]
+		))
+		return before_plans
 
 
 if __name__ == '__main__':

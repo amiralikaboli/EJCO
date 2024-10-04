@@ -109,7 +109,7 @@ class GJSDQLGenerator(AbstractSDQLGenerator):
 			if self.var_mng.is_interm_rel(rel):
 				continue
 			if rel in rels_in_interm_cols:
-				trie_value = f"@smallvecdict(0) {{ i -> 1 }}"
+				trie_value = f"@smallvecdict(4) {{ i -> 1 }}"
 			else:
 				trie_value = "1"
 			for col in join_cols[::-1]:
