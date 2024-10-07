@@ -4,6 +4,7 @@ from collections import defaultdict
 from typing import List, Tuple, Set, Union
 
 from consts import generated_sdql_path, preprocessed_data_path, abbr2rel, rel_wo_idx, rel2col2type
+from optimisation import Optimisation, MAX_OPTIMISATION, to_hint
 from var_mng import VariableManager
 
 
@@ -186,9 +187,10 @@ class GJSDQLGenerator(AbstractSDQLGenerator):
 
 
 class FJSDQLGenerator(AbstractSDQLGenerator):
-	def __init__(self, var_mng: VariableManager):
+	def __init__(self, var_mng: VariableManager, optimisation: Optimisation = MAX_OPTIMISATION):
 		super().__init__(var_mng)
 		self.save_path = os.path.join(generated_sdql_path, "fj")
+		self.optimisation = optimisation
 
 	def _generate_subquery(
 			self,
@@ -212,16 +214,18 @@ class FJSDQLGenerator(AbstractSDQLGenerator):
 		for rel, trie_levels in rel2trie_levels.items():
 			if self.var_mng.is_interm_rel(rel):
 				continue
-			if rel in rels_in_interm_cols or rel in iter_rels:
-				trie_value = f"@smallvecdict(4) {{ i -> 1 }}"
+			if self.optimisation.value < Optimisation.ELIMINATING_REDUNDANT_OFFSETS.value or rel in rels_in_interm_cols or rel in iter_rels:
+				hint = to_hint(self.optimisation)
+				trie_value = f"{hint} {{ i -> 1 }}"
 			else:
 				trie_value = "1"
 			for i, col in enumerate(trie_levels[::-1]):
 				# i check isn't needed as FJ queries have 1 level of nesting - keeping it for robustness/correctness
 				hint = "" if i > 0 else f"@phmap({rel}.size) "
 				inner = f"{rel}.{col}(i)"
-				key = inner if "@smallvecdict" in trie_value else f"unique({inner})"
-				trie_value = f"{hint}{{ {key} -> {trie_value} }}"
+				if self.optimisation.value >= Optimisation.ELIMINATING_REDUNDANT_OFFSETS.value and "@smallvecdict" not in trie_value:
+					inner = f"unique({inner})"
+				trie_value = f"{hint}{{ {inner} -> {trie_value} }}"
 			yield f"let {self.var_mng.trie_var(rel)} = sum(<i, _> <- range({rel}.size)) {trie_value} in\n"
 
 		if not self.var_mng.is_root_rel(interm):
@@ -258,15 +262,25 @@ class FJSDQLGenerator(AbstractSDQLGenerator):
 		if self.var_mng.is_root_rel(interm):
 			interm_col2idx = {rel_col: interm_col_idx for interm_col_idx, rel_col in interm_cols}
 			elems = list()
-			for rel, _, proj_cols in build_plan:
-				if proj_cols:
-					let_value = f"<{', '.join(f'{col}={self._tuple_col_var(rel, col)}' for col in proj_cols)}>"
-					if rel not in self.available_tuples:
-						let_value = f"{self._tuple_iteration(rel)} promote[min_sum]({let_value})"
-					yield f"let {self.var_mng.mn_rel_var(rel)} = {let_value} in\n"
-				for col in proj_cols:
-					elems.append(
-						(self.var_mng.interm_col(interm_col2idx[(rel, col)]), f'{self.var_mng.mn_rel_var(rel)}.{col}'))
+			if self.optimisation.value < Optimisation.LOOP_INVARIANT_CODE_MOTION.value:
+				for rel, _, proj_cols in build_plan:
+					if proj_cols:
+						if rel not in self.available_tuples:
+							yield f"{self._tuple_iteration(rel)}\n"
+							self.indent += 1
+						for col in proj_cols:
+							elems.append(
+								(self.var_mng.interm_col(interm_col2idx[(rel, col)]), (self._tuple_col_var(rel, col))))
+			else:
+				for rel, _, proj_cols in build_plan:
+					if proj_cols:
+						let_value = f"<{', '.join(f'{col}={self._tuple_col_var(rel, col)}' for col in proj_cols)}>"
+						if rel not in self.available_tuples:
+							let_value = f"{self._tuple_iteration(rel)} promote[min_sum]({let_value})"
+						yield f"let {self.var_mng.mn_rel_var(rel)} = {let_value} in\n"
+					for col in proj_cols:
+						elems.append(
+							(self.var_mng.interm_col(interm_col2idx[(rel, col)]), f'{self.var_mng.mn_rel_var(rel)}.{col}'))
 			yield f"promote[min_sum](<{', '.join([f'{elem_key}={elem_val}' for elem_key, elem_val in elems])}>)\n"
 		else:
 			interm_rel2cols = defaultdict(list)
@@ -285,7 +299,8 @@ class FJSDQLGenerator(AbstractSDQLGenerator):
 				if lookup_cols is None or idx not in lookup_cols
 			]
 			tuple_value = f"<{', '.join(cols)}>"
-			trie_value = f"@smallvecdict(4) {{ {tuple_value} -> 1 }}"
+			hint = to_hint(self.optimisation)
+			trie_value = f"{hint} {{ {tuple_value} -> 1 }}"
 
 			for idx in interm_trie_cols[::-1]:
 				# exclude columns that won't be used for lookup

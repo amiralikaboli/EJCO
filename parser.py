@@ -3,15 +3,17 @@ import re
 from typing import List, Tuple, Set
 
 from consts import plans_path, JoinMode
+from optimisation import Optimisation, MAX_OPTIMISATION
 from var_mng import VariableManager
 
 
 class PlanParser:
-	def __init__(self, mode: JoinMode, var_mng: VariableManager):
+	def __init__(self, mode: JoinMode, var_mng: VariableManager, optimisation: Optimisation = MAX_OPTIMISATION):
 		self._mode = mode
 		self._var_mng = var_mng
 		self._bags: List[Set[Tuple[str, str]]] = list()
 		self._plans_path = os.path.join(plans_path, self._mode.value)
+		self._optimisation = optimisation
 
 	def clear(self):
 		self._bags = list()
@@ -38,7 +40,8 @@ class PlanParser:
 
 		nonopt_plans = self._resolve_intermediate_stuff(parsed_plans)
 		opt_plans = self._remove_extra_proj_columns(nonopt_plans)
-		# opt_plans = self._convert_to_naive(nonopt_plans, opt_plans)
+		if self._optimisation.value < Optimisation.DEAD_CODE_ELIMINATION.value:
+			opt_plans = self._convert_to_naive(nonopt_plans, opt_plans)
 
 		with open(os.path.join(self._plans_path, "parsed", f"{query}.log"), 'w') as log_file:
 			for node, build_plan, compiled_plan in opt_plans:
