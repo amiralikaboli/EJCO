@@ -4,7 +4,7 @@ from collections import defaultdict
 from typing import List, Tuple, Set, Union
 
 from consts import generated_sdql_path, preprocessed_data_path, abbr2rel, rel_wo_idx, rel2col2type
-from optimisation import Optimisation, MAX_OPTIMISATION
+from optimisation import Optimisation, MAX_OPTIMISATION, to_hint
 from var_mng import VariableManager
 
 
@@ -215,15 +215,17 @@ class FJSDQLGenerator(AbstractSDQLGenerator):
 			if self.var_mng.is_interm_rel(rel):
 				continue
 			if self.optimisation.value < Optimisation.ELIMINATING_REDUNDANT_OFFSETS.value or rel in rels_in_interm_cols or rel in iter_rels:
-				trie_value = f"@smallvecdict(4) {{ i -> 1 }}"
+				hint = to_hint(self.optimisation)
+				trie_value = f"{hint} {{ i -> 1 }}"
 			else:
 				trie_value = "1"
 			for i, col in enumerate(trie_levels[::-1]):
 				# i check isn't needed as FJ queries have 1 level of nesting - keeping it for robustness/correctness
 				hint = "" if i > 0 else f"@phmap({rel}.size) "
 				inner = f"{rel}.{col}(i)"
-				key = inner if "@smallvecdict" in trie_value else f"unique({inner})"
-				trie_value = f"{hint}{{ {key} -> {trie_value} }}"
+				if self.optimisation.value >= Optimisation.ELIMINATING_REDUNDANT_OFFSETS.value and "@smallvecdict" not in trie_value:
+					inner = f"unique({inner})"
+				trie_value = f"{hint}{{ {inner} -> {trie_value} }}"
 			yield f"let {self.var_mng.trie_var(rel)} = sum(<i, _> <- range({rel}.size)) {trie_value} in\n"
 
 		if not self.var_mng.is_root_rel(interm):
@@ -297,7 +299,8 @@ class FJSDQLGenerator(AbstractSDQLGenerator):
 				if lookup_cols is None or idx not in lookup_cols
 			]
 			tuple_value = f"<{', '.join(cols)}>"
-			trie_value = f"@smallvecdict(4) {{ {tuple_value} -> 1 }}"
+			hint = to_hint(self.optimisation)
+			trie_value = f"{hint} {{ {tuple_value} -> 1 }}"
 
 			for idx in interm_trie_cols[::-1]:
 				# exclude columns that won't be used for lookup

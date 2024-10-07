@@ -10,3 +10,12 @@ class Optimisation(Enum):
 
 
 MAX_OPTIMISATION = max(Optimisation, key=lambda x: x.value)
+
+
+def to_hint(optimisation: Optimisation) -> str:
+    if optimisation.value >= Optimisation.SMALL_VECTOR.value:
+        return "@smallvecdict(4)"
+    elif optimisation == Optimisation.VECTOR:
+        return "@smallvecdict(0)"
+    else:
+        return ""
