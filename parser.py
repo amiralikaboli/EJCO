@@ -38,6 +38,7 @@ class PlanParser:
 
 		nonopt_plans = self._resolve_intermediate_stuff(parsed_plans)
 		opt_plans = self._remove_extra_proj_columns(nonopt_plans)
+		# O2 ablation - keep both lines including above
 		# opt_plans = self._convert_to_naive(nonopt_plans, opt_plans)
 
 		with open(os.path.join(self._plans_path, "parsed", f"{query}.log"), 'w') as log_file:
