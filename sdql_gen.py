@@ -108,12 +108,15 @@ class GJSDQLGenerator(AbstractSDQLGenerator):
 		for rel, join_cols, proj_cols in build_plan:
 			if self.var_mng.is_interm_rel(rel):
 				continue
+			# TODO @smallvecdict(4) segfaults
+			is_svd = len(join_cols[::-1]) == 1
 			if rel in rels_in_interm_cols:
-				trie_value = f"@smallvecdict(4) {{ i -> 1 }}"
+				trie_value = f"@smallvecdict({4 if is_svd else 0}) {{ i -> 1 }}"
 			else:
 				trie_value = "1"
 			for col in join_cols[::-1]:
-				trie_value = f"{{ {rel}.{col}(i) -> {trie_value} }}"
+				phmap = f"@phmap({rel}.size) " if rel in rels_in_interm_cols and is_svd else ""
+				trie_value = f"{phmap} {{ {rel}.{col}(i) -> {trie_value} }}"
 			yield f"let {self.var_mng.trie_var(rel)} = sum(<i, _> <- range({rel}.size)) {trie_value} in\n"
 
 		if not self.var_mng.is_root_rel(interm):
@@ -167,7 +170,8 @@ class GJSDQLGenerator(AbstractSDQLGenerator):
 				for idx, (rel, col) in interm_cols
 			}
 			tuple_value = f"<{', '.join([f'{new_col}={old_col}' for new_col, old_col in new2old_map.items()])}>"
-			trie_value = f"@smallvecdict(4) {{ {tuple_value} -> 1 }}"
+			# TODO @smallvecdict(4) segfaults
+			trie_value = f"@smallvecdict(0) {{ {tuple_value} -> 1 }}"
 			for idx in interm_trie_cols[::-1]:
 				trie_value = f"{{ {new2old_map[self.var_mng.interm_col(idx)]} -> {trie_value} }}"
 			yield f'{trie_value}\n'
