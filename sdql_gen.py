@@ -260,6 +260,13 @@ class FJSDQLGenerator(AbstractSDQLGenerator):
 			elems = list()
 			for rel, _, proj_cols in build_plan:
 				if proj_cols:
+					# O4 ablation
+					# if rel not in self.available_tuples:
+					# 	yield f"{self._tuple_iteration(rel)}\n"
+					# 	self.indent += 1
+					# for col in proj_cols:
+					# 	elems.append(
+					# 		(self.var_mng.interm_col(interm_col2idx[(rel, col)]), (self._tuple_col_var(rel, col))))
 					let_value = f"<{', '.join(f'{col}={self._tuple_col_var(rel, col)}' for col in proj_cols)}>"
 					if rel not in self.available_tuples:
 						let_value = f"{self._tuple_iteration(rel)} promote[min_sum]({let_value})"
