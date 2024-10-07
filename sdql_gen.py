@@ -4,6 +4,7 @@ from collections import defaultdict
 from typing import List, Tuple, Set, Union
 
 from consts import generated_sdql_path, preprocessed_data_path, abbr2rel, rel_wo_idx, rel2col2type
+from optimisation import Optimisation, MAX_OPTIMISATION
 from var_mng import VariableManager
 
 
@@ -186,9 +187,10 @@ class GJSDQLGenerator(AbstractSDQLGenerator):
 
 
 class FJSDQLGenerator(AbstractSDQLGenerator):
-	def __init__(self, var_mng: VariableManager):
+	def __init__(self, var_mng: VariableManager, optimisation: Optimisation = MAX_OPTIMISATION):
 		super().__init__(var_mng)
 		self.save_path = os.path.join(generated_sdql_path, "fj")
+		self.optimisation = optimisation
 
 	def _generate_subquery(
 			self,
@@ -212,9 +214,7 @@ class FJSDQLGenerator(AbstractSDQLGenerator):
 		for rel, trie_levels in rel2trie_levels.items():
 			if self.var_mng.is_interm_rel(rel):
 				continue
-			# TODO O3 ablation
-			# trie_value = f"@smallvecdict(4) {{ i -> 1 }}"
-			if rel in rels_in_interm_cols or rel in iter_rels:
+			if self.optimisation.value < Optimisation.ELIMINATING_REDUNDANT_OFFSETS.value or rel in rels_in_interm_cols or rel in iter_rels:
 				trie_value = f"@smallvecdict(4) {{ i -> 1 }}"
 			else:
 				trie_value = "1"
@@ -260,22 +260,25 @@ class FJSDQLGenerator(AbstractSDQLGenerator):
 		if self.var_mng.is_root_rel(interm):
 			interm_col2idx = {rel_col: interm_col_idx for interm_col_idx, rel_col in interm_cols}
 			elems = list()
-			for rel, _, proj_cols in build_plan:
-				if proj_cols:
-					# O4 ablation
-					# if rel not in self.available_tuples:
-					# 	yield f"{self._tuple_iteration(rel)}\n"
-					# 	self.indent += 1
-					# for col in proj_cols:
-					# 	elems.append(
-					# 		(self.var_mng.interm_col(interm_col2idx[(rel, col)]), (self._tuple_col_var(rel, col))))
-					let_value = f"<{', '.join(f'{col}={self._tuple_col_var(rel, col)}' for col in proj_cols)}>"
-					if rel not in self.available_tuples:
-						let_value = f"{self._tuple_iteration(rel)} promote[min_sum]({let_value})"
-					yield f"let {self.var_mng.mn_rel_var(rel)} = {let_value} in\n"
-				for col in proj_cols:
-					elems.append(
-						(self.var_mng.interm_col(interm_col2idx[(rel, col)]), f'{self.var_mng.mn_rel_var(rel)}.{col}'))
+			if self.optimisation.value < Optimisation.LOOP_INVARIANT_CODE_MOTION.value:
+				for rel, _, proj_cols in build_plan:
+					if proj_cols:
+						if rel not in self.available_tuples:
+							yield f"{self._tuple_iteration(rel)}\n"
+							self.indent += 1
+						for col in proj_cols:
+							elems.append(
+								(self.var_mng.interm_col(interm_col2idx[(rel, col)]), (self._tuple_col_var(rel, col))))
+			else:
+				for rel, _, proj_cols in build_plan:
+					if proj_cols:
+						let_value = f"<{', '.join(f'{col}={self._tuple_col_var(rel, col)}' for col in proj_cols)}>"
+						if rel not in self.available_tuples:
+							let_value = f"{self._tuple_iteration(rel)} promote[min_sum]({let_value})"
+						yield f"let {self.var_mng.mn_rel_var(rel)} = {let_value} in\n"
+					for col in proj_cols:
+						elems.append(
+							(self.var_mng.interm_col(interm_col2idx[(rel, col)]), f'{self.var_mng.mn_rel_var(rel)}.{col}'))
 			yield f"promote[min_sum](<{', '.join([f'{elem_key}={elem_val}' for elem_key, elem_val in elems])}>)\n"
 		else:
 			interm_rel2cols = defaultdict(list)

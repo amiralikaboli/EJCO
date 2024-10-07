@@ -1,0 +1,12 @@
+from enum import Enum
+
+class Optimisation(Enum):
+    HASHMAP = 0
+    VECTOR = 1
+    SMALL_VECTOR = 2
+    DEAD_CODE_ELIMINATION = 3
+    ELIMINATING_REDUNDANT_OFFSETS = 4
+    LOOP_INVARIANT_CODE_MOTION = 5
+
+
+MAX_OPTIMISATION = max(Optimisation, key=lambda x: x.value)
