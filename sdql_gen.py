@@ -212,6 +212,8 @@ class FJSDQLGenerator(AbstractSDQLGenerator):
 		for rel, trie_levels in rel2trie_levels.items():
 			if self.var_mng.is_interm_rel(rel):
 				continue
+			# TODO O3 ablation
+			# trie_value = f"@smallvecdict(4) {{ i -> 1 }}"
 			if rel in rels_in_interm_cols or rel in iter_rels:
 				trie_value = f"@smallvecdict(4) {{ i -> 1 }}"
 			else:
