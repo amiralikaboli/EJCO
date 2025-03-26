@@ -230,6 +230,8 @@ class FJSDQLGenerator(AbstractSDQLGenerator):
 
 		if not self.var_mng.is_root_rel(interm):
 			yield f"let {self.var_mng.trie_var(interm)} = "
+		elif self.optimisation.value < Optimisation.EARLY_AGGREGATION.value:
+			yield "let res = "
 
 		join_attrs_order = {rel: {col: math.inf for col in join_cols} for rel, join_cols, _ in build_plan}
 		for idx, eq_cols in enumerate(compiled_plan):
@@ -269,8 +271,17 @@ class FJSDQLGenerator(AbstractSDQLGenerator):
 							yield f"{self._tuple_iteration(rel)}\n"
 							self.indent += 1
 						for col in proj_cols:
-							elems.append(
-								(self.var_mng.interm_col(interm_col2idx[(rel, col)]), (self._tuple_col_var(rel, col))))
+							elems.append((
+								self.var_mng.interm_col(interm_col2idx[(rel, col)]),
+								self._tuple_col_var(rel, col)
+							))
+				if self.optimisation.value < Optimisation.EARLY_AGGREGATION.value:
+					yield f"{{ <{', '.join([f'{elem_key}={elem_val}' for elem_key, elem_val in elems])}> -> 1 }}\n"
+					self.indent = 0
+					yield "in\n\n"
+					yield "sum(<tpl, _> <- res)\n"
+					self.indent = 1
+					elems = [(elem_key, f'tpl.{elem_key}') for elem_key, elem_val in elems]
 			else:
 				for rel, _, proj_cols in build_plan:
 					if proj_cols:
@@ -279,8 +290,10 @@ class FJSDQLGenerator(AbstractSDQLGenerator):
 							let_value = f"{self._tuple_iteration(rel)} promote[min_sum]({let_value})"
 						yield f"let {self.var_mng.mn_rel_var(rel)} = {let_value} in\n"
 					for col in proj_cols:
-						elems.append(
-							(self.var_mng.interm_col(interm_col2idx[(rel, col)]), f'{self.var_mng.mn_rel_var(rel)}.{col}'))
+						elems.append((
+							self.var_mng.interm_col(interm_col2idx[(rel, col)]),
+							f'{self.var_mng.mn_rel_var(rel)}.{col}'
+						))
 			yield f"promote[min_sum](<{', '.join([f'{elem_key}={elem_val}' for elem_key, elem_val in elems])}>)\n"
 		else:
 			interm_rel2cols = defaultdict(list)

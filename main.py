@@ -12,7 +12,7 @@ if __name__ == '__main__':
 	args = sys.argv[1:]
 	mode = JoinMode(args[0]) if args else JoinMode.FJ
 	print(f"JoinMode: {mode}")
-	optimisation = Optimisation(args[1]) if len(args) > 1 else MAX_OPTIMISATION
+	optimisation = Optimisation(int(args[1])) if len(args) > 1 else MAX_OPTIMISATION
 
 	queries = []
 	for filename in os.listdir(os.path.join(plans_path, mode.value, "raw")):
